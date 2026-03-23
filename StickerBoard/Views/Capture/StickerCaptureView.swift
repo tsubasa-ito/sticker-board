@@ -13,6 +13,8 @@ struct StickerCaptureView: View {
     @State private var errorMessage: String?
     @State private var showingSaveSuccess = false
     @State private var animateIn = false
+    @State private var showingCamera = false
+    @State private var cameraImage: UIImage?
 
     var body: some View {
         ZStack {
@@ -50,6 +52,17 @@ struct StickerCaptureView: View {
         .onChange(of: selectedItem) { _, newItem in
             loadImage(from: newItem)
         }
+        .onChange(of: cameraImage) { _, newImage in
+            guard let newImage else { return }
+            withAnimation(.spring(duration: 0.4)) {
+                originalImage = newImage
+                errorMessage = nil
+            }
+        }
+        .fullScreenCover(isPresented: $showingCamera) {
+            CameraView(image: $cameraImage)
+                .ignoresSafeArea()
+        }
         .alert("保存完了!", isPresented: $showingSaveSuccess) {
             Button("続けて追加") { resetState() }
             Button("閉じる") { dismiss() }
@@ -82,42 +95,40 @@ struct StickerCaptureView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 12))
             }
 
-            // 写真選択ボタン
-            PhotosPicker(selection: $selectedItem, matching: .images) {
-                VStack(spacing: 16) {
-                    ZStack {
-                        Circle()
-                            .fill(AppTheme.headerGradient)
-                            .frame(width: 80, height: 80)
+            if originalImage == nil {
+                // 取得方法の選択
+                VStack(spacing: 8) {
+                    Text("シールにしたい写真を選ぼう")
+                        .font(.system(size: 18, weight: .semibold, design: .rounded))
+                        .foregroundStyle(AppTheme.textPrimary)
+                        .scaleEffect(animateIn ? 1 : 0.8)
 
-                        Image(systemName: "photo.badge.plus")
-                            .font(.system(size: 32))
-                            .foregroundStyle(.white)
-                    }
-                    .scaleEffect(animateIn ? 1 : 0.6)
-
-                    VStack(spacing: 4) {
-                        Text("写真を選んでシールを作ろう")
-                            .font(.system(size: 18, weight: .semibold, design: .rounded))
-                            .foregroundStyle(AppTheme.textPrimary)
-
-                        Text("カメラロールからシールにしたい写真を選択")
-                            .font(.system(size: 13, weight: .regular, design: .rounded))
-                            .foregroundStyle(AppTheme.textSecondary)
-                    }
+                    Text("カメラで撮影するか、ライブラリから選択できます")
+                        .font(.system(size: 13, weight: .regular, design: .rounded))
+                        .foregroundStyle(AppTheme.textSecondary)
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 48)
-                .background {
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(AppTheme.cardGradient)
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 20)
-                                .strokeBorder(
-                                    AppTheme.accent.opacity(0.3),
-                                    style: StrokeStyle(lineWidth: 2, dash: [8, 6])
-                                )
-                        }
+                .padding(.top, 8)
+
+                HStack(spacing: 16) {
+                    // カメラボタン
+                    Button {
+                        showingCamera = true
+                    } label: {
+                        sourceButton(
+                            icon: "camera.fill",
+                            title: "カメラで撮る",
+                            gradient: AppTheme.headerGradient
+                        )
+                    }
+
+                    // フォトライブラリボタン
+                    PhotosPicker(selection: $selectedItem, matching: .images) {
+                        sourceButton(
+                            icon: "photo.on.rectangle",
+                            title: "写真から選ぶ",
+                            gradient: AppTheme.mintGradient
+                        )
+                    }
                 }
             }
 
@@ -148,6 +159,38 @@ struct StickerCaptureView: View {
                 }
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
+        }
+    }
+
+    private func sourceButton(icon: String, title: String, gradient: LinearGradient) -> some View {
+        VStack(spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(gradient)
+                    .frame(width: 64, height: 64)
+
+                Image(systemName: icon)
+                    .font(.system(size: 26))
+                    .foregroundStyle(.white)
+            }
+            .scaleEffect(animateIn ? 1 : 0.6)
+
+            Text(title)
+                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                .foregroundStyle(AppTheme.textPrimary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 32)
+        .background {
+            RoundedRectangle(cornerRadius: 20)
+                .fill(AppTheme.cardGradient)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 20)
+                        .strokeBorder(
+                            AppTheme.accent.opacity(0.3),
+                            style: StrokeStyle(lineWidth: 2, dash: [8, 6])
+                        )
+                }
         }
     }
 
@@ -277,6 +320,7 @@ struct StickerCaptureView: View {
         selectedItem = nil
         originalImage = nil
         processedImage = nil
+        cameraImage = nil
         errorMessage = nil
     }
 }
