@@ -4,7 +4,6 @@ struct StickerItemView: View {
     @Binding var placement: StickerPlacement
     let image: UIImage?
 
-    // ジェスチャー中の一時的な値
     @State private var dragOffset: CGSize = .zero
     @State private var currentScale: CGFloat = 1.0
     @State private var currentRotation: Angle = .zero
@@ -27,14 +26,24 @@ struct StickerItemView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 120, height: 120)
+                .shadow(color: .black.opacity(0.15), radius: 6, y: 3)
         } else {
-            RoundedRectangle(cornerRadius: 8)
-                .fill(.quaternary)
-                .frame(width: 120, height: 120)
-                .overlay {
-                    Image(systemName: "questionmark")
-                        .foregroundStyle(.secondary)
+            // プレースホルダー（見えるように改善）
+            ZStack {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(AppTheme.backgroundCard)
+                    .frame(width: 120, height: 120)
+                    .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
+
+                VStack(spacing: 4) {
+                    Image(systemName: "photo")
+                        .font(.system(size: 28))
+                        .foregroundStyle(AppTheme.textTertiary)
+                    Text("読込失敗")
+                        .font(.system(size: 10, design: .rounded))
+                        .foregroundStyle(AppTheme.textTertiary)
                 }
+            }
         }
     }
 

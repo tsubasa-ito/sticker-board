@@ -21,6 +21,7 @@
 		BDD4B606C0138C4D7142458D /* StickerItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF271962CA9EF750652A353 /* StickerItemView.swift */; };
 		CEE293526AD847B540BF5EC7 /* BoardListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C5DFE900836F1D943C5CFB /* BoardListView.swift */; };
 		CFAF3F2916CACA75DED85E2C /* BackgroundRemover.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5D9FFAB2F480D8D2327E386 /* BackgroundRemover.swift */; };
+		E2D14D4429193D3C436BA5D2 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DE8FA1873B214DE9520E815 /* AppTheme.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,8 +29,9 @@
 		1D878D128C4599B9F13AD702 /* StickerCaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerCaptureView.swift; sourceTree = "<group>"; };
 		32104833845A2ADD7C14A5F8 /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
 		37C5DFE900836F1D943C5CFB /* BoardListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardListView.swift; sourceTree = "<group>"; };
+		3DE8FA1873B214DE9520E815 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		6364161BD5EB2AA06CF6AE7D /* StickerPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerPreviewView.swift; sourceTree = "<group>"; };
-		98F3C1F87DFC6BE33492062C /* StickerBoard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StickerBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		98F3C1F87DFC6BE33492062C /* StickerBoard.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = StickerBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CBF271962CA9EF750652A353 /* StickerItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerItemView.swift; sourceTree = "<group>"; };
 		D23D569B5232A2F3DB9F3B61 /* StickerBoardApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerBoardApp.swift; sourceTree = "<group>"; };
 		D8F0053CD2C5B7ABC5FC4A01 /* StickerPlacement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerPlacement.swift; sourceTree = "<group>"; };
@@ -53,6 +55,7 @@
 		22130D75CEBE5A13BF65E1B7 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				3DE8FA1873B214DE9520E815 /* AppTheme.swift */,
 				D23D569B5232A2F3DB9F3B61 /* StickerBoardApp.swift */,
 			);
 			path = App;
@@ -213,6 +216,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E2D14D4429193D3C436BA5D2 /* AppTheme.swift in Sources */,
 				CFAF3F2916CACA75DED85E2C /* BackgroundRemover.swift in Sources */,
 				1A6D5B570ED5466E73AD8176 /* Board.swift in Sources */,
 				51EDBBD61C732A65999AA9E4 /* BoardEditorView.swift in Sources */,
@@ -240,7 +244,6 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6CGGS6SX69;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "シールにする写真を選択するためにフォトライブラリへのアクセスが必要です";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -388,7 +391,6 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6CGGS6SX69;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "シールにする写真を選択するためにフォトライブラリへのアクセスが必要です";
 				LD_RUNPATH_SEARCH_PATHS = (
