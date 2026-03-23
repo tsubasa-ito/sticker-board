@@ -110,15 +110,17 @@ struct StickerCaptureView: View {
                 .padding(.top, 8)
 
                 HStack(spacing: 16) {
-                    // カメラボタン
-                    Button {
-                        showingCamera = true
-                    } label: {
-                        sourceButton(
-                            icon: "camera.fill",
-                            title: "カメラで撮る",
-                            gradient: AppTheme.headerGradient
-                        )
+                    // カメラボタン（カメラ搭載デバイスのみ表示）
+                    if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                        Button {
+                            showingCamera = true
+                        } label: {
+                            sourceButton(
+                                icon: "camera.fill",
+                                title: "カメラで撮る",
+                                gradient: AppTheme.headerGradient
+                            )
+                        }
                     }
 
                     // フォトライブラリボタン
