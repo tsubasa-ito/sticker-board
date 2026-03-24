@@ -16,6 +16,8 @@ struct BoardEditorView: View {
     @State private var saveResultSuccess = false
     @State private var canvasSize: CGSize = .zero
     @State private var showHint = true
+    @State private var bottomBarExpanded = true
+    @State private var showQuickPicks = false
 
     var body: some View {
         ZStack {
@@ -28,16 +30,64 @@ struct BoardEditorView: View {
                 canvasArea
             }
 
-            // フローティングUI（クイックピック + ツールバー）
+            // フローティングUI（折りたたみ可能）
             VStack(spacing: 0) {
                 Spacer()
-                if !allStickers.isEmpty {
-                    stickerQuickPicks
+
+                if bottomBarExpanded {
+                    // 折りたたみハンドル
+                    Button {
+                        withAnimation(.spring(duration: 0.3)) {
+                            bottomBarExpanded = false
+                            showQuickPicks = false
+                        }
+                    } label: {
+                        VStack(spacing: 2) {
+                            Capsule()
+                                .fill(AppTheme.textTertiary.opacity(0.4))
+                                .frame(width: 36, height: 4)
+                            Image(systemName: "chevron.down")
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundStyle(AppTheme.textTertiary)
+                        }
+                        .frame(height: 24)
+                        .frame(maxWidth: .infinity)
+                    }
+
+                    if showQuickPicks && !allStickers.isEmpty {
+                        stickerQuickPicks
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                    }
+                    floatingToolbar
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 10)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                } else {
+                    // 折りたたみ時: 小さな展開ボタン
+                    Button {
+                        withAnimation(.spring(duration: 0.3)) {
+                            bottomBarExpanded = true
+                        }
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "chevron.up")
+                                .font(.system(size: 12, weight: .bold))
+                            Image(systemName: "slider.horizontal.3")
+                                .font(.system(size: 14))
+                        }
+                        .foregroundStyle(AppTheme.textSecondary)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 10)
+                        .background(.ultraThinMaterial)
+                        .clipShape(Capsule())
+                        .shadow(color: .black.opacity(0.1), radius: 8, y: 2)
+                    }
+                    .padding(.bottom, 16)
+                    .transition(.scale.combined(with: .opacity))
                 }
-                floatingToolbar
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 10)
             }
+            .animation(.spring(duration: 0.3), value: bottomBarExpanded)
+            .animation(.spring(duration: 0.3), value: showQuickPicks)
 
             // ヒントトースト
             if showHint && !placements.isEmpty {
@@ -264,6 +314,23 @@ struct BoardEditorView: View {
                         QuickPickThumbnail(fileName: sticker.imageFileName)
                     }
                 }
+
+                // 全て見るボタン
+                Button {
+                    showQuickPicks = false
+                    showingStickerPicker = true
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: "square.grid.2x2")
+                            .font(.system(size: 18))
+                        Text("全て")
+                            .font(.system(size: 9, weight: .medium, design: .rounded))
+                    }
+                    .foregroundStyle(AppTheme.textSecondary)
+                    .frame(width: 64, height: 64)
+                    .background(Color(hex: 0xF0F1EF))
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                }
             }
             .padding(.horizontal, 24)
             .padding(.vertical, 8)
@@ -275,9 +342,11 @@ struct BoardEditorView: View {
 
     private var floatingToolbar: some View {
         HStack(spacing: 0) {
-            // 追加ボタン
+            // 追加ボタン（タップ: クイックピック表示、長押し: 全シール一覧）
             Button {
-                showingStickerPicker = true
+                withAnimation(.spring(duration: 0.3)) {
+                    showQuickPicks.toggle()
+                }
             } label: {
                 VStack(spacing: 4) {
                     ZStack {
