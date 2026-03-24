@@ -7,6 +7,8 @@ struct HomeView: View {
 
     private let newBoardCardID = "new-board"
 
+    @Binding var hideTabBar: Bool
+
     @State private var showingNewBoard = false
     @State private var newBoardTitle = ""
     @State private var scrolledID: String?
@@ -49,6 +51,8 @@ struct HomeView: View {
         .toolbar(.hidden, for: .navigationBar)
         .navigationDestination(item: $selectedBoard) { board in
             BoardEditorView(board: board)
+                .onAppear { hideTabBar = true }
+                .onDisappear { hideTabBar = false }
         }
         .alert("新しいボード", isPresented: $showingNewBoard) {
             TextField("ボード名", text: $newBoardTitle)
@@ -484,7 +488,7 @@ private struct BoardStickerPreviewView: View {
 
 #Preview {
     NavigationStack {
-        HomeView()
+        HomeView(hideTabBar: .constant(false))
     }
     .modelContainer(for: [Sticker.self, Board.self], inMemory: true)
 }

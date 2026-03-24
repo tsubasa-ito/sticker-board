@@ -3,13 +3,15 @@ import SwiftUI
 struct StickerItemView: View {
     @Binding var placement: StickerPlacement
     let image: UIImage?
+    var isSelected: Bool = false
+    var onTap: (() -> Void)?
 
     @State private var dragOffset: CGSize = .zero
     @State private var currentScale: CGFloat = 1.0
     @State private var currentRotation: Angle = .zero
 
     var body: some View {
-        stickerImage
+        stickerContent
             .scaleEffect(placement.scale * currentScale)
             .rotationEffect(.radians(placement.rotation) + currentRotation)
             .offset(x: placement.positionX + dragOffset.width,
@@ -17,6 +19,40 @@ struct StickerItemView: View {
             .gesture(dragGesture)
             .simultaneousGesture(magnificationGesture)
             .simultaneousGesture(rotationGesture)
+            .simultaneousGesture(TapGesture().onEnded { onTap?() })
+    }
+
+    // MARK: - コンテンツ
+
+    @ViewBuilder
+    private var stickerContent: some View {
+        ZStack(alignment: .topTrailing) {
+            stickerImage
+                .overlay {
+                    if isSelected {
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(AppTheme.accent, lineWidth: 3)
+                            .padding(-6)
+                    }
+                }
+
+            if isSelected {
+                // タッチインジケーター
+                ZStack {
+                    Circle()
+                        .fill(AppTheme.accent.opacity(0.2))
+                    Circle()
+                        .stroke(AppTheme.accent.opacity(0.6), lineWidth: 2)
+                    Image(systemName: "hand.tap.fill")
+                        .font(.system(size: 12))
+                        .foregroundStyle(AppTheme.accent)
+                }
+                .frame(width: 32, height: 32)
+                .offset(x: 12, y: -12)
+                .transition(.scale.combined(with: .opacity))
+            }
+        }
+        .animation(.easeInOut(duration: 0.2), value: isSelected)
     }
 
     @ViewBuilder
@@ -28,7 +64,6 @@ struct StickerItemView: View {
                 .frame(width: 120, height: 120)
                 .shadow(color: .black.opacity(0.15), radius: 6, y: 3)
         } else {
-            // プレースホルダー（見えるように改善）
             ZStack {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(AppTheme.backgroundCard)
