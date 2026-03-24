@@ -5,6 +5,8 @@ import CoreImage.CIFilterBuiltins
 
 struct BackgroundRemover {
 
+    private static let ciContext = CIContext()
+
     /// シミュレータかどうかを判定
     static var isSimulator: Bool {
         #if targetEnvironment(simulator)
@@ -54,7 +56,6 @@ struct BackgroundRemover {
             return [single]
         }
 
-        let context = CIContext()
         var results: [UIImage] = []
         for instanceId in allInstances {
             let singleSet = IndexSet(integer: instanceId)
@@ -64,7 +65,7 @@ struct BackgroundRemover {
                 croppedToInstancesExtent: true
             )
             let ciImage = CIImage(cvPixelBuffer: maskedBuffer)
-            guard let outputCGImage = context.createCGImage(ciImage, from: ciImage.extent) else {
+            guard let outputCGImage = ciContext.createCGImage(ciImage, from: ciImage.extent) else {
                 continue
             }
             results.append(UIImage(cgImage: outputCGImage))
@@ -108,8 +109,7 @@ struct BackgroundRemover {
             throw BackgroundRemoverError.filterFailed
         }
 
-        let context = CIContext()
-        guard let outputCGImage = context.createCGImage(outputImage, from: ciImage.extent) else {
+        guard let outputCGImage = ciContext.createCGImage(outputImage, from: ciImage.extent) else {
             throw BackgroundRemoverError.renderFailed
         }
 
