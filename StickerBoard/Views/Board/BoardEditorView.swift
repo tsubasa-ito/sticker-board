@@ -24,6 +24,40 @@ struct BoardEditorView: View {
                     placement: binding(for: placement),
                     image: loadImage(for: placement)
                 )
+                .zIndex(Double(placement.zIndex))
+                .contextMenu {
+                    Button {
+                        bringToFront(placement)
+                    } label: {
+                        Label("最前面に移動", systemImage: "square.3.layers.3d.top.filled")
+                    }
+
+                    Button {
+                        bringForward(placement)
+                    } label: {
+                        Label("前面に移動", systemImage: "square.2.layers.3d.top.filled")
+                    }
+
+                    Button {
+                        sendBackward(placement)
+                    } label: {
+                        Label("背面に移動", systemImage: "square.2.layers.3d.bottom.filled")
+                    }
+
+                    Button {
+                        sendToBack(placement)
+                    } label: {
+                        Label("最背面に移動", systemImage: "square.3.layers.3d.bottom.filled")
+                    }
+                } preview: {
+                    if let image = loadImage(for: placement) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 160, height: 160)
+                            .padding(12)
+                    }
+                }
             }
         }
         .navigationTitle(board.title)
@@ -139,6 +173,50 @@ struct BoardEditorView: View {
             zIndex: maxZ + 1
         )
         placements.append(placement)
+        saveBoard()
+    }
+
+    // MARK: - Z軸操作
+
+    private func bringToFront(_ placement: StickerPlacement) {
+        guard let index = placements.firstIndex(where: { $0.id == placement.id }) else { return }
+        let maxZ = placements.map(\.zIndex).max() ?? 0
+        guard placements[index].zIndex < maxZ else { return }
+        placements[index].zIndex = maxZ + 1
+        saveBoard()
+    }
+
+    private func bringForward(_ placement: StickerPlacement) {
+        let sorted = placements.sorted { $0.zIndex < $1.zIndex }
+        guard let sortedIndex = sorted.firstIndex(where: { $0.id == placement.id }),
+              sortedIndex < sorted.count - 1 else { return }
+        let nextId = sorted[sortedIndex + 1].id
+        guard let idx1 = placements.firstIndex(where: { $0.id == placement.id }),
+              let idx2 = placements.firstIndex(where: { $0.id == nextId }) else { return }
+        let tempZ = placements[idx1].zIndex
+        placements[idx1].zIndex = placements[idx2].zIndex
+        placements[idx2].zIndex = tempZ
+        saveBoard()
+    }
+
+    private func sendBackward(_ placement: StickerPlacement) {
+        let sorted = placements.sorted { $0.zIndex < $1.zIndex }
+        guard let sortedIndex = sorted.firstIndex(where: { $0.id == placement.id }),
+              sortedIndex > 0 else { return }
+        let prevId = sorted[sortedIndex - 1].id
+        guard let idx1 = placements.firstIndex(where: { $0.id == placement.id }),
+              let idx2 = placements.firstIndex(where: { $0.id == prevId }) else { return }
+        let tempZ = placements[idx1].zIndex
+        placements[idx1].zIndex = placements[idx2].zIndex
+        placements[idx2].zIndex = tempZ
+        saveBoard()
+    }
+
+    private func sendToBack(_ placement: StickerPlacement) {
+        guard let index = placements.firstIndex(where: { $0.id == placement.id }) else { return }
+        let minZ = placements.map(\.zIndex).min() ?? 0
+        guard placements[index].zIndex > minZ else { return }
+        placements[index].zIndex = minZ - 1
         saveBoard()
     }
 
