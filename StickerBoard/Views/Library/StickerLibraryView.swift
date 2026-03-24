@@ -101,11 +101,8 @@ struct StickerLibraryView: View {
                 LazyVGrid(columns: columns, spacing: 14) {
                     ForEach(stickers) { sticker in
                         StickerThumbnailView(sticker: sticker)
-                            .matchedGeometryEffect(
-                                id: sticker.id,
-                                in: previewNamespace,
-                                isSource: previewSticker?.id != sticker.id
-                            )
+                            .matchedGeometryEffect(id: sticker.id, in: previewNamespace)
+                            .opacity(previewSticker?.id == sticker.id ? 0 : 1)
                             .onTapGesture {
                                 withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
                                     previewSticker = sticker
