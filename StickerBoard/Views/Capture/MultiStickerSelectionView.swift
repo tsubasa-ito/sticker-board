@@ -185,6 +185,8 @@ struct MultiStickerSelectionView: View {
 
     private func saveSelectedStickers() {
         var savedCount = 0
+        var firstError: Error?
+
         for index in selectedIndices.sorted() {
             do {
                 let fileName = try ImageStorage.save(images[index])
@@ -192,10 +194,16 @@ struct MultiStickerSelectionView: View {
                 modelContext.insert(sticker)
                 savedCount += 1
             } catch {
-                errorMessage = error.localizedDescription
-                return
+                if firstError == nil {
+                    firstError = error
+                }
             }
         }
+
+        if let error = firstError {
+            errorMessage = "\(selectedIndices.count - savedCount)枚のシールの保存に失敗しました: \(error.localizedDescription)"
+        }
+
         if savedCount > 0 {
             showingSaveSuccess = true
         }
