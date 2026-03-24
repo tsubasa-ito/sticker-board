@@ -237,7 +237,6 @@ struct BoardEditorView: View {
     private func sendToBack(_ placement: StickerPlacement) {
         guard let index = placements.firstIndex(where: { $0.id == placement.id }) else { return }
         let minZ = placements.map(\.zIndex).min() ?? 0
-        guard placements[index].zIndex > minZ else { return }
         placements[index].zIndex = minZ - 1
         saveBoard()
     }
