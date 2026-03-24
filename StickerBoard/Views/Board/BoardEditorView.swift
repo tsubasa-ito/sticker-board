@@ -189,7 +189,6 @@ struct BoardEditorView: View {
     private func bringToFront(_ placement: StickerPlacement) {
         guard let index = placements.firstIndex(where: { $0.id == placement.id }) else { return }
         let maxZ = placements.map(\.zIndex).max() ?? 0
-        guard placements[index].zIndex < maxZ else { return }
         placements[index].zIndex = maxZ + 1
         saveBoard()
     }
