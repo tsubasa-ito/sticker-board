@@ -25,17 +25,18 @@ struct MainTabView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            Group {
-                switch selectedTab {
-                case .home:
-                    NavigationStack {
-                        HomeView()
-                    }
-                case .library:
-                    NavigationStack {
-                        StickerLibraryView()
-                    }
+            ZStack {
+                NavigationStack {
+                    HomeView()
                 }
+                .opacity(selectedTab == .home ? 1 : 0)
+                .allowsHitTesting(selectedTab == .home)
+
+                NavigationStack {
+                    StickerLibraryView()
+                }
+                .opacity(selectedTab == .library ? 1 : 0)
+                .allowsHitTesting(selectedTab == .library)
             }
 
             floatingTabBar
