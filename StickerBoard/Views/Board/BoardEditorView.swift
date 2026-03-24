@@ -154,44 +154,19 @@ struct BoardEditorView: View {
 
             Spacer()
 
-            // 右: ダウンロード + 保存
-            HStack(spacing: 0) {
-                Button {
-                    saveBoardAsImage()
-                } label: {
-                    Image(systemName: "arrow.down.to.line")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundStyle(AppTheme.textSecondary)
-                        .frame(width: 40, height: 40)
-                }
-                .disabled(placements.isEmpty)
-                .opacity(placements.isEmpty ? 0.4 : 1)
-
-                Divider()
-                    .frame(height: 24)
-                    .padding(.horizontal, 4)
-
-                Button {
-                    dismiss()
-                } label: {
-                    Text("保存")
-                        .font(.system(size: 14, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 10)
-                        .background(AppTheme.headerGradient)
-                        .clipShape(Capsule())
-                }
+            // 右: ダウンロード（画像として保存）
+            Button {
+                saveBoardAsImage()
+            } label: {
+                Image(systemName: "arrow.down.to.line")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundStyle(AppTheme.textSecondary)
+                    .frame(width: 40, height: 40)
+                    .background(Color(hex: 0xF0F1EF))
+                    .clipShape(Circle())
             }
-            .padding(4)
-            .background(
-                Capsule()
-                    .fill(Color(hex: 0xF0F1EF))
-                    .overlay(
-                        Capsule()
-                            .stroke(Color(hex: 0xACADAC).opacity(0.2), lineWidth: 1)
-                    )
-            )
+            .disabled(placements.isEmpty)
+            .opacity(placements.isEmpty ? 0.4 : 1)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
