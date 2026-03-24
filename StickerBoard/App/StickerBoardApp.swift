@@ -5,7 +5,7 @@ import SwiftData
 struct StickerBoardApp: App {
     var body: some Scene {
         WindowGroup {
-            HomeView()
+            MainTabView()
         }
         .modelContainer(for: [Sticker.self, Board.self])
     }
