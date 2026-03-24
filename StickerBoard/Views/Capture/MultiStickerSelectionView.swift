@@ -4,14 +4,13 @@ import SwiftData
 struct MultiStickerSelectionView: View {
     @Environment(\.modelContext) private var modelContext
     let images: [UIImage]
-    let onComplete: () -> Void
+    let onComplete: (Int) -> Void
 
     @State private var selectedIndices: Set<Int>
-    @State private var showingSaveSuccess = false
     @State private var errorMessage: String?
     @State private var appeared = false
 
-    init(images: [UIImage], onComplete: @escaping () -> Void) {
+    init(images: [UIImage], onComplete: @escaping (Int) -> Void) {
         self.images = images
         self.onComplete = onComplete
         self._selectedIndices = State(initialValue: Set(images.indices))
@@ -30,11 +29,6 @@ struct MultiStickerSelectionView: View {
             }
         }
         .background(AppTheme.backgroundPrimary)
-        .alert("保存完了!", isPresented: $showingSaveSuccess) {
-            Button("OK") { onComplete() }
-        } message: {
-            Text("\(selectedIndices.count)枚のシールをコレクションに追加しました")
-        }
         .onAppear {
             withAnimation(.spring(duration: 0.5, bounce: 0.3)) {
                 appeared = true
@@ -205,7 +199,7 @@ struct MultiStickerSelectionView: View {
         }
 
         if savedCount > 0 {
-            showingSaveSuccess = true
+            onComplete(savedCount)
         }
     }
 }

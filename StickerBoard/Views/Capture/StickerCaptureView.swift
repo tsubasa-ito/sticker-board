@@ -13,6 +13,7 @@ struct StickerCaptureView: View {
     @State private var isProcessing = false
     @State private var errorMessage: String?
     @State private var showingSaveSuccess = false
+    @State private var savedStickerCount = 0
     @State private var animateIn = false
     @State private var showingCamera = false
     @State private var cameraImage: UIImage?
@@ -26,7 +27,8 @@ struct StickerCaptureView: View {
                 VStack(spacing: 24) {
                     if let extractedStickers, extractedStickers.count > 1 {
                         // 複数シール選択
-                        MultiStickerSelectionView(images: extractedStickers) {
+                        MultiStickerSelectionView(images: extractedStickers) { count in
+                            savedStickerCount = count
                             resetState()
                             showingSaveSuccess = true
                         }
@@ -74,7 +76,11 @@ struct StickerCaptureView: View {
             Button("続けて追加") { resetState() }
             Button("閉じる") { dismiss() }
         } message: {
-            Text("シールをコレクションに追加しました")
+            if savedStickerCount > 1 {
+                Text("\(savedStickerCount)枚のシールをコレクションに追加しました")
+            } else {
+                Text("シールをコレクションに追加しました")
+            }
         }
         .onAppear {
             withAnimation(.easeOut(duration: 0.5)) {
@@ -323,6 +329,7 @@ struct StickerCaptureView: View {
             let fileName = try ImageStorage.save(image)
             let sticker = Sticker(imageFileName: fileName)
             modelContext.insert(sticker)
+            savedStickerCount = 1
             showingSaveSuccess = true
         } catch {
             errorMessage = error.localizedDescription
