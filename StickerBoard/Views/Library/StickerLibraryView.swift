@@ -5,6 +5,8 @@ struct StickerLibraryView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Sticker.createdAt, order: .reverse) private var stickers: [Sticker]
     @State private var stickerToDelete: Sticker?
+    @State private var previewSticker: Sticker?
+    @Namespace private var previewNamespace
 
     private let columns = [
         GridItem(.adaptive(minimum: 100), spacing: 14)
@@ -20,6 +22,18 @@ struct StickerLibraryView: View {
                     emptyState
                 } else {
                     stickerGrid
+                }
+            }
+        }
+        .overlay {
+            if let sticker = previewSticker {
+                StickerPreviewOverlay(
+                    sticker: sticker,
+                    namespace: previewNamespace
+                ) {
+                    withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
+                        previewSticker = nil
+                    }
                 }
             }
         }
@@ -87,6 +101,15 @@ struct StickerLibraryView: View {
                 LazyVGrid(columns: columns, spacing: 14) {
                     ForEach(stickers) { sticker in
                         StickerThumbnailView(sticker: sticker)
+                            .matchedGeometryEffect(id: sticker.id, in: previewNamespace)
+                            .opacity(previewSticker?.id == sticker.id ? 0 : 1)
+                            .onTapGesture {
+                                withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
+                                    previewSticker = sticker
+                                }
+                            }
+                            .accessibilityAddTraits(.isButton)
+                            .accessibilityHint("タップしてプレビューを表示")
                             .contextMenu {
                                 Button(role: .destructive) {
                                     stickerToDelete = sticker
@@ -105,6 +128,46 @@ struct StickerLibraryView: View {
         ImageStorage.delete(fileName: sticker.imageFileName)
         modelContext.delete(sticker)
         stickerToDelete = nil
+    }
+}
+
+// MARK: - プレビューオーバーレイ
+
+struct StickerPreviewOverlay: View {
+    let sticker: Sticker
+    let namespace: Namespace.ID
+    var onDismiss: () -> Void
+
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.7)
+                .ignoresSafeArea()
+                .onTapGesture { onDismiss() }
+                .accessibilityAddTraits(.isButton)
+                .accessibilityLabel("プレビューを閉じる")
+
+            VStack(spacing: 20) {
+                Group {
+                    if let image = ImageStorage.load(fileName: sticker.imageFileName) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFit()
+                            .accessibilityLabel("シールのプレビュー")
+                    } else {
+                        Image(systemName: "photo")
+                            .font(.system(size: 60))
+                            .foregroundStyle(AppTheme.textTertiary)
+                    }
+                }
+                .matchedGeometryEffect(id: sticker.id, in: namespace)
+                .padding(32)
+
+                Text(sticker.createdAt.formatted(date: .abbreviated, time: .shortened))
+                    .font(.system(size: 13, design: .rounded))
+                    .foregroundStyle(.white.opacity(0.6))
+            }
+        }
+        .transition(.opacity)
     }
 }
 
