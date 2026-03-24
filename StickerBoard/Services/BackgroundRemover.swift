@@ -5,6 +5,8 @@ import CoreImage.CIFilterBuiltins
 
 struct BackgroundRemover {
 
+    private static let ciContext = CIContext()
+
     /// シミュレータかどうかを判定
     static var isSimulator: Bool {
         #if targetEnvironment(simulator)
@@ -16,12 +18,19 @@ struct BackgroundRemover {
 
     /// 画像から前景（シール）を切り抜いて背景を透明にする
     static func removeBackground(from image: UIImage) async throws -> UIImage {
-        // シミュレータでは Vision の背景除去が動作しないため、
-        // 元画像をそのまま返す（実機でのみ背景除去が有効）
         #if targetEnvironment(simulator)
         return image
         #else
         return try removeBackgroundReal(from: image)
+        #endif
+    }
+
+    /// 画像内の複数オブジェクトを個別に切り抜いて返す
+    static func extractIndividualStickers(from image: UIImage) async throws -> [UIImage] {
+        #if targetEnvironment(simulator)
+        return [image]
+        #else
+        return try extractIndividualStickersReal(from: image)
         #endif
     }
 
@@ -30,21 +39,57 @@ struct BackgroundRemover {
             throw BackgroundRemoverError.invalidImage
         }
 
+        let (observation, handler) = try performInstanceMask(on: cgImage)
+        return try applyMask(observation, instances: observation.allInstances, to: cgImage, handler: handler)
+    }
+
+    private static func extractIndividualStickersReal(from image: UIImage) throws -> [UIImage] {
+        guard let cgImage = image.cgImage else {
+            throw BackgroundRemoverError.invalidImage
+        }
+
+        let (observation, handler) = try performInstanceMask(on: cgImage)
+        let allInstances = observation.allInstances
+
+        if allInstances.count <= 1 {
+            let single = try applyMask(observation, instances: allInstances, to: cgImage, handler: handler)
+            return [single]
+        }
+
+        var results: [UIImage] = []
+        for instanceId in allInstances {
+            let singleSet = IndexSet(integer: instanceId)
+            let maskedBuffer = try observation.generateMaskedImage(
+                ofInstances: singleSet,
+                from: handler,
+                croppedToInstancesExtent: true
+            )
+            let ciImage = CIImage(cvPixelBuffer: maskedBuffer)
+            guard let outputCGImage = ciContext.createCGImage(ciImage, from: ciImage.extent) else {
+                continue
+            }
+            results.append(UIImage(cgImage: outputCGImage))
+        }
+
+        if results.isEmpty {
+            throw BackgroundRemoverError.noResult
+        }
+        return results
+    }
+
+    private static func performInstanceMask(on cgImage: CGImage) throws -> (VNInstanceMaskObservation, VNImageRequestHandler) {
         let request = VNGenerateForegroundInstanceMaskRequest()
         let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
-
         try handler.perform([request])
 
         guard let result = request.results?.first else {
             throw BackgroundRemoverError.noResult
         }
-
-        return try applyMask(result, to: cgImage, handler: handler)
+        return (result, handler)
     }
 
-    private static func applyMask(_ observation: VNInstanceMaskObservation, to cgImage: CGImage, handler: VNImageRequestHandler) throws -> UIImage {
-        let allInstances = observation.allInstances
-        let maskPixelBuffer = try observation.generateScaledMaskForImage(forInstances: allInstances, from: handler)
+    private static func applyMask(_ observation: VNInstanceMaskObservation, instances: IndexSet, to cgImage: CGImage, handler: VNImageRequestHandler) throws -> UIImage {
+        let maskPixelBuffer = try observation.generateScaledMaskForImage(forInstances: instances, from: handler)
 
         let ciMask = CIImage(cvPixelBuffer: maskPixelBuffer)
         let ciImage = CIImage(cgImage: cgImage)
@@ -64,8 +109,7 @@ struct BackgroundRemover {
             throw BackgroundRemoverError.filterFailed
         }
 
-        let context = CIContext()
-        guard let outputCGImage = context.createCGImage(outputImage, from: ciImage.extent) else {
+        guard let outputCGImage = ciContext.createCGImage(outputImage, from: ciImage.extent) else {
             throw BackgroundRemoverError.renderFailed
         }
 
