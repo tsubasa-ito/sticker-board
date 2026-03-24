@@ -1,12 +1,17 @@
 import SwiftUI
 import SwiftData
+import Photos
 
 struct BoardEditorView: View {
     @Bindable var board: Board
     @Query(sort: \Sticker.createdAt, order: .reverse) private var allStickers: [Sticker]
+    @Environment(\.displayScale) private var displayScale
 
     @State private var placements: [StickerPlacement] = []
     @State private var showingStickerPicker = false
+    @State private var showingSaveResult = false
+    @State private var saveResultSuccess = false
+    @State private var canvasSize: CGSize = .zero
 
     var body: some View {
         ZStack {
@@ -87,11 +92,37 @@ struct BoardEditorView: View {
                     }
                 }
             }
+
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    saveBoardAsImage()
+                } label: {
+                    Image(systemName: "square.and.arrow.down")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(AppTheme.accent)
+                }
+                .disabled(placements.isEmpty)
+            }
         }
         .sheet(isPresented: $showingStickerPicker) {
             StickerPickerSheet(stickers: allStickers) { sticker in
                 addStickerToBoard(sticker)
             }
+        }
+        .alert(
+            saveResultSuccess ? "保存完了" : "エラー",
+            isPresented: $showingSaveResult
+        ) {
+            Button("OK") {}
+        } message: {
+            Text(saveResultSuccess
+                 ? "ボードを写真に保存しました"
+                 : "写真の保存に失敗しました。設定から写真へのアクセスを許可してください。")
+        }
+        .onGeometryChange(for: CGSize.self) { proxy in
+            proxy.size
+        } action: { newSize in
+            canvasSize = newSize
         }
         .onAppear {
             placements = board.placements
@@ -244,6 +275,92 @@ struct BoardEditorView: View {
     private func saveBoard() {
         board.placements = placements
         board.updatedAt = Date()
+    }
+
+    // MARK: - 画像として保存
+
+    private func saveBoardAsImage() {
+        let content = BoardSnapshotView(placements: sortedPlacements, size: canvasSize)
+
+        let renderer = ImageRenderer(content: content)
+        renderer.scale = displayScale
+
+        guard let image = renderer.uiImage else {
+            saveResultSuccess = false
+            showingSaveResult = true
+            return
+        }
+
+        Task {
+            let status = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
+            guard status == .authorized else {
+                saveResultSuccess = false
+                showingSaveResult = true
+                return
+            }
+            do {
+                try await PHPhotoLibrary.shared().performChanges {
+                    PHAssetChangeRequest.creationRequestForAsset(from: image)
+                }
+                saveResultSuccess = true
+            } catch {
+                saveResultSuccess = false
+            }
+            showingSaveResult = true
+        }
+    }
+}
+
+// MARK: - ボードスナップショット（画像書き出し用）
+
+private struct BoardSnapshotView: View {
+    let placements: [StickerPlacement]
+    let size: CGSize
+
+    var body: some View {
+        ZStack {
+            AppTheme.backgroundCanvas
+
+            Canvas { context, size in
+                let spacing: CGFloat = 24
+                let dotSize: CGFloat = 2
+                let rows = Int(size.height / spacing) + 1
+                let cols = Int(size.width / spacing) + 1
+
+                for row in 0..<rows {
+                    for col in 0..<cols {
+                        let point = CGPoint(
+                            x: CGFloat(col) * spacing + spacing / 2,
+                            y: CGFloat(row) * spacing + spacing / 2
+                        )
+                        context.fill(
+                            Path(ellipseIn: CGRect(
+                                x: point.x - dotSize / 2,
+                                y: point.y - dotSize / 2,
+                                width: dotSize,
+                                height: dotSize
+                            )),
+                            with: .color(Color(hex: 0xDDD5C8).opacity(0.5))
+                        )
+                    }
+                }
+            }
+
+            ForEach(placements) { placement in
+                if let image = ImageStorage.load(fileName: placement.imageFileName) {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 120, height: 120)
+                        .shadow(color: .black.opacity(0.15), radius: 6, y: 3)
+                        .scaleEffect(placement.scale)
+                        .rotationEffect(.radians(placement.rotation))
+                        .offset(x: placement.positionX, y: placement.positionY)
+                }
+            }
+        }
+        .frame(width: size.width, height: size.height)
+        .clipped()
     }
 }
 
