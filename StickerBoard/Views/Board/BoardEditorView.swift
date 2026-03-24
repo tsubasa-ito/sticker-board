@@ -49,6 +49,14 @@ struct BoardEditorView: View {
                     } label: {
                         Label("最背面に移動", systemImage: "square.3.layers.3d.bottom.filled")
                     }
+
+                    Divider()
+
+                    Button(role: .destructive) {
+                        removeFromBoard(placement)
+                    } label: {
+                        Label("ボードから削除", systemImage: "trash")
+                    }
                 } preview: {
                     if let image = loadImage(for: placement) {
                         Image(uiImage: image)
@@ -209,6 +217,11 @@ struct BoardEditorView: View {
         let tempZ = placements[idx1].zIndex
         placements[idx1].zIndex = placements[idx2].zIndex
         placements[idx2].zIndex = tempZ
+        saveBoard()
+    }
+
+    private func removeFromBoard(_ placement: StickerPlacement) {
+        placements.removeAll { $0.id == placement.id }
         saveBoard()
     }
 
