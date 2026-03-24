@@ -287,16 +287,12 @@ struct HomeView: View {
             // エディタと同じ配置をZStackで再現し、全体を縮小
             ZStack {
                 ForEach(visible) { placement in
-                    if let image = ImageStorage.load(fileName: placement.imageFileName) {
-                        Image(uiImage: image)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 120, height: 120)
-                            .shadow(color: .black.opacity(0.15), radius: 6, y: 3)
-                            .scaleEffect(placement.scale)
-                            .rotationEffect(.radians(placement.rotation))
-                            .offset(x: placement.positionX, y: placement.positionY)
-                    }
+                    AsyncStickerImage(fileName: placement.imageFileName)
+                        .frame(width: 120, height: 120)
+                        .shadow(color: .black.opacity(0.15), radius: 6, y: 3)
+                        .scaleEffect(placement.scale)
+                        .rotationEffect(.radians(placement.rotation))
+                        .offset(x: placement.positionX, y: placement.positionY)
                 }
             }
             .frame(width: canvasWidth, height: canvasHeight)
@@ -458,6 +454,28 @@ struct HomeView: View {
         board.updatedAt = Date()
         boardToRename = nil
         renameBoardTitle = ""
+    }
+}
+
+// MARK: - 非同期シール画像読み込み
+
+private struct AsyncStickerImage: View {
+    let fileName: String
+    @State private var image: UIImage?
+
+    var body: some View {
+        Group {
+            if let image {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+            }
+        }
+        .task {
+            image = await Task.detached {
+                ImageStorage.load(fileName: fileName)
+            }.value
+        }
     }
 }
 
