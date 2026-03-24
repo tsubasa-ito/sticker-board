@@ -2,237 +2,466 @@ import SwiftUI
 import SwiftData
 
 struct HomeView: View {
-    @Query private var stickers: [Sticker]
-    @Query private var boards: [Board]
+    @Environment(\.modelContext) private var modelContext
+    @Query(sort: \Board.updatedAt, order: .reverse) private var boards: [Board]
 
-    @State private var showCapture = false
-    @State private var animateHeader = false
+    @State private var showingNewBoard = false
+    @State private var newBoardTitle = ""
+    @State private var scrolledID: String?
+    @State private var animateIn = false
+    @State private var selectedBoard: Board?
+    @State private var boardToRename: Board?
+    @State private var showingRenameBoard = false
+    @State private var renameBoardTitle = ""
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                // 背景グラデーション
-                AppTheme.backgroundPrimary
-                    .ignoresSafeArea()
+        ZStack {
+            AppTheme.backgroundPrimary
+                .ignoresSafeArea()
 
-                ScrollView {
-                    VStack(spacing: 24) {
-                        // ヘッダー
-                        headerSection
+            ScrollView(.vertical) {
+                VStack(spacing: 0) {
+                    // トップバーのスペーサー
+                    Color.clear.frame(height: 64)
 
-                        // 統計カード
-                        statsRow
+                    heroSection
 
-                        // メインアクション
-                        actionCards
+                    if boards.isEmpty {
+                        emptyState
+                    } else {
+                        boardCarousel
+                            .padding(.top, 8)
 
-                        Spacer(minLength: 40)
+                        pageIndicators
+                            .padding(.top, 20)
                     }
-                    .padding(.horizontal, 20)
+
+                    Spacer(minLength: 120)
                 }
             }
-            .navigationBarHidden(true)
-            .sheet(isPresented: $showCapture) {
-                NavigationStack {
-                    StickerCaptureView()
-                }
+            .scrollIndicators(.hidden)
+        }
+        .overlay(alignment: .top) {
+            topBar
+        }
+        .toolbar(.hidden, for: .navigationBar)
+        .navigationDestination(item: $selectedBoard) { board in
+            BoardEditorView(board: board)
+        }
+        .alert("新しいボード", isPresented: $showingNewBoard) {
+            TextField("ボード名", text: $newBoardTitle)
+            Button("作成") { createBoard() }
+            Button("キャンセル", role: .cancel) { newBoardTitle = "" }
+        } message: {
+            Text("ボードの名前を入力してください")
+        }
+        .alert("ボード名を変更", isPresented: $showingRenameBoard) {
+            TextField("新しいボード名", text: $renameBoardTitle)
+            Button("変更") { renameBoard() }
+            Button("キャンセル", role: .cancel) {
+                boardToRename = nil
+                renameBoardTitle = ""
             }
-            .onAppear {
-                withAnimation(.easeOut(duration: 0.8)) {
-                    animateHeader = true
-                }
+        } message: {
+            Text("新しいボードの名前を入力してください")
+        }
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.8)) {
+                animateIn = true
             }
         }
     }
 
-    // MARK: - ヘッダー
+    // MARK: - トップバー
 
-    private var headerSection: some View {
-        VStack(spacing: 6) {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("シールボード")
-                        .font(.system(size: 32, weight: .bold, design: .rounded))
-                        .foregroundStyle(AppTheme.headerGradient)
+    private var topBar: some View {
+        HStack {
+            Text("シールボード")
+                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .foregroundStyle(AppTheme.headerGradient)
 
-                    Text("リアルシールをデジタルコレクション")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
-                        .foregroundStyle(AppTheme.textSecondary)
+            Spacer()
+
+            Button {
+                showingNewBoard = true
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "plus")
+                        .font(.system(size: 13, weight: .bold))
+                    Text("新しく作る")
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                }
+                .foregroundStyle(AppTheme.accent)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .background(AppTheme.accent.opacity(0.12))
+                .clipShape(Capsule())
+            }
+        }
+        .padding(.horizontal, 24)
+        .padding(.vertical, 12)
+        .background(.ultraThinMaterial)
+    }
+
+    // MARK: - ヒーローセクション
+
+    private var heroSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("マイコレクション")
+                .font(.system(size: 34, weight: .heavy, design: .rounded))
+                .foregroundStyle(AppTheme.textPrimary)
+
+            Text("お気に入りのシールを撮影して、自分だけのボードを作ろう")
+                .font(.system(size: 15, design: .rounded))
+                .foregroundStyle(AppTheme.textSecondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 24)
+        .padding(.bottom, 24)
+        .opacity(animateIn ? 1 : 0)
+        .offset(y: animateIn ? 0 : 20)
+    }
+
+    // MARK: - ボードカルーセル
+
+    private var boardCarousel: some View {
+        ScrollView(.horizontal) {
+            LazyHStack(spacing: 16) {
+                ForEach(boards) { board in
+                    boardCard(board)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            selectedBoard = board
+                        }
+                        .id(board.id.uuidString)
+                }
+
+                // 新規ボード作成カード
+                newBoardCard
+                    .id("new-board")
+            }
+            .scrollTargetLayout()
+        }
+        .scrollTargetBehavior(.viewAligned)
+        .scrollIndicators(.hidden)
+        .scrollPosition(id: $scrolledID)
+        .contentMargins(.horizontal, 32)
+        .opacity(animateIn ? 1 : 0)
+        .offset(y: animateIn ? 0 : 30)
+    }
+
+    // MARK: - ボードカード
+
+    private func boardCard(_ board: Board) -> some View {
+        VStack(spacing: 0) {
+            // プレビューエリア
+            ZStack {
+                RoundedRectangle(cornerRadius: 24)
+                    .fill(AppTheme.backgroundCanvas)
+
+                // ドットグリッドパターン
+                Canvas { context, size in
+                    let spacing: CGFloat = 18
+                    let dotSize: CGFloat = 1.5
+                    let color = Color(hex: 0xE5DDD0)
+                    for x in stride(from: spacing, to: size.width, by: spacing) {
+                        for y in stride(from: spacing, to: size.height, by: spacing) {
+                            context.fill(
+                                Path(ellipseIn: CGRect(
+                                    x: x - dotSize / 2,
+                                    y: y - dotSize / 2,
+                                    width: dotSize,
+                                    height: dotSize
+                                )),
+                                with: .color(color)
+                            )
+                        }
+                    }
+                }
+
+                // シールプレビュー
+                if board.placements.isEmpty {
+                    VStack(spacing: 12) {
+                        Image(systemName: "rectangle.on.rectangle.angled")
+                            .font(.system(size: 48))
+                            .foregroundStyle(AppTheme.textTertiary.opacity(0.4))
+                        Text("シールを配置しよう")
+                            .font(.system(size: 14, weight: .medium, design: .rounded))
+                            .foregroundStyle(AppTheme.textTertiary)
+                    }
+                } else {
+                    boardStickerPreview(board.placements)
+                }
+
+                // ボトムグラデーション
+                VStack {
+                    Spacer()
+                    LinearGradient(
+                        colors: [.clear, .black.opacity(0.15)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 80)
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 24))
+            }
+            .aspectRatio(4.0 / 5.0, contentMode: .fit)
+            .clipShape(RoundedRectangle(cornerRadius: 24))
+
+            // 情報セクション
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(board.title)
+                        .font(.system(size: 22, weight: .heavy, design: .rounded))
+                        .foregroundStyle(AppTheme.textPrimary)
+                        .lineLimit(1)
+
+                    HStack(spacing: 8) {
+                        Text("\(board.placements.count)枚のシール")
+                            .font(.system(size: 12, weight: .semibold, design: .rounded))
+                            .foregroundStyle(AppTheme.accent)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                            .background(AppTheme.accent.opacity(0.12))
+                            .clipShape(Capsule())
+
+                        Text(board.updatedAt.formatted(.relative(presentation: .named)))
+                            .font(.system(size: 12, design: .rounded))
+                            .foregroundStyle(AppTheme.textTertiary)
+                    }
                 }
 
                 Spacer()
 
-                // アプリアイコン風の装飾
-                ZStack {
-                    Circle()
-                        .fill(AppTheme.headerGradient)
-                        .frame(width: 48, height: 48)
+                Menu {
+                    Button {
+                        boardToRename = board
+                        renameBoardTitle = board.title
+                        showingRenameBoard = true
+                    } label: {
+                        Label("名前を変更", systemImage: "pencil")
+                    }
 
-                    Image(systemName: "sparkles")
-                        .font(.system(size: 22))
-                        .foregroundStyle(.white)
+                    Divider()
+
+                    Button(role: .destructive) {
+                        modelContext.delete(board)
+                    } label: {
+                        Label("削除", systemImage: "trash")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundStyle(AppTheme.textTertiary)
+                        .padding(10)
+                        .background(AppTheme.backgroundPrimary.opacity(0.8))
+                        .clipShape(Circle())
                 }
-                .opacity(animateHeader ? 1 : 0)
-                .scaleEffect(animateHeader ? 1 : 0.5)
             }
+            .padding(20)
         }
-        .padding(.top, 16)
+        .background(AppTheme.backgroundCard)
+        .clipShape(RoundedRectangle(cornerRadius: 32))
+        .shadow(color: .black.opacity(0.1), radius: 20, x: 0, y: 10)
+        .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 4)
+        .containerRelativeFrame(.horizontal)
     }
 
-    // MARK: - 統計行
+    // MARK: - ボードシールプレビュー
 
-    private var statsRow: some View {
-        HStack(spacing: 12) {
-            StatBadge(
-                icon: "star.fill",
-                count: stickers.count,
-                label: "シール",
-                color: AppTheme.accent
+    /// ボードエディタと同じレイアウトを縮小して表示する
+    private func boardStickerPreview(_ placements: [StickerPlacement]) -> some View {
+        GeometryReader { geo in
+            // エディタのキャンバスサイズ（画面全体）を基準にする
+            let canvasWidth = UIScreen.main.bounds.width
+            let canvasHeight = UIScreen.main.bounds.height
+            let previewScale = min(
+                geo.size.width / canvasWidth,
+                geo.size.height / canvasHeight
             )
 
-            StatBadge(
-                icon: "rectangle.on.rectangle.angled",
-                count: boards.count,
-                label: "ボード",
-                color: AppTheme.secondary
-            )
+            let visible = placements.sorted { $0.zIndex < $1.zIndex }
+
+            // エディタと同じ配置をZStackで再現し、全体を縮小
+            ZStack {
+                ForEach(visible) { placement in
+                    if let image = ImageStorage.load(fileName: placement.imageFileName) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 120, height: 120)
+                            .shadow(color: .black.opacity(0.15), radius: 6, y: 3)
+                            .scaleEffect(placement.scale)
+                            .rotationEffect(.radians(placement.rotation))
+                            .offset(x: placement.positionX, y: placement.positionY)
+                    }
+                }
+            }
+            .frame(width: canvasWidth, height: canvasHeight)
+            .scaleEffect(previewScale)
+            .frame(width: geo.size.width, height: geo.size.height)
+            .clipped()
         }
-        .opacity(animateHeader ? 1 : 0)
-        .offset(y: animateHeader ? 0 : 20)
     }
 
-    // MARK: - アクションカード
+    // MARK: - 新規ボードカード
 
-    private var actionCards: some View {
-        VStack(spacing: 16) {
-            // シール追加カード
-            Button {
-                showCapture = true
-            } label: {
-                ActionCard(
-                    icon: "camera.fill",
-                    title: "シールを追加",
-                    subtitle: "写真から切り抜いてコレクションに追加",
-                    gradient: AppTheme.headerGradient
-                )
+    private var newBoardCard: some View {
+        Button {
+            showingNewBoard = true
+        } label: {
+            VStack(spacing: 0) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 24)
+                        .strokeBorder(
+                            AppTheme.accent.opacity(0.25),
+                            style: StrokeStyle(lineWidth: 3, dash: [10, 8])
+                        )
+                        .background(
+                            RoundedRectangle(cornerRadius: 24)
+                                .fill(AppTheme.backgroundCard.opacity(0.6))
+                        )
+
+                    VStack(spacing: 20) {
+                        ZStack {
+                            Circle()
+                                .fill(AppTheme.headerGradient)
+                                .frame(width: 72, height: 72)
+                                .shadow(
+                                    color: AppTheme.accent.opacity(0.3),
+                                    radius: 12, x: 0, y: 6
+                                )
+
+                            Image(systemName: "plus")
+                                .font(.system(size: 30, weight: .bold))
+                                .foregroundStyle(.white)
+                        }
+
+                        VStack(spacing: 6) {
+                            Text("新しくボードを作る")
+                                .font(.system(size: 22, weight: .heavy, design: .rounded))
+                                .foregroundStyle(AppTheme.accent)
+
+                            Text("新しい思い出をスクラップしよう")
+                                .font(.system(size: 14, design: .rounded))
+                                .foregroundStyle(AppTheme.textSecondary)
+                        }
+                    }
+                }
+                .aspectRatio(4.0 / 5.0, contentMode: .fit)
+
+                // 情報セクションと同じ高さのスペーサー
+                Color.clear.frame(height: 84)
             }
-            .buttonStyle(.plain)
+        }
+        .buttonStyle(.plain)
+        .containerRelativeFrame(.horizontal)
+    }
 
-            // ライブラリカード
-            NavigationLink {
-                StickerLibraryView()
-            } label: {
-                ActionCard(
-                    icon: "square.grid.2x2.fill",
-                    title: "シールライブラリ",
-                    subtitle: "\(stickers.count)枚のシールをコレクション中",
-                    gradient: AppTheme.mintGradient
-                )
-            }
-            .buttonStyle(.plain)
+    // MARK: - ページインジケーター
 
-            // ボード一覧カード
-            NavigationLink {
-                BoardListView()
-            } label: {
-                ActionCard(
-                    icon: "rectangle.on.rectangle.angled",
-                    title: "ボード一覧",
-                    subtitle: "\(boards.count)枚のボードを作成済み",
-                    gradient: LinearGradient(
-                        colors: [AppTheme.cream, Color(hex: 0xFFD8A8)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
+    private var pageIndicators: some View {
+        HStack(spacing: 6) {
+            let totalPages = boards.count + 1
+            ForEach(0..<totalPages, id: \.self) { index in
+                Capsule()
+                    .fill(
+                        index == currentPageIndex
+                            ? AppTheme.accent
+                            : AppTheme.accent.opacity(0.2)
                     )
-                )
+                    .frame(
+                        width: index == currentPageIndex ? 24 : 8,
+                        height: 8
+                    )
+                    .animation(.spring(duration: 0.3), value: currentPageIndex)
             }
-            .buttonStyle(.plain)
         }
-        .opacity(animateHeader ? 1 : 0)
-        .offset(y: animateHeader ? 0 : 30)
     }
-}
 
-// MARK: - 統計バッジ
+    private var currentPageIndex: Int {
+        guard let id = scrolledID else { return 0 }
+        if let index = boards.firstIndex(where: { $0.id.uuidString == id }) {
+            return index
+        }
+        if id == "new-board" {
+            return boards.count
+        }
+        return 0
+    }
 
-struct StatBadge: View {
-    let icon: String
-    let count: Int
-    let label: String
-    let color: Color
+    // MARK: - 空の状態
 
-    var body: some View {
-        HStack(spacing: 10) {
+    private var emptyState: some View {
+        VStack(spacing: 24) {
+            Spacer().frame(height: 48)
+
             ZStack {
                 Circle()
-                    .fill(color.opacity(0.15))
-                    .frame(width: 40, height: 40)
+                    .fill(AppTheme.accent.opacity(0.08))
+                    .frame(width: 120, height: 120)
 
-                Image(systemName: icon)
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(color)
+                Image(systemName: "rectangle.on.rectangle.angled")
+                    .font(.system(size: 48))
+                    .foregroundStyle(AppTheme.accent.opacity(0.5))
             }
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text("\(count)")
+            VStack(spacing: 8) {
+                Text("ボードがまだありません")
                     .font(.system(size: 20, weight: .bold, design: .rounded))
                     .foregroundStyle(AppTheme.textPrimary)
-                Text(label)
-                    .font(.system(size: 11, weight: .medium, design: .rounded))
+
+                Text("ボードを作ってシールを\n自由に配置しましょう")
+                    .font(.system(size: 15, design: .rounded))
                     .foregroundStyle(AppTheme.textSecondary)
+                    .multilineTextAlignment(.center)
             }
 
-            Spacer()
+            Button {
+                showingNewBoard = true
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "plus")
+                        .font(.system(size: 16, weight: .bold))
+                    Text("ボードを作る")
+                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                }
+                .foregroundStyle(.white)
+                .padding(.horizontal, 28)
+                .padding(.vertical, 14)
+                .background(AppTheme.headerGradient)
+                .clipShape(Capsule())
+                .shadow(color: AppTheme.accent.opacity(0.3), radius: 8, x: 0, y: 4)
+            }
         }
-        .padding(14)
-        .stickerCard()
+        .opacity(animateIn ? 1 : 0)
+        .offset(y: animateIn ? 0 : 20)
     }
-}
 
-// MARK: - アクションカード
+    // MARK: - アクション
 
-struct ActionCard: View {
-    let icon: String
-    let title: String
-    let subtitle: String
-    let gradient: LinearGradient
+    private func createBoard() {
+        let title = newBoardTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !title.isEmpty else { return }
+        let board = Board(title: title)
+        modelContext.insert(board)
+        newBoardTitle = ""
+    }
 
-    var body: some View {
-        HStack(spacing: 16) {
-            // アイコン
-            ZStack {
-                RoundedRectangle(cornerRadius: 14)
-                    .fill(gradient)
-                    .frame(width: 56, height: 56)
-
-                Image(systemName: icon)
-                    .font(.system(size: 24))
-                    .foregroundStyle(.white)
-            }
-
-            // テキスト
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .font(.system(size: 17, weight: .semibold, design: .rounded))
-                    .foregroundStyle(AppTheme.textPrimary)
-
-                Text(subtitle)
-                    .font(.system(size: 13, weight: .regular, design: .rounded))
-                    .foregroundStyle(AppTheme.textSecondary)
-            }
-
-            Spacer()
-
-            Image(systemName: "chevron.right")
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundStyle(AppTheme.textTertiary)
-        }
-        .padding(16)
-        .stickerCard()
+    private func renameBoard() {
+        guard let board = boardToRename else { return }
+        let title = renameBoardTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !title.isEmpty else { return }
+        board.title = title
+        board.updatedAt = Date()
+        boardToRename = nil
+        renameBoardTitle = ""
     }
 }
 
 #Preview {
-    HomeView()
-        .modelContainer(for: [Sticker.self, Board.self], inMemory: true)
+    NavigationStack {
+        HomeView()
+    }
+    .modelContainer(for: [Sticker.self, Board.self], inMemory: true)
 }
