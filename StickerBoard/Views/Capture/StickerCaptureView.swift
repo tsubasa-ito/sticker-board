@@ -9,6 +9,7 @@ struct StickerCaptureView: View {
     @State private var selectedItem: PhotosPickerItem?
     @State private var originalImage: UIImage?
     @State private var processedImage: UIImage?
+    @State private var extractedStickers: [UIImage]?
     @State private var isProcessing = false
     @State private var errorMessage: String?
     @State private var showingSaveSuccess = false
@@ -23,8 +24,14 @@ struct StickerCaptureView: View {
 
             ScrollView {
                 VStack(spacing: 24) {
-                    if let processedImage {
-                        // 切り抜き結果
+                    if let extractedStickers, extractedStickers.count > 1 {
+                        // 複数シール選択
+                        MultiStickerSelectionView(images: extractedStickers) {
+                            resetState()
+                            showingSaveSuccess = true
+                        }
+                    } else if let processedImage {
+                        // 切り抜き結果（単一）
                         resultSection(processedImage)
                     } else if isProcessing {
                         processingSection
@@ -217,7 +224,7 @@ struct StickerCaptureView: View {
                     .font(.system(size: 17, weight: .semibold, design: .rounded))
                     .foregroundStyle(AppTheme.textPrimary)
 
-                Text("AIが被写体を認識しています")
+                Text("AIが被写体を検出しています")
                     .font(.system(size: 13, design: .rounded))
                     .foregroundStyle(AppTheme.textSecondary)
             }
@@ -296,9 +303,13 @@ struct StickerCaptureView: View {
 
         Task {
             do {
-                let result = try await BackgroundRemover.removeBackground(from: originalImage)
+                let results = try await BackgroundRemover.extractIndividualStickers(from: originalImage)
                 withAnimation(.spring(duration: 0.5)) {
-                    processedImage = result
+                    if results.count > 1 {
+                        extractedStickers = results
+                    } else {
+                        processedImage = results.first
+                    }
                 }
             } catch {
                 errorMessage = error.localizedDescription
@@ -322,6 +333,7 @@ struct StickerCaptureView: View {
         selectedItem = nil
         originalImage = nil
         processedImage = nil
+        extractedStickers = nil
         cameraImage = nil
         errorMessage = nil
     }
