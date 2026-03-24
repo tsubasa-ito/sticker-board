@@ -12,10 +12,14 @@
 ## プロジェクト構成
 ```
 StickerBoard/
-├── App/          # エントリーポイント、カラーテーマ
+├── App/          # エントリーポイント（MainTabView）、カラーテーマ
 ├── Models/       # SwiftData モデル（Sticker, Board, StickerPlacement）
 ├── Services/     # BackgroundRemover, ImageStorage
-└── Views/        # SwiftUI画面（Home, Capture, Library, Board）
+└── Views/        # SwiftUI画面
+    ├── Home/     # MainTabView（タブナビゲーション）、HomeView（ボード一覧カルーセル）
+    ├── Capture/  # シール撮影・切り抜きフロー
+    ├── Library/  # シールライブラリ
+    └── Board/    # ボード編集・一覧
 ```
 
 ## 開発コマンド
