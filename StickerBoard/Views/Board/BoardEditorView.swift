@@ -139,7 +139,6 @@ struct BoardEditorView: View {
 
                     Button {
                         placements = originalPlacements
-                        saveBoard()
                         dismiss()
                     } label: {
                         HStack(spacing: 4) {
