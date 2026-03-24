@@ -120,7 +120,7 @@ struct BoardEditorView: View {
             // 左: 閉じるボタン + タイトル
             HStack(spacing: 16) {
                 Button {
-                    saveBoard()
+                    placements = originalPlacements
                     dismiss()
                 } label: {
                     Image(systemName: "xmark")
