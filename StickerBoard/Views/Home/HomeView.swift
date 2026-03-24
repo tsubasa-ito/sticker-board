@@ -5,6 +5,8 @@ struct HomeView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Board.updatedAt, order: .reverse) private var boards: [Board]
 
+    private let newBoardCardID = "new-board"
+
     @State private var showingNewBoard = false
     @State private var newBoardTitle = ""
     @State private var scrolledID: String?
@@ -138,7 +140,7 @@ struct HomeView: View {
 
                 // 新規ボード作成カード
                 newBoardCard
-                    .id("new-board")
+                    .id(newBoardCardID)
             }
             .scrollTargetLayout()
         }
@@ -384,7 +386,7 @@ struct HomeView: View {
         if let index = boards.firstIndex(where: { $0.id.uuidString == id }) {
             return index
         }
-        if id == "new-board" {
+        if id == newBoardCardID {
             return boards.count
         }
         return 0
