@@ -150,18 +150,20 @@ struct StickerPreviewOverlay: View {
                 .accessibilityLabel("プレビューを閉じる")
 
             VStack(spacing: 20) {
-                if let image = ImageStorage.load(fileName: sticker.imageFileName) {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                        .matchedGeometryEffect(id: sticker.id, in: namespace)
-                        .padding(32)
-                        .accessibilityLabel("シールのプレビュー")
-                } else {
-                    Image(systemName: "photo")
-                        .font(.system(size: 60))
-                        .foregroundStyle(AppTheme.textTertiary)
+                Group {
+                    if let image = ImageStorage.load(fileName: sticker.imageFileName) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFit()
+                            .accessibilityLabel("シールのプレビュー")
+                    } else {
+                        Image(systemName: "photo")
+                            .font(.system(size: 60))
+                            .foregroundStyle(AppTheme.textTertiary)
+                    }
                 }
+                .matchedGeometryEffect(id: sticker.id, in: namespace)
+                .padding(32)
 
                 Text(sticker.createdAt.formatted(date: .abbreviated, time: .shortened))
                     .font(.system(size: 13, design: .rounded))
