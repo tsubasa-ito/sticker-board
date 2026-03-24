@@ -135,7 +135,7 @@ struct StickerLibraryView: View {
 
 struct StickerPreviewOverlay: View {
     let sticker: Sticker
-    var namespace: Namespace.ID
+    let namespace: Namespace.ID
     var onDismiss: () -> Void
 
     var body: some View {
