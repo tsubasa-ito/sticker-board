@@ -200,9 +200,14 @@ struct BoardEditorView: View {
         let nextId = sorted[sortedIndex + 1].id
         guard let idx1 = placements.firstIndex(where: { $0.id == placement.id }),
               let idx2 = placements.firstIndex(where: { $0.id == nextId }) else { return }
-        let tempZ = placements[idx1].zIndex
-        placements[idx1].zIndex = placements[idx2].zIndex
-        placements[idx2].zIndex = tempZ
+        let z1 = placements[idx1].zIndex
+        let z2 = placements[idx2].zIndex
+        if z1 < z2 {
+            placements[idx1].zIndex = z2
+            placements[idx2].zIndex = z1
+        } else {
+            placements[idx1].zIndex += 1
+        }
         saveBoard()
     }
 
