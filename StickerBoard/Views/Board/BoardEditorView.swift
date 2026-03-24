@@ -172,7 +172,6 @@ struct BoardEditorView: View {
                     .padding(.horizontal, 4)
 
                 Button {
-                    saveBoard()
                     dismiss()
                 } label: {
                     Text("保存")
