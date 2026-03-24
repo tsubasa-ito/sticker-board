@@ -54,6 +54,7 @@ struct BackgroundRemover {
             return [single]
         }
 
+        let context = CIContext()
         var results: [UIImage] = []
         for instanceId in allInstances {
             let singleSet = IndexSet(integer: instanceId)
@@ -63,7 +64,6 @@ struct BackgroundRemover {
                 croppedToInstancesExtent: true
             )
             let ciImage = CIImage(cvPixelBuffer: maskedBuffer)
-            let context = CIContext()
             guard let outputCGImage = context.createCGImage(ciImage, from: ciImage.extent) else {
                 continue
             }
