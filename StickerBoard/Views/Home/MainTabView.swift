@@ -4,6 +4,20 @@ import SwiftData
 struct MainTabView: View {
     enum Tab {
         case home, library
+
+        var icon: String {
+            switch self {
+            case .home: "square.grid.2x2"
+            case .library: "star.square.on.square"
+            }
+        }
+
+        var filledIcon: String {
+            switch self {
+            case .home: "square.grid.2x2.fill"
+            case .library: "star.square.on.square.fill"
+            }
+        }
     }
 
     @State private var selectedTab: Tab = .home
@@ -44,8 +58,7 @@ struct MainTabView: View {
                 }
             } label: {
                 tabItem(
-                    icon: "square.grid.2x2",
-                    filledIcon: "square.grid.2x2.fill",
+                    tab: .home,
                     isSelected: selectedTab == .home
                 )
                 .frame(maxWidth: .infinity)
@@ -83,8 +96,7 @@ struct MainTabView: View {
                 }
             } label: {
                 tabItem(
-                    icon: "star.square.on.square",
-                    filledIcon: "star.square.on.square.fill",
+                    tab: .library,
                     isSelected: selectedTab == .library
                 )
                 .frame(maxWidth: .infinity)
@@ -101,7 +113,7 @@ struct MainTabView: View {
         .padding(.bottom, 4)
     }
 
-    private func tabItem(icon: String, filledIcon: String, isSelected: Bool) -> some View {
+    private func tabItem(tab: Tab, isSelected: Bool) -> some View {
         ZStack {
             if isSelected {
                 Circle()
@@ -110,7 +122,7 @@ struct MainTabView: View {
                     .transition(.scale.combined(with: .opacity))
             }
 
-            Image(systemName: isSelected ? filledIcon : icon)
+            Image(systemName: isSelected ? tab.filledIcon : tab.icon)
                 .font(.system(size: 20, weight: .medium))
                 .foregroundStyle(isSelected ? .white : AppTheme.textSecondary)
         }
