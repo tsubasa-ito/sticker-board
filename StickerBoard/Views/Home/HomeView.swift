@@ -273,33 +273,7 @@ struct HomeView: View {
 
     /// ボードエディタと同じレイアウトを縮小して表示する
     private func boardStickerPreview(_ placements: [StickerPlacement]) -> some View {
-        GeometryReader { geo in
-            // エディタのキャンバスサイズ（画面全体）を基準にする
-            let canvasWidth = UIScreen.main.bounds.width
-            let canvasHeight = UIScreen.main.bounds.height
-            let previewScale = min(
-                geo.size.width / canvasWidth,
-                geo.size.height / canvasHeight
-            )
-
-            let visible = placements.sorted { $0.zIndex < $1.zIndex }
-
-            // エディタと同じ配置をZStackで再現し、全体を縮小
-            ZStack {
-                ForEach(visible) { placement in
-                    AsyncStickerImage(fileName: placement.imageFileName)
-                        .frame(width: 120, height: 120)
-                        .shadow(color: .black.opacity(0.15), radius: 6, y: 3)
-                        .scaleEffect(placement.scale)
-                        .rotationEffect(.radians(placement.rotation))
-                        .offset(x: placement.positionX, y: placement.positionY)
-                }
-            }
-            .frame(width: canvasWidth, height: canvasHeight)
-            .scaleEffect(previewScale)
-            .frame(width: geo.size.width, height: geo.size.height)
-            .clipped()
-        }
+        BoardStickerPreviewView(placements: placements)
     }
 
     // MARK: - 新規ボードカード
@@ -457,24 +431,53 @@ struct HomeView: View {
     }
 }
 
-// MARK: - 非同期シール画像読み込み
+// MARK: - ボードシールプレビュー（非同期画像読み込み）
 
-private struct AsyncStickerImage: View {
-    let fileName: String
-    @State private var image: UIImage?
+private struct BoardStickerPreviewView: View {
+    let placements: [StickerPlacement]
+    @State private var images: [UUID: UIImage] = [:]
 
     var body: some View {
-        Group {
-            if let image {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
+        GeometryReader { geo in
+            let canvasWidth = UIScreen.main.bounds.width
+            let canvasHeight = UIScreen.main.bounds.height
+            let previewScale = min(
+                geo.size.width / canvasWidth,
+                geo.size.height / canvasHeight
+            )
+
+            let visible = placements.sorted { $0.zIndex < $1.zIndex }
+
+            ZStack {
+                ForEach(visible) { placement in
+                    if let image = images[placement.id] {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 120, height: 120)
+                            .shadow(color: .black.opacity(0.15), radius: 6, y: 3)
+                            .scaleEffect(placement.scale)
+                            .rotationEffect(.radians(placement.rotation))
+                            .offset(x: placement.positionX, y: placement.positionY)
+                    }
+                }
             }
+            .frame(width: canvasWidth, height: canvasHeight)
+            .scaleEffect(previewScale)
+            .frame(width: geo.size.width, height: geo.size.height)
+            .clipped()
         }
         .task {
-            image = await Task.detached {
-                ImageStorage.load(fileName: fileName)
+            let loaded = await Task.detached {
+                var result: [UUID: UIImage] = [:]
+                for placement in placements {
+                    if let image = ImageStorage.load(fileName: placement.imageFileName) {
+                        result[placement.id] = image
+                    }
+                }
+                return result
             }.value
+            images = loaded
         }
     }
 }
