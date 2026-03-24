@@ -22,12 +22,13 @@ struct MainTabView: View {
 
     @State private var selectedTab: Tab = .home
     @State private var showCapture = false
+    @State private var hideTabBar = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
             ZStack {
                 NavigationStack {
-                    HomeView()
+                    HomeView(hideTabBar: $hideTabBar)
                 }
                 .opacity(selectedTab == .home ? 1 : 0)
                 .allowsHitTesting(selectedTab == .home)
@@ -39,8 +40,12 @@ struct MainTabView: View {
                 .allowsHitTesting(selectedTab == .library)
             }
 
-            floatingTabBar
+            if !hideTabBar {
+                floatingTabBar
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
         }
+        .animation(.easeInOut(duration: 0.25), value: hideTabBar)
         .sheet(isPresented: $showCapture) {
             NavigationStack {
                 StickerCaptureView()
