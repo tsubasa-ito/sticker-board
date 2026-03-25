@@ -39,3 +39,4 @@ open StickerBoard.xcodeproj
 - シミュレータではフォールバックとして元画像をそのまま返す
 - 画像は Documents/Stickers/ にPNG保存、メタデータはSwiftDataに保存
 - StickerPlacement に imageFileName を直接保持する設計（SwiftDataのID問題回避のため）
+- BackgroundRemover は入力画像の EXIF 向きを正規化し、長辺2048pxにリサイズする（cgImage とマスクの整合性確保 + メモリ最適化）
