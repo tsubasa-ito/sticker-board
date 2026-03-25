@@ -19,7 +19,7 @@ struct StickerCaptureView: View {
     @State private var cameraImage: UIImage?
     @State private var backgroundRemovalResult: BackgroundRemovalResult?
     @State private var showingMaskEditor = false
-    @State private var editedMask: UIImage?
+    @State private var maskEditorId = UUID()
 
     var body: some View {
         ZStack {
@@ -79,13 +79,13 @@ struct StickerCaptureView: View {
             if let result = backgroundRemovalResult {
                 MaskEditorView(
                     originalImage: result.originalImage,
-                    maskImage: editedMask ?? result.maskImage
-                ) { composited, mask in
+                    maskImage: result.maskImage
+                ) { composited, _ in
                     withAnimation(.spring(duration: 0.4)) {
                         processedImage = composited
-                        editedMask = mask
                     }
                 }
+                .id(maskEditorId)
             }
         }
         .alert("保存完了!", isPresented: $showingSaveSuccess) {
@@ -264,6 +264,7 @@ struct StickerCaptureView: View {
             // マスク手動調整ボタン
             if backgroundRemovalResult != nil {
                 Button {
+                    maskEditorId = UUID()
                     showingMaskEditor = true
                 } label: {
                     HStack(spacing: 8) {
@@ -342,7 +343,6 @@ struct StickerCaptureView: View {
         guard let originalImage else { return }
         withAnimation { isProcessing = true }
         errorMessage = nil
-        editedMask = nil
 
         Task {
             do {
@@ -387,6 +387,5 @@ struct StickerCaptureView: View {
         cameraImage = nil
         errorMessage = nil
         backgroundRemovalResult = nil
-        editedMask = nil
     }
 }

@@ -38,6 +38,12 @@ struct MaskEditorView: View {
                 processingOverlay
             }
         }
+        .onAppear {
+            // fullScreenCover で @State がキャッシュされる問題の対策
+            // 毎回 Vision のオリジナルマスクにリセット
+            currentMask = initialMask
+            undoStack = []
+        }
     }
 
     // MARK: - トップバー
