@@ -76,7 +76,7 @@
 以下はv2以降で検討する。
 
 - 完成ボードの画像書き出し・SNSシェア
-- 背景テクスチャ・装飾素材
+- ~~背景テクスチャ・装飾素材~~ → 背景パターン5種（無地・ドット・グリッド・ストライプ・グラデーション）は実装済み。装飾素材は未実装
 - シールへのテキスト・スタンプ追加
 - クラウド同期・バックアップ
 - シールライブラリの整理・タグ付け
@@ -167,7 +167,8 @@ class Board {
     var title: String
     var createdAt: Date
     var updatedAt: Date
-    var stickerPlacements: [StickerPlacement]
+    var placementsData: Data?           // StickerPlacement の JSON シリアライズ
+    var backgroundPatternData: Data?    // BackgroundPatternConfig の JSON シリアライズ
 }
 
 struct StickerPlacement: Codable {
@@ -229,7 +230,7 @@ Week 9-10 : フィードバック反映 + MVP 完成
 ### v2 以降（MVP 後の拡張）
 
 - 完成ボードの画像書き出し・SNS シェア
-- 背景テクスチャ・デコレーション素材
+- デコレーション素材（背景パターンは実装済み）
 - シールライブラリのタグ・検索
 - クラウドバックアップ（iCloud）
 
