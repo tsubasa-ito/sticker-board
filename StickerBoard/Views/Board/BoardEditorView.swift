@@ -107,12 +107,12 @@ struct BoardEditorView: View {
                 addStickerToBoard(sticker)
             }
         }
-        .sheet(isPresented: $showingBackgroundPicker) {
-            BackgroundPatternPickerView(config: $backgroundConfig) {
-                board.backgroundPattern = backgroundConfig
-                saveBoard()
-            }
-            .presentationDetents([.medium, .large])
+        .sheet(isPresented: $showingBackgroundPicker, onDismiss: {
+            board.backgroundPattern = backgroundConfig
+            saveBoard()
+        }) {
+            BackgroundPatternPickerView(config: $backgroundConfig)
+                .presentationDetents([.medium, .large])
         }
         .alert(
             saveResultSuccess ? "保存完了" : "エラー",

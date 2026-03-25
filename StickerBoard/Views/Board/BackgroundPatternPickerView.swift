@@ -3,7 +3,6 @@ import SwiftUI
 /// 背景パターン選択シート
 struct BackgroundPatternPickerView: View {
     @Binding var config: BackgroundPatternConfig
-    let onChanged: () -> Void
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -87,7 +86,6 @@ struct BackgroundPatternPickerView: View {
                 } else {
                     config.patternType = type
                 }
-                onChanged()
             }
         } label: {
             VStack(spacing: 8) {
@@ -168,7 +166,6 @@ struct BackgroundPatternPickerView: View {
             get: { Color(hexString: hex.wrappedValue) },
             set: { newColor in
                 hex.wrappedValue = newColor.toHexString()
-                onChanged()
             }
         )
     }
