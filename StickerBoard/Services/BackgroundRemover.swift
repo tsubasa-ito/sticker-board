@@ -7,6 +7,30 @@ struct BackgroundRemover {
 
     private static let ciContext = CIContext()
 
+    private static let maxImageDimension: CGFloat = 2048
+
+    /// EXIF の向き情報を適用し、メモリ節約のためリサイズも行う
+    private static func normalizeOrientation(_ image: UIImage) -> UIImage {
+        let size = image.size
+        let needsResize = max(size.width, size.height) > maxImageDimension
+        let needsRotation = image.imageOrientation != .up
+
+        guard needsResize || needsRotation else { return image }
+
+        let targetSize: CGSize
+        if needsResize {
+            let scale = maxImageDimension / max(size.width, size.height)
+            targetSize = CGSize(width: size.width * scale, height: size.height * scale)
+        } else {
+            targetSize = size
+        }
+
+        let renderer = UIGraphicsImageRenderer(size: targetSize)
+        return renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: targetSize))
+        }
+    }
+
     /// シミュレータかどうかを判定
     static var isSimulator: Bool {
         #if targetEnvironment(simulator)
@@ -18,34 +42,36 @@ struct BackgroundRemover {
 
     /// 画像から前景（シール）を切り抜いて背景を透明にする
     static func removeBackground(from image: UIImage) async throws -> UIImage {
+        let normalized = normalizeOrientation(image)
         #if targetEnvironment(simulator)
-        return image
+        return normalized
         #else
-        return try removeBackgroundReal(from: image)
+        return try removeBackgroundReal(from: normalized)
         #endif
     }
 
     /// 背景除去の結果とマスク画像を一緒に返す（マスク編集用）
     static func removeBackgroundWithMask(from image: UIImage) async throws -> BackgroundRemovalResult {
+        let normalized = normalizeOrientation(image)
         #if targetEnvironment(simulator)
-        // シミュレータ: 全白マスク（全体を前景として扱う）
-        let renderer = UIGraphicsImageRenderer(size: image.size)
+        let renderer = UIGraphicsImageRenderer(size: normalized.size)
         let whiteMask = renderer.image { ctx in
             UIColor.white.setFill()
-            ctx.fill(CGRect(origin: .zero, size: image.size))
+            ctx.fill(CGRect(origin: .zero, size: normalized.size))
         }
-        return BackgroundRemovalResult(processedImage: image, maskImage: whiteMask, originalImage: image)
+        return BackgroundRemovalResult(processedImage: normalized, maskImage: whiteMask, originalImage: normalized)
         #else
-        return try removeBackgroundWithMaskReal(from: image)
+        return try removeBackgroundWithMaskReal(from: normalized)
         #endif
     }
 
     /// 画像内の複数オブジェクトを個別に切り抜いて返す
     static func extractIndividualStickers(from image: UIImage) async throws -> [UIImage] {
+        let normalized = normalizeOrientation(image)
         #if targetEnvironment(simulator)
-        return [image]
+        return [normalized]
         #else
-        return try extractIndividualStickersReal(from: image)
+        return try extractIndividualStickersReal(from: normalized)
         #endif
     }
 
