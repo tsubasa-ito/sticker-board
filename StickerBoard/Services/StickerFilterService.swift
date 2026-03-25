@@ -45,16 +45,6 @@ struct StickerFilterService {
         guard let noiseOutput = noise.outputImage else { return nil }
         let croppedNoise = noiseOutput.cropped(to: extent)
 
-        // 明度しきい値でスパークル点を抽出
-        let colorMatrix = CIFilter.colorMatrix()
-        colorMatrix.inputImage = croppedNoise
-        colorMatrix.rVector = CIVector(x: 0, y: 0, z: 0, w: 0)
-        colorMatrix.gVector = CIVector(x: 0, y: 0, z: 0, w: 0)
-        colorMatrix.bVector = CIVector(x: 0, y: 0, z: 0, w: 0)
-        colorMatrix.aVector = CIVector(x: 0, y: 0, z: 0, w: 0)
-        colorMatrix.biasVector = CIVector(x: 1, y: 1, z: 1, w: 0)
-        guard let whiteNoise = colorMatrix.outputImage else { return nil }
-
         // ノイズをしきい値でフィルタリング（スパークル点のみ残す）
         let thresholdNoise = croppedNoise.applyingFilter("CIColorThreshold", parameters: [
             "inputThreshold": 0.985,

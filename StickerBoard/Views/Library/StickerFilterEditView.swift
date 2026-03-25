@@ -7,6 +7,7 @@ struct StickerFilterEditView: View {
     @State private var filteredPreviewImage: UIImage?
     @State private var originalImage: UIImage?
     @State private var isSaving = false
+    @State private var filterPreviewTask: Task<Void, Never>?
 
     var body: some View {
         ZStack {
@@ -77,13 +78,15 @@ struct StickerFilterEditView: View {
     }
 
     private func applyFilterPreview(_ filter: StickerFilter) {
+        filterPreviewTask?.cancel()
         guard let originalImage else { return }
         guard filter != .original else {
             filteredPreviewImage = nil
             return
         }
-        Task.detached {
+        filterPreviewTask = Task.detached {
             let result = StickerFilterService.apply(filter, to: originalImage)
+            guard !Task.isCancelled else { return }
             await MainActor.run {
                 withAnimation(.easeInOut(duration: 0.2)) {
                     filteredPreviewImage = result
@@ -95,23 +98,25 @@ struct StickerFilterEditView: View {
     private func saveFilter() {
         guard let originalImage else { return }
         isSaving = true
+        let currentFilter = selectedFilter
+        let oldFilteredFileName = sticker.filteredImageFileName
 
         Task.detached {
             do {
                 // 古いフィルター画像を削除
-                if let oldFilteredFileName = sticker.filteredImageFileName {
+                if let oldFilteredFileName {
                     ImageStorage.delete(fileName: oldFilteredFileName)
                 }
 
                 // 新しいフィルター画像を保存（オリジナル以外）
                 var newFilteredFileName: String?
-                if selectedFilter != .original {
-                    let filteredImage = StickerFilterService.apply(selectedFilter, to: originalImage)
+                if currentFilter != .original {
+                    let filteredImage = StickerFilterService.apply(currentFilter, to: originalImage)
                     newFilteredFileName = try ImageStorage.save(filteredImage)
                 }
 
                 await MainActor.run {
-                    sticker.filter = selectedFilter
+                    sticker.filter = currentFilter
                     sticker.filteredImageFileName = newFilteredFileName
                     isSaving = false
                     dismiss()

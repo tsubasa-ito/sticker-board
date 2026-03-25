@@ -6,7 +6,7 @@ final class Sticker {
     var id: UUID
     var imageFileName: String
     var filteredImageFileName: String?
-    var filterType: String
+    var filterType: String = "original"
     var createdAt: Date
 
     init(imageFileName: String, filterType: StickerFilter = .original, filteredImageFileName: String? = nil) {

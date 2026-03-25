@@ -23,6 +23,7 @@ struct StickerCaptureView: View {
     @State private var selectedFilter: StickerFilter = .original
     @State private var filteredPreviewImage: UIImage?
     @State private var isApplyingFilter = false
+    @State private var filterPreviewTask: Task<Void, Never>?
 
     var body: some View {
         ZStack {
@@ -388,6 +389,7 @@ struct StickerCaptureView: View {
 
     private func saveStickerWithFilter(_ originalCroppedImage: UIImage) {
         isApplyingFilter = true
+        let currentFilter = selectedFilter
 
         Task.detached {
             do {
@@ -396,15 +398,15 @@ struct StickerCaptureView: View {
 
                 // フィルター適用画像を保存（オリジナル以外の場合）
                 var filteredFileName: String?
-                if selectedFilter != .original {
-                    let filteredImage = StickerFilterService.apply(selectedFilter, to: originalCroppedImage)
+                if currentFilter != .original {
+                    let filteredImage = StickerFilterService.apply(currentFilter, to: originalCroppedImage)
                     filteredFileName = try ImageStorage.save(filteredImage)
                 }
 
                 await MainActor.run {
                     let sticker = Sticker(
                         imageFileName: originalFileName,
-                        filterType: selectedFilter,
+                        filterType: currentFilter,
                         filteredImageFileName: filteredFileName
                     )
                     modelContext.insert(sticker)
@@ -422,12 +424,14 @@ struct StickerCaptureView: View {
     }
 
     private func applyFilterPreview(_ filter: StickerFilter, to image: UIImage) {
+        filterPreviewTask?.cancel()
         guard filter != .original else {
             filteredPreviewImage = nil
             return
         }
-        Task.detached {
+        filterPreviewTask = Task.detached {
             let result = StickerFilterService.apply(filter, to: image)
+            guard !Task.isCancelled else { return }
             await MainActor.run {
                 withAnimation(.easeInOut(duration: 0.2)) {
                     filteredPreviewImage = result
