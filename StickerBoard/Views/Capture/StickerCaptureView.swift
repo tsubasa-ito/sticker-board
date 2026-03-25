@@ -17,6 +17,9 @@ struct StickerCaptureView: View {
     @State private var animateIn = false
     @State private var showingCamera = false
     @State private var cameraImage: UIImage?
+    @State private var backgroundRemovalResult: BackgroundRemovalResult?
+    @State private var showingMaskEditor = false
+    @State private var editedMask: UIImage?
 
     var body: some View {
         ZStack {
@@ -71,6 +74,19 @@ struct StickerCaptureView: View {
         .fullScreenCover(isPresented: $showingCamera) {
             CameraView(image: $cameraImage)
                 .ignoresSafeArea()
+        }
+        .fullScreenCover(isPresented: $showingMaskEditor) {
+            if let result = backgroundRemovalResult {
+                MaskEditorView(
+                    originalImage: result.originalImage,
+                    maskImage: editedMask ?? result.maskImage
+                ) { composited, mask in
+                    withAnimation(.spring(duration: 0.4)) {
+                        processedImage = composited
+                        editedMask = mask
+                    }
+                }
+            }
         }
         .alert("保存完了!", isPresented: $showingSaveSuccess) {
             Button("続けて追加") { resetState() }
@@ -245,6 +261,26 @@ struct StickerCaptureView: View {
         VStack(spacing: 20) {
             StickerPreviewView(image: image)
 
+            // マスク手動調整ボタン
+            if backgroundRemovalResult != nil {
+                Button {
+                    showingMaskEditor = true
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "paintbrush.pointed.fill")
+                        Text("手動で調整する")
+                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .foregroundStyle(AppTheme.secondary)
+                    .background {
+                        RoundedRectangle(cornerRadius: 14)
+                            .strokeBorder(AppTheme.secondary, lineWidth: 2)
+                    }
+                }
+            }
+
             // 保存ボタン
             Button {
                 saveSticker(image)
@@ -309,12 +345,18 @@ struct StickerCaptureView: View {
 
         Task {
             do {
+                // まず複数オブジェクト検出を試みる
                 let results = try await BackgroundRemover.extractIndividualStickers(from: originalImage)
-                withAnimation(.spring(duration: 0.5)) {
-                    if results.count > 1 {
+                if results.count > 1 {
+                    withAnimation(.spring(duration: 0.5)) {
                         extractedStickers = results
-                    } else {
-                        processedImage = results.first
+                    }
+                } else {
+                    // 単一シール: マスク付きで処理（手動調整を可能にする）
+                    let result = try await BackgroundRemover.removeBackgroundWithMask(from: originalImage)
+                    withAnimation(.spring(duration: 0.5)) {
+                        backgroundRemovalResult = result
+                        processedImage = result.processedImage
                     }
                 }
             } catch {
@@ -343,5 +385,7 @@ struct StickerCaptureView: View {
         extractedStickers = nil
         cameraImage = nil
         errorMessage = nil
+        backgroundRemovalResult = nil
+        editedMask = nil
     }
 }

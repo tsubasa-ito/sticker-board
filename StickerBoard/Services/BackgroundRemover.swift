@@ -25,6 +25,21 @@ struct BackgroundRemover {
         #endif
     }
 
+    /// 背景除去の結果とマスク画像を一緒に返す（マスク編集用）
+    static func removeBackgroundWithMask(from image: UIImage) async throws -> BackgroundRemovalResult {
+        #if targetEnvironment(simulator)
+        // シミュレータ: 全白マスク（全体を前景として扱う）
+        let renderer = UIGraphicsImageRenderer(size: image.size)
+        let whiteMask = renderer.image { ctx in
+            UIColor.white.setFill()
+            ctx.fill(CGRect(origin: .zero, size: image.size))
+        }
+        return BackgroundRemovalResult(processedImage: image, maskImage: whiteMask, originalImage: image)
+        #else
+        return try removeBackgroundWithMaskReal(from: image)
+        #endif
+    }
+
     /// 画像内の複数オブジェクトを個別に切り抜いて返す
     static func extractIndividualStickers(from image: UIImage) async throws -> [UIImage] {
         #if targetEnvironment(simulator)
@@ -32,6 +47,27 @@ struct BackgroundRemover {
         #else
         return try extractIndividualStickersReal(from: image)
         #endif
+    }
+
+    private static func removeBackgroundWithMaskReal(from image: UIImage) throws -> BackgroundRemovalResult {
+        guard let cgImage = image.cgImage else {
+            throw BackgroundRemoverError.invalidImage
+        }
+
+        let (observation, handler) = try performInstanceMask(on: cgImage)
+
+        // マスクを UIImage として取得
+        let maskPixelBuffer = try observation.generateScaledMaskForImage(forInstances: observation.allInstances, from: handler)
+        let ciMask = CIImage(cvPixelBuffer: maskPixelBuffer)
+        guard let maskCGImage = ciContext.createCGImage(ciMask, from: ciMask.extent) else {
+            throw BackgroundRemoverError.renderFailed
+        }
+        let maskImage = UIImage(cgImage: maskCGImage)
+
+        // 合成画像を生成
+        let processedImage = try applyMask(observation, instances: observation.allInstances, to: cgImage, handler: handler)
+
+        return BackgroundRemovalResult(processedImage: processedImage, maskImage: maskImage, originalImage: image)
     }
 
     private static func removeBackgroundReal(from image: UIImage) throws -> UIImage {
