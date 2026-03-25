@@ -13,7 +13,7 @@
 ```
 StickerBoard/
 ├── App/          # エントリーポイント（MainTabView）、カラーテーマ
-├── Models/       # SwiftData モデル（Sticker, Board, StickerPlacement）
+├── Models/       # SwiftData モデル（Sticker, Board, StickerPlacement, BackgroundPattern）
 ├── Services/     # BackgroundRemover, MaskCompositor, ImageStorage
 └── Views/        # SwiftUI画面
     ├── Home/     # MainTabView（タブナビゲーション）、HomeView（ボード一覧カルーセル）
@@ -39,4 +39,5 @@ open StickerBoard.xcodeproj
 - シミュレータではフォールバックとして元画像をそのまま返す
 - 画像は Documents/Stickers/ にPNG保存、メタデータはSwiftDataに保存
 - StickerPlacement に imageFileName を直接保持する設計（SwiftDataのID問題回避のため）
+- Board の backgroundPatternData も placements と同様に Codable struct を JSON シリアライズして Data? に格納する設計
 - BackgroundRemover は入力画像の EXIF 向きを正規化し、長辺2048pxにリサイズする（cgImage とマスクの整合性確保 + メモリ最適化）

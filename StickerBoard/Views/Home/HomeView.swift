@@ -162,28 +162,9 @@ struct HomeView: View {
         VStack(spacing: 0) {
             // プレビューエリア
             ZStack {
-                RoundedRectangle(cornerRadius: 24)
-                    .fill(AppTheme.backgroundCanvas)
-
-                // ドットグリッドパターン
-                Canvas { context, size in
-                    let spacing: CGFloat = 18
-                    let dotSize: CGFloat = 1.5
-                    let color = Color(hex: 0xE5DDD0)
-                    for x in stride(from: spacing, to: size.width, by: spacing) {
-                        for y in stride(from: spacing, to: size.height, by: spacing) {
-                            context.fill(
-                                Path(ellipseIn: CGRect(
-                                    x: x - dotSize / 2,
-                                    y: y - dotSize / 2,
-                                    width: dotSize,
-                                    height: dotSize
-                                )),
-                                with: .color(color)
-                            )
-                        }
-                    }
-                }
+                // ボード背景パターン
+                BoardBackgroundView(config: board.backgroundPattern)
+                    .clipShape(RoundedRectangle(cornerRadius: 24))
 
                 // シールプレビュー
                 if board.placements.isEmpty {

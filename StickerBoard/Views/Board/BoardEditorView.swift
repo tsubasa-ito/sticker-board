@@ -18,6 +18,8 @@ struct BoardEditorView: View {
     @State private var showHint = true
     @State private var bottomBarExpanded = true
     @State private var showQuickPicks = false
+    @State private var showingBackgroundPicker = false
+    @State private var backgroundConfig: BackgroundPatternConfig = .default
 
     var body: some View {
         ZStack {
@@ -105,6 +107,13 @@ struct BoardEditorView: View {
                 addStickerToBoard(sticker)
             }
         }
+        .sheet(isPresented: $showingBackgroundPicker, onDismiss: {
+            board.backgroundPattern = backgroundConfig
+            saveBoard()
+        }) {
+            BackgroundPatternPickerView(config: $backgroundConfig)
+                .presentationDetents([.medium, .large])
+        }
         .alert(
             saveResultSuccess ? "保存完了" : "エラー",
             isPresented: $showingSaveResult
@@ -117,6 +126,7 @@ struct BoardEditorView: View {
         }
         .onAppear {
             placements = board.placements
+            backgroundConfig = board.backgroundPattern
         }
         .onDisappear {
             saveBoard()
@@ -224,9 +234,9 @@ struct BoardEditorView: View {
 
     private var canvasArea: some View {
         ZStack {
-            // 白いボードカード
-            RoundedRectangle(cornerRadius: 16)
-                .fill(.white)
+            // ボードカード（背景パターン付き）
+            BoardBackgroundView(config: backgroundConfig)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
                 .shadow(color: .black.opacity(0.08), radius: 20, y: 4)
                 .padding(24)
 
@@ -358,6 +368,29 @@ struct BoardEditorView: View {
                             .foregroundStyle(AppTheme.accent)
                     }
                     Text("追加")
+                        .font(.system(size: 8, weight: .bold, design: .rounded))
+                        .textCase(.uppercase)
+                        .tracking(1.5)
+                        .foregroundStyle(AppTheme.textSecondary)
+                }
+            }
+
+            Spacer()
+
+            // 背景パターンボタン
+            Button {
+                showingBackgroundPicker = true
+            } label: {
+                VStack(spacing: 4) {
+                    ZStack {
+                        Circle()
+                            .fill(AppTheme.secondary.opacity(0.15))
+                            .frame(width: 44, height: 44)
+                        Image(systemName: "paintpalette.fill")
+                            .font(.system(size: 20))
+                            .foregroundStyle(AppTheme.secondary)
+                    }
+                    Text("背景")
                         .font(.system(size: 8, weight: .bold, design: .rounded))
                         .textCase(.uppercase)
                         .tracking(1.5)
@@ -521,7 +554,7 @@ struct BoardEditorView: View {
     // MARK: - 画像として保存
 
     private func saveBoardAsImage() {
-        let content = BoardSnapshotView(placements: sortedPlacements, size: canvasSize)
+        let content = BoardSnapshotView(placements: sortedPlacements, size: canvasSize, backgroundConfig: backgroundConfig)
 
         let renderer = ImageRenderer(content: content)
         renderer.scale = displayScale
@@ -589,10 +622,11 @@ private struct QuickPickThumbnail: View {
 private struct BoardSnapshotView: View {
     let placements: [StickerPlacement]
     let size: CGSize
+    var backgroundConfig: BackgroundPatternConfig = .default
 
     var body: some View {
         ZStack {
-            Color.white
+            BoardBackgroundView(config: backgroundConfig)
 
             ForEach(placements) { placement in
                 if let image = ImageStorage.load(fileName: placement.imageFileName) {
