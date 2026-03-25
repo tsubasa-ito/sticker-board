@@ -5,6 +5,7 @@ struct StickerItemView: View {
     let image: UIImage?
     var isSelected: Bool = false
     var onTap: (() -> Void)?
+    var onGestureEnded: (() -> Void)?
 
     @State private var dragOffset: CGSize = .zero
     @State private var currentScale: CGFloat = 1.0
@@ -93,6 +94,7 @@ struct StickerItemView: View {
                 placement.positionX += value.translation.width
                 placement.positionY += value.translation.height
                 dragOffset = .zero
+                onGestureEnded?()
             }
     }
 
@@ -104,6 +106,7 @@ struct StickerItemView: View {
             .onEnded { value in
                 placement.scale *= value.magnification
                 currentScale = 1.0
+                onGestureEnded?()
             }
     }
 
@@ -115,6 +118,7 @@ struct StickerItemView: View {
             .onEnded { value in
                 placement.rotation += value.rotation.radians
                 currentRotation = .zero
+                onGestureEnded?()
             }
     }
 }
