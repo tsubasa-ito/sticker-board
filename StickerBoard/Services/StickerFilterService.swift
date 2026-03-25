@@ -32,50 +32,100 @@ struct StickerFilterService {
         return UIImage(cgImage: cgImage)
     }
 
-    // MARK: - キラキラ（ホログラム風オーバーレイ）
+    // MARK: - キラキラ（ホログラムシール風オーバーレイ）
 
     private static func applySparkle(to image: CIImage) -> CIImage? {
         let extent = image.extent
 
-        // 元画像のアルファを抽出（透明部分マスク）
         guard let alphaMask = extractAlpha(from: image) else { return nil }
 
-        // ランダムノイズ生成 → しきい値で疎なドットに
-        let noise = CIFilter.randomGenerator()
-        guard let noiseOutput = noise.outputImage else { return nil }
-        let croppedNoise = noiseOutput.cropped(to: extent)
+        // ホログラム風の虹色グリッドパターンを生成
+        guard let hologramPattern = generateHologramPattern(extent: extent) else { return nil }
 
-        // ノイズをしきい値でフィルタリング（スパークル点のみ残す）
-        let thresholdNoise = croppedNoise.applyingFilter("CIColorThreshold", parameters: [
-            "inputThreshold": 0.985,
-        ])
+        // パターンを半透明にして元画像とソフトライト合成
+        // （元画像が見えつつキラキラ感が出る）
+        let opacity = CIFilter.colorMatrix()
+        opacity.inputImage = hologramPattern
+        opacity.rVector = CIVector(x: 1, y: 0, z: 0, w: 0)
+        opacity.gVector = CIVector(x: 0, y: 1, z: 0, w: 0)
+        opacity.bVector = CIVector(x: 0, y: 0, z: 1, w: 0)
+        opacity.aVector = CIVector(x: 0, y: 0, z: 0, w: 0.35)
+        opacity.biasVector = CIVector(x: 0, y: 0, z: 0, w: 0)
+        guard let semiTransparent = opacity.outputImage else { return nil }
 
-        // ガウシアンブラーで少し光らせる
-        let glowFilter = CIFilter.gaussianBlur()
-        glowFilter.inputImage = thresholdNoise
-        glowFilter.radius = 2.0
-        guard let glow = glowFilter.outputImage?.cropped(to: extent) else { return nil }
+        // 元画像の上にオーバーレイ合成
+        let blend = CIFilter.sourceOverCompositing()
+        blend.inputImage = semiTransparent
+        blend.backgroundImage = image
+        guard let blended = blend.outputImage else { return nil }
 
-        // スパークル点とグローを合成
-        let sparkleComposite = CIFilter.additionCompositing()
-        sparkleComposite.inputImage = thresholdNoise
-        sparkleComposite.backgroundImage = glow
-        guard let sparkles = sparkleComposite.outputImage else { return nil }
-
-        // 虹色ティントを追加
-        let hueAdjust = CIFilter.hueAdjust()
-        hueAdjust.inputImage = sparkles
-        hueAdjust.angle = 1.2
-        guard let tintedSparkles = hueAdjust.outputImage else { return nil }
-
-        // 元画像にスクリーン合成
-        let screenBlend = CIFilter.screenBlendMode()
-        screenBlend.inputImage = tintedSparkles
-        screenBlend.backgroundImage = image
-        guard let blended = screenBlend.outputImage else { return nil }
-
-        // 元のアルファでマスク（透明部分にスパークルが出ないように）
         return applyAlphaMask(to: blended, mask: alphaMask)
+    }
+
+    /// ホログラムシール風の虹色グリッドパターンを生成
+    private static func generateHologramPattern(extent: CGRect) -> CIImage? {
+        let cellSize: CGFloat = 30
+
+        let renderer = UIGraphicsImageRenderer(size: extent.size)
+        let patternImage = renderer.image { ctx in
+            let gc = ctx.cgContext
+            let cols = Int(extent.width / cellSize) + 1
+            let rows = Int(extent.height / cellSize) + 1
+
+            for row in 0..<rows {
+                for col in 0..<cols {
+                    // 虹色を位置に応じて生成
+                    let hue = CGFloat((col + row)) / CGFloat(cols + rows) * 1.0
+                    let color = UIColor(hue: hue, saturation: 0.5, brightness: 1.0, alpha: 1.0)
+                    gc.setFillColor(color.cgColor)
+
+                    let x = CGFloat(col) * cellSize
+                    let y = CGFloat(row) * cellSize
+
+                    // 各セル内にダイヤモンドカットのようなグラデーション三角形を描画
+                    let cx = x + cellSize / 2
+                    let cy = y + cellSize / 2
+
+                    // 上三角 - 少し明るく
+                    let brightColor = UIColor(hue: hue, saturation: 0.35, brightness: 1.0, alpha: 1.0)
+                    gc.setFillColor(brightColor.cgColor)
+                    gc.move(to: CGPoint(x: x, y: y))
+                    gc.addLine(to: CGPoint(x: x + cellSize, y: y))
+                    gc.addLine(to: CGPoint(x: cx, y: cy))
+                    gc.closePath()
+                    gc.fillPath()
+
+                    // 右三角
+                    let midColor = UIColor(hue: hue + 0.08, saturation: 0.45, brightness: 0.95, alpha: 1.0)
+                    gc.setFillColor(midColor.cgColor)
+                    gc.move(to: CGPoint(x: x + cellSize, y: y))
+                    gc.addLine(to: CGPoint(x: x + cellSize, y: y + cellSize))
+                    gc.addLine(to: CGPoint(x: cx, y: cy))
+                    gc.closePath()
+                    gc.fillPath()
+
+                    // 下三角 - 少し暗く
+                    let darkColor = UIColor(hue: hue + 0.15, saturation: 0.5, brightness: 0.85, alpha: 1.0)
+                    gc.setFillColor(darkColor.cgColor)
+                    gc.move(to: CGPoint(x: x + cellSize, y: y + cellSize))
+                    gc.addLine(to: CGPoint(x: x, y: y + cellSize))
+                    gc.addLine(to: CGPoint(x: cx, y: cy))
+                    gc.closePath()
+                    gc.fillPath()
+
+                    // 左三角
+                    let leftColor = UIColor(hue: hue + 0.22, saturation: 0.4, brightness: 0.9, alpha: 1.0)
+                    gc.setFillColor(leftColor.cgColor)
+                    gc.move(to: CGPoint(x: x, y: y + cellSize))
+                    gc.addLine(to: CGPoint(x: x, y: y))
+                    gc.addLine(to: CGPoint(x: cx, y: cy))
+                    gc.closePath()
+                    gc.fillPath()
+                }
+            }
+        }
+
+        return CIImage(image: patternImage)
     }
 
     // MARK: - レトロ（セピア＋粒子感）
