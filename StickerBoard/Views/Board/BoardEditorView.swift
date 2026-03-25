@@ -5,11 +5,11 @@ import Photos
 struct BoardEditorView: View {
     @Bindable var board: Board
     @Query(sort: \Sticker.createdAt, order: .reverse) private var allStickers: [Sticker]
+    @Environment(\.modelContext) private var modelContext
     @Environment(\.displayScale) private var displayScale
     @Environment(\.dismiss) private var dismiss
 
     @State private var placements: [StickerPlacement] = []
-    @State private var originalPlacements: [StickerPlacement] = []
     @State private var selectedPlacementId: UUID?
     @State private var showingStickerPicker = false
     @State private var showingSaveResult = false
@@ -117,7 +117,6 @@ struct BoardEditorView: View {
         }
         .onAppear {
             placements = board.placements
-            originalPlacements = board.placements
         }
         .onDisappear {
             saveBoard()
@@ -170,7 +169,6 @@ struct BoardEditorView: View {
             // 左: 閉じるボタン + タイトル
             HStack(spacing: 16) {
                 Button {
-                    placements = originalPlacements
                     dismiss()
                 } label: {
                     Image(systemName: "xmark")
@@ -188,13 +186,12 @@ struct BoardEditorView: View {
                         .lineLimit(1)
 
                     Button {
-                        placements = originalPlacements
                         dismiss()
                     } label: {
                         HStack(spacing: 4) {
-                            Text("キャンセル")
+                            Text("閉じる")
                                 .font(.system(size: 10, weight: .medium))
-                            Image(systemName: "arrow.uturn.backward")
+                            Image(systemName: "xmark")
                                 .font(.system(size: 10))
                         }
                         .foregroundStyle(AppTheme.textSecondary)
@@ -257,6 +254,9 @@ struct BoardEditorView: View {
                         withAnimation(.easeInOut(duration: 0.15)) {
                             selectedPlacementId = placement.id
                         }
+                    },
+                    onGestureEnded: {
+                        saveBoard()
                     }
                 )
                 .zIndex(Double(placement.zIndex))
@@ -515,6 +515,7 @@ struct BoardEditorView: View {
     private func saveBoard() {
         board.placements = placements
         board.updatedAt = Date()
+        try? modelContext.save()
     }
 
     // MARK: - 画像として保存

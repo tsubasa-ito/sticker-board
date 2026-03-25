@@ -14,10 +14,10 @@
 StickerBoard/
 ├── App/          # エントリーポイント（MainTabView）、カラーテーマ
 ├── Models/       # SwiftData モデル（Sticker, Board, StickerPlacement）
-├── Services/     # BackgroundRemover, ImageStorage
+├── Services/     # BackgroundRemover, MaskCompositor, ImageStorage
 └── Views/        # SwiftUI画面
     ├── Home/     # MainTabView（タブナビゲーション）、HomeView（ボード一覧カルーセル）
-    ├── Capture/  # シール撮影・切り抜きフロー
+    ├── Capture/  # シール撮影・切り抜きフロー・マスク手動編集
     ├── Library/  # シールライブラリ
     └── Board/    # ボード編集・一覧
 ```
