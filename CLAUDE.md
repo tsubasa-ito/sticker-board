@@ -13,8 +13,8 @@
 ```
 StickerBoard/
 ├── App/          # エントリーポイント（MainTabView）、カラーテーマ
-├── Models/       # SwiftData モデル（Sticker, Board, StickerPlacement, BackgroundPattern）
-├── Services/     # BackgroundRemover, MaskCompositor, ImageStorage
+├── Models/       # SwiftData モデル（Sticker, Board, StickerPlacement, BackgroundPattern, StickerFilter）
+├── Services/     # BackgroundRemover, MaskCompositor, ImageStorage, StickerFilterService
 └── Views/        # SwiftUI画面
     ├── Home/     # MainTabView（タブナビゲーション）、HomeView（ボード一覧カルーセル）
     ├── Capture/  # シール撮影・切り抜きフロー・マスク手動編集
@@ -41,3 +41,5 @@ open StickerBoard.xcodeproj
 - StickerPlacement に imageFileName を直接保持する設計（SwiftDataのID問題回避のため）
 - Board の backgroundPatternData も placements と同様に Codable struct を JSON シリアライズして Data? に格納する設計
 - BackgroundRemover は入力画像の EXIF 向きを正規化し、長辺2048pxにリサイズする（cgImage とマスクの整合性確保 + メモリ最適化）
+- フィルター（キラキラ・レトロ・パステル・ネオン）は StickerPlacement の filterType に保存し、ボード配置単位で適用する設計（シール自体ではなく配置ごとにフィルターが異なる）
+- StickerFilterService は CIFilter ベースでオンザフライ処理。BoardEditorView ではフィルター適用画像をキャッシュして body 再評価時の再計算を回避
