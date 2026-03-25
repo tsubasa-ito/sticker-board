@@ -321,7 +321,7 @@ struct BoardEditorView: View {
                     Button {
                         addStickerToBoard(sticker)
                     } label: {
-                        QuickPickThumbnail(fileName: sticker.imageFileName)
+                        QuickPickThumbnail(fileName: sticker.displayImageFileName)
                     }
                 }
 
@@ -506,7 +506,7 @@ struct BoardEditorView: View {
         let maxZ = placements.map(\.zIndex).max() ?? -1
         let placement = StickerPlacement(
             stickerId: sticker.id,
-            imageFileName: sticker.imageFileName,
+            imageFileName: sticker.displayImageFileName,
             positionX: 0,
             positionY: 0,
             scale: 1.0,

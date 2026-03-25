@@ -6,6 +6,7 @@ struct StickerLibraryView: View {
     @Query(sort: \Sticker.createdAt, order: .reverse) private var stickers: [Sticker]
     @State private var stickerToDelete: Sticker?
     @State private var previewSticker: Sticker?
+    @State private var stickerToRefilter: Sticker?
     @Namespace private var previewNamespace
 
     private let columns = [
@@ -29,12 +30,19 @@ struct StickerLibraryView: View {
             if let sticker = previewSticker {
                 StickerPreviewOverlay(
                     sticker: sticker,
-                    namespace: previewNamespace
-                ) {
-                    withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
-                        previewSticker = nil
+                    namespace: previewNamespace,
+                    onDismiss: {
+                        withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
+                            previewSticker = nil
+                        }
+                    },
+                    onChangeFilter: {
+                        withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
+                            previewSticker = nil
+                        }
+                        stickerToRefilter = sticker
                     }
-                }
+                )
             }
         }
         .navigationTitle("ライブラリ")
@@ -52,6 +60,11 @@ struct StickerLibraryView: View {
             Button("キャンセル", role: .cancel) {}
         } message: {
             Text("このシールをコレクションから削除しますか？")
+        }
+        .sheet(item: $stickerToRefilter) { sticker in
+            NavigationStack {
+                StickerFilterEditView(sticker: sticker)
+            }
         }
     }
 
@@ -111,6 +124,11 @@ struct StickerLibraryView: View {
                             .accessibilityAddTraits(.isButton)
                             .accessibilityHint("タップしてプレビューを表示")
                             .contextMenu {
+                                Button {
+                                    stickerToRefilter = sticker
+                                } label: {
+                                    Label("フィルター変更", systemImage: "wand.and.stars")
+                                }
                                 Button(role: .destructive) {
                                     stickerToDelete = sticker
                                 } label: {
@@ -126,6 +144,9 @@ struct StickerLibraryView: View {
 
     private func deleteSticker(_ sticker: Sticker) {
         ImageStorage.delete(fileName: sticker.imageFileName)
+        if let filteredFileName = sticker.filteredImageFileName {
+            ImageStorage.delete(fileName: filteredFileName)
+        }
         modelContext.delete(sticker)
         stickerToDelete = nil
     }
@@ -137,6 +158,7 @@ struct StickerPreviewOverlay: View {
     let sticker: Sticker
     let namespace: Namespace.ID
     var onDismiss: () -> Void
+    var onChangeFilter: () -> Void
 
     var body: some View {
         ZStack {
@@ -148,7 +170,7 @@ struct StickerPreviewOverlay: View {
 
             VStack(spacing: 20) {
                 Group {
-                    if let image = ImageStorage.load(fileName: sticker.imageFileName) {
+                    if let image = ImageStorage.load(fileName: sticker.displayImageFileName) {
                         Image(uiImage: image)
                             .resizable()
                             .scaledToFit()
@@ -162,9 +184,37 @@ struct StickerPreviewOverlay: View {
                 .matchedGeometryEffect(id: sticker.id, in: namespace)
                 .padding(32)
 
-                Text(sticker.createdAt.formatted(date: .abbreviated, time: .shortened))
-                    .font(.system(size: 13, design: .rounded))
-                    .foregroundStyle(.white.opacity(0.6))
+                VStack(spacing: 8) {
+                    if sticker.filter != .original {
+                        Text(sticker.filter.displayName)
+                            .font(.system(size: 12, weight: .medium, design: .rounded))
+                            .foregroundStyle(.white.opacity(0.8))
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                            .background(.white.opacity(0.15))
+                            .clipShape(Capsule())
+                    }
+
+                    Text(sticker.createdAt.formatted(date: .abbreviated, time: .shortened))
+                        .font(.system(size: 13, design: .rounded))
+                        .foregroundStyle(.white.opacity(0.6))
+                }
+
+                // フィルター変更ボタン
+                Button {
+                    onChangeFilter()
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "wand.and.stars")
+                        Text("フィルター変更")
+                            .font(.system(size: 14, weight: .semibold, design: .rounded))
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+                    .background(.ultraThinMaterial)
+                    .clipShape(Capsule())
+                }
+                .foregroundStyle(.white)
             }
         }
         .transition(.opacity)
@@ -177,7 +227,7 @@ struct StickerThumbnailView: View {
 
     var body: some View {
         Group {
-            if let image = ImageStorage.load(fileName: sticker.imageFileName) {
+            if let image = ImageStorage.load(fileName: sticker.displayImageFileName) {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFit()
