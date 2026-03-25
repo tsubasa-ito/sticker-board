@@ -120,17 +120,20 @@ struct BackgroundRemover {
 
         var results: [UIImage] = []
         for instanceId in allInstances {
-            let singleSet = IndexSet(integer: instanceId)
-            let maskedBuffer = try observation.generateMaskedImage(
-                ofInstances: singleSet,
-                from: handler,
-                croppedToInstancesExtent: true
-            )
-            let ciImage = CIImage(cvPixelBuffer: maskedBuffer)
-            guard let outputCGImage = ciContext.createCGImage(ciImage, from: ciImage.extent) else {
-                continue
+            let image: UIImage? = try autoreleasepool {
+                let singleSet = IndexSet(integer: instanceId)
+                let maskedBuffer = try observation.generateMaskedImage(
+                    ofInstances: singleSet,
+                    from: handler,
+                    croppedToInstancesExtent: true
+                )
+                let ciImage = CIImage(cvPixelBuffer: maskedBuffer)
+                guard let outputCGImage = ciContext.createCGImage(ciImage, from: ciImage.extent) else {
+                    return nil
+                }
+                return UIImage(cgImage: outputCGImage)
             }
-            results.append(UIImage(cgImage: outputCGImage))
+            if let image { results.append(image) }
         }
 
         if results.isEmpty {

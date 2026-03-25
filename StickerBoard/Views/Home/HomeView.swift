@@ -422,6 +422,9 @@ private struct BoardStickerPreviewView: View {
     let placements: [StickerPlacement]
     @State private var images: [UUID: UIImage] = [:]
 
+    /// プレビュー用サムネイルサイズ（カルーセル内なので小さくてOK）
+    private let previewThumbnailSize: CGFloat = 200
+
     var body: some View {
         GeometryReader { geo in
             let canvasWidth = UIScreen.main.bounds.width
@@ -453,19 +456,23 @@ private struct BoardStickerPreviewView: View {
             .clipped()
         }
         .task {
+            let thumbSize = previewThumbnailSize
             let loaded = await Task.detached {
                 var result: [UUID: UIImage] = [:]
                 for placement in placements {
-                    if let original = ImageStorage.load(fileName: placement.imageFileName) {
+                    if let thumbnail = ImageStorage.loadThumbnail(fileName: placement.imageFileName, size: thumbSize) {
                         let image = placement.filter == .original
-                            ? original
-                            : StickerFilterService.apply(placement.filter, to: original)
+                            ? thumbnail
+                            : StickerFilterService.apply(placement.filter, to: thumbnail)
                         result[placement.id] = image
                     }
                 }
                 return result
             }.value
             images = loaded
+        }
+        .onDisappear {
+            images = [:]
         }
     }
 }
