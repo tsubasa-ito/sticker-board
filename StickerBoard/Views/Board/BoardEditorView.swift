@@ -116,17 +116,16 @@ struct BoardEditorView: View {
             BackgroundPatternPickerView(config: $backgroundConfig)
                 .presentationDetents([.medium, .large])
         }
-        .sheet(isPresented: $showingFilterPicker, onDismiss: {
-            if let id = selectedPlacementId,
-               let placement = placements.first(where: { $0.id == id }) {
-                updateFilterCache(for: placement)
-            }
-            saveBoard()
-        }) {
+        .sheet(isPresented: $showingFilterPicker) {
             if let id = selectedPlacementId,
                let index = placements.firstIndex(where: { $0.id == id }) {
-                PlacementFilterPickerSheet(placement: $placements[index])
-                    .presentationDetents([.medium])
+                PlacementFilterPickerSheet(placement: $placements[index]) {
+                    if let placement = placements.first(where: { $0.id == id }) {
+                        updateFilterCache(for: placement)
+                    }
+                    saveBoard()
+                }
+                .presentationDetents([.medium])
             }
         }
         .alert(
@@ -724,6 +723,7 @@ private struct BoardSnapshotView: View {
 
 private struct PlacementFilterPickerSheet: View {
     @Binding var placement: StickerPlacement
+    var onApply: () -> Void
     @Environment(\.dismiss) private var dismiss
     @State private var selectedFilter: StickerFilter = .original
     @State private var originalImage: UIImage?
@@ -758,6 +758,7 @@ private struct PlacementFilterPickerSheet: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("適用") {
                         placement.filter = selectedFilter
+                        onApply()
                         dismiss()
                     }
                     .foregroundStyle(AppTheme.accent)
