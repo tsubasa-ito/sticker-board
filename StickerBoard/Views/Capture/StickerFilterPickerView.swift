@@ -1,3 +1,4 @@
+@preconcurrency import UIKit
 import SwiftUI
 
 struct StickerFilterPickerView: View {

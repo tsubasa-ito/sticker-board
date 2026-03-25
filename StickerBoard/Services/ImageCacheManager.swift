@@ -102,7 +102,7 @@ final class ImageCacheManager {
         // サムネイルはサイズ別で複数あるため一括クリアは行わない（NSCache が LRU で自動管理）
     }
 
-    @objc func purgeAllCaches() {
+    @objc private func purgeAllCaches() {
         fullResolutionCache.removeAllObjects()
         thumbnailCache.removeAllObjects()
         filteredCache.removeAllObjects()
