@@ -456,7 +456,10 @@ private struct BoardStickerPreviewView: View {
             let loaded = await Task.detached {
                 var result: [UUID: UIImage] = [:]
                 for placement in placements {
-                    if let image = ImageStorage.load(fileName: placement.imageFileName) {
+                    if let original = ImageStorage.load(fileName: placement.imageFileName) {
+                        let image = placement.filter == .original
+                            ? original
+                            : StickerFilterService.apply(placement.filter, to: original)
                         result[placement.id] = image
                     }
                 }
