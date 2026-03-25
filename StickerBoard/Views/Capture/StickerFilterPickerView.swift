@@ -6,24 +6,15 @@ struct StickerFilterPickerView: View {
     @State private var previewImages: [StickerFilter: UIImage] = [:]
     @State private var isGenerating = true
 
-    var body: some View {
-        VStack(spacing: 12) {
-            HStack(spacing: 6) {
-                Image(systemName: "wand.and.stars")
-                    .foregroundStyle(AppTheme.secondary)
-                Text("フィルターを選択")
-                    .font(.system(size: 14, weight: .semibold, design: .rounded))
-                    .foregroundStyle(AppTheme.textPrimary)
-            }
+    private let columns = [
+        GridItem(.flexible(), spacing: 12),
+        GridItem(.flexible(), spacing: 12),
+    ]
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                    ForEach(StickerFilter.allCases) { filter in
-                        filterThumbnail(filter)
-                    }
-                }
-                .padding(.horizontal, 4)
-                .padding(.vertical, 4)
+    var body: some View {
+        LazyVGrid(columns: columns, spacing: 12) {
+            ForEach(StickerFilter.allCases) { filter in
+                filterThumbnail(filter)
             }
         }
         .task {
@@ -42,23 +33,21 @@ struct StickerFilterPickerView: View {
             VStack(spacing: 6) {
                 ZStack {
                     CheckerboardBackground()
-                        .frame(width: 72, height: 72)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
 
                     if let preview = previewImages[filter] {
                         Image(uiImage: preview)
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 60, height: 60)
+                            .padding(10)
                     } else {
                         ProgressView()
-                            .frame(width: 60, height: 60)
                     }
                 }
-                .frame(width: 72, height: 72)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .aspectRatio(1, contentMode: .fit)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
                 .overlay {
-                    RoundedRectangle(cornerRadius: 10)
+                    RoundedRectangle(cornerRadius: 12)
                         .strokeBorder(
                             isSelected ? AppTheme.accent : AppTheme.accent.opacity(0.15),
                             lineWidth: isSelected ? 2.5 : 1
@@ -70,7 +59,7 @@ struct StickerFilterPickerView: View {
                 )
 
                 Text(filter.displayName)
-                    .font(.system(size: 11, weight: isSelected ? .bold : .medium, design: .rounded))
+                    .font(.system(size: 12, weight: isSelected ? .bold : .medium, design: .rounded))
                     .foregroundStyle(isSelected ? AppTheme.accent : AppTheme.textSecondary)
             }
         }
@@ -78,8 +67,7 @@ struct StickerFilterPickerView: View {
     }
 
     private func generatePreviews() async {
-        // サムネイル用にリサイズしてからフィルター適用（パフォーマンス最適化）
-        let thumbnailSize: CGFloat = 150
+        let thumbnailSize: CGFloat = 200
         let scale = thumbnailSize / max(originalImage.size.width, originalImage.size.height)
         let thumbSize = CGSize(
             width: originalImage.size.width * scale,
@@ -90,10 +78,8 @@ struct StickerFilterPickerView: View {
             originalImage.draw(in: CGRect(origin: .zero, size: thumbSize))
         }
 
-        // オリジナルはそのまま
         previewImages[.original] = thumbnail
 
-        // 各フィルターを非同期で生成
         for filter in StickerFilter.allCases where filter != .original {
             let result = await Task.detached {
                 StickerFilterService.apply(filter, to: thumbnail)

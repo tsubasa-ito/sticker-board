@@ -20,10 +20,6 @@ struct StickerCaptureView: View {
     @State private var backgroundRemovalResult: BackgroundRemovalResult?
     @State private var showingMaskEditor = false
     @State private var maskEditorId = UUID()
-    @State private var selectedFilter: StickerFilter = .original
-    @State private var filteredPreviewImage: UIImage?
-    @State private var isApplyingFilter = false
-    @State private var filterPreviewTask: Task<Void, Never>?
 
     var body: some View {
         ZStack {
@@ -263,14 +259,7 @@ struct StickerCaptureView: View {
 
     private func resultSection(_ image: UIImage) -> some View {
         VStack(spacing: 20) {
-            // フィルター適用済みプレビュー or 元画像プレビュー
-            StickerPreviewView(image: filteredPreviewImage ?? image)
-
-            // フィルター選択
-            StickerFilterPickerView(
-                originalImage: image,
-                selectedFilter: $selectedFilter
-            )
+            StickerPreviewView(image: image)
 
             // マスク手動調整ボタン
             if backgroundRemovalResult != nil {
@@ -295,15 +284,10 @@ struct StickerCaptureView: View {
 
             // 保存ボタン
             Button {
-                saveStickerWithFilter(image)
+                saveSticker(image)
             } label: {
                 HStack(spacing: 8) {
-                    if isApplyingFilter {
-                        ProgressView()
-                            .tint(.white)
-                    } else {
-                        Image(systemName: "checkmark.circle.fill")
-                    }
+                    Image(systemName: "checkmark.circle.fill")
                     Text("コレクションに追加")
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
                 }
@@ -313,7 +297,6 @@ struct StickerCaptureView: View {
                 .foregroundStyle(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 14))
             }
-            .disabled(isApplyingFilter)
 
             Button {
                 resetState()
@@ -322,9 +305,6 @@ struct StickerCaptureView: View {
                     .font(.system(size: 14, weight: .medium, design: .rounded))
                     .foregroundStyle(AppTheme.textSecondary)
             }
-        }
-        .onChange(of: selectedFilter) { _, newFilter in
-            applyFilterPreview(newFilter, to: image)
         }
     }
 
@@ -387,56 +367,15 @@ struct StickerCaptureView: View {
         }
     }
 
-    private func saveStickerWithFilter(_ originalCroppedImage: UIImage) {
-        isApplyingFilter = true
-        let currentFilter = selectedFilter
-
-        Task.detached {
-            do {
-                // 元画像を保存
-                let originalFileName = try ImageStorage.save(originalCroppedImage)
-
-                // フィルター適用画像を保存（オリジナル以外の場合）
-                var filteredFileName: String?
-                if currentFilter != .original {
-                    let filteredImage = StickerFilterService.apply(currentFilter, to: originalCroppedImage)
-                    filteredFileName = try ImageStorage.save(filteredImage)
-                }
-
-                await MainActor.run {
-                    let sticker = Sticker(
-                        imageFileName: originalFileName,
-                        filterType: currentFilter,
-                        filteredImageFileName: filteredFileName
-                    )
-                    modelContext.insert(sticker)
-                    isApplyingFilter = false
-                    savedStickerCount = 1
-                    showingSaveSuccess = true
-                }
-            } catch {
-                await MainActor.run {
-                    isApplyingFilter = false
-                    errorMessage = error.localizedDescription
-                }
-            }
-        }
-    }
-
-    private func applyFilterPreview(_ filter: StickerFilter, to image: UIImage) {
-        filterPreviewTask?.cancel()
-        guard filter != .original else {
-            filteredPreviewImage = nil
-            return
-        }
-        filterPreviewTask = Task.detached {
-            let result = StickerFilterService.apply(filter, to: image)
-            guard !Task.isCancelled else { return }
-            await MainActor.run {
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    filteredPreviewImage = result
-                }
-            }
+    private func saveSticker(_ image: UIImage) {
+        do {
+            let fileName = try ImageStorage.save(image)
+            let sticker = Sticker(imageFileName: fileName)
+            modelContext.insert(sticker)
+            savedStickerCount = 1
+            showingSaveSuccess = true
+        } catch {
+            errorMessage = error.localizedDescription
         }
     }
 
@@ -448,7 +387,5 @@ struct StickerCaptureView: View {
         cameraImage = nil
         errorMessage = nil
         backgroundRemovalResult = nil
-        selectedFilter = .original
-        filteredPreviewImage = nil
     }
 }

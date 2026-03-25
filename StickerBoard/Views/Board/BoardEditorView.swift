@@ -20,6 +20,8 @@ struct BoardEditorView: View {
     @State private var showQuickPicks = false
     @State private var showingBackgroundPicker = false
     @State private var backgroundConfig: BackgroundPatternConfig = .default
+    @State private var showingFilterPicker = false
+    @State private var filteredImageCache: [UUID: UIImage] = [:]
 
     var body: some View {
         ZStack {
@@ -114,6 +116,19 @@ struct BoardEditorView: View {
             BackgroundPatternPickerView(config: $backgroundConfig)
                 .presentationDetents([.medium, .large])
         }
+        .sheet(isPresented: $showingFilterPicker, onDismiss: {
+            if let id = selectedPlacementId,
+               let placement = placements.first(where: { $0.id == id }) {
+                updateFilterCache(for: placement)
+            }
+            saveBoard()
+        }) {
+            if let id = selectedPlacementId,
+               let index = placements.firstIndex(where: { $0.id == id }) {
+                PlacementFilterPickerSheet(placement: $placements[index])
+                    .presentationDetents([.medium])
+            }
+        }
         .alert(
             saveResultSuccess ? "保存完了" : "エラー",
             isPresented: $showingSaveResult
@@ -127,6 +142,7 @@ struct BoardEditorView: View {
         .onAppear {
             placements = board.placements
             backgroundConfig = board.backgroundPattern
+            rebuildFilterCache()
         }
         .onDisappear {
             saveBoard()
@@ -321,7 +337,7 @@ struct BoardEditorView: View {
                     Button {
                         addStickerToBoard(sticker)
                     } label: {
-                        QuickPickThumbnail(fileName: sticker.displayImageFileName)
+                        QuickPickThumbnail(fileName: sticker.imageFileName)
                     }
                 }
 
@@ -397,6 +413,30 @@ struct BoardEditorView: View {
                         .foregroundStyle(AppTheme.textSecondary)
                 }
             }
+
+            Spacer()
+
+            // フィルターボタン
+            Button {
+                showingFilterPicker = true
+            } label: {
+                VStack(spacing: 4) {
+                    ZStack {
+                        Circle()
+                            .fill(selectedPlacementId != nil ? AppTheme.cream.opacity(0.3) : Color.clear)
+                            .frame(width: 44, height: 44)
+                        Image(systemName: "wand.and.stars")
+                            .font(.system(size: 20))
+                            .foregroundStyle(selectedPlacementId != nil ? AppTheme.accent : AppTheme.textTertiary)
+                    }
+                    Text("効果")
+                        .font(.system(size: 8, weight: .bold, design: .rounded))
+                        .textCase(.uppercase)
+                        .tracking(1.5)
+                        .foregroundStyle(AppTheme.textSecondary)
+                }
+            }
+            .disabled(selectedPlacementId == nil)
 
             Spacer()
 
@@ -499,14 +539,45 @@ struct BoardEditorView: View {
     }
 
     private func loadImage(for placement: StickerPlacement) -> UIImage? {
-        ImageStorage.load(fileName: placement.imageFileName)
+        if let cached = filteredImageCache[placement.id] {
+            return cached
+        }
+        return ImageStorage.load(fileName: placement.imageFileName)
+    }
+
+    private func rebuildFilterCache() {
+        Task.detached {
+            var cache: [UUID: UIImage] = [:]
+            for placement in placements where placement.filter != .original {
+                if let original = ImageStorage.load(fileName: placement.imageFileName) {
+                    cache[placement.id] = StickerFilterService.apply(placement.filter, to: original)
+                }
+            }
+            await MainActor.run {
+                filteredImageCache = cache
+            }
+        }
+    }
+
+    private func updateFilterCache(for placement: StickerPlacement) {
+        guard placement.filter != .original else {
+            filteredImageCache.removeValue(forKey: placement.id)
+            return
+        }
+        Task.detached {
+            guard let original = ImageStorage.load(fileName: placement.imageFileName) else { return }
+            let filtered = StickerFilterService.apply(placement.filter, to: original)
+            await MainActor.run {
+                filteredImageCache[placement.id] = filtered
+            }
+        }
     }
 
     private func addStickerToBoard(_ sticker: Sticker) {
         let maxZ = placements.map(\.zIndex).max() ?? -1
         let placement = StickerPlacement(
             stickerId: sticker.id,
-            imageFileName: sticker.displayImageFileName,
+            imageFileName: sticker.imageFileName,
             positionX: 0,
             positionY: 0,
             scale: 1.0,
@@ -629,8 +700,11 @@ private struct BoardSnapshotView: View {
             BoardBackgroundView(config: backgroundConfig)
 
             ForEach(placements) { placement in
-                if let image = ImageStorage.load(fileName: placement.imageFileName) {
-                    Image(uiImage: image)
+                if let original = ImageStorage.load(fileName: placement.imageFileName) {
+                    let displayImage = placement.filter == .original
+                        ? original
+                        : StickerFilterService.apply(placement.filter, to: original)
+                    Image(uiImage: displayImage)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 120, height: 120)
@@ -643,6 +717,58 @@ private struct BoardSnapshotView: View {
         }
         .frame(width: size.width, height: size.height)
         .clipped()
+    }
+}
+
+// MARK: - 配置フィルター選択シート
+
+private struct PlacementFilterPickerSheet: View {
+    @Binding var placement: StickerPlacement
+    @Environment(\.dismiss) private var dismiss
+    @State private var selectedFilter: StickerFilter = .original
+    @State private var originalImage: UIImage?
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                AppTheme.backgroundPrimary
+                    .ignoresSafeArea()
+
+                if let originalImage {
+                    ScrollView {
+                        StickerFilterPickerView(
+                            originalImage: originalImage,
+                            selectedFilter: $selectedFilter
+                        )
+                        .padding(.horizontal, 16)
+                        .padding(.top, 8)
+                    }
+                } else {
+                    ProgressView()
+                }
+            }
+            .navigationTitle("フィルター変更")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(AppTheme.backgroundPrimary, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("キャンセル") { dismiss() }
+                        .foregroundStyle(AppTheme.accent)
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("適用") {
+                        placement.filter = selectedFilter
+                        dismiss()
+                    }
+                    .foregroundStyle(AppTheme.accent)
+                    .fontWeight(.semibold)
+                }
+            }
+            .onAppear {
+                selectedFilter = placement.filter
+                originalImage = ImageStorage.load(fileName: placement.imageFileName)
+            }
+        }
     }
 }
 
