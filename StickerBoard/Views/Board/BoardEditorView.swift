@@ -169,10 +169,9 @@ struct BoardEditorView: View {
             // 左: 閉じるボタン + タイトル
             HStack(spacing: 16) {
                 Button {
-                    saveBoard()
                     dismiss()
                 } label: {
-                    Image(systemName: "checkmark")
+                    Image(systemName: "xmark")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundStyle(AppTheme.textPrimary)
                         .frame(width: 40, height: 40)
@@ -187,13 +186,12 @@ struct BoardEditorView: View {
                         .lineLimit(1)
 
                     Button {
-                        saveBoard()
                         dismiss()
                     } label: {
                         HStack(spacing: 4) {
                             Text("閉じる")
                                 .font(.system(size: 10, weight: .medium))
-                            Image(systemName: "arrow.backward")
+                            Image(systemName: "xmark")
                                 .font(.system(size: 10))
                         }
                         .foregroundStyle(AppTheme.textSecondary)
