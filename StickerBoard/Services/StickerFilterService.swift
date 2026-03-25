@@ -34,18 +34,57 @@ struct StickerFilterService {
 
     // MARK: - キラキラ（ホログラムシール風オーバーレイ）
 
+    /// 小さなタイルを1枚だけ生成してキャッシュ（メモリ節約）
+    private static let hologramTile: CIImage? = {
+        let cellSize: CGFloat = 30
+        let gridCount = 6
+        let tileSize = cellSize * CGFloat(gridCount)
+
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: tileSize, height: tileSize))
+        let tileImage = renderer.image { ctx in
+            let gc = ctx.cgContext
+            for row in 0..<gridCount {
+                for col in 0..<gridCount {
+                    let hue = CGFloat(col + row) / CGFloat(gridCount * 2)
+                    let x = CGFloat(col) * cellSize
+                    let y = CGFloat(row) * cellSize
+                    let cx = x + cellSize / 2
+                    let cy = y + cellSize / 2
+
+                    let faces: [(CGPoint, CGPoint, CGFloat, CGFloat, CGFloat)] = [
+                        (CGPoint(x: x, y: y), CGPoint(x: x + cellSize, y: y), hue, 0.35, 1.0),
+                        (CGPoint(x: x + cellSize, y: y), CGPoint(x: x + cellSize, y: y + cellSize), hue + 0.08, 0.45, 0.95),
+                        (CGPoint(x: x + cellSize, y: y + cellSize), CGPoint(x: x, y: y + cellSize), hue + 0.15, 0.5, 0.85),
+                        (CGPoint(x: x, y: y + cellSize), CGPoint(x: x, y: y), hue + 0.22, 0.4, 0.9),
+                    ]
+                    for (p1, p2, h, s, b) in faces {
+                        gc.setFillColor(UIColor(hue: h, saturation: s, brightness: b, alpha: 1.0).cgColor)
+                        gc.move(to: p1)
+                        gc.addLine(to: p2)
+                        gc.addLine(to: CGPoint(x: cx, y: cy))
+                        gc.closePath()
+                        gc.fillPath()
+                    }
+                }
+            }
+        }
+        return CIImage(image: tileImage)
+    }()
+
     private static func applySparkle(to image: CIImage) -> CIImage? {
         let extent = image.extent
 
         guard let alphaMask = extractAlpha(from: image) else { return nil }
+        guard let tile = hologramTile else { return nil }
 
-        // ホログラム風の虹色グリッドパターンを生成
-        guard let hologramPattern = generateHologramPattern(extent: extent) else { return nil }
+        // タイルを繰り返して画像全体に敷き詰める
+        let tiled = tile.applyingFilter("CIAffineTile", parameters: [
+            "inputTransform": NSValue(cgAffineTransform: .identity),
+        ]).cropped(to: extent)
 
-        // パターンを半透明にして元画像とソフトライト合成
-        // （元画像が見えつつキラキラ感が出る）
+        // 半透明にして元画像とオーバーレイ合成
         let opacity = CIFilter.colorMatrix()
-        opacity.inputImage = hologramPattern
+        opacity.inputImage = tiled
         opacity.rVector = CIVector(x: 1, y: 0, z: 0, w: 0)
         opacity.gVector = CIVector(x: 0, y: 1, z: 0, w: 0)
         opacity.bVector = CIVector(x: 0, y: 0, z: 1, w: 0)
@@ -53,79 +92,12 @@ struct StickerFilterService {
         opacity.biasVector = CIVector(x: 0, y: 0, z: 0, w: 0)
         guard let semiTransparent = opacity.outputImage else { return nil }
 
-        // 元画像の上にオーバーレイ合成
         let blend = CIFilter.sourceOverCompositing()
         blend.inputImage = semiTransparent
         blend.backgroundImage = image
         guard let blended = blend.outputImage else { return nil }
 
         return applyAlphaMask(to: blended, mask: alphaMask)
-    }
-
-    /// ホログラムシール風の虹色グリッドパターンを生成
-    private static func generateHologramPattern(extent: CGRect) -> CIImage? {
-        let cellSize: CGFloat = 30
-
-        let renderer = UIGraphicsImageRenderer(size: extent.size)
-        let patternImage = renderer.image { ctx in
-            let gc = ctx.cgContext
-            let cols = Int(extent.width / cellSize) + 1
-            let rows = Int(extent.height / cellSize) + 1
-
-            for row in 0..<rows {
-                for col in 0..<cols {
-                    // 虹色を位置に応じて生成
-                    let hue = CGFloat((col + row)) / CGFloat(cols + rows) * 1.0
-                    let color = UIColor(hue: hue, saturation: 0.5, brightness: 1.0, alpha: 1.0)
-                    gc.setFillColor(color.cgColor)
-
-                    let x = CGFloat(col) * cellSize
-                    let y = CGFloat(row) * cellSize
-
-                    // 各セル内にダイヤモンドカットのようなグラデーション三角形を描画
-                    let cx = x + cellSize / 2
-                    let cy = y + cellSize / 2
-
-                    // 上三角 - 少し明るく
-                    let brightColor = UIColor(hue: hue, saturation: 0.35, brightness: 1.0, alpha: 1.0)
-                    gc.setFillColor(brightColor.cgColor)
-                    gc.move(to: CGPoint(x: x, y: y))
-                    gc.addLine(to: CGPoint(x: x + cellSize, y: y))
-                    gc.addLine(to: CGPoint(x: cx, y: cy))
-                    gc.closePath()
-                    gc.fillPath()
-
-                    // 右三角
-                    let midColor = UIColor(hue: hue + 0.08, saturation: 0.45, brightness: 0.95, alpha: 1.0)
-                    gc.setFillColor(midColor.cgColor)
-                    gc.move(to: CGPoint(x: x + cellSize, y: y))
-                    gc.addLine(to: CGPoint(x: x + cellSize, y: y + cellSize))
-                    gc.addLine(to: CGPoint(x: cx, y: cy))
-                    gc.closePath()
-                    gc.fillPath()
-
-                    // 下三角 - 少し暗く
-                    let darkColor = UIColor(hue: hue + 0.15, saturation: 0.5, brightness: 0.85, alpha: 1.0)
-                    gc.setFillColor(darkColor.cgColor)
-                    gc.move(to: CGPoint(x: x + cellSize, y: y + cellSize))
-                    gc.addLine(to: CGPoint(x: x, y: y + cellSize))
-                    gc.addLine(to: CGPoint(x: cx, y: cy))
-                    gc.closePath()
-                    gc.fillPath()
-
-                    // 左三角
-                    let leftColor = UIColor(hue: hue + 0.22, saturation: 0.4, brightness: 0.9, alpha: 1.0)
-                    gc.setFillColor(leftColor.cgColor)
-                    gc.move(to: CGPoint(x: x, y: y + cellSize))
-                    gc.addLine(to: CGPoint(x: x, y: y))
-                    gc.addLine(to: CGPoint(x: cx, y: cy))
-                    gc.closePath()
-                    gc.fillPath()
-                }
-            }
-        }
-
-        return CIImage(image: patternImage)
     }
 
     // MARK: - レトロ（セピア＋粒子感）
