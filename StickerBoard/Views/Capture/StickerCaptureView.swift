@@ -342,6 +342,7 @@ struct StickerCaptureView: View {
         guard let originalImage else { return }
         withAnimation { isProcessing = true }
         errorMessage = nil
+        editedMask = nil
 
         Task {
             do {
