@@ -560,18 +560,32 @@ struct BoardEditorView: View {
 
     // MARK: - Z軸操作
 
-    private func bringToFront(_ placement: StickerPlacement) {
-        guard let index = placements.firstIndex(where: { $0.id == placement.id }) else { return }
-        let maxZ = placements.map(\.zIndex).max() ?? 0
-        placements[index].zIndex = maxZ + 1
+    private func reorderAndNormalizeZIndex(for placement: StickerPlacement, moveToFront: Bool) {
+        guard let targetIndex = placements.firstIndex(where: { $0.id == placement.id }) else { return }
+
+        var sortedIndices = placements.indices.sorted { placements[$0].zIndex < placements[$1].zIndex }
+
+        if let position = sortedIndices.firstIndex(of: targetIndex) {
+            let index = sortedIndices.remove(at: position)
+            if moveToFront {
+                sortedIndices.append(index)
+            } else {
+                sortedIndices.insert(index, at: 0)
+            }
+        }
+
+        for (newZ, originalIndex) in sortedIndices.enumerated() {
+            placements[originalIndex].zIndex = newZ
+        }
         saveBoard()
     }
 
+    private func bringToFront(_ placement: StickerPlacement) {
+        reorderAndNormalizeZIndex(for: placement, moveToFront: true)
+    }
+
     private func sendToBack(_ placement: StickerPlacement) {
-        guard let index = placements.firstIndex(where: { $0.id == placement.id }) else { return }
-        let minZ = placements.map(\.zIndex).min() ?? 0
-        placements[index].zIndex = minZ - 1
-        saveBoard()
+        reorderAndNormalizeZIndex(for: placement, moveToFront: false)
     }
 
     private func removeFromBoard(_ placement: StickerPlacement) {
