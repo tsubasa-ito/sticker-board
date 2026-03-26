@@ -18,7 +18,8 @@ struct ImageStorage {
         let fileName = UUID().uuidString + ".png"
         let fileURL = stickersDirectory.appendingPathComponent(fileName)
 
-        let optimized = image.resized(maxDimension: maxSaveDimension)
+        let trimmed = image.alphaTrimmed()
+        let optimized = trimmed.resized(maxDimension: maxSaveDimension)
 
         guard let data = optimized.pngData() else {
             throw ImageStorageError.encodingFailed

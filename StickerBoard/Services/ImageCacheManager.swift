@@ -207,4 +207,59 @@ extension UIImage {
             draw(in: CGRect(origin: .zero, size: newSize))
         }
     }
+
+    /// 透明ピクセルの余白をトリミングして、不透明領域の外接矩形で切り抜く
+    func alphaTrimmed() -> UIImage {
+        guard let cgImage else { return self }
+
+        let width = cgImage.width
+        let height = cgImage.height
+        guard width > 0, height > 0 else { return self }
+
+        guard let dataProvider = cgImage.dataProvider,
+              let data = dataProvider.data,
+              let bytes = CFDataGetBytePtr(data) else { return self }
+
+        let bytesPerPixel = cgImage.bitsPerPixel / 8
+        let bytesPerRow = cgImage.bytesPerRow
+
+        // アルファチャンネルの位置を特定
+        let alphaInfo = cgImage.alphaInfo
+        let alphaOffset: Int
+        switch alphaInfo {
+        case .premultipliedFirst, .first, .alphaOnly:
+            alphaOffset = 0
+        case .premultipliedLast, .last:
+            alphaOffset = bytesPerPixel - 1
+        case .none, .noneSkipFirst, .noneSkipLast:
+            return self // アルファなし → トリミング不要
+        @unknown default:
+            return self // 未知のフォーマットはトリミングしない
+        }
+
+        var minX = width
+        var minY = height
+        var maxX = 0
+        var maxY = 0
+
+        for y in 0..<height {
+            let rowOffset = y * bytesPerRow
+            for x in 0..<width {
+                let pixelOffset = rowOffset + x * bytesPerPixel + alphaOffset
+                if bytes[pixelOffset] > 0 {
+                    minX = min(minX, x)
+                    maxX = max(maxX, x)
+                    minY = min(minY, y)
+                    maxY = max(maxY, y)
+                }
+            }
+        }
+
+        // 不透明ピクセルが見つからなかった場合
+        guard minX <= maxX, minY <= maxY else { return self }
+
+        let trimRect = CGRect(x: minX, y: minY, width: maxX - minX + 1, height: maxY - minY + 1)
+        guard let croppedCGImage = cgImage.cropping(to: trimRect) else { return self }
+        return UIImage(cgImage: croppedCGImage, scale: scale, orientation: imageOrientation)
+    }
 }
