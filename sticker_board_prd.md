@@ -78,6 +78,7 @@
 - 完成ボードの画像書き出し・SNSシェア
 - ~~背景テクスチャ・装飾素材~~ → 背景パターン5種（無地・ドット・グリッド・ストライプ・グラデーション）は実装済み。装飾素材は未実装
 - ~~シールのフィルター加工~~ → ボード配置単位でフィルター6種（オリジナル・キラキラ・レトロ・パステル・ネオン・ぷっくり）を実装済み
+- ~~シールへの枠線（ボーダー）追加~~ → ボード配置単位で枠線（太さ4段階×9色）を実装済み。CIMorphologyMaximumによるアルファマスク膨張で輪郭に沿った自然な枠線を描画
 - シールへのテキスト・スタンプ追加
 - クラウド同期・バックアップ
 - シールライブラリの整理・タグ付け
@@ -174,10 +175,14 @@ class Board {
 
 struct StickerPlacement: Codable {
     var stickerId: UUID
+    var imageFileName: String   // シール画像ファイル名
     var position: CGPoint       // X, Y 座標
     var scale: CGFloat          // 拡大縮小
     var rotation: CGFloat       // 回転角度（ラジアン）
     var zIndex: Int             // 重なり順
+    var filterType: String      // フィルター種別（配置単位で管理）
+    var borderWidthType: String // 枠線の太さ（none/thin/medium/thick）
+    var borderColorHex: String  // 枠線の色（hex値）
 }
 ```
 

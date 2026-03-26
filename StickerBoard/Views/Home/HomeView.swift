@@ -461,9 +461,13 @@ private struct BoardStickerPreviewView: View {
                 var result: [UUID: UIImage] = [:]
                 for placement in placements {
                     if let thumbnail = ImageStorage.loadThumbnail(fileName: placement.imageFileName, size: thumbSize) {
-                        let image = placement.filter == .original
+                        var image = placement.filter == .original
                             ? thumbnail
                             : StickerFilterService.apply(placement.filter, to: thumbnail)
+                        if placement.hasBorder,
+                           let bordered = StickerBorderService.applyBorder(to: image, width: placement.borderWidth, colorHex: placement.borderColorHex) {
+                            image = bordered
+                        }
                         result[placement.id] = image
                     }
                 }
