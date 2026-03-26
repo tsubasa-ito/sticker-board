@@ -41,7 +41,7 @@ struct StickerBoardApp: App {
             MainTabView()
                 .fullScreenCover(isPresented: Binding(
                     get: { !hasCompletedOnboarding },
-                    set: { if !$0 { hasCompletedOnboarding = true } }
+                    set: { _ in }
                 )) {
                     OnboardingView {
                         hasCompletedOnboarding = true
