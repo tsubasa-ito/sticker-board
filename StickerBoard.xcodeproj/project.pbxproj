@@ -12,10 +12,12 @@
 		1A6D5B570ED5466E73AD8176 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32104833845A2ADD7C14A5F8 /* Board.swift */; };
 		1EA00AE13C24C07F0760CC5B /* StickerFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3FC7C093763688E6344217F /* StickerFilter.swift */; };
 		2879C41569C30BC9D3D460E5 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BF7C58976D7F4A010B330FC /* HomeView.swift */; };
+		29094CE9A81C80A82A9FE337 /* StickerBorderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABCD1438794D34A642F45B93 /* StickerBorderService.swift */; };
 		3C58A5E81DEC383139F9311A /* StickerFilterPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E07374D0724CABB84AC640D /* StickerFilterPickerView.swift */; };
 		3E7AC02052003DA43D669B47 /* MaskEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F51DD1916FC4B3337ADA86F /* MaskEditorView.swift */; };
 		416D0E1EC917ED9CBCFAACE4 /* BoardBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73436443E84517F0AAC3C265 /* BoardBackgroundView.swift */; };
 		4724B638CB65A0DBF4794EC7 /* BrushToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 701F95F5E765F73DE7181F78 /* BrushToolbar.swift */; };
+		4BE1A239F068F14C52B8E395 /* StickerBorderPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE0B8E6513901BD9D46F2FA /* StickerBorderPickerView.swift */; };
 		51EDBBD61C732A65999AA9E4 /* BoardEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB005F042AEE62F5E35C66E2 /* BoardEditorView.swift */; };
 		564A5D5F41AB5B43E4103611 /* StickerBoardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23D569B5232A2F3DB9F3B61 /* StickerBoardApp.swift */; };
 		567094296030D6D397CCFDA2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F870EE68E060BE5480814A21 /* Assets.xcassets */; };
@@ -26,6 +28,7 @@
 		9B6AE8CDABF573157738B32A /* Sticker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6B638736BE2DE98C1C08D4B /* Sticker.swift */; };
 		9F18F7BCD225FCCA7127FFEF /* ImageStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE93838BF2C08278A3401AE /* ImageStorage.swift */; };
 		A9E174752B496F13389C1181 /* StickerPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6364161BD5EB2AA06CF6AE7D /* StickerPreviewView.swift */; };
+		B361D0D57A3AB393E69DA39C /* StickerBorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E5D6F908EE947CC125BAC4 /* StickerBorder.swift */; };
 		B4AA40A530C03F83FF775E31 /* BackgroundPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC1436F39A4162AD412D53A /* BackgroundPattern.swift */; };
 		BDD4B606C0138C4D7142458D /* StickerItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF271962CA9EF750652A353 /* StickerItemView.swift */; };
 		CEE293526AD847B540BF5EC7 /* BoardListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C5DFE900836F1D943C5CFB /* BoardListView.swift */; };
@@ -40,6 +43,7 @@
 
 /* Begin PBXFileReference section */
 		0D6802D6762B69A0CA2A7336 /* MaskCompositor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaskCompositor.swift; sourceTree = "<group>"; };
+		19E5D6F908EE947CC125BAC4 /* StickerBorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerBorder.swift; sourceTree = "<group>"; };
 		1BF7C58976D7F4A010B330FC /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		1CE8160539FD33AFF7809C92 /* BackgroundPatternPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundPatternPickerView.swift; sourceTree = "<group>"; };
 		1D878D128C4599B9F13AD702 /* StickerCaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerCaptureView.swift; sourceTree = "<group>"; };
@@ -55,6 +59,7 @@
 		98F3C1F87DFC6BE33492062C /* StickerBoard.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = StickerBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F51DD1916FC4B3337ADA86F /* MaskEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaskEditorView.swift; sourceTree = "<group>"; };
 		A3FC7C093763688E6344217F /* StickerFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerFilter.swift; sourceTree = "<group>"; };
+		ABCD1438794D34A642F45B93 /* StickerBorderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerBorderService.swift; sourceTree = "<group>"; };
 		B8B41B23D775F8487A3B361B /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		C1211D3F280555E23A6562B3 /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
 		CBF271962CA9EF750652A353 /* StickerItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerItemView.swift; sourceTree = "<group>"; };
@@ -69,6 +74,7 @@
 		EB005F042AEE62F5E35C66E2 /* BoardEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEditorView.swift; sourceTree = "<group>"; };
 		F6B638736BE2DE98C1C08D4B /* Sticker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sticker.swift; sourceTree = "<group>"; };
 		F870EE68E060BE5480814A21 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		FFE0B8E6513901BD9D46F2FA /* StickerBorderPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerBorderPickerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -95,6 +101,7 @@
 				CEC1436F39A4162AD412D53A /* BackgroundPattern.swift */,
 				32104833845A2ADD7C14A5F8 /* Board.swift */,
 				F6B638736BE2DE98C1C08D4B /* Sticker.swift */,
+				19E5D6F908EE947CC125BAC4 /* StickerBorder.swift */,
 				A3FC7C093763688E6344217F /* StickerFilter.swift */,
 				D8F0053CD2C5B7ABC5FC4A01 /* StickerPlacement.swift */,
 			);
@@ -128,6 +135,7 @@
 				73436443E84517F0AAC3C265 /* BoardBackgroundView.swift */,
 				EB005F042AEE62F5E35C66E2 /* BoardEditorView.swift */,
 				37C5DFE900836F1D943C5CFB /* BoardListView.swift */,
+				FFE0B8E6513901BD9D46F2FA /* StickerBorderPickerView.swift */,
 				CBF271962CA9EF750652A353 /* StickerItemView.swift */,
 			);
 			path = Board;
@@ -148,6 +156,7 @@
 				C1211D3F280555E23A6562B3 /* ImageCacheManager.swift */,
 				DFE93838BF2C08278A3401AE /* ImageStorage.swift */,
 				0D6802D6762B69A0CA2A7336 /* MaskCompositor.swift */,
+				ABCD1438794D34A642F45B93 /* StickerBorderService.swift */,
 				D44F094F53D9CC5028477F0F /* StickerFilterService.swift */,
 			);
 			path = Services;
@@ -278,6 +287,9 @@
 				8834A7A836ECA4320FA81370 /* MultiStickerSelectionView.swift in Sources */,
 				9B6AE8CDABF573157738B32A /* Sticker.swift in Sources */,
 				564A5D5F41AB5B43E4103611 /* StickerBoardApp.swift in Sources */,
+				B361D0D57A3AB393E69DA39C /* StickerBorder.swift in Sources */,
+				4BE1A239F068F14C52B8E395 /* StickerBorderPickerView.swift in Sources */,
+				29094CE9A81C80A82A9FE337 /* StickerBorderService.swift in Sources */,
 				946C3EF198BC305C48293848 /* StickerCaptureView.swift in Sources */,
 				1EA00AE13C24C07F0760CC5B /* StickerFilter.swift in Sources */,
 				3C58A5E81DEC383139F9311A /* StickerFilterPickerView.swift in Sources */,

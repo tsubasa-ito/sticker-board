@@ -21,6 +21,7 @@ struct BoardEditorView: View {
     @State private var showingBackgroundPicker = false
     @State private var backgroundConfig: BackgroundPatternConfig = .default
     @State private var showingFilterPicker = false
+    @State private var showingBorderPicker = false
     @State private var loadedImages: [UUID: UIImage] = [:]
 
     var body: some View {
@@ -121,11 +122,23 @@ struct BoardEditorView: View {
                let index = placements.firstIndex(where: { $0.id == id }) {
                 PlacementFilterPickerSheet(placement: $placements[index]) {
                     if let placement = placements.first(where: { $0.id == id }) {
-                        updateFilterCache(for: placement)
+                        updateProcessedCache(for: placement)
                     }
                     saveBoard()
                 }
                 .presentationDetents([.medium])
+            }
+        }
+        .sheet(isPresented: $showingBorderPicker) {
+            if let id = selectedPlacementId,
+               let index = placements.firstIndex(where: { $0.id == id }) {
+                PlacementBorderPickerSheet(placement: $placements[index]) {
+                    if let placement = placements.first(where: { $0.id == id }) {
+                        updateProcessedCache(for: placement)
+                    }
+                    saveBoard()
+                }
+                .presentationDetents([.medium, .large])
             }
         }
         .alert(
@@ -366,125 +379,52 @@ struct BoardEditorView: View {
     // MARK: - フローティングツールバー
 
     private var floatingToolbar: some View {
-        HStack(spacing: 0) {
-            // 追加ボタン（タップ: クイックピック表示、長押し: 全シール一覧）
-            Button {
+        HStack(spacing: 10) {
+            // 追加
+            toolbarButton(icon: "plus.circle.fill", label: "追加", color: AppTheme.accent) {
                 withAnimation(.spring(duration: 0.3)) {
                     showQuickPicks.toggle()
                 }
-            } label: {
-                VStack(spacing: 4) {
-                    ZStack {
-                        Circle()
-                            .fill(AppTheme.accent.opacity(0.15))
-                            .frame(width: 44, height: 44)
-                        Image(systemName: "plus.circle.fill")
-                            .font(.system(size: 22))
-                            .foregroundStyle(AppTheme.accent)
-                    }
-                    Text("追加")
-                        .font(.system(size: 8, weight: .bold, design: .rounded))
-                        .textCase(.uppercase)
-                        .tracking(1.5)
-                        .foregroundStyle(AppTheme.textSecondary)
-                }
             }
 
-            Spacer()
-
-            // 背景パターンボタン
-            Button {
+            // 背景
+            toolbarButton(icon: "paintpalette.fill", label: "背景", color: AppTheme.secondary) {
                 showingBackgroundPicker = true
-            } label: {
-                VStack(spacing: 4) {
-                    ZStack {
-                        Circle()
-                            .fill(AppTheme.secondary.opacity(0.15))
-                            .frame(width: 44, height: 44)
-                        Image(systemName: "paintpalette.fill")
-                            .font(.system(size: 20))
-                            .foregroundStyle(AppTheme.secondary)
-                    }
-                    Text("背景")
-                        .font(.system(size: 8, weight: .bold, design: .rounded))
-                        .textCase(.uppercase)
-                        .tracking(1.5)
-                        .foregroundStyle(AppTheme.textSecondary)
-                }
             }
 
-            Spacer()
-
-            // フィルターボタン
-            Button {
-                showingFilterPicker = true
-            } label: {
-                VStack(spacing: 4) {
-                    ZStack {
-                        Circle()
-                            .fill(selectedPlacementId != nil ? AppTheme.cream.opacity(0.3) : Color.clear)
-                            .frame(width: 44, height: 44)
-                        Image(systemName: "wand.and.stars")
-                            .font(.system(size: 20))
-                            .foregroundStyle(selectedPlacementId != nil ? AppTheme.accent : AppTheme.textTertiary)
-                    }
-                    Text("効果")
-                        .font(.system(size: 8, weight: .bold, design: .rounded))
-                        .textCase(.uppercase)
-                        .tracking(1.5)
-                        .foregroundStyle(AppTheme.textSecondary)
+            // 効果・枠線グループ
+            toolbarGroup {
+                toolbarButton(icon: "wand.and.stars", label: "効果",
+                              color: selectedPlacementId != nil ? AppTheme.accent : AppTheme.textTertiary) {
+                    showingFilterPicker = true
                 }
-            }
-            .disabled(selectedPlacementId == nil)
+                .disabled(selectedPlacementId == nil)
 
-            Spacer()
+                toolbarButton(icon: "square.dashed", label: "枠線",
+                              color: selectedPlacementId != nil ? AppTheme.accent : AppTheme.textTertiary) {
+                    showingBorderPicker = true
+                }
+                .disabled(selectedPlacementId == nil)
+            }
 
             // レイヤー操作グループ
-            HStack(spacing: 16) {
-                Button {
+            toolbarGroup {
+                toolbarButton(icon: "square.2.layers.3d.top.filled", label: "前面",
+                              color: selectedPlacementId != nil ? AppTheme.textPrimary : AppTheme.textTertiary) {
                     applyToSelected { bringToFront($0) }
-                } label: {
-                    VStack(spacing: 4) {
-                        Image(systemName: "square.2.layers.3d.top.filled")
-                            .font(.system(size: 20))
-                            .foregroundStyle(selectedPlacementId != nil ? AppTheme.textPrimary : AppTheme.textTertiary)
-                        Text("前面へ")
-                            .font(.system(size: 8, weight: .bold, design: .rounded))
-                            .tracking(1)
-                            .foregroundStyle(AppTheme.textSecondary)
-                    }
                 }
                 .disabled(selectedPlacementId == nil)
 
-                Divider()
-                    .frame(height: 32)
-
-                Button {
+                toolbarButton(icon: "square.2.layers.3d.bottom.filled", label: "背面",
+                              color: selectedPlacementId != nil ? AppTheme.textPrimary : AppTheme.textTertiary) {
                     applyToSelected { sendToBack($0) }
-                } label: {
-                    VStack(spacing: 4) {
-                        Image(systemName: "square.2.layers.3d.bottom.filled")
-                            .font(.system(size: 20))
-                            .foregroundStyle(selectedPlacementId != nil ? AppTheme.textPrimary : AppTheme.textTertiary)
-                        Text("背面へ")
-                            .font(.system(size: 8, weight: .bold, design: .rounded))
-                            .tracking(1)
-                            .foregroundStyle(AppTheme.textSecondary)
-                    }
                 }
                 .disabled(selectedPlacementId == nil)
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 8)
-            .background(
-                RoundedRectangle(cornerRadius: 24)
-                    .fill(Color(hex: 0xF0F1EF).opacity(0.5))
-            )
 
-            Spacer()
-
-            // 削除ボタン
-            Button {
+            // 削除
+            toolbarButton(icon: "trash", label: "削除",
+                          color: selectedPlacementId != nil ? .red : AppTheme.textTertiary) {
                 if let id = selectedPlacementId,
                    let placement = placements.first(where: { $0.id == id }) {
                     withAnimation {
@@ -492,27 +432,12 @@ struct BoardEditorView: View {
                         selectedPlacementId = nil
                     }
                 }
-            } label: {
-                VStack(spacing: 4) {
-                    ZStack {
-                        Circle()
-                            .fill(selectedPlacementId != nil ? Color.red.opacity(0.1) : Color.clear)
-                            .frame(width: 44, height: 44)
-                        Image(systemName: "trash")
-                            .font(.system(size: 20))
-                            .foregroundStyle(selectedPlacementId != nil ? .red : AppTheme.textTertiary)
-                    }
-                    Text("削除")
-                        .font(.system(size: 8, weight: .bold, design: .rounded))
-                        .textCase(.uppercase)
-                        .tracking(1.5)
-                        .foregroundStyle(selectedPlacementId != nil ? .red : AppTheme.textSecondary)
-                }
             }
             .disabled(selectedPlacementId == nil)
         }
-        .padding(.horizontal, 28)
-        .frame(height: 72)
+        .padding(.horizontal, 12)
+        .frame(height: 64)
+        .frame(maxWidth: .infinity)
         .background(
             Capsule()
                 .fill(.ultraThinMaterial)
@@ -521,6 +446,35 @@ struct BoardEditorView: View {
                     Capsule()
                         .stroke(.white.opacity(0.2), lineWidth: 1)
                 )
+        )
+    }
+
+    private func toolbarButton(icon: String, label: String, color: Color, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: 3) {
+                Image(systemName: icon)
+                    .font(.system(size: 18))
+                    .foregroundStyle(color)
+                    .frame(height: 24)
+                Text(label)
+                    .font(.system(size: 9, weight: .semibold, design: .rounded))
+                    .foregroundStyle(AppTheme.textSecondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+            }
+            .frame(maxWidth: .infinity)
+        }
+    }
+
+    private func toolbarGroup<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        HStack(spacing: 4) {
+            content()
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 6)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(hex: 0xF0F1EF).opacity(0.5))
         )
     }
 
@@ -543,7 +497,12 @@ struct BoardEditorView: View {
         Task.detached {
             var result: [UUID: UIImage] = [:]
             for placement in currentPlacements {
-                if let image = cache.filtered(for: placement.imageFileName, filter: placement.filter) {
+                if let image = cache.processed(
+                    for: placement.imageFileName,
+                    filter: placement.filter,
+                    borderWidth: placement.borderWidth,
+                    borderColorHex: placement.borderColorHex
+                ) {
                     result[placement.id] = image
                 }
             }
@@ -553,17 +512,23 @@ struct BoardEditorView: View {
         }
     }
 
-    private func updateFilterCache(for placement: StickerPlacement) {
+    private func updateProcessedCache(for placement: StickerPlacement) {
         let cache = ImageCacheManager.shared
         let fileName = placement.imageFileName
         let filter = placement.filter
+        let borderWidth = placement.borderWidth
+        let borderColorHex = placement.borderColorHex
         let placementId = placement.id
         Task.detached {
-            guard let original = cache.fullResolution(for: fileName) else { return }
-            let filtered = StickerFilterService.apply(filter, to: original)
-            cache.setFiltered(filtered, for: fileName, filter: filter)
-            await MainActor.run {
-                loadedImages[placementId] = filtered
+            if let processed = cache.processed(
+                for: fileName,
+                filter: filter,
+                borderWidth: borderWidth,
+                borderColorHex: borderColorHex
+            ) {
+                await MainActor.run {
+                    loadedImages[placementId] = processed
+                }
             }
         }
     }
@@ -698,7 +663,7 @@ private struct BoardSnapshotView: View {
             BoardBackgroundView(config: backgroundConfig)
 
             ForEach(placements) { placement in
-                if let displayImage = ImageCacheManager.shared.filtered(for: placement.imageFileName, filter: placement.filter) {
+                if let displayImage = ImageCacheManager.shared.processed(for: placement.imageFileName, filter: placement.filter, borderWidth: placement.borderWidth, borderColorHex: placement.borderColorHex) {
                     Image(uiImage: displayImage)
                         .resizable()
                         .scaledToFit()
@@ -763,6 +728,64 @@ private struct PlacementFilterPickerSheet: View {
             }
             .onAppear {
                 selectedFilter = placement.filter
+                originalImage = ImageStorage.load(fileName: placement.imageFileName)
+            }
+        }
+    }
+}
+
+// MARK: - 枠線設定シート
+
+private struct PlacementBorderPickerSheet: View {
+    @Binding var placement: StickerPlacement
+    var onApply: () -> Void
+    @Environment(\.dismiss) private var dismiss
+    @State private var selectedWidth: StickerBorderWidth = .none
+    @State private var selectedColorHex: String = "FFFFFF"
+    @State private var originalImage: UIImage?
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                AppTheme.backgroundPrimary
+                    .ignoresSafeArea()
+
+                if originalImage != nil {
+                    ScrollView {
+                        StickerBorderPickerView(
+                            selectedWidth: $selectedWidth,
+                            selectedColorHex: $selectedColorHex,
+                            originalImage: originalImage
+                        )
+                        .padding(.horizontal, 16)
+                        .padding(.top, 8)
+                    }
+                } else {
+                    ProgressView()
+                }
+            }
+            .navigationTitle("枠線設定")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(AppTheme.backgroundPrimary, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("キャンセル") { dismiss() }
+                        .foregroundStyle(AppTheme.accent)
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("適用") {
+                        placement.borderWidth = selectedWidth
+                        placement.borderColorHex = selectedColorHex
+                        onApply()
+                        dismiss()
+                    }
+                    .foregroundStyle(AppTheme.accent)
+                    .fontWeight(.semibold)
+                }
+            }
+            .onAppear {
+                selectedWidth = placement.borderWidth
+                selectedColorHex = placement.borderColorHex
                 originalImage = ImageStorage.load(fileName: placement.imageFileName)
             }
         }

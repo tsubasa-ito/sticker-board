@@ -71,6 +71,29 @@ final class ImageCacheManager {
         return thumbnail
     }
 
+    // MARK: - 加工済みサムネイル（フィルター＋枠線）
+
+    func processedThumbnail(for fileName: String, size: CGFloat, filter: StickerFilter, borderWidth: StickerBorderWidth, borderColorHex: String) -> UIImage? {
+        // フィルターも枠線もなし → 通常サムネイル
+        if filter == .original && borderWidth == .none {
+            return thumbnail(for: fileName, size: size)
+        }
+
+        let key = processedThumbnailKey(fileName: fileName, size: size, filter: filter, borderWidth: borderWidth, borderColorHex: borderColorHex)
+        if let cached = thumbnailCache.object(forKey: key) {
+            return cached
+        }
+
+        guard let thumb = thumbnail(for: fileName, size: size) else { return nil }
+
+        var image = filter == .original ? thumb : StickerFilterService.apply(filter, to: thumb)
+        if borderWidth != .none, let bordered = StickerBorderService.applyBorder(to: image, width: borderWidth, colorHex: borderColorHex) {
+            image = bordered
+        }
+        thumbnailCache.setObject(image, forKey: key, cost: image.estimatedMemoryCost)
+        return image
+    }
+
     // MARK: - フィルター適用済み
 
     func filtered(for fileName: String, filter: StickerFilter) -> UIImage? {
@@ -87,6 +110,45 @@ final class ImageCacheManager {
 
     func setFiltered(_ image: UIImage, for fileName: String, filter: StickerFilter) {
         let key = filteredKey(fileName: fileName, filter: filter)
+        filteredCache.setObject(image, forKey: key, cost: image.estimatedMemoryCost)
+    }
+
+    // MARK: - フィルター＋枠線適用済み
+
+    func processed(for fileName: String, filter: StickerFilter, borderWidth: StickerBorderWidth, borderColorHex: String) -> UIImage? {
+        // フィルターも枠線もなし → フル解像度
+        if filter == .original && borderWidth == .none {
+            return fullResolution(for: fileName)
+        }
+        // 枠線なし → 既存のフィルターキャッシュを使用
+        if borderWidth == .none {
+            return filtered(for: fileName, filter: filter)
+        }
+
+        let key = processedKey(fileName: fileName, filter: filter, borderWidth: borderWidth, borderColorHex: borderColorHex)
+        if let cached = filteredCache.object(forKey: key) {
+            return cached
+        }
+
+        // ベース画像を取得（フィルター適用 or オリジナル）
+        let baseImage: UIImage?
+        if filter == .original {
+            baseImage = fullResolution(for: fileName)
+        } else {
+            baseImage = filtered(for: fileName, filter: filter)
+        }
+        guard let base = baseImage else { return nil }
+
+        // 枠線を適用
+        guard let result = StickerBorderService.applyBorder(to: base, width: borderWidth, colorHex: borderColorHex) else {
+            return base
+        }
+        filteredCache.setObject(result, forKey: key, cost: result.estimatedMemoryCost)
+        return result
+    }
+
+    func setProcessed(_ image: UIImage, for fileName: String, filter: StickerFilter, borderWidth: StickerBorderWidth, borderColorHex: String) {
+        let key = processedKey(fileName: fileName, filter: filter, borderWidth: borderWidth, borderColorHex: borderColorHex)
         filteredCache.setObject(image, forKey: key, cost: image.estimatedMemoryCost)
     }
 
@@ -115,6 +177,14 @@ final class ImageCacheManager {
 
     private func filteredKey(fileName: String, filter: StickerFilter) -> NSString {
         "\(fileName)_\(filter.rawValue)" as NSString
+    }
+
+    private func processedThumbnailKey(fileName: String, size: CGFloat, filter: StickerFilter, borderWidth: StickerBorderWidth, borderColorHex: String) -> NSString {
+        "\(fileName)_\(Int(size))_\(filter.rawValue)_\(borderWidth.rawValue)_\(borderColorHex)" as NSString
+    }
+
+    private func processedKey(fileName: String, filter: StickerFilter, borderWidth: StickerBorderWidth, borderColorHex: String) -> NSString {
+        "\(fileName)_\(filter.rawValue)_\(borderWidth.rawValue)_\(borderColorHex)" as NSString
     }
 }
 
