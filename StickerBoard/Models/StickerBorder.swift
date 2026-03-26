@@ -43,10 +43,16 @@ struct StickerBorderColor: Identifiable, Equatable {
         self.id = id
         self.displayName = displayName
         self.hex = hex
+
+        guard let hexValue = UInt(hex, radix: 16) else {
+            self.color = .black
+            return
+        }
+
         self.color = UIColor(
-            red: CGFloat((UInt(hex, radix: 16)! >> 16) & 0xFF) / 255.0,
-            green: CGFloat((UInt(hex, radix: 16)! >> 8) & 0xFF) / 255.0,
-            blue: CGFloat(UInt(hex, radix: 16)! & 0xFF) / 255.0,
+            red: CGFloat((hexValue >> 16) & 0xFF) / 255.0,
+            green: CGFloat((hexValue >> 8) & 0xFF) / 255.0,
+            blue: CGFloat(hexValue & 0xFF) / 255.0,
             alpha: 1.0
         )
     }
