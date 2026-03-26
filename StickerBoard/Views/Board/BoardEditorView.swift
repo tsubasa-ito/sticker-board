@@ -561,7 +561,6 @@ struct BoardEditorView: View {
     // MARK: - Z軸操作
 
     private func bringToFront(_ placement: StickerPlacement) {
-        guard placements.contains(where: { $0.id == placement.id }) else { return }
         // 対象を最前面にして全体を正規化（zIndex を 0 始まりに再割り振り）
         var sorted = placements.enumerated().sorted { $0.element.zIndex < $1.element.zIndex }
         // 対象を末尾（最前面）に移動
