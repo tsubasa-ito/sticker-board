@@ -305,31 +305,24 @@ struct StickerFilterService {
 
             // 密な横糸（サテンステッチ: 太い線を1.5px間隔で交互に明暗）
             let stitchSpacing: CGFloat = 1.5
-            var y: CGFloat = 0
-            var rowIndex = 0
-            while y < tileSize {
+            for (rowIndex, y) in stride(from: CGFloat(0), to: tileSize, by: stitchSpacing).enumerated() {
                 let brightness: CGFloat = (rowIndex % 2 == 0) ? 0.62 : 0.38
                 gc.setStrokeColor(UIColor(white: brightness, alpha: 1.0).cgColor)
                 gc.setLineWidth(1.2)
                 gc.move(to: CGPoint(x: 0, y: y))
                 gc.addLine(to: CGPoint(x: tileSize, y: y))
                 gc.strokePath()
-                y += stitchSpacing
-                rowIndex += 1
             }
 
             // 縦糸（横糸より控えめだが存在感あり、織り目の交差を表現）
-            var x: CGFloat = 0
-            var colIndex = 0
-            while x < tileSize {
+            let verticalStitchSpacing: CGFloat = 2.5
+            for (colIndex, x) in stride(from: CGFloat(0), to: tileSize, by: verticalStitchSpacing).enumerated() {
                 let brightness: CGFloat = (colIndex % 3 == 0) ? 0.35 : 0.55
                 gc.setStrokeColor(UIColor(white: brightness, alpha: 0.3).cgColor)
                 gc.setLineWidth(0.8)
                 gc.move(to: CGPoint(x: x, y: 0))
                 gc.addLine(to: CGPoint(x: x, y: tileSize))
                 gc.strokePath()
-                x += 2.5
-                colIndex += 1
             }
         }
         return CIImage(image: tileImage)
