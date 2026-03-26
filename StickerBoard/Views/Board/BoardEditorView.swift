@@ -31,7 +31,6 @@ struct BoardEditorView: View {
 
             // メインコンテンツ
             VStack(spacing: 0) {
-                editorTopBar
                 canvasArea
             }
 
@@ -98,13 +97,38 @@ struct BoardEditorView: View {
             if showHint && !placements.isEmpty {
                 VStack {
                     hintToast
-                        .padding(.top, 76)
+                        .padding(.top, 16)
                     Spacer()
                 }
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
-        .toolbar(.hidden, for: .navigationBar)
+        .navigationTitle(board.title)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(AppTheme.editorBackground, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(AppTheme.textPrimary)
+                }
+            }
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    saveBoardAsImage()
+                } label: {
+                    Image(systemName: "arrow.down.to.line")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(AppTheme.textSecondary)
+                }
+                .disabled(placements.isEmpty)
+                .opacity(placements.isEmpty ? 0.4 : 1)
+            }
+        }
         .sheet(isPresented: $showingStickerPicker) {
             StickerPickerSheet(stickers: allStickers) { sticker in
                 addStickerToBoard(sticker)
@@ -169,7 +193,7 @@ struct BoardEditorView: View {
 
     private var editorBackground: some View {
         ZStack {
-            Color(hex: 0xF0F1EF)
+            AppTheme.editorBackground
                 .ignoresSafeArea()
 
             Canvas { context, size in
@@ -191,71 +215,13 @@ struct BoardEditorView: View {
                                 width: dotSize,
                                 height: dotSize
                             )),
-                            with: .color(Color(hex: 0x2D2F2E).opacity(0.03))
+                            with: .color(AppTheme.editorDark.opacity(0.03))
                         )
                     }
                 }
             }
             .ignoresSafeArea()
         }
-    }
-
-    // MARK: - トップバー
-
-    private var editorTopBar: some View {
-        HStack {
-            // 左: 閉じるボタン + タイトル
-            HStack(spacing: 16) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundStyle(AppTheme.textPrimary)
-                        .frame(width: 40, height: 40)
-                        .background(Color(hex: 0xF0F1EF))
-                        .clipShape(Circle())
-                }
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(board.title)
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
-                        .foregroundStyle(AppTheme.accent)
-                        .lineLimit(1)
-
-                    Button {
-                        dismiss()
-                    } label: {
-                        HStack(spacing: 4) {
-                            Text("閉じる")
-                                .font(.system(size: 10, weight: .medium))
-                            Image(systemName: "xmark")
-                                .font(.system(size: 10))
-                        }
-                        .foregroundStyle(AppTheme.textSecondary)
-                    }
-                }
-            }
-
-            Spacer()
-
-            // 右: ダウンロード（画像として保存）
-            Button {
-                saveBoardAsImage()
-            } label: {
-                Image(systemName: "arrow.down.to.line")
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundStyle(AppTheme.textSecondary)
-                    .frame(width: 40, height: 40)
-                    .background(Color(hex: 0xF0F1EF))
-                    .clipShape(Circle())
-            }
-            .disabled(placements.isEmpty)
-            .opacity(placements.isEmpty ? 0.4 : 1)
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 12)
-        .background(Color(hex: 0xF6F6F4))
     }
 
     // MARK: - キャンバスエリア
@@ -335,7 +301,7 @@ struct BoardEditorView: View {
         .padding(.vertical, 10)
         .background(
             Capsule()
-                .fill(Color(hex: 0x2D2F2E).opacity(0.9))
+                .fill(AppTheme.editorDark.opacity(0.9))
         )
         .shadow(color: .black.opacity(0.15), radius: 8, y: 4)
     }
@@ -366,7 +332,7 @@ struct BoardEditorView: View {
                     }
                     .foregroundStyle(AppTheme.textSecondary)
                     .frame(width: 64, height: 64)
-                    .background(Color(hex: 0xF0F1EF))
+                    .background(AppTheme.editorBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
             }
@@ -474,7 +440,7 @@ struct BoardEditorView: View {
         .padding(.vertical, 6)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(hex: 0xF0F1EF).opacity(0.5))
+                .fill(AppTheme.editorBackground.opacity(0.5))
         )
     }
 
@@ -649,7 +615,7 @@ private struct QuickPickThumbnail: View {
                     .clipShape(RoundedRectangle(cornerRadius: 10))
             } else {
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(Color(hex: 0xF0F1EF))
+                    .fill(AppTheme.editorBackground)
                     .frame(width: 56, height: 56)
             }
         }
@@ -724,11 +690,9 @@ private struct PlacementFilterPickerSheet: View {
             }
             .navigationTitle("フィルター変更")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(AppTheme.backgroundPrimary, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("キャンセル") { dismiss() }
-                        .foregroundStyle(AppTheme.accent)
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("適用") {
@@ -736,7 +700,6 @@ private struct PlacementFilterPickerSheet: View {
                         onApply()
                         dismiss()
                     }
-                    .foregroundStyle(AppTheme.accent)
                     .fontWeight(.semibold)
                 }
             }
@@ -780,11 +743,9 @@ private struct PlacementBorderPickerSheet: View {
             }
             .navigationTitle("枠線設定")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(AppTheme.backgroundPrimary, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("キャンセル") { dismiss() }
-                        .foregroundStyle(AppTheme.accent)
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("適用") {
@@ -793,7 +754,6 @@ private struct PlacementBorderPickerSheet: View {
                         onApply()
                         dismiss()
                     }
-                    .foregroundStyle(AppTheme.accent)
                     .fontWeight(.semibold)
                 }
             }
@@ -855,11 +815,9 @@ struct StickerPickerSheet: View {
             }
             .navigationTitle("シールを選択")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(AppTheme.backgroundPrimary, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("閉じる") { dismiss() }
-                        .foregroundStyle(AppTheme.accent)
                 }
             }
         }

@@ -76,7 +76,7 @@ struct MainTabView: View {
             } label: {
                 ZStack {
                     Circle()
-                        .fill(AppTheme.headerGradient)
+                        .fill(AppTheme.accent)
                         .frame(width: 56, height: 56)
                         .shadow(color: AppTheme.accent.opacity(0.4), radius: 10, x: 0, y: 4)
 
@@ -123,7 +123,7 @@ struct MainTabView: View {
         ZStack {
             if isSelected {
                 Circle()
-                    .fill(AppTheme.headerGradient)
+                    .fill(AppTheme.accent)
                     .frame(width: 46, height: 46)
                     .transition(.scale.combined(with: .opacity))
             }

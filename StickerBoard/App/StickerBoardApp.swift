@@ -21,6 +21,18 @@ struct StickerBoardApp: App {
             let defaultBoard = Board(title: "はじめてのボード")
             context.insert(defaultBoard)
         }
+
+        // グローバルNavBar外観設定
+        let navBarAppearance = UINavigationBarAppearance()
+        navBarAppearance.configureWithDefaultBackground()
+        navBarAppearance.backgroundColor = UIColor(AppTheme.backgroundPrimary)
+        navBarAppearance.titleTextAttributes = [
+            .foregroundColor: UIColor(AppTheme.textPrimary)
+        ]
+        UINavigationBar.appearance().standardAppearance = navBarAppearance
+        UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
+        UINavigationBar.appearance().compactAppearance = navBarAppearance
+        UINavigationBar.appearance().tintColor = UIColor(AppTheme.accent)
     }
 
     var body: some Scene {

@@ -54,11 +54,9 @@ struct StickerCaptureView: View {
         }
         .navigationTitle("シール追加")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(AppTheme.backgroundPrimary, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("閉じる") { dismiss() }
-                    .foregroundStyle(AppTheme.accent)
             }
         }
         .onChange(of: selectedItem) { _, newItem in
@@ -150,7 +148,7 @@ struct StickerCaptureView: View {
                             sourceButton(
                                 icon: "camera.fill",
                                 title: "カメラで撮る",
-                                gradient: AppTheme.headerGradient
+                                color: AppTheme.accent
                             )
                         }
                     }
@@ -160,7 +158,7 @@ struct StickerCaptureView: View {
                         sourceButton(
                             icon: "photo.on.rectangle",
                             title: "写真から選ぶ",
-                            gradient: AppTheme.mintGradient
+                            color: AppTheme.secondary
                         )
                     }
                 }
@@ -186,7 +184,7 @@ struct StickerCaptureView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
-                        .background(AppTheme.headerGradient)
+                        .background(AppTheme.accent)
                         .foregroundStyle(.white)
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
@@ -196,11 +194,11 @@ struct StickerCaptureView: View {
         }
     }
 
-    private func sourceButton(icon: String, title: String, gradient: LinearGradient) -> some View {
+    private func sourceButton(icon: String, title: String, color: Color) -> some View {
         VStack(spacing: 12) {
             ZStack {
                 Circle()
-                    .fill(gradient)
+                    .fill(color)
                     .frame(width: 64, height: 64)
 
                 Image(systemName: icon)
@@ -217,7 +215,7 @@ struct StickerCaptureView: View {
         .padding(.vertical, 32)
         .background {
             RoundedRectangle(cornerRadius: 20)
-                .fill(AppTheme.cardGradient)
+                .fill(AppTheme.backgroundCard)
                 .overlay {
                     RoundedRectangle(cornerRadius: 20)
                         .strokeBorder(
@@ -296,7 +294,7 @@ struct StickerCaptureView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
-                .background(AppTheme.mintGradient)
+                .background(AppTheme.accent)
                 .foregroundStyle(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 14))
             }

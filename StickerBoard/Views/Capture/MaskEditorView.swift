@@ -23,19 +23,35 @@ struct MaskEditorView: View {
     }
 
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
+        NavigationStack {
+            ZStack {
+                Color.black.ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                topBar
-                canvas
-                    .padding(.vertical, 8)
-                bottomToolbar
-                    .padding(.bottom, 8)
+                VStack(spacing: 0) {
+                    canvas
+                        .padding(.vertical, 8)
+                    bottomToolbar
+                        .padding(.bottom, 8)
+                }
+
+                if isProcessing {
+                    processingOverlay
+                }
             }
-
-            if isProcessing {
-                processingOverlay
+            .navigationTitle("マスク調整")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.black, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("キャンセル") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("完了") { applyAndDismiss() }
+                        .fontWeight(.semibold)
+                        .foregroundStyle(AppTheme.softOrange)
+                }
             }
         }
         .onAppear {
@@ -44,33 +60,6 @@ struct MaskEditorView: View {
             currentMask = initialMask
             undoStack = []
         }
-    }
-
-    // MARK: - トップバー
-
-    private var topBar: some View {
-        HStack {
-            Button("キャンセル") {
-                dismiss()
-            }
-            .foregroundStyle(.white)
-
-            Spacer()
-
-            Text("マスク調整")
-                .font(.system(size: 17, weight: .semibold, design: .rounded))
-                .foregroundStyle(.white)
-
-            Spacer()
-
-            Button("完了") {
-                applyAndDismiss()
-            }
-            .font(.system(size: 17, weight: .semibold))
-            .foregroundStyle(AppTheme.mint)
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 12)
     }
 
     // MARK: - キャンバス

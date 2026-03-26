@@ -27,11 +27,9 @@ struct BackgroundPatternPickerView: View {
             }
             .navigationTitle("背景パターン")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(AppTheme.backgroundPrimary, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("完了") { dismiss() }
-                        .foregroundStyle(AppTheme.accent)
                         .fontWeight(.bold)
                 }
             }

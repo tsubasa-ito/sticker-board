@@ -76,7 +76,7 @@ struct StickerBorderPickerView: View {
                         .padding(.vertical, 10)
                         .background(
                             RoundedRectangle(cornerRadius: 12)
-                                .fill(isSelected ? AppTheme.accent.opacity(0.12) : Color(hex: 0xF0F1EF))
+                                .fill(isSelected ? AppTheme.accent.opacity(0.12) : AppTheme.editorBackground)
                         )
                         .overlay {
                             RoundedRectangle(cornerRadius: 12)

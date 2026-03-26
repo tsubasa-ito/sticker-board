@@ -50,3 +50,7 @@ open StickerBoard.xcodeproj
 - StickerBorderService は CIMorphologyMaximum でアルファマスクを膨張させて輪郭に沿った枠線を描画。フィルター適用後の画像に枠線を重ねる（描画順序: フィルター → 枠線）
 - ImageCacheManager の processed() メソッドがフィルター＋枠線の統合キャッシュを管理。キーは「fileName_filterType_borderWidth_borderColorHex」形式
 - StickerBoardApp.init() で初回起動時（ボード0件）にデフォルトボード「はじめてのボード」を自動作成する
+- StickerBoardApp.init() でグローバル UINavigationBar.appearance() を設定（背景色・テキスト色・tintColor）。各画面で個別に toolbarBackground を指定しない
+- カラーパレットはネイビー(`#2A2D5B`) × オレンジ(`#E87A2E`) × クリーム(`#FAF0DE`)。全色 AppTheme に集約し、Color(hex:) の直指定は禁止
+- グラデーション（LinearGradient）は使用しない。すべてフラットカラーで統一
+- 全画面で iOS 標準ナビゲーションバー（.navigationTitle + .inline）を使用。カスタムトップバーは使わない（BoardEditorView / MaskEditorView 含む）

@@ -20,7 +20,7 @@ struct BrushToolbar: View {
             // ブラシサイズ
             HStack(spacing: 8) {
                 Circle()
-                    .fill(brushMode == .eraser ? Color.red.opacity(0.6) : AppTheme.mint)
+                    .fill(brushMode == .eraser ? Color.red.opacity(0.6) : AppTheme.softOrange)
                     .frame(width: max(brushSize * 0.4, 6), height: max(brushSize * 0.4, 6))
 
                 Slider(value: $brushSize, in: 5...80)
@@ -63,7 +63,7 @@ struct BrushToolbar: View {
                     RoundedRectangle(cornerRadius: 10)
                         .fill(mode == .eraser
                               ? Color.red.opacity(0.7)
-                              : AppTheme.mint)
+                              : AppTheme.softOrange)
                 }
             }
         }

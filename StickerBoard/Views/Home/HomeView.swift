@@ -24,8 +24,6 @@ struct HomeView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                topBar
-
                 if boards.isEmpty {
                     emptyState
                         .frame(maxHeight: .infinity)
@@ -41,7 +39,15 @@ struct HomeView: View {
                 }
             }
         }
-        .toolbar(.hidden, for: .navigationBar)
+        .navigationTitle("シールボード")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("シールボード")
+                    .font(.system(size: 20, weight: .heavy, design: .rounded))
+                    .foregroundStyle(AppTheme.accent)
+            }
+        }
         .navigationDestination(item: $selectedBoard) { board in
             BoardEditorView(board: board)
                 .onAppear { hideTabBar = true }
@@ -69,20 +75,6 @@ struct HomeView: View {
                 animateIn = true
             }
         }
-    }
-
-    // MARK: - トップバー
-
-    private var topBar: some View {
-        HStack {
-            Text("シールボード")
-                .font(.system(size: 22, weight: .heavy, design: .rounded))
-                .foregroundStyle(AppTheme.headerGradient)
-
-            Spacer()
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 10)
     }
 
     // MARK: - ボードカルーセル
@@ -221,7 +213,7 @@ struct HomeView: View {
                 VStack(spacing: 20) {
                     ZStack {
                         Circle()
-                            .fill(AppTheme.headerGradient)
+                            .fill(AppTheme.accent)
                             .frame(width: 64, height: 64)
                             .shadow(
                                 color: AppTheme.accent.opacity(0.3),
@@ -299,7 +291,7 @@ struct HomeView: View {
 
                 Image(systemName: "sparkles")
                     .font(.system(size: 44))
-                    .foregroundStyle(AppTheme.headerGradient)
+                    .foregroundStyle(AppTheme.accent)
             }
 
             VStack(spacing: 6) {
@@ -318,7 +310,7 @@ struct HomeView: View {
             } label: {
                 ZStack {
                     Circle()
-                        .fill(AppTheme.headerGradient)
+                        .fill(AppTheme.accent)
                         .frame(width: 64, height: 64)
                         .shadow(
                             color: AppTheme.accent.opacity(0.3),

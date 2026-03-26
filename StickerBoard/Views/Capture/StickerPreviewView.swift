@@ -9,7 +9,7 @@ struct StickerPreviewView: View {
             // ラベル
             HStack(spacing: 6) {
                 Image(systemName: "checkmark.seal.fill")
-                    .foregroundStyle(AppTheme.mint)
+                    .foregroundStyle(AppTheme.softOrange)
                 Text("切り抜き完了")
                     .font(.system(size: 14, weight: .semibold, design: .rounded))
                     .foregroundStyle(AppTheme.textPrimary)
@@ -62,7 +62,7 @@ struct CheckerboardBackground: View {
                     )
                     context.fill(
                         Path(rect),
-                        with: .color(isLight ? Color(hex: 0xFFFEFC) : Color(hex: 0xF0ECE6))
+                        with: .color(isLight ? AppTheme.checkerLight : AppTheme.checkerDark)
                     )
                 }
             }
