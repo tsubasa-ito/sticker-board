@@ -457,17 +457,17 @@ private struct BoardStickerPreviewView: View {
         }
         .task {
             let thumbSize = previewThumbnailSize
+            let cache = ImageCacheManager.shared
             let loaded = await Task.detached {
                 var result: [UUID: UIImage] = [:]
                 for placement in placements {
-                    if let thumbnail = ImageStorage.loadThumbnail(fileName: placement.imageFileName, size: thumbSize) {
-                        var image = placement.filter == .original
-                            ? thumbnail
-                            : StickerFilterService.apply(placement.filter, to: thumbnail)
-                        if placement.hasBorder,
-                           let bordered = StickerBorderService.applyBorder(to: image, width: placement.borderWidth, colorHex: placement.borderColorHex) {
-                            image = bordered
-                        }
+                    if let image = cache.processedThumbnail(
+                        for: placement.imageFileName,
+                        size: thumbSize,
+                        filter: placement.filter,
+                        borderWidth: placement.borderWidth,
+                        borderColorHex: placement.borderColorHex
+                    ) {
                         result[placement.id] = image
                     }
                 }
