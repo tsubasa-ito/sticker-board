@@ -23,30 +23,23 @@ struct HomeView: View {
             AppTheme.backgroundPrimary
                 .ignoresSafeArea()
 
-            ScrollView(.vertical) {
-                VStack(spacing: 0) {
-                    // トップバーのスペーサー
-                    Color.clear.frame(height: 64)
+            VStack(spacing: 0) {
+                topBar
 
-                    heroSection
+                if boards.isEmpty {
+                    emptyState
+                        .frame(maxHeight: .infinity)
+                } else {
+                    Spacer(minLength: 8)
 
-                    if boards.isEmpty {
-                        emptyState
-                    } else {
-                        boardCarousel
-                            .padding(.top, 8)
+                    boardCarousel
 
-                        pageIndicators
-                            .padding(.top, 20)
-                    }
+                    pageIndicators
+                        .padding(.top, 16)
 
-                    Spacer(minLength: 120)
+                    Spacer(minLength: 100)
                 }
             }
-            .scrollIndicators(.hidden)
-        }
-        .overlay(alignment: .top) {
-            topBar
         }
         .toolbar(.hidden, for: .navigationBar)
         .navigationDestination(item: $selectedBoard) { board in
@@ -83,56 +76,20 @@ struct HomeView: View {
     private var topBar: some View {
         HStack {
             Text("シールボード")
-                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .font(.system(size: 22, weight: .heavy, design: .rounded))
                 .foregroundStyle(AppTheme.headerGradient)
 
             Spacer()
-
-            Button {
-                showingNewBoard = true
-            } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 13, weight: .bold))
-                    Text("新しく作る")
-                        .font(.system(size: 13, weight: .bold, design: .rounded))
-                }
-                .foregroundStyle(AppTheme.accent)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 8)
-                .background(AppTheme.accent.opacity(0.12))
-                .clipShape(Capsule())
-            }
         }
-        .padding(.horizontal, 24)
-        .padding(.vertical, 12)
-        .background(.ultraThinMaterial)
-    }
-
-    // MARK: - ヒーローセクション
-
-    private var heroSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("マイコレクション")
-                .font(.system(size: 34, weight: .heavy, design: .rounded))
-                .foregroundStyle(AppTheme.textPrimary)
-
-            Text("お気に入りのシールを撮影して、自分だけのボードを作ろう")
-                .font(.system(size: 15, design: .rounded))
-                .foregroundStyle(AppTheme.textSecondary)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 24)
-        .padding(.bottom, 24)
-        .opacity(animateIn ? 1 : 0)
-        .offset(y: animateIn ? 0 : 20)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 10)
     }
 
     // MARK: - ボードカルーセル
 
     private var boardCarousel: some View {
         ScrollView(.horizontal) {
-            LazyHStack(spacing: 16) {
+            LazyHStack(spacing: 12) {
                 ForEach(boards) { board in
                     boardCard(board)
                         .contentShape(Rectangle())
@@ -151,7 +108,7 @@ struct HomeView: View {
         .scrollTargetBehavior(.viewAligned)
         .scrollIndicators(.hidden)
         .scrollPosition(id: $scrolledID)
-        .contentMargins(.horizontal, 32)
+        .contentMargins(.horizontal, 20)
         .opacity(animateIn ? 1 : 0)
         .offset(y: animateIn ? 0 : 30)
     }
@@ -164,93 +121,76 @@ struct HomeView: View {
             ZStack {
                 // ボード背景パターン
                 BoardBackgroundView(config: board.backgroundPattern)
-                    .clipShape(RoundedRectangle(cornerRadius: 24))
 
                 // シールプレビュー
                 if board.placements.isEmpty {
-                    VStack(spacing: 12) {
-                        Image(systemName: "rectangle.on.rectangle.angled")
-                            .font(.system(size: 48))
-                            .foregroundStyle(AppTheme.textTertiary.opacity(0.4))
-                        Text("シールを配置しよう")
-                            .font(.system(size: 14, weight: .medium, design: .rounded))
-                            .foregroundStyle(AppTheme.textTertiary)
-                    }
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 40))
+                        .foregroundStyle(AppTheme.textTertiary.opacity(0.3))
                 } else {
                     boardStickerPreview(board.placements)
                 }
 
-                // ボトムグラデーション
+                // ボトムグラデーション + タイトルオーバーレイ
                 VStack {
                     Spacer()
                     LinearGradient(
-                        colors: [.clear, .black.opacity(0.15)],
+                        colors: [.clear, .black.opacity(0.45)],
                         startPoint: .top,
                         endPoint: .bottom
                     )
-                    .frame(height: 80)
-                }
-                .clipShape(RoundedRectangle(cornerRadius: 24))
-            }
-            .aspectRatio(4.0 / 5.0, contentMode: .fit)
-            .clipShape(RoundedRectangle(cornerRadius: 24))
+                    .frame(height: 120)
+                    .overlay(alignment: .bottomLeading) {
+                        HStack(alignment: .bottom) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(board.title)
+                                    .font(.system(size: 24, weight: .heavy, design: .rounded))
+                                    .foregroundStyle(.white)
+                                    .lineLimit(1)
+                                    .shadow(color: .black.opacity(0.3), radius: 4, y: 2)
 
-            // 情報セクション
-            HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(board.title)
-                        .font(.system(size: 22, weight: .heavy, design: .rounded))
-                        .foregroundStyle(AppTheme.textPrimary)
-                        .lineLimit(1)
+                                Text("\(board.placements.count)枚")
+                                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                                    .foregroundStyle(.white.opacity(0.8))
+                            }
 
-                    HStack(spacing: 8) {
-                        Text("\(board.placements.count)枚のシール")
-                            .font(.system(size: 12, weight: .semibold, design: .rounded))
-                            .foregroundStyle(AppTheme.accent)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 4)
-                            .background(AppTheme.accent.opacity(0.12))
-                            .clipShape(Capsule())
+                            Spacer()
 
-                        Text(board.updatedAt.formatted(.relative(presentation: .named)))
-                            .font(.system(size: 12, design: .rounded))
-                            .foregroundStyle(AppTheme.textTertiary)
+                            Menu {
+                                Button {
+                                    boardToRename = board
+                                    renameBoardTitle = board.title
+                                    showingRenameBoard = true
+                                } label: {
+                                    Label("名前を変更", systemImage: "pencil")
+                                }
+
+                                Divider()
+
+                                Button(role: .destructive) {
+                                    modelContext.delete(board)
+                                } label: {
+                                    Label("削除", systemImage: "trash")
+                                }
+                            } label: {
+                                Image(systemName: "ellipsis")
+                                    .font(.system(size: 14, weight: .bold))
+                                    .foregroundStyle(.white.opacity(0.9))
+                                    .padding(10)
+                                    .background(.ultraThinMaterial.opacity(0.6))
+                                    .clipShape(Circle())
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 14)
                     }
-                }
-
-                Spacer()
-
-                Menu {
-                    Button {
-                        boardToRename = board
-                        renameBoardTitle = board.title
-                        showingRenameBoard = true
-                    } label: {
-                        Label("名前を変更", systemImage: "pencil")
-                    }
-
-                    Divider()
-
-                    Button(role: .destructive) {
-                        modelContext.delete(board)
-                    } label: {
-                        Label("削除", systemImage: "trash")
-                    }
-                } label: {
-                    Image(systemName: "ellipsis")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundStyle(AppTheme.textTertiary)
-                        .padding(10)
-                        .background(AppTheme.backgroundPrimary.opacity(0.8))
-                        .clipShape(Circle())
                 }
             }
-            .padding(20)
+            .aspectRatio(3.0 / 4.0, contentMode: .fit)
+            .clipShape(RoundedRectangle(cornerRadius: 28))
         }
-        .background(AppTheme.backgroundCard)
-        .clipShape(RoundedRectangle(cornerRadius: 32))
-        .shadow(color: .black.opacity(0.1), radius: 20, x: 0, y: 10)
-        .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 4)
+        .shadow(color: .black.opacity(0.12), radius: 24, x: 0, y: 12)
+        .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 4)
         .containerRelativeFrame(.horizontal)
     }
 
@@ -267,49 +207,46 @@ struct HomeView: View {
         Button {
             showingNewBoard = true
         } label: {
-            VStack(spacing: 0) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 24)
-                        .strokeBorder(
-                            AppTheme.accent.opacity(0.25),
-                            style: StrokeStyle(lineWidth: 3, dash: [10, 8])
-                        )
-                        .background(
-                            RoundedRectangle(cornerRadius: 24)
-                                .fill(AppTheme.backgroundCard.opacity(0.6))
-                        )
+            ZStack {
+                RoundedRectangle(cornerRadius: 28)
+                    .strokeBorder(
+                        AppTheme.accent.opacity(0.25),
+                        style: StrokeStyle(lineWidth: 2.5, dash: [12, 8])
+                    )
+                    .background(
+                        RoundedRectangle(cornerRadius: 28)
+                            .fill(AppTheme.backgroundCard.opacity(0.5))
+                    )
 
-                    VStack(spacing: 20) {
-                        ZStack {
-                            Circle()
-                                .fill(AppTheme.headerGradient)
-                                .frame(width: 72, height: 72)
-                                .shadow(
-                                    color: AppTheme.accent.opacity(0.3),
-                                    radius: 12, x: 0, y: 6
-                                )
+                VStack(spacing: 20) {
+                    ZStack {
+                        Circle()
+                            .fill(AppTheme.headerGradient)
+                            .frame(width: 64, height: 64)
+                            .shadow(
+                                color: AppTheme.accent.opacity(0.3),
+                                radius: 12, x: 0, y: 6
+                            )
 
-                            Image(systemName: "plus")
-                                .font(.system(size: 30, weight: .bold))
-                                .foregroundStyle(.white)
-                        }
+                        Image(systemName: "plus")
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundStyle(.white)
+                    }
 
-                        VStack(spacing: 6) {
-                            Text("新しくボードを作る")
-                                .font(.system(size: 22, weight: .heavy, design: .rounded))
-                                .foregroundStyle(AppTheme.accent)
+                    VStack(spacing: 6) {
+                        Text("新しいボードを作る")
+                            .font(.system(size: 18, weight: .bold, design: .rounded))
+                            .foregroundStyle(AppTheme.textPrimary)
 
-                            Text("新しい思い出をスクラップしよう")
-                                .font(.system(size: 14, design: .rounded))
-                                .foregroundStyle(AppTheme.textSecondary)
-                        }
+                        Text("シールを撮影して\n自分だけのボードを作ろう")
+                            .font(.system(size: 13, design: .rounded))
+                            .foregroundStyle(AppTheme.textSecondary)
+                            .multilineTextAlignment(.center)
                     }
                 }
-                .aspectRatio(4.0 / 5.0, contentMode: .fit)
-
-                // 情報セクションと同じ高さのスペーサー
-                Color.clear.frame(height: 84)
+                .padding(.horizontal, 24)
             }
+            .aspectRatio(3.0 / 4.0, contentMode: .fit)
         }
         .buttonStyle(.plain)
         .containerRelativeFrame(.horizontal)
@@ -350,26 +287,28 @@ struct HomeView: View {
     // MARK: - 空の状態
 
     private var emptyState: some View {
-        VStack(spacing: 24) {
-            Spacer().frame(height: 48)
-
+        VStack(spacing: 28) {
             ZStack {
                 Circle()
-                    .fill(AppTheme.accent.opacity(0.08))
-                    .frame(width: 120, height: 120)
+                    .fill(AppTheme.accent.opacity(0.06))
+                    .frame(width: 140, height: 140)
 
-                Image(systemName: "rectangle.on.rectangle.angled")
-                    .font(.system(size: 48))
-                    .foregroundStyle(AppTheme.accent.opacity(0.5))
+                Circle()
+                    .fill(AppTheme.accent.opacity(0.1))
+                    .frame(width: 100, height: 100)
+
+                Image(systemName: "sparkles")
+                    .font(.system(size: 44))
+                    .foregroundStyle(AppTheme.headerGradient)
             }
 
-            VStack(spacing: 8) {
-                Text("ボードがまだありません")
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
+            VStack(spacing: 6) {
+                Text("新しいボードを作る")
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
                     .foregroundStyle(AppTheme.textPrimary)
 
-                Text("ボードを作ってシールを\n自由に配置しましょう")
-                    .font(.system(size: 15, design: .rounded))
+                Text("シールを撮影して\n自分だけのボードを作ろう")
+                    .font(.system(size: 13, design: .rounded))
                     .foregroundStyle(AppTheme.textSecondary)
                     .multilineTextAlignment(.center)
             }
@@ -377,18 +316,19 @@ struct HomeView: View {
             Button {
                 showingNewBoard = true
             } label: {
-                HStack(spacing: 8) {
+                ZStack {
+                    Circle()
+                        .fill(AppTheme.headerGradient)
+                        .frame(width: 64, height: 64)
+                        .shadow(
+                            color: AppTheme.accent.opacity(0.3),
+                            radius: 12, x: 0, y: 6
+                        )
+
                     Image(systemName: "plus")
-                        .font(.system(size: 16, weight: .bold))
-                    Text("ボードを作る")
-                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .font(.system(size: 28, weight: .bold))
+                        .foregroundStyle(.white)
                 }
-                .foregroundStyle(.white)
-                .padding(.horizontal, 28)
-                .padding(.vertical, 14)
-                .background(AppTheme.headerGradient)
-                .clipShape(Capsule())
-                .shadow(color: AppTheme.accent.opacity(0.3), radius: 8, x: 0, y: 4)
             }
         }
         .opacity(animateIn ? 1 : 0)
