@@ -6,7 +6,12 @@ struct StickerBoardApp: App {
     let container: ModelContainer
 
     init() {
-        let container = try! ModelContainer(for: Sticker.self, Board.self)
+        let container: ModelContainer
+        do {
+            container = try ModelContainer(for: Sticker.self, Board.self)
+        } catch {
+            fatalError("Could not create ModelContainer: \(error)")
+        }
         self.container = container
 
         // 初回起動時にデフォルトボードを作成
