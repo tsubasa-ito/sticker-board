@@ -167,7 +167,7 @@ struct MultiStickerSelectionView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
-                .background(selectedIndices.isEmpty ? AnyShapeStyle(Color.gray.opacity(0.3)) : AnyShapeStyle(AppTheme.mintGradient))
+                .background(selectedIndices.isEmpty ? AnyShapeStyle(Color.gray.opacity(0.3)) : AnyShapeStyle(AppTheme.accent))
                 .foregroundStyle(selectedIndices.isEmpty ? AppTheme.textTertiary : .white)
                 .clipShape(RoundedRectangle(cornerRadius: 14))
             }

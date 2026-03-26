@@ -23,7 +23,6 @@ struct BoardListView: View {
         }
         .navigationTitle("ボード")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(AppTheme.backgroundPrimary, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
@@ -31,7 +30,7 @@ struct BoardListView: View {
                 } label: {
                     ZStack {
                         Circle()
-                            .fill(AppTheme.headerGradient)
+                            .fill(AppTheme.accent)
                             .frame(width: 32, height: 32)
 
                         Image(systemName: "plus")
@@ -125,7 +124,7 @@ struct BoardCard: View {
                     .frame(width: 56, height: 56)
                     .overlay {
                         RoundedRectangle(cornerRadius: 12)
-                            .strokeBorder(Color(hex: 0xE5DDD0), lineWidth: 1)
+                            .strokeBorder(AppTheme.borderSubtle, lineWidth: 1)
                     }
 
                 Image(systemName: "rectangle.on.rectangle.angled")

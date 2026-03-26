@@ -62,7 +62,7 @@ struct CheckerboardBackground: View {
                     )
                     context.fill(
                         Path(rect),
-                        with: .color(isLight ? Color(hex: 0xFFFEFC) : Color(hex: 0xF0ECE6))
+                        with: .color(isLight ? AppTheme.checkerLight : AppTheme.checkerDark)
                     )
                 }
             }

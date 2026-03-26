@@ -41,7 +41,6 @@ struct StickerLibraryView: View {
         }
         .navigationTitle("ライブラリ")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(AppTheme.backgroundPrimary, for: .navigationBar)
         .alert("シールを削除", isPresented: Binding(
             get: { deleteInfo != nil },
             set: { if !$0 { deleteInfo = nil } }

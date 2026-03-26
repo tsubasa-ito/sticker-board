@@ -1,18 +1,18 @@
 import SwiftUI
 
 // MARK: - シールボード カラーテーマ
-// 90年代シール手帳のノスタルジー × モダンUIの融合
+// ネイビー × オレンジ — おしゃれな文房具屋さんの世界観
 
 enum AppTheme {
 
     // MARK: - メインカラー
 
-    /// やわらかいコーラルピンク（アクセント）
-    static let accent = Color(hex: 0xF2A7B0)
-    /// ラベンダー（セカンダリ）
-    static let secondary = Color(hex: 0xC5B4E3)
-    /// ミントグリーン（サクセス・ポジティブ）
-    static let mint = Color(hex: 0xA8E6CF)
+    /// ビビッドオレンジ（アクセント）
+    static let accent = Color(hex: 0xE87A2E)
+    /// ディープネイビー（セカンダリ）
+    static let secondary = Color(hex: 0x2A2D5B)
+    /// ソフトオレンジ（サクセス・ポジティブ）
+    static let mint = Color(hex: 0xF0A870)
     /// クリームイエロー（ハイライト）
     static let cream = Color(hex: 0xFFF5C3)
     /// ベビーブルー（情報・補助）
@@ -20,38 +20,36 @@ enum AppTheme {
 
     // MARK: - 背景
 
-    /// メイン背景（温かみのあるオフホワイト）
-    static let backgroundPrimary = Color(hex: 0xFFF8F0)
+    /// メイン背景（温かみのあるクリーム）
+    static let backgroundPrimary = Color(hex: 0xFAF0DE)
     /// カード背景
-    static let backgroundCard = Color(hex: 0xFFFEFC)
+    static let backgroundCard = Color(hex: 0xFFFEF8)
     /// ボードのキャンバス背景（クラフト紙風）
     static let backgroundCanvas = Color(hex: 0xF5EDE0)
+    /// エディタ背景（薄いクリーム）
+    static let editorBackground = Color(hex: 0xF2EDE4)
+    /// ヒントトースト背景（ネイビー）
+    static let editorDark = Color(hex: 0x2A2D5B)
+
+    // MARK: - ボーダー・セパレータ
+
+    /// 薄いボーダー
+    static let borderSubtle = Color(hex: 0xE5DDD0)
+
+    // MARK: - チェッカーボード
+
+    static let checkerLight = Color(hex: 0xFFFEFC)
+    static let checkerDark = Color(hex: 0xF0ECE6)
 
     // MARK: - テキスト
 
-    static let textPrimary = Color(hex: 0x3D3236)
-    static let textSecondary = Color(hex: 0x8E7E85)
-    static let textTertiary = Color(hex: 0xBEB2B7)
+    /// ネイビー系プライマリテキスト
+    static let textPrimary = Color(hex: 0x2A2D5B)
+    /// ミディアムネイビー
+    static let textSecondary = Color(hex: 0x6B6D8E)
+    /// ライトネイビー
+    static let textTertiary = Color(hex: 0xA0A2B8)
 
-    // MARK: - グラデーション
-
-    static let headerGradient = LinearGradient(
-        colors: [Color(hex: 0xF2A7B0), Color(hex: 0xC5B4E3)],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
-
-    static let cardGradient = LinearGradient(
-        colors: [Color(hex: 0xFFF8F0), Color(hex: 0xFFF0F5)],
-        startPoint: .top,
-        endPoint: .bottom
-    )
-
-    static let mintGradient = LinearGradient(
-        colors: [Color(hex: 0xA8E6CF), Color(hex: 0xB5D8F7)],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
 }
 
 // MARK: - Hex Color Extension
