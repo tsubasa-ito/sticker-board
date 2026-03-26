@@ -4,6 +4,7 @@ import SwiftData
 struct StickerLibraryView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Sticker.createdAt, order: .reverse) private var stickers: [Sticker]
+    @Query private var boards: [Board]
     @State private var stickerToDelete: Sticker?
     @State private var previewSticker: Sticker?
     @Namespace private var previewNamespace
@@ -52,7 +53,14 @@ struct StickerLibraryView: View {
             }
             Button("キャンセル", role: .cancel) {}
         } message: {
-            Text("このシールをコレクションから削除しますか？")
+            if let sticker = stickerToDelete {
+                let usedBoardCount = boardsUsing(sticker).count
+                if usedBoardCount > 0 {
+                    Text("このシールは\(usedBoardCount)個のボードで使用されています。削除するとボードからも取り除かれます。")
+                } else {
+                    Text("このシールをコレクションから削除しますか？")
+                }
+            }
         }
     }
 
@@ -127,7 +135,17 @@ struct StickerLibraryView: View {
         }
     }
 
+    private func boardsUsing(_ sticker: Sticker) -> [Board] {
+        boards.filter { board in
+            board.placements.contains { $0.stickerId == sticker.id }
+        }
+    }
+
     private func deleteSticker(_ sticker: Sticker) {
+        for board in boardsUsing(sticker) {
+            board.placements = board.placements.filter { $0.stickerId != sticker.id }
+            board.updatedAt = Date()
+        }
         ImageStorage.delete(fileName: sticker.imageFileName)
         modelContext.delete(sticker)
         stickerToDelete = nil
