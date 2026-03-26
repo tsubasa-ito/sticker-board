@@ -23,6 +23,7 @@
 - **ボード画像保存** — 完成したボードを一枚の画像として写真ライブラリに保存（背景パターン込み）
 - **初回オンボーディング** — 初回起動時に3ページのガイドでアプリの使い方を紹介（スキップ可能、ホーム画面の「?」ボタンから再表示可能）
 - **ローカル保存** — シールとボードのデータを端末内に永続保存
+- **Pro サブスクリプション** — フリーミアムモデル（無料: シール30枚・ボード1枚・基本枠線・基本背景 / Pro: 無制限・全機能・ロゴなし書き出し）。StoreKit 2 による月額¥380 / 年額¥2,900
 
 ## 技術スタック
 
@@ -32,6 +33,7 @@
 | UI | SwiftUI |
 | 背景除去 | Vision Framework（VNGenerateForegroundInstanceMaskRequest） |
 | データ保存 | SwiftData + FileManager |
+| 課金 | StoreKit 2（自動更新サブスクリプション） |
 | プロジェクト管理 | XcodeGen |
 | 対応OS | iOS 18+ |
 
@@ -122,14 +124,16 @@ StickerBoard/
 │   ├── StickerPlacement.swift       # ボード上のシール配置情報
 │   ├── StickerFilter.swift          # フィルター種別（オリジナル・キラキラ・レトロ・パステル・ネオン・ぷっくり・ワッペン）
 │   ├── StickerBorder.swift          # 枠線の太さ・カラープリセット定義
-│   └── BackgroundPattern.swift      # 背景パターン種別・設定
+│   ├── BackgroundPattern.swift      # 背景パターン種別・設定
+│   └── SubscriptionProduct.swift    # サブスクリプション商品ID定義
 ├── Services/
 │   ├── BackgroundRemover.swift      # Vision Framework 背景除去
 │   ├── MaskCompositor.swift         # マスク合成・手動編集結果の適用
 │   ├── StickerFilterService.swift   # CIFilterベースのフィルター処理
 │   ├── StickerBorderService.swift   # CIMorphologyMaximumベースの枠線描画
 │   ├── ImageCacheManager.swift      # 3層キャッシュ管理（フル解像度・サムネイル・フィルター+枠線）
-│   └── ImageStorage.swift           # 画像ファイルの保存・読み込み
+│   ├── ImageStorage.swift           # 画像ファイルの保存・読み込み
+│   └── SubscriptionManager.swift    # StoreKit 2 サブスクリプション管理
 └── Views/
     ├── Home/
     │   ├── MainTabView.swift        # タブナビゲーション・フローティングタブバー
@@ -148,6 +152,8 @@ StickerBoard/
     │   ├── MultiStickerSelectionView.swift  # 複数シール選択
     │   ├── StickerPreviewView.swift        # 切り抜きプレビュー
     │   └── StickerFilterPickerView.swift   # フィルター選択UI（2カラムグリッド）
+    ├── Paywall/
+    │   └── PaywallView.swift         # ペイウォール・ProBadge
     ├── Library/
     │   └── StickerLibraryView.swift  # シール一覧
     └── Board/

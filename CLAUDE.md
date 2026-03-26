@@ -7,19 +7,21 @@
 - Swift / SwiftUI / iOS 18+
 - Vision Framework（背景除去: VNGenerateForegroundInstanceMaskRequest）
 - SwiftData（ローカルDB）
+- StoreKit 2（自動更新サブスクリプション）
 - XcodeGen（project.yml からプロジェクト生成）
 
 ## プロジェクト構成
 ```
 StickerBoard/
 ├── App/          # エントリーポイント（MainTabView）、カラーテーマ
-├── Models/       # SwiftData モデル（Sticker, Board, StickerPlacement, BackgroundPattern, StickerFilter, StickerBorder）
-├── Services/     # BackgroundRemover, MaskCompositor, ImageStorage, ImageCacheManager, StickerFilterService, StickerBorderService
+├── Models/       # SwiftData モデル（Sticker, Board, StickerPlacement, BackgroundPattern, StickerFilter, StickerBorder, SubscriptionProduct）
+├── Services/     # BackgroundRemover, MaskCompositor, ImageStorage, ImageCacheManager, StickerFilterService, StickerBorderService, SubscriptionManager
 └── Views/        # SwiftUI画面
     ├── Home/     # MainTabView（タブナビゲーション）、HomeView（ボード一覧カルーセル）
     ├── Onboarding/ # 初回起動オンボーディング（3ページガイド）
     ├── Capture/  # シール撮影・切り抜きフロー・マスク手動編集
     ├── Library/  # シールライブラリ
+    ├── Paywall/  # ペイウォール（Pro課金導線）
     └── Board/    # ボード編集・一覧
 ```
 
@@ -53,3 +55,6 @@ open StickerBoard.xcodeproj
 - StickerBoardApp.init() で初回起動時（ボード0件）にデフォルトボード「はじめてのボード」を自動作成する
 - @AppStorage("hasCompletedOnboarding") で初回起動オンボーディングの表示制御。初回は .fullScreenCover で OnboardingView を表示し、完了後は非表示。HomeView のナビバー「?」ボタンから再表示可能
 - UIデザインルールは `.claude/rules/ui-design.md` を参照
+- サブスクリプション（StoreKit 2）: SubscriptionManager がシングルトンで購入状態を管理。StickerBoardApp.init() で早期初期化。UserDefaults に isProUser をキャッシュしてオフライン対応
+- フリーミアムモデル: 無料（シール30枚/ボード1枚/枠線なし・細/背景3種/ロゴ入り書き出し）、Pro（全制限解除）。「期待値駆動型ペイウォール」でプレミアム機能をプレビュー可能にし、適用・確定時にペイウォール表示
+- Products.storekit は Xcode の StoreKit Configuration Editor で編集すること（手動JSONは非推奨）。project.yml の schemes で StoreKit Configuration を自動設定済み
