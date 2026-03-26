@@ -21,7 +21,7 @@ struct BoardEditorView: View {
     @State private var showingBackgroundPicker = false
     @State private var backgroundConfig: BackgroundPatternConfig = .default
     @State private var showingFilterPicker = false
-    @State private var filteredImageCache: [UUID: UIImage] = [:]
+    @State private var loadedImages: [UUID: UIImage] = [:]
 
     var body: some View {
         ZStack {
@@ -273,7 +273,7 @@ struct BoardEditorView: View {
             ForEach(sortedPlacements) { placement in
                 StickerItemView(
                     placement: binding(for: placement),
-                    image: loadImage(for: placement),
+                    image: loadedImages[placement.id],
                     isSelected: selectedPlacementId == placement.id,
                     onTap: {
                         withAnimation(.easeInOut(duration: 0.15)) {
@@ -537,37 +537,33 @@ struct BoardEditorView: View {
         return $placements[index]
     }
 
-    private func loadImage(for placement: StickerPlacement) -> UIImage? {
-        if let cached = filteredImageCache[placement.id] {
-            return cached
-        }
-        return ImageStorage.load(fileName: placement.imageFileName)
-    }
-
     private func rebuildFilterCache() {
+        let cache = ImageCacheManager.shared
+        let currentPlacements = placements
         Task.detached {
-            var cache: [UUID: UIImage] = [:]
-            for placement in placements where placement.filter != .original {
-                if let original = ImageStorage.load(fileName: placement.imageFileName) {
-                    cache[placement.id] = StickerFilterService.apply(placement.filter, to: original)
+            var result: [UUID: UIImage] = [:]
+            for placement in currentPlacements {
+                if let image = cache.filtered(for: placement.imageFileName, filter: placement.filter) {
+                    result[placement.id] = image
                 }
             }
             await MainActor.run {
-                filteredImageCache = cache
+                loadedImages = result
             }
         }
     }
 
     private func updateFilterCache(for placement: StickerPlacement) {
-        guard placement.filter != .original else {
-            filteredImageCache.removeValue(forKey: placement.id)
-            return
-        }
+        let cache = ImageCacheManager.shared
+        let fileName = placement.imageFileName
+        let filter = placement.filter
+        let placementId = placement.id
         Task.detached {
-            guard let original = ImageStorage.load(fileName: placement.imageFileName) else { return }
-            let filtered = StickerFilterService.apply(placement.filter, to: original)
+            guard let original = cache.fullResolution(for: fileName) else { return }
+            let filtered = StickerFilterService.apply(filter, to: original)
+            cache.setFiltered(filtered, for: fileName, filter: filter)
             await MainActor.run {
-                filteredImageCache[placement.id] = filtered
+                loadedImages[placementId] = filtered
             }
         }
     }
@@ -585,6 +581,9 @@ struct BoardEditorView: View {
         )
         placements.append(placement)
         selectedPlacementId = placement.id
+        if let image = ImageCacheManager.shared.fullResolution(for: sticker.imageFileName) {
+            loadedImages[placement.id] = image
+        }
         saveBoard()
     }
 
@@ -681,7 +680,7 @@ private struct QuickPickThumbnail: View {
         .shadow(color: .black.opacity(0.04), radius: 4, y: 2)
         .task {
             image = await Task.detached {
-                ImageStorage.load(fileName: fileName)
+                ImageStorage.loadThumbnail(fileName: fileName, size: 112)
             }.value
         }
     }
@@ -699,10 +698,7 @@ private struct BoardSnapshotView: View {
             BoardBackgroundView(config: backgroundConfig)
 
             ForEach(placements) { placement in
-                if let original = ImageStorage.load(fileName: placement.imageFileName) {
-                    let displayImage = placement.filter == .original
-                        ? original
-                        : StickerFilterService.apply(placement.filter, to: original)
+                if let displayImage = ImageCacheManager.shared.filtered(for: placement.imageFileName, filter: placement.filter) {
                     Image(uiImage: displayImage)
                         .resizable()
                         .scaledToFit()

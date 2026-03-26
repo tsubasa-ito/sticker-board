@@ -154,9 +154,7 @@ struct StickerPreviewOverlay: View {
                             .scaledToFit()
                             .accessibilityLabel("シールのプレビュー")
                     } else {
-                        Image(systemName: "photo")
-                            .font(.system(size: 60))
-                            .foregroundStyle(AppTheme.textTertiary)
+                        ProgressView()
                     }
                 }
                 .matchedGeometryEffect(id: sticker.id, in: namespace)
@@ -174,10 +172,11 @@ struct StickerPreviewOverlay: View {
 struct StickerThumbnailView: View {
     let sticker: Sticker
     @State private var appeared = false
+    @State private var thumbnailImage: UIImage?
 
     var body: some View {
         Group {
-            if let image = ImageStorage.load(fileName: sticker.imageFileName) {
+            if let image = thumbnailImage {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFit()
@@ -198,6 +197,11 @@ struct StickerThumbnailView: View {
         .shadow(color: .black.opacity(0.04), radius: 4, y: 2)
         .scaleEffect(appeared ? 1 : 0.7)
         .opacity(appeared ? 1 : 0)
+        .task {
+            thumbnailImage = await Task.detached {
+                ImageStorage.loadThumbnail(fileName: sticker.imageFileName, size: 200)
+            }.value
+        }
         .onAppear {
             withAnimation(.spring(duration: 0.4, bounce: 0.3).delay(Double.random(in: 0...0.15))) {
                 appeared = true

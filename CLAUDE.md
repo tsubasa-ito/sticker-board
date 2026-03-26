@@ -14,7 +14,7 @@
 StickerBoard/
 ├── App/          # エントリーポイント（MainTabView）、カラーテーマ
 ├── Models/       # SwiftData モデル（Sticker, Board, StickerPlacement, BackgroundPattern, StickerFilter）
-├── Services/     # BackgroundRemover, MaskCompositor, ImageStorage, StickerFilterService
+├── Services/     # BackgroundRemover, MaskCompositor, ImageStorage, ImageCacheManager, StickerFilterService
 └── Views/        # SwiftUI画面
     ├── Home/     # MainTabView（タブナビゲーション）、HomeView（ボード一覧カルーセル）
     ├── Capture/  # シール撮影・切り抜きフロー・マスク手動編集
@@ -43,3 +43,6 @@ open StickerBoard.xcodeproj
 - BackgroundRemover は入力画像の EXIF 向きを正規化し、長辺2048pxにリサイズする（cgImage とマスクの整合性確保 + メモリ最適化）
 - フィルター（キラキラ・レトロ・パステル・ネオン）は StickerPlacement の filterType に保存し、ボード配置単位で適用する設計（シール自体ではなく配置ごとにフィルターが異なる）
 - StickerFilterService は CIFilter ベースでオンザフライ処理。BoardEditorView ではフィルター適用画像をキャッシュして body 再評価時の再計算を回避
+- ImageCacheManager（NSCache ベース）がフル解像度・サムネイル・フィルター適用済みの3層キャッシュを管理。メモリ警告時に自動パージ
+- ImageStorage.save() は保存時に長辺1024pxにリサイズする（BackgroundRemover の2048px出力をステッカー用途に最適化）
+- サムネイル表示（StickerThumbnailView, QuickPickThumbnail, BoardStickerPreviewView）は ImageStorage.loadThumbnail() 経由で縮小画像を使用

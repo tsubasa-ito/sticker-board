@@ -9,27 +9,30 @@ struct StickerFilterService {
     /// フィルターを適用した画像を返す
     static func apply(_ filter: StickerFilter, to image: UIImage) -> UIImage {
         guard filter != .original else { return image }
-        guard let ciImage = CIImage(image: image) else { return image }
 
-        let filtered: CIImage?
-        switch filter {
-        case .original:
-            return image
-        case .sparkle:
-            filtered = applySparkle(to: ciImage)
-        case .retro:
-            filtered = applyRetro(to: ciImage)
-        case .pastel:
-            filtered = applyPastel(to: ciImage)
-        case .neon:
-            filtered = applyNeon(to: ciImage)
-        }
+        return autoreleasepool {
+            guard let ciImage = CIImage(image: image) else { return image }
 
-        guard let output = filtered,
-              let cgImage = ciContext.createCGImage(output, from: ciImage.extent) else {
-            return image
+            let filtered: CIImage?
+            switch filter {
+            case .original:
+                return image
+            case .sparkle:
+                filtered = applySparkle(to: ciImage)
+            case .retro:
+                filtered = applyRetro(to: ciImage)
+            case .pastel:
+                filtered = applyPastel(to: ciImage)
+            case .neon:
+                filtered = applyNeon(to: ciImage)
+            }
+
+            guard let output = filtered,
+                  let cgImage = ciContext.createCGImage(output, from: ciImage.extent) else {
+                return image
+            }
+            return UIImage(cgImage: cgImage)
         }
-        return UIImage(cgImage: cgImage)
     }
 
     // MARK: - キラキラ（ホログラムシール風オーバーレイ）

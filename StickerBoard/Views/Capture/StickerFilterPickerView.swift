@@ -1,3 +1,4 @@
+@preconcurrency import UIKit
 import SwiftUI
 
 struct StickerFilterPickerView: View {
@@ -68,23 +69,20 @@ struct StickerFilterPickerView: View {
 
     private func generatePreviews() async {
         let thumbnailSize: CGFloat = 200
-        let scale = thumbnailSize / max(originalImage.size.width, originalImage.size.height)
-        let thumbSize = CGSize(
-            width: originalImage.size.width * scale,
-            height: originalImage.size.height * scale
-        )
-        let renderer = UIGraphicsImageRenderer(size: thumbSize)
-        let thumbnail = renderer.image { _ in
-            originalImage.draw(in: CGRect(origin: .zero, size: thumbSize))
-        }
+        let thumbnail = originalImage.resized(maxDimension: thumbnailSize)
 
         previewImages[.original] = thumbnail
 
-        for filter in StickerFilter.allCases where filter != .original {
-            let result = await Task.detached {
-                StickerFilterService.apply(filter, to: thumbnail)
-            }.value
-            previewImages[filter] = result
+        await withTaskGroup(of: (StickerFilter, UIImage).self) { group in
+            for filter in StickerFilter.allCases where filter != .original {
+                group.addTask {
+                    let result = StickerFilterService.apply(filter, to: thumbnail)
+                    return (filter, result)
+                }
+            }
+            for await (filter, result) in group {
+                previewImages[filter] = result
+            }
         }
         isGenerating = false
     }
