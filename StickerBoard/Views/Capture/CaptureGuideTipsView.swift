@@ -42,7 +42,7 @@ struct CaptureGuideTipsView: View {
             // ヒント一覧
             if !isCollapsed {
                 VStack(spacing: 8) {
-                    ForEach(Array(tips.enumerated()), id: \.offset) { _, tip in
+                    ForEach(tips, id: \.text) { tip in
                         HStack(spacing: 10) {
                             Image(systemName: tip.icon)
                                 .font(.system(size: 13))
