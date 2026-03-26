@@ -27,6 +27,8 @@ struct StickerFilterService {
                 filtered = applyNeon(to: ciImage)
             case .puffy:
                 filtered = applyPuffy(to: ciImage)
+            case .wappen:
+                filtered = applyWappen(to: ciImage)
             }
 
             guard let output = filtered,
@@ -285,6 +287,123 @@ struct StickerFilterService {
         guard let result = addSpec.outputImage else { return nil }
 
         return applyAlphaMask(to: result, mask: alphaMask)
+    }
+
+    // MARK: - ワッペン（刺繍サテンステッチ風テクスチャ）
+
+    /// サテンステッチ風タイルを生成してキャッシュ（密な横糸＋縦糸の交差）
+    private static let fabricTile: CIImage? = {
+        let tileSize: CGFloat = 80
+
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: tileSize, height: tileSize))
+        let tileImage = renderer.image { ctx in
+            let gc = ctx.cgContext
+
+            // ベースを中間グレーで塗る
+            gc.setFillColor(UIColor(white: 0.5, alpha: 1.0).cgColor)
+            gc.fill(CGRect(x: 0, y: 0, width: tileSize, height: tileSize))
+
+            // 密な横糸（サテンステッチ: 太い線を1.5px間隔で交互に明暗）
+            let stitchSpacing: CGFloat = 1.5
+            var y: CGFloat = 0
+            var rowIndex = 0
+            while y < tileSize {
+                let brightness: CGFloat = (rowIndex % 2 == 0) ? 0.62 : 0.38
+                gc.setStrokeColor(UIColor(white: brightness, alpha: 1.0).cgColor)
+                gc.setLineWidth(1.2)
+                gc.move(to: CGPoint(x: 0, y: y))
+                gc.addLine(to: CGPoint(x: tileSize, y: y))
+                gc.strokePath()
+                y += stitchSpacing
+                rowIndex += 1
+            }
+
+            // 縦糸（横糸より控えめだが存在感あり、織り目の交差を表現）
+            var x: CGFloat = 0
+            var colIndex = 0
+            while x < tileSize {
+                let brightness: CGFloat = (colIndex % 3 == 0) ? 0.35 : 0.55
+                gc.setStrokeColor(UIColor(white: brightness, alpha: 0.3).cgColor)
+                gc.setLineWidth(0.8)
+                gc.move(to: CGPoint(x: x, y: 0))
+                gc.addLine(to: CGPoint(x: x, y: tileSize))
+                gc.strokePath()
+                x += 2.5
+                colIndex += 1
+            }
+        }
+        return CIImage(image: tileImage)
+    }()
+
+    private static func applyWappen(to image: CIImage) -> CIImage? {
+        let extent = image.extent
+
+        guard let alphaMask = extractAlpha(from: image) else { return nil }
+
+        // 1. 彩度を落として糸に染めたような色合いに + わずかにコントラスト低下
+        let colorAdjust = CIFilter.colorControls()
+        colorAdjust.inputImage = image
+        colorAdjust.saturation = 0.7
+        colorAdjust.brightness = 0.0
+        colorAdjust.contrast = 0.85
+        guard let adjusted = colorAdjust.outputImage else { return nil }
+
+        // 2. サテンステッチテクスチャを敷き詰めてオーバーレイ
+        guard let tile = fabricTile else { return nil }
+
+        let tiled = tile.applyingFilter("CIAffineTile", parameters: [
+            "inputTransform": NSValue(cgAffineTransform: .identity),
+        ]).cropped(to: extent)
+
+        // テクスチャをオーバーレイブレンド（元画像の明暗に沿ってステッチが乗る）
+        let texBlend = CIFilter.overlayBlendMode()
+        texBlend.inputImage = tiled
+        texBlend.backgroundImage = adjusted
+        guard let textured = texBlend.outputImage else { return nil }
+
+        // 3. ランダムノイズで糸の微妙な色ムラを追加
+        let noise = CIFilter.randomGenerator()
+        guard let noiseOutput = noise.outputImage?.cropped(to: extent) else { return nil }
+
+        let noiseOpacity = CIFilter.colorMatrix()
+        noiseOpacity.inputImage = noiseOutput
+        noiseOpacity.rVector = CIVector(x: 0.06, y: 0, z: 0, w: 0)
+        noiseOpacity.gVector = CIVector(x: 0, y: 0.06, z: 0, w: 0)
+        noiseOpacity.bVector = CIVector(x: 0, y: 0, z: 0.06, w: 0)
+        noiseOpacity.aVector = CIVector(x: 0, y: 0, z: 0, w: 0)
+        noiseOpacity.biasVector = CIVector(x: 0, y: 0, z: 0, w: 0.15)
+        guard let subtleNoise = noiseOpacity.outputImage else { return nil }
+
+        let noiseBlend = CIFilter.sourceOverCompositing()
+        noiseBlend.inputImage = subtleNoise
+        noiseBlend.backgroundImage = textured
+        guard let withNoise = noiseBlend.outputImage else { return nil }
+
+        // 4. エンボス効果（刺繍の糸の凹凸感を強調）
+        let embossWeights: [CGFloat] = [
+            -1,   -0.5,  0,
+            -0.5,  1,    0.5,
+             0,    0.5,  1,
+        ]
+        let embossed = withNoise.applyingFilter("CIConvolution3X3", parameters: [
+            "inputWeights": CIVector(values: embossWeights, count: 9),
+            "inputBias": 0.0,
+        ]).cropped(to: extent)
+
+        // エンボスをソフトライトで合成（糸の立体感）
+        let embossBlend = CIFilter.softLightBlendMode()
+        embossBlend.inputImage = embossed
+        embossBlend.backgroundImage = withNoise
+        guard let withEmboss = embossBlend.outputImage else { return nil }
+
+        // 5. わずかにシャープネスを上げて糸のディテールを際立たせる
+        let sharpen = CIFilter.sharpenLuminance()
+        sharpen.inputImage = withEmboss
+        sharpen.sharpness = 0.6
+        sharpen.radius = 1.0
+        guard let sharpened = sharpen.outputImage else { return nil }
+
+        return applyAlphaMask(to: sharpened, mask: alphaMask)
     }
 
     // MARK: - アルファチャンネル操作
