@@ -7,6 +7,7 @@ struct BoardListView: View {
 
     @State private var showingNewBoard = false
     @State private var newBoardTitle = ""
+    @State private var showingPaywall = false
 
     var body: some View {
         ZStack {
@@ -26,7 +27,11 @@ struct BoardListView: View {
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
-                    showingNewBoard = true
+                    if !SubscriptionManager.shared.isProUser && boards.count >= 1 {
+                        showingPaywall = true
+                    } else {
+                        showingNewBoard = true
+                    }
                 } label: {
                     ZStack {
                         Circle()
@@ -39,6 +44,9 @@ struct BoardListView: View {
                     }
                 }
             }
+        }
+        .sheet(isPresented: $showingPaywall) {
+            PaywallView()
         }
         .alert("新しいボード", isPresented: $showingNewBoard) {
             TextField("ボード名", text: $newBoardTitle)

@@ -19,6 +19,9 @@ targets:
     platform: iOS
     sources:
       - StickerBoard
+      - path: Products.storekit
+        optional: true
+        buildPhase: none
     settings:
       base:
         INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "シールにする写真を選択するためにフォトライブラリへのアクセスが必要です"
@@ -33,3 +36,18 @@ targets:
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         SWIFT_EMIT_LOC_STRINGS: YES
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
+
+schemes:
+  StickerBoard:
+    build:
+      targets:
+        StickerBoard: all
+    run:
+      config: Debug
+      storeKitConfiguration: Products.storekit
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release

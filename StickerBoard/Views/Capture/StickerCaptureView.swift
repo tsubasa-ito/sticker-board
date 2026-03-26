@@ -20,6 +20,8 @@ struct StickerCaptureView: View {
     @State private var backgroundRemovalResult: BackgroundRemovalResult?
     @State private var showingMaskEditor = false
     @State private var maskEditorId = UUID()
+    @State private var showingPaywall = false
+    @Query private var allStickers: [Sticker]
 
     var body: some View {
         ZStack {
@@ -85,6 +87,9 @@ struct StickerCaptureView: View {
                 }
                 .id(maskEditorId)
             }
+        }
+        .sheet(isPresented: $showingPaywall) {
+            PaywallView()
         }
         .alert("保存完了!", isPresented: $showingSaveSuccess) {
             Button("続けて追加") { resetState() }
@@ -369,6 +374,10 @@ struct StickerCaptureView: View {
     }
 
     private func saveSticker(_ image: UIImage) {
+        if !SubscriptionManager.shared.isProUser && allStickers.count >= 30 {
+            showingPaywall = true
+            return
+        }
         do {
             let fileName = try ImageStorage.save(image)
             let sticker = Sticker(imageFileName: fileName)

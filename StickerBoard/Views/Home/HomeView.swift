@@ -18,6 +18,7 @@ struct HomeView: View {
     @State private var showingRenameBoard = false
     @State private var renameBoardTitle = ""
     @State private var showingOnboarding = false
+    @State private var showingPaywall = false
 
     var body: some View {
         ZStack {
@@ -60,6 +61,9 @@ struct HomeView: View {
         }
         .fullScreenCover(isPresented: $showingOnboarding) {
             OnboardingView()
+        }
+        .sheet(isPresented: $showingPaywall) {
+            PaywallView()
         }
         .navigationDestination(item: $selectedBoard) { board in
             BoardEditorView(board: board)
@@ -210,7 +214,11 @@ struct HomeView: View {
 
     private var newBoardCard: some View {
         Button {
-            showingNewBoard = true
+            if !SubscriptionManager.shared.isProUser && boards.count >= 1 {
+                showingPaywall = true
+            } else {
+                showingNewBoard = true
+            }
         } label: {
             ZStack {
                 RoundedRectangle(cornerRadius: 28)
@@ -319,7 +327,11 @@ struct HomeView: View {
             }
 
             Button {
-                showingNewBoard = true
+                if !SubscriptionManager.shared.isProUser && boards.count >= 1 {
+                    showingPaywall = true
+                } else {
+                    showingNewBoard = true
+                }
             } label: {
                 ZStack {
                     Circle()
