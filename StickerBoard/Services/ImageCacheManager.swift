@@ -227,12 +227,14 @@ extension UIImage {
         let alphaInfo = cgImage.alphaInfo
         let alphaOffset: Int
         switch alphaInfo {
-        case .premultipliedFirst, .first, .noneSkipFirst:
+        case .premultipliedFirst, .first, .alphaOnly:
             alphaOffset = 0
-        case .premultipliedLast, .last, .noneSkipLast:
+        case .premultipliedLast, .last:
             alphaOffset = bytesPerPixel - 1
-        default:
+        case .none, .noneSkipFirst, .noneSkipLast:
             return self // アルファなし → トリミング不要
+        @unknown default:
+            return self // 未知のフォーマットはトリミングしない
         }
 
         var minX = width
