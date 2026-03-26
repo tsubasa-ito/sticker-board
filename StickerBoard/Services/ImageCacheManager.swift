@@ -66,8 +66,7 @@ final class ImageCacheManager {
         if let cached = thumbnailCache.object(forKey: key) {
             return cached
         }
-        guard let original = fullResolution(for: fileName) else { return nil }
-        let thumbnail = original.resized(maxDimension: size)
+        guard let thumbnail = ImageStorage.createThumbnailFromDisk(fileName: fileName, maxPixelSize: size) else { return nil }
         thumbnailCache.setObject(thumbnail, forKey: key, cost: thumbnail.estimatedMemoryCost)
         return thumbnail
     }

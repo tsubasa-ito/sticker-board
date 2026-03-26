@@ -1,4 +1,5 @@
 import UIKit
+import ImageIO
 
 struct ImageStorage {
 
@@ -43,6 +44,21 @@ struct ImageStorage {
         let fileURL = stickersDirectory.appendingPathComponent(fileName)
         guard let data = try? Data(contentsOf: fileURL) else { return nil }
         return UIImage(data: data)
+    }
+
+    /// ImageIO を使ってディスクから直接サムネイルを生成する（フル解像度をメモリに展開しない）
+    static func createThumbnailFromDisk(fileName: String, maxPixelSize: CGFloat) -> UIImage? {
+        let fileURL = stickersDirectory.appendingPathComponent(fileName)
+        guard let imageSource = CGImageSourceCreateWithURL(fileURL as CFURL, nil) else { return nil }
+
+        let options: [CFString: Any] = [
+            kCGImageSourceCreateThumbnailFromImageIfAbsent: true,
+            kCGImageSourceCreateThumbnailWithTransform: true,
+            kCGImageSourceThumbnailMaxPixelSize: maxPixelSize
+        ]
+
+        guard let cgImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, options as CFDictionary) else { return nil }
+        return UIImage(cgImage: cgImage)
     }
 
     /// ファイルを削除する
