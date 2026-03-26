@@ -5,7 +5,7 @@ struct StickerLibraryView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Sticker.createdAt, order: .reverse) private var stickers: [Sticker]
     @Query private var boards: [Board]
-    @State private var stickerToDelete: Sticker?
+    @State private var deleteInfo: (sticker: Sticker, boards: [Board])?
     @State private var previewSticker: Sticker?
     @Namespace private var previewNamespace
     var onAddSticker: () -> Void = {}
@@ -43,23 +43,18 @@ struct StickerLibraryView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(AppTheme.backgroundPrimary, for: .navigationBar)
         .alert("シールを削除", isPresented: Binding(
-            get: { stickerToDelete != nil },
-            set: { if !$0 { stickerToDelete = nil } }
-        )) {
+            get: { deleteInfo != nil },
+            set: { if !$0 { deleteInfo = nil } }
+        ), presenting: deleteInfo) { info in
             Button("削除", role: .destructive) {
-                if let sticker = stickerToDelete {
-                    deleteSticker(sticker)
-                }
+                deleteSticker(info.sticker, from: info.boards)
             }
             Button("キャンセル", role: .cancel) {}
-        } message: {
-            if let sticker = stickerToDelete {
-                let usedBoardCount = boardsUsing(sticker).count
-                if usedBoardCount > 0 {
-                    Text("このシールは\(usedBoardCount)個のボードで使用されています。削除するとボードからも取り除かれます。")
-                } else {
-                    Text("このシールをコレクションから削除しますか？")
-                }
+        } message: { info in
+            if info.boards.isEmpty {
+                Text("このシールをコレクションから削除しますか？")
+            } else {
+                Text("このシールは\(info.boards.count)個のボードで使用されています。削除するとボードからも取り除かれます。")
             }
         }
     }
@@ -123,7 +118,7 @@ struct StickerLibraryView: View {
                             .accessibilityHint("タップしてプレビューを表示")
                             .contextMenu {
                                 Button(role: .destructive) {
-                                    stickerToDelete = sticker
+                                    deleteInfo = (sticker, boardsUsing(sticker))
                                 } label: {
                                     Label("削除", systemImage: "trash")
                                 }
@@ -141,14 +136,14 @@ struct StickerLibraryView: View {
         }
     }
 
-    private func deleteSticker(_ sticker: Sticker) {
-        for board in boardsUsing(sticker) {
+    private func deleteSticker(_ sticker: Sticker, from usedBoards: [Board]) {
+        for board in usedBoards {
             board.placements = board.placements.filter { $0.stickerId != sticker.id }
             board.updatedAt = Date()
         }
         ImageStorage.delete(fileName: sticker.imageFileName)
         modelContext.delete(sticker)
-        stickerToDelete = nil
+        deleteInfo = nil
     }
 
     // MARK: - さらに追加カード
