@@ -90,6 +90,45 @@ final class ImageCacheManager {
         filteredCache.setObject(image, forKey: key, cost: image.estimatedMemoryCost)
     }
 
+    // MARK: - フィルター＋枠線適用済み
+
+    func processed(for fileName: String, filter: StickerFilter, borderWidth: StickerBorderWidth, borderColorHex: String) -> UIImage? {
+        // フィルターも枠線もなし → フル解像度
+        if filter == .original && borderWidth == .none {
+            return fullResolution(for: fileName)
+        }
+        // 枠線なし → 既存のフィルターキャッシュを使用
+        if borderWidth == .none {
+            return filtered(for: fileName, filter: filter)
+        }
+
+        let key = processedKey(fileName: fileName, filter: filter, borderWidth: borderWidth, borderColorHex: borderColorHex)
+        if let cached = filteredCache.object(forKey: key) {
+            return cached
+        }
+
+        // ベース画像を取得（フィルター適用 or オリジナル）
+        let baseImage: UIImage?
+        if filter == .original {
+            baseImage = fullResolution(for: fileName)
+        } else {
+            baseImage = filtered(for: fileName, filter: filter)
+        }
+        guard let base = baseImage else { return nil }
+
+        // 枠線を適用
+        guard let result = StickerBorderService.applyBorder(to: base, width: borderWidth, colorHex: borderColorHex) else {
+            return base
+        }
+        filteredCache.setObject(result, forKey: key, cost: result.estimatedMemoryCost)
+        return result
+    }
+
+    func setProcessed(_ image: UIImage, for fileName: String, filter: StickerFilter, borderWidth: StickerBorderWidth, borderColorHex: String) {
+        let key = processedKey(fileName: fileName, filter: filter, borderWidth: borderWidth, borderColorHex: borderColorHex)
+        filteredCache.setObject(image, forKey: key, cost: image.estimatedMemoryCost)
+    }
+
     // MARK: - キャッシュ無効化
 
     func removeAll(for fileName: String) {
@@ -115,6 +154,10 @@ final class ImageCacheManager {
 
     private func filteredKey(fileName: String, filter: StickerFilter) -> NSString {
         "\(fileName)_\(filter.rawValue)" as NSString
+    }
+
+    private func processedKey(fileName: String, filter: StickerFilter, borderWidth: StickerBorderWidth, borderColorHex: String) -> NSString {
+        "\(fileName)_\(filter.rawValue)_\(borderWidth.rawValue)_\(borderColorHex)" as NSString
     }
 }
 

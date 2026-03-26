@@ -21,6 +21,7 @@ struct BoardEditorView: View {
     @State private var showingBackgroundPicker = false
     @State private var backgroundConfig: BackgroundPatternConfig = .default
     @State private var showingFilterPicker = false
+    @State private var showingBorderPicker = false
     @State private var loadedImages: [UUID: UIImage] = [:]
 
     var body: some View {
@@ -121,11 +122,23 @@ struct BoardEditorView: View {
                let index = placements.firstIndex(where: { $0.id == id }) {
                 PlacementFilterPickerSheet(placement: $placements[index]) {
                     if let placement = placements.first(where: { $0.id == id }) {
-                        updateFilterCache(for: placement)
+                        updateProcessedCache(for: placement)
                     }
                     saveBoard()
                 }
                 .presentationDetents([.medium])
+            }
+        }
+        .sheet(isPresented: $showingBorderPicker) {
+            if let id = selectedPlacementId,
+               let index = placements.firstIndex(where: { $0.id == id }) {
+                PlacementBorderPickerSheet(placement: $placements[index]) {
+                    if let placement = placements.first(where: { $0.id == id }) {
+                        updateProcessedCache(for: placement)
+                    }
+                    saveBoard()
+                }
+                .presentationDetents([.medium, .large])
             }
         }
         .alert(
@@ -439,6 +452,30 @@ struct BoardEditorView: View {
 
             Spacer()
 
+            // 枠線ボタン
+            Button {
+                showingBorderPicker = true
+            } label: {
+                VStack(spacing: 4) {
+                    ZStack {
+                        Circle()
+                            .fill(selectedPlacementId != nil ? AppTheme.baby.opacity(0.3) : Color.clear)
+                            .frame(width: 44, height: 44)
+                        Image(systemName: "square.on.square.dashed")
+                            .font(.system(size: 20))
+                            .foregroundStyle(selectedPlacementId != nil ? AppTheme.accent : AppTheme.textTertiary)
+                    }
+                    Text("枠線")
+                        .font(.system(size: 8, weight: .bold, design: .rounded))
+                        .textCase(.uppercase)
+                        .tracking(1.5)
+                        .foregroundStyle(AppTheme.textSecondary)
+                }
+            }
+            .disabled(selectedPlacementId == nil)
+
+            Spacer()
+
             // レイヤー操作グループ
             HStack(spacing: 16) {
                 Button {
@@ -543,7 +580,12 @@ struct BoardEditorView: View {
         Task.detached {
             var result: [UUID: UIImage] = [:]
             for placement in currentPlacements {
-                if let image = cache.filtered(for: placement.imageFileName, filter: placement.filter) {
+                if let image = cache.processed(
+                    for: placement.imageFileName,
+                    filter: placement.filter,
+                    borderWidth: placement.borderWidth,
+                    borderColorHex: placement.borderColorHex
+                ) {
                     result[placement.id] = image
                 }
             }
@@ -553,17 +595,23 @@ struct BoardEditorView: View {
         }
     }
 
-    private func updateFilterCache(for placement: StickerPlacement) {
+    private func updateProcessedCache(for placement: StickerPlacement) {
         let cache = ImageCacheManager.shared
         let fileName = placement.imageFileName
         let filter = placement.filter
+        let borderWidth = placement.borderWidth
+        let borderColorHex = placement.borderColorHex
         let placementId = placement.id
         Task.detached {
-            guard let original = cache.fullResolution(for: fileName) else { return }
-            let filtered = StickerFilterService.apply(filter, to: original)
-            cache.setFiltered(filtered, for: fileName, filter: filter)
-            await MainActor.run {
-                loadedImages[placementId] = filtered
+            if let processed = cache.processed(
+                for: fileName,
+                filter: filter,
+                borderWidth: borderWidth,
+                borderColorHex: borderColorHex
+            ) {
+                await MainActor.run {
+                    loadedImages[placementId] = processed
+                }
             }
         }
     }
@@ -698,7 +746,7 @@ private struct BoardSnapshotView: View {
             BoardBackgroundView(config: backgroundConfig)
 
             ForEach(placements) { placement in
-                if let displayImage = ImageCacheManager.shared.filtered(for: placement.imageFileName, filter: placement.filter) {
+                if let displayImage = ImageCacheManager.shared.processed(for: placement.imageFileName, filter: placement.filter, borderWidth: placement.borderWidth, borderColorHex: placement.borderColorHex) {
                     Image(uiImage: displayImage)
                         .resizable()
                         .scaledToFit()
@@ -763,6 +811,64 @@ private struct PlacementFilterPickerSheet: View {
             }
             .onAppear {
                 selectedFilter = placement.filter
+                originalImage = ImageStorage.load(fileName: placement.imageFileName)
+            }
+        }
+    }
+}
+
+// MARK: - 枠線設定シート
+
+private struct PlacementBorderPickerSheet: View {
+    @Binding var placement: StickerPlacement
+    var onApply: () -> Void
+    @Environment(\.dismiss) private var dismiss
+    @State private var selectedWidth: StickerBorderWidth = .none
+    @State private var selectedColorHex: String = "FFFFFF"
+    @State private var originalImage: UIImage?
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                AppTheme.backgroundPrimary
+                    .ignoresSafeArea()
+
+                if originalImage != nil {
+                    ScrollView {
+                        StickerBorderPickerView(
+                            selectedWidth: $selectedWidth,
+                            selectedColorHex: $selectedColorHex,
+                            originalImage: originalImage
+                        )
+                        .padding(.horizontal, 16)
+                        .padding(.top, 8)
+                    }
+                } else {
+                    ProgressView()
+                }
+            }
+            .navigationTitle("枠線設定")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(AppTheme.backgroundPrimary, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("キャンセル") { dismiss() }
+                        .foregroundStyle(AppTheme.accent)
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("適用") {
+                        placement.borderWidth = selectedWidth
+                        placement.borderColorHex = selectedColorHex
+                        onApply()
+                        dismiss()
+                    }
+                    .foregroundStyle(AppTheme.accent)
+                    .fontWeight(.semibold)
+                }
+            }
+            .onAppear {
+                selectedWidth = placement.borderWidth
+                selectedColorHex = placement.borderColorHex
                 originalImage = ImageStorage.load(fileName: placement.imageFileName)
             }
         }
