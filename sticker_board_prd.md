@@ -4,7 +4,7 @@
 **サブタイトル:** リアルシールをデジタルコレクション  
 **作成日:** 2026年3月  
 **プラットフォーム:** iOS（Swift / SwiftUI）  
-**ステータス:** MVP 設計フェーズ
+**ステータス:** MVP 実装完了
 
 ---
 
@@ -58,26 +58,34 @@
 
 #### 機能1: 写真からシール切り抜き
 
-- カメラロールから写真を選択
+- カメラ撮影またはカメラロールから写真を選択
 - Vision Framework による自動背景除去（被写体切り抜き）
 - 切り抜き結果のプレビュー表示
 - 切り抜いたシールをライブラリに保存
+- **複数シール一括検出** — 1枚の画像から複数オブジェクトを個別に検出・選択・一括保存
+- **マスク手動調整** — ブラシツール（消しゴム/復元モード、サイズ変更、Undo対応）で切り抜き結果を微調整
+- **撮影ガイド** — きれいに切り抜くための撮影のコツを表示（折りたたみ可能）
+- **画像最適化** — アルファトリミング（透明余白除去）＋ 長辺1024pxリサイズで保存
 
 #### 機能2: シールのレイアウト・配置
 
-- ボード（キャンバス）を新規作成
-- ライブラリからシールをボードに配置
+- ボード（キャンバス）を新規作成（初回起動時にデフォルトボード自動作成）
+- ライブラリからシールをボードに配置（クイックピック対応）
 - ドラッグ移動・ピンチズーム・回転のジェスチャー操作
 - 複数シールの重なり順（Z軸）変更
-- ボードの保存（ローカル）
+- ボードの保存（ローカル・自動保存）
+- **フィルター加工** — キラキラ・レトロ・パステル・ネオン・ぷっくり・ワッペンの6種（＋オリジナル）をボード配置単位で適用
+- **枠線（ボーダー）** — 太さ4段階 × 9色プリセット、輪郭に沿った自然な枠線描画
+- **背景パターン** — 無地・ドット・グリッド・ストライプ・グラデーションの5種、カラーカスタマイズ対応
+- **ボード画像書き出し** — 完成ボードを1枚の画像として写真ライブラリに保存
 
 ### 3.2 MVP に含めない機能（Out of Scope）
 
 以下はv2以降で検討する。
 
-- 完成ボードの画像書き出し・SNSシェア
+- ~~完成ボードの画像書き出し~~ → 写真ライブラリへの保存は実装済み。SNSシェア機能は未実装
 - ~~背景テクスチャ・装飾素材~~ → 背景パターン5種（無地・ドット・グリッド・ストライプ・グラデーション）は実装済み。装飾素材は未実装
-- ~~シールのフィルター加工~~ → ボード配置単位でフィルター6種（オリジナル・キラキラ・レトロ・パステル・ネオン・ぷっくり）を実装済み
+- ~~シールのフィルター加工~~ → ボード配置単位でフィルター7種（オリジナル・キラキラ・レトロ・パステル・ネオン・ぷっくり・ワッペン）を実装済み
 - ~~シールへの枠線（ボーダー）追加~~ → ボード配置単位で枠線（太さ4段階×9色）を実装済み。CIMorphologyMaximumによるアルファマスク膨張で輪郭に沿った自然な枠線を描画
 - シールへのテキスト・スタンプ追加
 - クラウド同期・バックアップ
@@ -99,22 +107,34 @@ I want to 切り抜いたシールをボード上に自由に配置して
 So that 自分好みのシールレイアウトを作りたい
 ```
 
-### ユーザーフロー（MVP）
+### ユーザーフロー（実装済み）
 
 ```
-アプリ起動
-  └─ ホーム画面
-       ├─ [シールを追加する]
-       │    └─ カメラロール選択
-       │         └─ 背景除去処理（Vision Framework）
-       │              └─ プレビュー確認
-       │                   └─ ライブラリに保存
+アプリ起動（初回: デフォルトボード自動作成）
+  └─ ホーム画面（カルーセル型ボード一覧）
        │
-       └─ [ボードを作成する]
-            └─ 新規ボード作成
-                 └─ シールライブラリから選択
-                      └─ ボードに配置・操作
-                           └─ ボード保存
+       ├─ [＋ タブ] シールを追加する
+       │    ├─ 撮影ガイド表示（折りたたみ可能）
+       │    ├─ カメラ撮影 or カメラロール選択
+       │    │    └─ 背景除去処理（Vision Framework）
+       │    │         ├─ 単体検出 → プレビュー確認
+       │    │         │    ├─ [手動で調整する] → マスクエディタ（ブラシ編集）
+       │    │         │    └─ ライブラリに保存
+       │    │         └─ 複数検出 → 個別選択UI → 一括保存
+       │    └─ ライブラリに保存
+       │
+       ├─ [ボードカードをタップ] ボード編集
+       │    ├─ シール追加（ライブラリ / クイックピック）
+       │    ├─ シール操作（ドラッグ・ピンチ・回転・Z軸変更・削除）
+       │    ├─ フィルター加工（7種）
+       │    ├─ 枠線追加（4段階×9色）
+       │    ├─ 背景パターン選択（5種＋カラーカスタマイズ）
+       │    └─ ボード画像保存（写真ライブラリ）
+       │
+       └─ [ライブラリ タブ] シール一覧
+            ├─ グリッド表示（タップでプレビュー拡大）
+            ├─ 長押しで削除（使用中ボード警告あり）
+            └─ シール追加ボタン
 ```
 
 ---
@@ -129,27 +149,60 @@ So that 自分好みのシールレイアウトを作りたい
 | UI フレームワーク | SwiftUI | 宣言的UI・最新Apple推奨 |
 | 背景除去 | Vision Framework（VNGenerateForegroundInstanceMaskRequest） | オンデバイス・高精度・無料 |
 | 画像合成 | Core Image / UIGraphicsImageRenderer | ネイティブGPU活用 |
-| データ保存 | SwiftData（iOS 17+） | シンプルなローカルDB |
-| 画像ファイル保存 | FileManager + PNG/HEIC | ローカルストレージ |
-| 最低OS要件 | iOS 17以上 | VisionフレームワークAPIの安定版 |
+| フィルター処理 | CIFilter（CISepiaTone, CIColorControls 等） | リアルタイムGPU処理 |
+| 枠線描画 | CIMorphologyMaximum | アルファマスク膨張で輪郭追従 |
+| データ保存 | SwiftData | シンプルなローカルDB |
+| 画像ファイル保存 | FileManager + PNG | ローカルストレージ |
+| プロジェクト管理 | XcodeGen（project.yml） | プロジェクトファイルの自動生成 |
+| 最低OS要件 | iOS 18以上 | Vision Framework + SwiftData の安定版 |
 
 ### 5.2 主要コンポーネント構成
 
 ```
-StickerBoardApp
-├── StickerCapture（シール切り抜きモジュール）
-│   ├── PhotoPicker          // カメラロール選択
-│   ├── BackgroundRemover    // Vision Framework 処理
-│   └── StickerPreview       // 切り抜き結果プレビュー
+StickerBoard/
+├── App/                              # エントリーポイント・テーマ
+│   ├── StickerBoardApp.swift         # ModelContainer初期化・デフォルトボード作成・NavBar設定
+│   └── AppTheme.swift                # カラーパレット・共通スタイル（ネイビー×オレンジ×クリーム）
 │
-├── StickerLibrary（ライブラリ管理）
-│   ├── StickerStore         // SwiftData モデル
-│   └── LibraryView          // ライブラリ一覧UI
+├── Models/                           # SwiftData モデル・Codable構造体
+│   ├── Sticker.swift                 # シールデータモデル
+│   ├── Board.swift                   # ボードデータモデル（JSONシリアライズ設計）
+│   ├── StickerPlacement.swift        # ボード上のシール配置情報
+│   ├── StickerFilter.swift           # フィルター種別（7種）
+│   ├── StickerBorder.swift           # 枠線の太さ・カラープリセット
+│   └── BackgroundPattern.swift       # 背景パターン種別・設定
 │
-└── BoardEditor（ボードエディタ）
-    ├── BoardCanvas          // メインキャンバス
-    ├── StickerItem          // 個別シールのView
-    └── GestureHandler       // ドラッグ・ピンチ・回転
+├── Services/                         # ビジネスロジック
+│   ├── BackgroundRemover.swift       # Vision Framework 背景除去・複数オブジェクト検出
+│   ├── MaskCompositor.swift          # マスク合成（手動編集結果の適用）
+│   ├── StickerFilterService.swift    # CIFilterベースのフィルター処理（7種）
+│   ├── StickerBorderService.swift    # CIMorphologyMaximumベースの枠線描画
+│   ├── ImageCacheManager.swift       # 3層NSCacheキャッシュ管理
+│   └── ImageStorage.swift            # 画像ファイルの保存・読み込み・サムネイル生成
+│
+└── Views/
+    ├── Home/                         # ホーム・ナビゲーション
+    │   ├── MainTabView.swift         # フローティングタブバー
+    │   └── HomeView.swift            # ボード一覧カルーセル
+    ├── Capture/                      # シール撮影・切り抜きフロー
+    │   ├── StickerCaptureView.swift  # 写真選択・背景除去・保存
+    │   ├── CameraView.swift          # カメラ撮影（UIImagePickerController）
+    │   ├── CaptureGuideTipsView.swift # 撮影ガイド・コツ
+    │   ├── MaskEditorView.swift      # マスク手動編集画面
+    │   ├── MaskDrawingCanvas.swift   # ブラシ描画キャンバス
+    │   ├── BrushToolbar.swift        # ブラシツールバー
+    │   ├── MultiStickerSelectionView.swift # 複数シール選択
+    │   ├── StickerPreviewView.swift  # 切り抜きプレビュー
+    │   └── StickerFilterPickerView.swift # フィルター選択UI
+    ├── Library/
+    │   └── StickerLibraryView.swift  # シール一覧・プレビュー・削除
+    └── Board/
+        ├── BoardListView.swift       # ボード一覧
+        ├── BoardEditorView.swift     # ボード編集キャンバス
+        ├── StickerItemView.swift     # ドラッグ・ピンチ・回転操作
+        ├── BoardBackgroundView.swift # 背景パターン描画
+        ├── BackgroundPatternPickerView.swift # 背景パターン選択UI
+        └── StickerBorderPickerView.swift # 枠線設定UI
 ```
 
 ### 5.3 データモデル（SwiftData）
@@ -158,9 +211,8 @@ StickerBoardApp
 @Model
 class Sticker {
     var id: UUID
-    var imageFileName: String   // ローカルファイルパス
+    var imageFileName: String   // Documents/Stickers/ 内のPNGファイル名
     var createdAt: Date
-    var tags: [String]          // v2以降で活用
 }
 
 @Model
@@ -169,20 +221,39 @@ class Board {
     var title: String
     var createdAt: Date
     var updatedAt: Date
-    var placementsData: Data?           // StickerPlacement の JSON シリアライズ
+    var placementsData: Data?           // [StickerPlacement] の JSON シリアライズ
     var backgroundPatternData: Data?    // BackgroundPatternConfig の JSON シリアライズ
+    // computed: placements, backgroundPattern（getter/setter でJSON変換）
 }
 
-struct StickerPlacement: Codable {
+struct StickerPlacement: Codable, Identifiable {
+    var id: UUID
     var stickerId: UUID
-    var imageFileName: String   // シール画像ファイル名
-    var position: CGPoint       // X, Y 座標
-    var scale: CGFloat          // 拡大縮小
-    var rotation: CGFloat       // 回転角度（ラジアン）
+    var imageFileName: String   // シール画像ファイル名（SwiftData ID問題回避のため直接保持）
+    var positionX: Double       // X 座標
+    var positionY: Double       // Y 座標
+    var scale: Double           // 拡大縮小（デフォルト 1.0）
+    var rotation: Double        // 回転角度（ラジアン）
     var zIndex: Int             // 重なり順
     var filterType: String      // フィルター種別（配置単位で管理）
     var borderWidthType: String // 枠線の太さ（none/thin/medium/thick）
     var borderColorHex: String  // 枠線の色（hex値）
+    // computed: filter, borderWidth, hasBorder
+}
+
+enum StickerFilter: String, CaseIterable {
+    case original, sparkle, retro, pastel, neon, puffy, wappen
+}
+
+enum StickerBorderWidth: String, CaseIterable {
+    case none, thin, medium, thick
+    // radiusRatio: 画像短辺に対する比率（0.015, 0.03, 0.05）
+}
+
+struct BackgroundPatternConfig: Codable {
+    var patternType: BackgroundPatternType  // solid, dot, grid, stripe, gradient
+    var primaryColorHex: String
+    var secondaryColorHex: String
 }
 ```
 
@@ -192,12 +263,12 @@ struct StickerPlacement: Codable {
 
 ### 6.1 技術リスク
 
-| リスク | 影響度 | 対応策 |
-|--------|--------|--------|
-| 背景除去の精度が低い場合（複雑な背景・白シール） | 高 | 手動マスク調整UIをv1.1で追加検討 |
-| ジェスチャーの競合（ドラッグ vs ピンチ） | 中 | `simultaneousGesture` で適切に制御 |
-| 大量シール配置時のパフォーマンス劣化 | 中 | Canvas APIで描画最適化 |
-| iOS 17未満のデバイス非対応 | 低 | 要件として明記し対象外とする |
+| リスク | 影響度 | 対応状況 |
+|--------|--------|----------|
+| 背景除去の精度が低い場合（複雑な背景・白シール） | 高 | **対応済み**: MaskEditorView でブラシによる手動マスク調整を実装 |
+| ジェスチャーの競合（ドラッグ vs ピンチ） | 中 | **対応済み**: `simultaneousGesture` で制御 |
+| 大量シール配置時のパフォーマンス劣化 | 中 | **対応済み**: 3層キャッシュ（ImageCacheManager）+ サムネイル最適化 |
+| iOS 18未満のデバイス非対応 | 低 | 要件として iOS 18+ を明記 |
 
 ### 6.2 著作権リスク
 
@@ -209,34 +280,27 @@ struct StickerPlacement: Codable {
 
 ## 7. 開発ロードマップ
 
-### MVP フェーズ（目安: 8〜10週間）
+### MVP フェーズ — **完了**
 
-```
-Week 1-2  : 開発環境構築 + Swift/SwiftUI 基礎習得
-            └─ Xcode セットアップ、チュートリアル完了
+以下の機能がすべて実装済み:
 
-Week 3    : PhotoPicker + Vision Framework PoC
-            └─ 背景除去の精度検証（最重要マイルストーン）
-
-Week 4    : StickerLibrary 実装
-            └─ SwiftData モデル定義、ライブラリUI
-
-Week 5-6  : BoardEditor 実装
-            └─ キャンバス、シール配置、ジェスチャー操作
-
-Week 7    : データ永続化 + ボード保存
-            └─ SwiftData 保存・読み込み
-
-Week 8    : UI 調整 + バグ修正
-            └─ TestFlight 配布・社内テスト
-
-Week 9-10 : フィードバック反映 + MVP 完成
-```
+- シール撮影・切り抜き（Vision Framework 背景除去）
+- マスク手動調整（ブラシツール）
+- 複数シール一括検出・選択
+- 撮影ガイド表示
+- シールライブラリ（一覧・プレビュー・削除）
+- ボード作成・編集・保存（カルーセルUI）
+- シール配置（ドラッグ・ピンチ・回転・Z軸変更）
+- フィルター加工（7種、配置単位）
+- 枠線（4段階×9色、配置単位）
+- 背景パターン（5種、カラーカスタマイズ）
+- ボード画像書き出し（写真ライブラリ保存）
+- デザインシステム統一（ネイビー×オレンジ×クリーム）
 
 ### v2 以降（MVP 後の拡張）
 
-- 完成ボードの画像書き出し・SNS シェア
-- デコレーション素材（背景パターンは実装済み）
+- SNS シェア機能
+- デコレーション素材（装飾スタンプ等）
 - シールライブラリのタグ・検索
 - クラウドバックアップ（iCloud）
 
@@ -258,7 +322,7 @@ MVP 検証期間（リリース後 4 週間）での目標値：
 ## 9. 未解決事項・今後の検討
 
 - [x] アプリ名の決定 → **シールボード**（サブタイトル：リアルシールをデジタルコレクション）
+- [x] 最低OS要件の決定 → **iOS 18以上**
 - [ ] App Store カテゴリ（写真＆ビデオ or ライフスタイル）
 - [ ] 無料 or 有料モデルの検討（広告なし前提）
-- [ ] iOS 16 以下のサポート要否（VisionAPIの互換性確認）
 - [ ] TestFlight での初期テスター募集方法

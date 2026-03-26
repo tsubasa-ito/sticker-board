@@ -52,5 +52,5 @@ open StickerBoard.xcodeproj
 - StickerBoardApp.init() で初回起動時（ボード0件）にデフォルトボード「はじめてのボード」を自動作成する
 - StickerBoardApp.init() でグローバル UINavigationBar.appearance() を設定（背景色・テキスト色・tintColor）。各画面で個別に toolbarBackground を指定しない
 - カラーパレットはネイビー(`#2A2D5B`) × オレンジ(`#E87A2E`) × クリーム(`#FAF0DE`)。全色 AppTheme に集約し、Color(hex:) の直指定は禁止
-- グラデーション（LinearGradient）は使用しない。すべてフラットカラーで統一
+- UIデザインのグラデーション（LinearGradient）は使用しない。すべてフラットカラーで統一（ただしボード背景パターンの「グラデーション」オプションは機能として提供）
 - 全画面で iOS 標準ナビゲーションバー（.navigationTitle + .inline）を使用。カスタムトップバーは使わない（BoardEditorView / MaskEditorView 含む）
