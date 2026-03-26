@@ -43,7 +43,9 @@ struct StickerBoardApp: App {
                     get: { !hasCompletedOnboarding },
                     set: { if !$0 { hasCompletedOnboarding = true } }
                 )) {
-                    OnboardingView(hasCompletedOnboarding: $hasCompletedOnboarding)
+                    OnboardingView {
+                        hasCompletedOnboarding = true
+                    }
                 }
         }
         .modelContainer(container)

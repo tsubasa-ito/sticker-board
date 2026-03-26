@@ -17,6 +17,7 @@ struct HomeView: View {
     @State private var boardToRename: Board?
     @State private var showingRenameBoard = false
     @State private var renameBoardTitle = ""
+    @State private var showingOnboarding = false
 
     var body: some View {
         ZStack {
@@ -47,6 +48,18 @@ struct HomeView: View {
                     .font(.system(size: 20, weight: .heavy, design: .rounded))
                     .foregroundStyle(AppTheme.accent)
             }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    showingOnboarding = true
+                } label: {
+                    Image(systemName: "questionmark.circle")
+                        .font(.system(size: 17, weight: .medium))
+                        .foregroundStyle(AppTheme.textSecondary)
+                }
+            }
+        }
+        .fullScreenCover(isPresented: $showingOnboarding) {
+            OnboardingView()
         }
         .navigationDestination(item: $selectedBoard) { board in
             BoardEditorView(board: board)

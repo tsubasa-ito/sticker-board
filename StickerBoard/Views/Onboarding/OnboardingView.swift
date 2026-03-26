@@ -3,7 +3,8 @@ import SwiftUI
 // MARK: - オンボーディングビュー
 
 struct OnboardingView: View {
-    @Binding var hasCompletedOnboarding: Bool
+    @Environment(\.dismiss) private var dismiss
+    var onComplete: (() -> Void)?
     @State private var currentPage = 0
 
     private let pages = OnboardingPage.pages
@@ -89,8 +90,7 @@ struct OnboardingView: View {
     // MARK: - オンボーディング完了
 
     private func completeOnboarding() {
-        withAnimation(.easeInOut(duration: 0.3)) {
-            hasCompletedOnboarding = true
-        }
+        onComplete?()
+        dismiss()
     }
 }
