@@ -12,7 +12,7 @@ enum AppTheme {
     /// ディープネイビー（セカンダリ）
     static let secondary = Color(hex: 0x2A2D5B)
     /// ソフトオレンジ（サクセス・ポジティブ）
-    static let mint = Color(hex: 0xF0A870)
+    static let softOrange = Color(hex: 0xF0A870)
     /// クリームイエロー（ハイライト）
     static let cream = Color(hex: 0xFFF5C3)
     /// ベビーブルー（情報・補助）

@@ -50,7 +50,7 @@ struct MaskEditorView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("完了") { applyAndDismiss() }
                         .fontWeight(.semibold)
-                        .foregroundStyle(AppTheme.mint)
+                        .foregroundStyle(AppTheme.softOrange)
                 }
             }
         }

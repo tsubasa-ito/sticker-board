@@ -9,7 +9,7 @@ struct StickerPreviewView: View {
             // ラベル
             HStack(spacing: 6) {
                 Image(systemName: "checkmark.seal.fill")
-                    .foregroundStyle(AppTheme.mint)
+                    .foregroundStyle(AppTheme.softOrange)
                 Text("切り抜き完了")
                     .font(.system(size: 14, weight: .semibold, design: .rounded))
                     .foregroundStyle(AppTheme.textPrimary)

@@ -98,7 +98,7 @@ struct MultiStickerSelectionView: View {
                     .overlay {
                         RoundedRectangle(cornerRadius: 12)
                             .strokeBorder(
-                                isSelected ? AppTheme.mint : AppTheme.accent.opacity(0.2),
+                                isSelected ? AppTheme.softOrange : AppTheme.accent.opacity(0.2),
                                 lineWidth: isSelected ? 3 : 1
                             )
                     }
@@ -107,7 +107,7 @@ struct MultiStickerSelectionView: View {
                 // 選択チェックマーク
                 ZStack {
                     Circle()
-                        .fill(isSelected ? AppTheme.mint : Color.white.opacity(0.8))
+                        .fill(isSelected ? AppTheme.softOrange : Color.white.opacity(0.8))
                         .frame(width: 28, height: 28)
                         .shadow(color: .black.opacity(0.1), radius: 2, y: 1)
 
