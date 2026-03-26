@@ -25,11 +25,11 @@ struct StickerBorderService {
             let morphology = CIFilter.morphologyMaximum()
             morphology.inputImage = alphaMask
             morphology.radius = radius
-            guard let expandedMask = morphology.outputImage?.cropped(to: extent.insetBy(dx: CGFloat(-radius), dy: CGFloat(-radius))) else { return image }
+            guard let expandedMask = morphology.outputImage?.cropped(to: extent) else { return image }
 
             // 3. 枠線カラーのソリッド画像を生成
             let borderColor = colorFromHex(colorHex)
-            let solidColor = CIImage(color: borderColor).cropped(to: expandedMask.extent)
+            let solidColor = CIImage(color: borderColor).cropped(to: extent)
 
             // 4. 拡大マスクで枠線カラーをマスク → 枠線シェイプ
             let maskedBorder = CIFilter.blendWithMask()
@@ -44,9 +44,8 @@ struct StickerBorderService {
             composite.backgroundImage = borderShape
             guard let result = composite.outputImage else { return image }
 
-            // 6. UIImage に変換（拡大分を含むextentで描画）
-            let outputExtent = result.extent
-            guard let cgImage = ciContext.createCGImage(result, from: outputExtent) else { return image }
+            // 6. UIImage に変換（元画像と同じサイズに維持）
+            guard let cgImage = ciContext.createCGImage(result, from: extent) else { return image }
             return UIImage(cgImage: cgImage)
         }
     }
