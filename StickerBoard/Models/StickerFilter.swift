@@ -8,6 +8,7 @@ enum StickerFilter: String, Codable, CaseIterable, Identifiable {
     case retro = "retro"
     case pastel = "pastel"
     case neon = "neon"
+    case puffy = "puffy"
 
     var id: String { rawValue }
 
@@ -18,6 +19,7 @@ enum StickerFilter: String, Codable, CaseIterable, Identifiable {
         case .retro: "レトロ"
         case .pastel: "パステル"
         case .neon: "ネオン"
+        case .puffy: "ぷっくり"
         }
     }
 
@@ -28,6 +30,7 @@ enum StickerFilter: String, Codable, CaseIterable, Identifiable {
         case .retro: "camera.filters"
         case .pastel: "paintpalette"
         case .neon: "bolt.fill"
+        case .puffy: "circle.fill"
         }
     }
 }
