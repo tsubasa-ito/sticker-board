@@ -25,6 +25,8 @@ struct StickerFilterService {
                 filtered = applyPastel(to: ciImage)
             case .neon:
                 filtered = applyNeon(to: ciImage)
+            case .puffy:
+                filtered = applyPuffy(to: ciImage)
             }
 
             guard let output = filtered,
@@ -224,6 +226,63 @@ struct StickerFilterService {
         blend.inputImage = brightEdges
         blend.backgroundImage = darkenedImage
         guard let result = blend.outputImage else { return nil }
+
+        return applyAlphaMask(to: result, mask: alphaMask)
+    }
+
+    // MARK: - ぷっくり（立体・膨らみエフェクト）
+
+    private static func applyPuffy(to image: CIImage) -> CIImage? {
+        let extent = image.extent
+        let shortSide = min(extent.width, extent.height)
+
+        guard let alphaMask = extractAlpha(from: image) else { return nil }
+
+        // アルファマスクをぼかして「内側距離場」を生成
+        // エッジ付近は値が低く、中央は高い → ぷっくり形状の断面を表現
+        let edgeBlur = CIFilter.gaussianBlur()
+        edgeBlur.inputImage = alphaMask
+        edgeBlur.radius = Float(shortSide * 0.05)
+        guard let blurredAlpha = edgeBlur.outputImage?.cropped(to: extent) else { return nil }
+
+        // エッジ暗化: エッジ付近を暗くして立体感（陰影）を出す
+        let darken = CIFilter.colorControls()
+        darken.inputImage = image
+        darken.brightness = -0.18
+        darken.contrast = 1.1
+        darken.saturation = 0.85
+        guard let darkened = darken.outputImage else { return nil }
+
+        // blurredAlpha をマスクとして合成
+        // 中央（マスク白）→ 元画像、エッジ（マスク黒）→ 暗い画像
+        let edgeBlend = CIFilter.blendWithMask()
+        edgeBlend.inputImage = image
+        edgeBlend.backgroundImage = darkened
+        edgeBlend.maskImage = blurredAlpha
+        guard let withEdge = edgeBlend.outputImage else { return nil }
+
+        // スペキュラハイライト（ドーム表面の光沢反射）
+        let hlCenter = CGPoint(x: extent.midX * 0.8, y: extent.maxY * 0.72)
+        let specular = CIFilter.radialGradient()
+        specular.center = hlCenter
+        specular.radius0 = 0
+        specular.radius1 = Float(shortSide * 0.28)
+        specular.color0 = CIColor(red: 1, green: 1, blue: 1, alpha: 0.55)
+        specular.color1 = CIColor(red: 1, green: 1, blue: 1, alpha: 0)
+        guard let specGrad = specular.outputImage?.cropped(to: extent) else { return nil }
+
+        // ハイライトを内側フィールドでマスク（エッジでは光沢が弱まる）
+        let specMasked = CIFilter.blendWithMask()
+        specMasked.inputImage = specGrad
+        specMasked.backgroundImage = CIImage.empty()
+        specMasked.maskImage = blurredAlpha
+        guard let specResult = specMasked.outputImage else { return nil }
+
+        // 合成（スクリーンブレンドで光沢を追加）
+        let addSpec = CIFilter.screenBlendMode()
+        addSpec.inputImage = specResult
+        addSpec.backgroundImage = withEdge
+        guard let result = addSpec.outputImage else { return nil }
 
         return applyAlphaMask(to: result, mask: alphaMask)
     }
