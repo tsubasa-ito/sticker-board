@@ -378,10 +378,11 @@ struct StickerFilterService {
             -0.5,  1,    0.5,
              0,    0.5,  1,
         ]
-        let embossed = withNoise.applyingFilter("CIConvolution3X3", parameters: [
-            "inputWeights": CIVector(values: embossWeights, count: 9),
-            "inputBias": 0.0,
-        ]).cropped(to: extent)
+        let convolution = CIFilter.convolution3X3()
+        convolution.inputImage = withNoise
+        convolution.weights = CIVector(values: embossWeights, count: 9)
+        convolution.bias = 0.0
+        guard let embossed = convolution.outputImage?.cropped(to: extent) else { return nil }
 
         // エンボスをソフトライトで合成（糸の立体感）
         let embossBlend = CIFilter.softLightBlendMode()
