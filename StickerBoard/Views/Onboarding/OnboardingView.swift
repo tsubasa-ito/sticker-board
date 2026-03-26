@@ -29,7 +29,6 @@ struct OnboardingView: View {
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
-                .animation(.spring(duration: 0.4), value: currentPage)
 
                 // 下部コントロール
                 bottomControls
