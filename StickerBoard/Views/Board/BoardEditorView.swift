@@ -575,7 +575,6 @@ struct BoardEditorView: View {
     }
 
     private func sendToBack(_ placement: StickerPlacement) {
-        guard placements.contains(where: { $0.id == placement.id }) else { return }
         // 対象を最背面にして全体を正規化（zIndex を 0 始まりに再割り振り）
         var sorted = placements.enumerated().sorted { $0.element.zIndex < $1.element.zIndex }
         // 対象を先頭（最背面）に移動
