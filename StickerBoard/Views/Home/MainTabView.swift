@@ -34,7 +34,7 @@ struct MainTabView: View {
                 .allowsHitTesting(selectedTab == .home)
 
                 NavigationStack {
-                    StickerLibraryView()
+                    StickerLibraryView(onAddSticker: { showCapture = true })
                 }
                 .opacity(selectedTab == .library ? 1 : 0)
                 .allowsHitTesting(selectedTab == .library)

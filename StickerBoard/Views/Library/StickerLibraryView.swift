@@ -7,6 +7,7 @@ struct StickerLibraryView: View {
     @State private var stickerToDelete: Sticker?
     @State private var previewSticker: Sticker?
     @Namespace private var previewNamespace
+    var onAddSticker: () -> Void = {}
 
     private let columns = [
         GridItem(.adaptive(minimum: 100), spacing: 14)
@@ -99,6 +100,8 @@ struct StickerLibraryView: View {
                 .padding(.horizontal, 4)
 
                 LazyVGrid(columns: columns, spacing: 14) {
+                    addStickerCard
+
                     ForEach(stickers) { sticker in
                         StickerThumbnailView(sticker: sticker)
                             .matchedGeometryEffect(id: sticker.id, in: previewNamespace)
@@ -128,6 +131,37 @@ struct StickerLibraryView: View {
         ImageStorage.delete(fileName: sticker.imageFileName)
         modelContext.delete(sticker)
         stickerToDelete = nil
+    }
+
+    // MARK: - さらに追加カード
+
+    private var addStickerCard: some View {
+        Button(action: onAddSticker) {
+            VStack(spacing: 10) {
+                ZStack {
+                    Circle()
+                        .fill(AppTheme.accent.opacity(0.12))
+                        .frame(width: 38, height: 38)
+
+                    Image(systemName: "plus")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(AppTheme.accent)
+                }
+
+                Text("さらに追加")
+                    .font(.system(size: 11, weight: .medium, design: .rounded))
+                    .foregroundStyle(AppTheme.textSecondary)
+            }
+            .frame(width: 100, height: 100)
+            .background(AppTheme.backgroundCard.opacity(0.5))
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .overlay {
+                RoundedRectangle(cornerRadius: 14)
+                    .strokeBorder(style: StrokeStyle(lineWidth: 1.5, dash: [6, 4]))
+                    .foregroundStyle(AppTheme.accent.opacity(0.3))
+            }
+        }
+        .accessibilityLabel("シールをさらに追加")
     }
 }
 
