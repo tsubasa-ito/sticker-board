@@ -4,6 +4,7 @@ import SwiftData
 @main
 struct StickerBoardApp: App {
     let container: ModelContainer
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
 
     init() {
         let container: ModelContainer
@@ -38,6 +39,12 @@ struct StickerBoardApp: App {
     var body: some Scene {
         WindowGroup {
             MainTabView()
+                .fullScreenCover(isPresented: Binding(
+                    get: { !hasCompletedOnboarding },
+                    set: { if !$0 { hasCompletedOnboarding = true } }
+                )) {
+                    OnboardingView(hasCompletedOnboarding: $hasCompletedOnboarding)
+                }
         }
         .modelContainer(container)
     }
