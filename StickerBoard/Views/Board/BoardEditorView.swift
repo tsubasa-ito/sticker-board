@@ -561,16 +561,32 @@ struct BoardEditorView: View {
     // MARK: - Z軸操作
 
     private func bringToFront(_ placement: StickerPlacement) {
-        guard let index = placements.firstIndex(where: { $0.id == placement.id }) else { return }
-        let maxZ = placements.map(\.zIndex).max() ?? 0
-        placements[index].zIndex = maxZ + 1
+        guard placements.contains(where: { $0.id == placement.id }) else { return }
+        // 対象を最前面にして全体を正規化（zIndex を 0 始まりに再割り振り）
+        var sorted = placements.enumerated().sorted { $0.element.zIndex < $1.element.zIndex }
+        // 対象を末尾（最前面）に移動
+        if let sortedIdx = sorted.firstIndex(where: { $0.element.id == placement.id }) {
+            let item = sorted.remove(at: sortedIdx)
+            sorted.append(item)
+        }
+        for (newZ, entry) in sorted.enumerated() {
+            placements[entry.offset].zIndex = newZ
+        }
         saveBoard()
     }
 
     private func sendToBack(_ placement: StickerPlacement) {
-        guard let index = placements.firstIndex(where: { $0.id == placement.id }) else { return }
-        let minZ = placements.map(\.zIndex).min() ?? 0
-        placements[index].zIndex = minZ - 1
+        guard placements.contains(where: { $0.id == placement.id }) else { return }
+        // 対象を最背面にして全体を正規化（zIndex を 0 始まりに再割り振り）
+        var sorted = placements.enumerated().sorted { $0.element.zIndex < $1.element.zIndex }
+        // 対象を先頭（最背面）に移動
+        if let sortedIdx = sorted.firstIndex(where: { $0.element.id == placement.id }) {
+            let item = sorted.remove(at: sortedIdx)
+            sorted.insert(item, at: 0)
+        }
+        for (newZ, entry) in sorted.enumerated() {
+            placements[entry.offset].zIndex = newZ
+        }
         saveBoard()
     }
 
