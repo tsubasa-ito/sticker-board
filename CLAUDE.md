@@ -17,6 +17,7 @@ StickerBoard/
 ├── Services/     # BackgroundRemover, MaskCompositor, ImageStorage, ImageCacheManager, StickerFilterService, StickerBorderService
 └── Views/        # SwiftUI画面
     ├── Home/     # MainTabView（タブナビゲーション）、HomeView（ボード一覧カルーセル）
+    ├── Onboarding/ # 初回起動オンボーディング（3ページガイド）
     ├── Capture/  # シール撮影・切り抜きフロー・マスク手動編集
     ├── Library/  # シールライブラリ
     └── Board/    # ボード編集・一覧
@@ -50,4 +51,5 @@ open StickerBoard.xcodeproj
 - StickerBorderService は CIMorphologyMaximum でアルファマスクを膨張させて輪郭に沿った枠線を描画。フィルター適用後の画像に枠線を重ねる（描画順序: フィルター → 枠線）
 - ImageCacheManager の processed() メソッドがフィルター＋枠線の統合キャッシュを管理。キーは「fileName_filterType_borderWidth_borderColorHex」形式
 - StickerBoardApp.init() で初回起動時（ボード0件）にデフォルトボード「はじめてのボード」を自動作成する
+- @AppStorage("hasCompletedOnboarding") で初回起動オンボーディングの表示制御。初回は .fullScreenCover で OnboardingView を表示し、完了後は非表示。HomeView のナビバー「?」ボタンから再表示可能
 - UIデザインルールは `.claude/rules/ui-design.md` を参照
