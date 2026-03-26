@@ -1,0 +1,15 @@
+version: 2
+updates:
+  # Swift Package Manager の依存関係を監視
+  - package-ecosystem: "swift"
+    directory: "/"
+    target-branch: "main"
+    schedule:
+      interval: "weekly"
+
+  # GitHub Actions のアクション バージョンを監視
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    target-branch: "main"
+    schedule:
+      interval: "weekly"
