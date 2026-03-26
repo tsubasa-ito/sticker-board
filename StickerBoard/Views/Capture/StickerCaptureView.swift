@@ -138,6 +138,9 @@ struct StickerCaptureView: View {
                 }
                 .padding(.top, 8)
 
+                // 撮影ガイド
+                CaptureGuideTipsView()
+
                 HStack(spacing: 16) {
                     // カメラボタン（カメラ搭載デバイスのみ表示）
                     if UIImagePickerController.isSourceTypeAvailable(.camera) {
