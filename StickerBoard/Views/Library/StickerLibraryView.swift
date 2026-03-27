@@ -279,7 +279,15 @@ struct StickerPreviewOverlay: View {
                             .scaledToFit()
                             .accessibilityLabel("シールのプレビュー")
                     } else {
-                        ProgressView()
+                        VStack(spacing: 12) {
+                            Image(systemName: "exclamationmark.triangle")
+                                .font(.system(size: 40))
+                                .foregroundStyle(.white.opacity(0.6))
+                            Text("画像を読み込めませんでした")
+                                .font(.system(size: 14, design: .rounded))
+                                .foregroundStyle(.white.opacity(0.6))
+                        }
+                        .accessibilityLabel("画像の読み込みに失敗しました")
                     }
                 }
                 .matchedGeometryEffect(id: sticker.id, in: namespace)
