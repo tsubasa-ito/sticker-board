@@ -42,7 +42,8 @@ open StickerBoard.xcodeproj
 - Vision Frameworkの背景除去はシミュレータでは動作しない（実機のみ）
 - シミュレータではフォールバックとして元画像をそのまま返す
 - シール画像は Documents/Stickers/ にPNG保存、メタデータはSwiftDataに保存
-- ボード背景画像は Documents/Backgrounds/ にJPEG保存（長辺2048px、品質0.85）。BackgroundPatternConfig の customImageFileName でファイル名を管理
+- ボード背景画像は Documents/Backgrounds/ にJPEG保存（長辺2048px、品質0.85）。BackgroundPatternConfig の customImageFileName でファイル名を管理。customImageCropX / customImageCropY（0.0〜1.0）でトリミング位置を保持
+- AppTheme.screenBounds で画面サイズを取得する（UIScreen.main は deprecated のため UIWindowScene 経由）
 - StickerPlacement に imageFileName を直接保持する設計（SwiftDataのID問題回避のため）
 - Board の backgroundPatternData も placements と同様に Codable struct を JSON シリアライズして Data? に格納する設計
 - BackgroundRemover は入力画像の EXIF 向きを正規化し、長辺2048pxにリサイズする（cgImage とマスクの整合性確保 + メモリ最適化）
