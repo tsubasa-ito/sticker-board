@@ -37,6 +37,10 @@ struct BackgroundPatternConfig: Codable, Equatable {
     var primaryColorHex: String
     var secondaryColorHex: String
     var customImageFileName: String?
+    /// カスタム背景画像の水平トリミング位置（0.0=左端 0.5=中央 1.0=右端）
+    var customImageCropX: Double?
+    /// カスタム背景画像の垂直トリミング位置（0.0=上端 0.5=中央 1.0=下端）
+    var customImageCropY: Double?
 
     static let `default` = BackgroundPatternConfig(
         patternType: .solid,

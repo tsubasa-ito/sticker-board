@@ -9,6 +9,8 @@ struct BackgroundPatternPickerView: View {
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var isLoadingPhoto = false
     @State private var customImage: UIImage?
+    @State private var dragStartCropX: Double = 0.5
+    @State private var dragStartCropY: Double = 0.5
 
     private static let premiumPatterns: Set<BackgroundPatternType> = [.stripe, .gradient]
 
@@ -72,6 +74,10 @@ struct BackgroundPatternPickerView: View {
                     await MainActor.run {
                         config.patternType = .custom
                         config.customImageFileName = fileName
+                        config.customImageCropX = 0.5
+                        config.customImageCropY = 0.5
+                        dragStartCropX = 0.5
+                        dragStartCropY = 0.5
                         customImage = loaded
                         isLoadingPhoto = false
                     }
@@ -81,6 +87,8 @@ struct BackgroundPatternPickerView: View {
                 if config.patternType == .custom, let fileName = config.customImageFileName {
                     customImage = BackgroundImageStorage.load(fileName: fileName)
                 }
+                dragStartCropX = config.customImageCropX ?? 0.5
+                dragStartCropY = config.customImageCropY ?? 0.5
             }
         }
     }
@@ -89,11 +97,20 @@ struct BackgroundPatternPickerView: View {
 
     private var previewSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("プレビュー")
-                .font(.system(size: 13, weight: .bold, design: .rounded))
-                .foregroundStyle(AppTheme.textSecondary)
-                .textCase(.uppercase)
-                .tracking(1)
+            HStack {
+                Text("プレビュー")
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .foregroundStyle(AppTheme.textSecondary)
+                    .textCase(.uppercase)
+                    .tracking(1)
+
+                if config.patternType == .custom && customImage != nil {
+                    Spacer()
+                    Label("ドラッグで位置調整", systemImage: "hand.draw")
+                        .font(.system(size: 11, weight: .medium, design: .rounded))
+                        .foregroundStyle(AppTheme.accent)
+                }
+            }
 
             BoardBackgroundView(config: config, customImage: customImage)
                 .frame(height: 160)
@@ -103,7 +120,35 @@ struct BackgroundPatternPickerView: View {
                         .stroke(Color.black.opacity(0.06), lineWidth: 1)
                 )
                 .shadow(color: .black.opacity(0.06), radius: 8, y: 4)
+                .gesture(customImageCropGesture)
         }
+    }
+
+    // MARK: - カスタム背景位置調整ジェスチャー
+
+    private var customImageCropGesture: some Gesture {
+        DragGesture()
+            .onChanged { value in
+                guard config.patternType == .custom, let image = customImage else { return }
+                let containerWidth: CGFloat = UIScreen.main.bounds.width - 40
+                let containerHeight: CGFloat = 160
+                let scale = max(containerWidth / image.size.width, containerHeight / image.size.height)
+                let excessWidth = image.size.width * scale - containerWidth
+                let excessHeight = image.size.height * scale - containerHeight
+
+                if excessWidth > 0 {
+                    let deltaX = -value.translation.width / excessWidth
+                    config.customImageCropX = min(1, max(0, dragStartCropX + deltaX))
+                }
+                if excessHeight > 0 {
+                    let deltaY = -value.translation.height / excessHeight
+                    config.customImageCropY = min(1, max(0, dragStartCropY + deltaY))
+                }
+            }
+            .onEnded { _ in
+                dragStartCropX = config.customImageCropX ?? 0.5
+                dragStartCropY = config.customImageCropY ?? 0.5
+            }
     }
 
     // MARK: - パターン選択
