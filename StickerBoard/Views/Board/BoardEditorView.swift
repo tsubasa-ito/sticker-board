@@ -229,16 +229,22 @@ struct BoardEditorView: View {
 
     // MARK: - キャンバスエリア
 
+    /// ボードのアスペクト比（ホーム一覧サムネイルと統一）
+    private static let boardAspectRatio: CGFloat = 3.0 / 4.0
+
     private var canvasArea: some View {
         ZStack {
             // ボードカード（背景パターン付き）
             BoardBackgroundView(config: backgroundConfig, customImage: customBackgroundImage)
+                .aspectRatio(Self.boardAspectRatio, contentMode: .fit)
                 .clipShape(RoundedRectangle(cornerRadius: 16))
                 .shadow(color: .black.opacity(0.08), radius: 20, y: 4)
                 .padding(24)
 
             // タップで選択解除
             Color.clear
+                .aspectRatio(Self.boardAspectRatio, contentMode: .fit)
+                .padding(24)
                 .contentShape(Rectangle())
                 .onTapGesture {
                     withAnimation(.easeInOut(duration: 0.15)) {
