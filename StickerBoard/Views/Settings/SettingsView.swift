@@ -17,6 +17,11 @@ struct SettingsView: View {
             ScrollView {
                 VStack(spacing: 20) {
                     subscriptionSection
+
+                    if !subscriptionManager.isProUser {
+                        proBenefitsSection
+                    }
+
                     actionsSection
                 }
                 .padding(.horizontal, 16)
@@ -147,6 +152,45 @@ struct SettingsView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
+    }
+
+    // MARK: - Proメリットセクション（無料ユーザー向け）
+
+    private var proBenefitsSection: some View {
+        VStack(spacing: 0) {
+            sectionHeader(title: "Pro にアップグレードすると", icon: "crown")
+
+            VStack(spacing: 0) {
+                benefitRow(icon: "star.fill", title: "シール保存", value: "無制限")
+                benefitRow(icon: "rectangle.on.rectangle.fill", title: "ボード作成", value: "無制限")
+                benefitRow(icon: "square.dashed", title: "枠線バリエーション", value: "全開放")
+                benefitRow(icon: "paintpalette.fill", title: "背景パターン", value: "全開放")
+                benefitRow(icon: "square.and.arrow.down.fill", title: "画像書き出し", value: "ロゴなし")
+            }
+            .padding(.vertical, 4)
+            .stickerCard()
+        }
+    }
+
+    private func benefitRow(icon: String, title: String, value: String) -> some View {
+        HStack {
+            Image(systemName: icon)
+                .font(.system(size: 13))
+                .foregroundStyle(AppTheme.accent)
+                .frame(width: 24)
+
+            Text(title)
+                .font(.system(size: 14, design: .rounded))
+                .foregroundStyle(AppTheme.textPrimary)
+
+            Spacer()
+
+            Text(value)
+                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .foregroundStyle(AppTheme.accent)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
     }
 
     // MARK: - アクションセクション
