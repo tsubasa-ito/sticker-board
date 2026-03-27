@@ -12,9 +12,9 @@ struct SettingsView: View {
     @State private var errorMessage: String?
     @State private var isLoadingProducts = false
 
-    // TODO: #38 自サービスのURLに差し替え（https://github.com/tsubasa-ito/sticker-board/issues/38）
-    private static let termsURL = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
-    private static let privacyURL = URL(string: "https://www.apple.com/legal/privacy/")!
+    private static let termsURL = URL(string: "https://colorfree-map.com/sticker-board/terms")!
+    private static let privacyURL = URL(string: "https://colorfree-map.com/sticker-board/privacy")!
+    private static let contactURL = URL(string: "https://forms.gle/Ngx3Fq5XnZJKxAaD6")!
 
     var body: some View {
         ZStack {
@@ -540,6 +540,10 @@ struct SettingsView: View {
                 Divider().padding(.horizontal, 16)
 
                 linkRow(title: "プライバシーポリシー", url: Self.privacyURL)
+
+                Divider().padding(.horizontal, 16)
+
+                linkRow(title: "お問い合わせ", url: Self.contactURL)
             }
             .stickerCard()
         }
