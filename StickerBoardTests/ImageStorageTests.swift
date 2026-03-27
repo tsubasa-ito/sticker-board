@@ -56,12 +56,17 @@ struct ImageStorageTests {
         let fileName = try ImageStorage.save(original)
         defer { ImageStorage.delete(fileName: fileName) }
 
+        let beforeOverwrite = try #require(ImageStorage.loadFromDisk(fileName: fileName))
+        let beforeData = try #require(beforeOverwrite.pngData())
+
         let replacement = makeTestImage(size: CGSize(width: 80, height: 80))
         try ImageStorage.overwrite(replacement, fileName: fileName)
 
         let loaded = try #require(ImageStorage.loadFromDisk(fileName: fileName))
-        #expect(loaded.size.width > 0)
-        #expect(loaded.size.height > 0)
+        let afterData = try #require(loaded.pngData())
+
+        // 上書き前後でファイル内容が変わっていることを検証
+        #expect(beforeData != afterData)
     }
 
     @Test func 上書き保存後もloadFromDiskで読み込める() throws {
