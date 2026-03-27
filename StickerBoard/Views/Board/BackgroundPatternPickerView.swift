@@ -112,29 +112,34 @@ struct BackgroundPatternPickerView: View {
                 }
             }
 
-            BoardBackgroundView(config: config, customImage: customImage)
-                .frame(height: 160)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color.black.opacity(0.06), lineWidth: 1)
-                )
-                .shadow(color: .black.opacity(0.06), radius: 8, y: 4)
-                .gesture(customImageCropGesture)
+            GeometryReader { geometry in
+                let previewWidth = geometry.size.width * 0.55
+                let previewHeight = previewWidth * 4 / 3
+
+                BoardBackgroundView(config: config, customImage: customImage)
+                    .frame(width: previewWidth, height: previewHeight)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(Color.black.opacity(0.06), lineWidth: 1)
+                    )
+                    .shadow(color: .black.opacity(0.06), radius: 8, y: 4)
+                    .gesture(customImageCropGesture(containerSize: CGSize(width: previewWidth, height: previewHeight)))
+                    .frame(maxWidth: .infinity)
+            }
+            .aspectRatio(1.0 / 0.8, contentMode: .fit)
         }
     }
 
     // MARK: - カスタム背景位置調整ジェスチャー
 
-    private var customImageCropGesture: some Gesture {
+    private func customImageCropGesture(containerSize: CGSize) -> some Gesture {
         DragGesture()
             .onChanged { value in
                 guard config.patternType == .custom, let image = customImage else { return }
-                let containerWidth: CGFloat = UIScreen.main.bounds.width - 40
-                let containerHeight: CGFloat = 160
-                let scale = max(containerWidth / image.size.width, containerHeight / image.size.height)
-                let excessWidth = image.size.width * scale - containerWidth
-                let excessHeight = image.size.height * scale - containerHeight
+                let scale = max(containerSize.width / image.size.width, containerSize.height / image.size.height)
+                let excessWidth = image.size.width * scale - containerSize.width
+                let excessHeight = image.size.height * scale - containerSize.height
 
                 if excessWidth > 0 {
                     let deltaX = -value.translation.width / excessWidth
