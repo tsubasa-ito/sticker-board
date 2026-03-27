@@ -19,20 +19,18 @@ struct BackgroundImageStorageTests {
     @Test func 保存したファイル名がJPG拡張子を持つ() throws {
         let image = makeTestImage()
         let fileName = try BackgroundImageStorage.save(image)
+        defer { BackgroundImageStorage.delete(fileName: fileName) }
 
         #expect(fileName.hasSuffix(".jpg"))
-
-        BackgroundImageStorage.delete(fileName: fileName)
     }
 
     @Test func 保存した画像をloadで読み込める() throws {
         let image = makeTestImage()
         let fileName = try BackgroundImageStorage.save(image)
+        defer { BackgroundImageStorage.delete(fileName: fileName) }
 
         let loaded = BackgroundImageStorage.load(fileName: fileName)
         #expect(loaded != nil)
-
-        BackgroundImageStorage.delete(fileName: fileName)
     }
 
     @Test func 削除後はloadでnilが返る() throws {
@@ -55,11 +53,10 @@ struct BackgroundImageStorageTests {
     @Test func 大きい画像も保存と読み込みが正常に動作する() throws {
         let image = makeTestImage(size: CGSize(width: 5000, height: 3000))
         let fileName = try BackgroundImageStorage.save(image)
+        defer { BackgroundImageStorage.delete(fileName: fileName) }
 
         let loaded = try #require(BackgroundImageStorage.load(fileName: fileName))
         #expect(loaded.size.width > 0)
         #expect(loaded.size.height > 0)
-
-        BackgroundImageStorage.delete(fileName: fileName)
     }
 }
