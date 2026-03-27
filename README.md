@@ -111,10 +111,10 @@ xcodebuild -project StickerBoard.xcodeproj \
   -arch arm64 \
   -quiet build
 
-# ユニットテスト実行（Swift Testing）
+# ユニットテスト実行（Swift Testing）※シミュレータ名は環境に合わせて変更
 xcodebuild -project StickerBoard.xcodeproj \
   -scheme StickerBoard \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
   test
 ```
 
