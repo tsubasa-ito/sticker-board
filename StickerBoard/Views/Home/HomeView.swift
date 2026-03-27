@@ -71,6 +71,8 @@ struct HomeView: View {
         }
         .navigationDestination(isPresented: $showingSettings) {
             SettingsView()
+                .onAppear { hideTabBar = true }
+                .onDisappear { hideTabBar = false }
         }
         .fullScreenCover(isPresented: $showingOnboarding) {
             OnboardingView()
