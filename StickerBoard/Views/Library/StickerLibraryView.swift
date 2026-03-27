@@ -37,12 +37,19 @@ struct StickerLibraryView: View {
             if let sticker = previewSticker {
                 StickerPreviewOverlay(
                     sticker: sticker,
-                    namespace: previewNamespace
-                ) {
-                    withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
-                        previewSticker = nil
+                    namespace: previewNamespace,
+                    onDismiss: {
+                        withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
+                            previewSticker = nil
+                        }
+                    },
+                    onDelete: {
+                        deleteInfo = (sticker, boardsUsing(sticker))
+                    },
+                    onMaskEdit: {
+                        startMaskEdit(sticker)
                     }
-                }
+                )
             }
         }
         .navigationTitle("ライブラリ")
@@ -236,6 +243,8 @@ struct StickerPreviewOverlay: View {
     let sticker: Sticker
     let namespace: Namespace.ID
     var onDismiss: () -> Void
+    var onDelete: () -> Void = {}
+    var onMaskEdit: () -> Void = {}
 
     var body: some View {
         ZStack {
@@ -262,6 +271,38 @@ struct StickerPreviewOverlay: View {
                 Text(sticker.createdAt.formatted(date: .abbreviated, time: .shortened))
                     .font(.system(size: 13, design: .rounded))
                     .foregroundStyle(.white.opacity(0.6))
+
+                // アクションボタン
+                HStack(spacing: 16) {
+                    Button {
+                        onDismiss()
+                        onDelete()
+                    } label: {
+                        Label("削除", systemImage: "trash")
+                            .font(.system(size: 14, weight: .medium, design: .rounded))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 12)
+                            .background(.white.opacity(0.15))
+                            .clipShape(Capsule())
+                    }
+                    .accessibilityLabel("シールを削除")
+
+                    Button {
+                        onDismiss()
+                        onMaskEdit()
+                    } label: {
+                        Label("再編集", systemImage: "eraser.line.dashed")
+                            .font(.system(size: 14, weight: .medium, design: .rounded))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 12)
+                            .background(.white.opacity(0.15))
+                            .clipShape(Capsule())
+                    }
+                    .accessibilityLabel("マスクを再編集")
+                }
+                .padding(.top, 4)
             }
         }
         .transition(.opacity)
