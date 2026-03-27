@@ -37,6 +37,18 @@ targets:
         SWIFT_EMIT_LOC_STRINGS: YES
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
 
+  StickerBoardTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - StickerBoardTests
+    dependencies:
+      - target: StickerBoard
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: "com.solodev.StickerBoardTests"
+
 schemes:
   StickerBoard:
     build:
@@ -45,6 +57,10 @@ schemes:
     run:
       config: Debug
       storeKitConfiguration: Products.storekit
+    test:
+      config: Debug
+      targets:
+        - StickerBoardTests
     profile:
       config: Release
     analyze:

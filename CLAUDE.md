@@ -24,6 +24,7 @@ StickerBoard/
     ├── Paywall/  # ペイウォール（Pro課金導線）
     ├── Settings/ # 設定画面（サブスクリプション管理）
     └── Board/    # ボード編集・一覧
+StickerBoardTests/  # Swift Testing によるユニットテスト
 ```
 
 ## 開発コマンド
@@ -33,6 +34,9 @@ xcodegen generate
 
 # ビルド
 xcodebuild -project StickerBoard.xcodeproj -target StickerBoard -sdk iphonesimulator26.2 -arch arm64 build
+
+# テスト実行（Swift Testing）※シミュレータ名は環境に合わせて変更
+xcodebuild -project StickerBoard.xcodeproj -scheme StickerBoard -destination 'platform=iOS Simulator,name=iPhone 16 Pro' test
 
 # Xcodeで開く
 open StickerBoard.xcodeproj
