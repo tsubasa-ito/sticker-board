@@ -29,7 +29,10 @@ struct SettingsView: View {
         .sheet(isPresented: $showingPaywall) {
             PaywallView()
         }
-        .manageSubscriptionsSheet(isPresented: $showingManageSubscription)
+        .manageSubscriptionsSheet(
+            isPresented: $showingManageSubscription,
+            subscriptionGroupID: SubscriptionProduct.groupID
+        )
         .alert("購入の復元", isPresented: $showRestoreAlert) {
             Button("OK") {}
         } message: {
