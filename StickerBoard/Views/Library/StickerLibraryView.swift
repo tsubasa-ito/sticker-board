@@ -10,6 +10,7 @@ struct StickerLibraryView: View {
     @State private var maskEditSticker: Sticker?
     @State private var maskEditOriginalImage: UIImage?
     @State private var maskEditMaskImage: UIImage?
+    @State private var thumbnailRefreshID = UUID()
     @Namespace private var previewNamespace
     var onAddSticker: () -> Void = {}
 
@@ -122,7 +123,7 @@ struct StickerLibraryView: View {
                     addStickerCard
 
                     ForEach(stickers) { sticker in
-                        StickerThumbnailView(sticker: sticker)
+                        StickerThumbnailView(sticker: sticker, refreshTrigger: thumbnailRefreshID)
                             .matchedGeometryEffect(id: sticker.id, in: previewNamespace)
                             .opacity(previewSticker?.id == sticker.id ? 0 : 1)
                             .onTapGesture {
@@ -168,6 +169,7 @@ struct StickerLibraryView: View {
     private func saveMaskEditResult(_ composited: UIImage) {
         guard let sticker = maskEditSticker else { return }
         try? ImageStorage.overwrite(composited, fileName: sticker.imageFileName)
+        thumbnailRefreshID = UUID()
     }
 
     private func deleteSticker(_ sticker: Sticker, from usedBoards: [Board]) {
@@ -252,6 +254,7 @@ struct StickerPreviewOverlay: View {
 
 struct StickerThumbnailView: View {
     let sticker: Sticker
+    var refreshTrigger: UUID = UUID()
     @State private var appeared = false
     @State private var thumbnailImage: UIImage?
 
@@ -278,7 +281,7 @@ struct StickerThumbnailView: View {
         .shadow(color: .black.opacity(0.04), radius: 4, y: 2)
         .scaleEffect(appeared ? 1 : 0.7)
         .opacity(appeared ? 1 : 0)
-        .task {
+        .task(id: refreshTrigger) {
             thumbnailImage = await Task.detached {
                 ImageStorage.loadThumbnail(fileName: sticker.imageFileName, size: 200)
             }.value
