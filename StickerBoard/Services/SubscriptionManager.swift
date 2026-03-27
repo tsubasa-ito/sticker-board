@@ -136,9 +136,12 @@ final class SubscriptionManager: ObservableObject {
     private func listenForTransactions() -> Task<Void, Never> {
         Task(priority: .background) {
             for await result in Transaction.updates {
-                if let transaction = try? checkVerified(result) {
+                do {
+                    let transaction = try checkVerified(result)
                     await transaction.finish()
                     await updatePurchasedProducts()
+                } catch {
+                    print("[SubscriptionManager] Failed to verify transaction from updates: \(error)")
                 }
             }
         }
