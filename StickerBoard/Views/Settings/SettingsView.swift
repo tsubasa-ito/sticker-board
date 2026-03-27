@@ -9,6 +9,10 @@ struct SettingsView: View {
     @State private var showRestoreAlert = false
     @State private var restoreAlertMessage = ""
 
+    // TODO: #38 で実際のURLに差し替え
+    private static let termsURL = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
+    private static let privacyURL = URL(string: "https://www.apple.com/legal/privacy/")!
+
     var body: some View {
         ZStack {
             AppTheme.backgroundPrimary
@@ -17,12 +21,15 @@ struct SettingsView: View {
             ScrollView {
                 VStack(spacing: 20) {
                     subscriptionSection
+                    actionsSection
 
                     if !subscriptionManager.isProUser {
                         proBenefitsSection
+                        faqSection
                     }
 
-                    actionsSection
+                    noticesSection
+                    relatedLinksSection
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
@@ -52,13 +59,11 @@ struct SettingsView: View {
             sectionHeader(title: "サブスクリプション", icon: "crown")
 
             VStack(spacing: 0) {
-                // 現在のプラン
                 planRow
 
                 Divider()
                     .padding(.horizontal, 16)
 
-                // 有効期限（Proユーザーのみ）
                 if subscriptionManager.isProUser {
                     expirationRow
 
@@ -66,7 +71,6 @@ struct SettingsView: View {
                         .padding(.horizontal, 16)
                 }
 
-                // ステータス
                 statusRow
             }
             .stickerCard()
@@ -154,58 +158,12 @@ struct SettingsView: View {
         .padding(.vertical, 14)
     }
 
-    // MARK: - Proメリットセクション（無料ユーザー向け）
-
-    private var proBenefitsSection: some View {
-        VStack(spacing: 0) {
-            sectionHeader(title: "Pro にアップグレードすると", icon: "crown")
-
-            VStack(spacing: 0) {
-                benefitRow(icon: "star.fill", title: "シール保存", value: "無制限")
-                benefitRow(icon: "rectangle.on.rectangle.fill", title: "ボード作成", value: "無制限")
-                benefitRow(icon: "square.dashed", title: "枠線バリエーション", value: "全開放")
-                benefitRow(icon: "paintpalette.fill", title: "背景パターン", value: "全開放")
-                benefitRow(icon: "square.and.arrow.down.fill", title: "画像書き出し", value: "ロゴなし")
-            }
-            .padding(.vertical, 4)
-            .stickerCard()
-        }
-    }
-
-    private func benefitRow(icon: String, title: String, value: String) -> some View {
-        HStack {
-            Image(systemName: icon)
-                .font(.system(size: 13))
-                .foregroundStyle(AppTheme.accent)
-                .frame(width: 24)
-
-            Text(title)
-                .font(.system(size: 14, design: .rounded))
-                .foregroundStyle(AppTheme.textPrimary)
-
-            Spacer()
-
-            Text(value)
-                .font(.system(size: 13, weight: .bold, design: .rounded))
-                .foregroundStyle(AppTheme.accent)
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-    }
-
     // MARK: - アクションセクション
 
     private var actionsSection: some View {
-        VStack(spacing: 0) {
-            sectionHeader(title: "アクション", icon: "gearshape")
-
-            VStack(spacing: 12) {
-                // プラン変更ボタン
-                changePlanButton
-
-                // 購入を復元ボタン
-                restorePurchasesButton
-            }
+        VStack(spacing: 12) {
+            changePlanButton
+            restorePurchasesButton
         }
     }
 
@@ -264,6 +222,161 @@ struct SettingsView: View {
             .background(AppTheme.accent.opacity(0.1), in: RoundedRectangle(cornerRadius: 16))
         }
         .disabled(isRestoringPurchases)
+    }
+
+    // MARK: - Proメリットセクション（無料ユーザー向け）
+
+    private var proBenefitsSection: some View {
+        VStack(spacing: 0) {
+            sectionHeader(title: "Pro にアップグレードすると", icon: "crown")
+
+            VStack(spacing: 0) {
+                benefitRow(icon: "star.fill", title: "シール保存", value: "無制限")
+                benefitRow(icon: "rectangle.on.rectangle.fill", title: "ボード作成", value: "無制限")
+                benefitRow(icon: "square.dashed", title: "枠線バリエーション", value: "全開放")
+                benefitRow(icon: "paintpalette.fill", title: "背景パターン", value: "全開放")
+                benefitRow(icon: "square.and.arrow.down.fill", title: "画像書き出し", value: "ロゴなし")
+            }
+            .padding(.vertical, 4)
+            .stickerCard()
+        }
+    }
+
+    private func benefitRow(icon: String, title: String, value: String) -> some View {
+        HStack {
+            Image(systemName: icon)
+                .font(.system(size: 13))
+                .foregroundStyle(AppTheme.accent)
+                .frame(width: 24)
+
+            Text(title)
+                .font(.system(size: 14, design: .rounded))
+                .foregroundStyle(AppTheme.textPrimary)
+
+            Spacer()
+
+            Text(value)
+                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .foregroundStyle(AppTheme.accent)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+    }
+
+    // MARK: - よくある質問セクション（無料ユーザー向け）
+
+    private var faqSection: some View {
+        VStack(spacing: 0) {
+            sectionHeader(title: "よくある質問", icon: "questionmark.circle")
+
+            VStack(spacing: 0) {
+                faqItem(
+                    question: "無料プランでもシールは作れますか？",
+                    answer: "はい。無料プランではシール30枚・ボード1枚まで作成できます。"
+                )
+
+                Divider().padding(.horizontal, 16)
+
+                faqItem(
+                    question: "Proプランはいつでも解約できますか？",
+                    answer: "はい。いつでも解約可能です。解約後も有効期限まではPro機能をご利用いただけます。"
+                )
+
+                Divider().padding(.horizontal, 16)
+
+                faqItem(
+                    question: "機種変更してもProは引き継げますか？",
+                    answer: "はい。同じApple IDでサインインし「購入を復元」を行うと引き継げます。"
+                )
+
+                Divider().padding(.horizontal, 16)
+
+                faqItem(
+                    question: "月額と年額はどちらがお得ですか？",
+                    answer: "年額プランは月額換算で約36%おトクです。長期利用の方におすすめします。"
+                )
+            }
+            .stickerCard()
+        }
+    }
+
+    private func faqItem(question: String, answer: String) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Q. \(question)")
+                .font(.system(size: 14, weight: .bold, design: .rounded))
+                .foregroundStyle(AppTheme.textPrimary)
+
+            Text(answer)
+                .font(.system(size: 13, design: .rounded))
+                .foregroundStyle(AppTheme.textSecondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+    }
+
+    // MARK: - 注意事項セクション
+
+    private var noticesSection: some View {
+        VStack(spacing: 0) {
+            sectionHeader(title: "注意事項", icon: "exclamationmark.triangle")
+
+            VStack(alignment: .leading, spacing: 10) {
+                noticeItem("有効期限終了の24時間前までに解約されない限り、自動的に継続購入となります。")
+                noticeItem("ご利用料金はApp Storeアカウントに対して請求されます。")
+                noticeItem("アプリを削除するだけでは継続購入は解除されません。ご注意ください。")
+                noticeItem("異なるアカウントで重複課金した場合の返金対応はできかねますのでご了承ください。")
+            }
+            .padding(16)
+            .stickerCard()
+        }
+    }
+
+    private func noticeItem(_ text: String) -> some View {
+        HStack(alignment: .top, spacing: 8) {
+            Text("・")
+                .font(.system(size: 13, design: .rounded))
+                .foregroundStyle(AppTheme.textTertiary)
+
+            Text(text)
+                .font(.system(size: 13, design: .rounded))
+                .foregroundStyle(AppTheme.textSecondary)
+        }
+    }
+
+    // MARK: - 関連リンクセクション
+
+    private var relatedLinksSection: some View {
+        VStack(spacing: 0) {
+            sectionHeader(title: "関連リンク", icon: "link")
+
+            VStack(spacing: 0) {
+                linkRow(title: "利用規約", url: Self.termsURL)
+
+                Divider().padding(.horizontal, 16)
+
+                linkRow(title: "プライバシーポリシー", url: Self.privacyURL)
+            }
+            .stickerCard()
+        }
+    }
+
+    private func linkRow(title: String, url: URL) -> some View {
+        Link(destination: url) {
+            HStack {
+                Text(title)
+                    .font(.system(size: 15, design: .rounded))
+                    .foregroundStyle(AppTheme.textPrimary)
+
+                Spacer()
+
+                Image(systemName: "arrow.up.right.square")
+                    .font(.system(size: 14))
+                    .foregroundStyle(AppTheme.textTertiary)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+        }
     }
 
     // MARK: - ヘルパー
