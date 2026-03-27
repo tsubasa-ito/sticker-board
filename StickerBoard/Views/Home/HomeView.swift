@@ -144,7 +144,7 @@ struct HomeView: View {
             // プレビューエリア
             ZStack {
                 // ボード背景パターン
-                BoardBackgroundView(config: board.backgroundPattern)
+                BoardCardBackground(config: board.backgroundPattern)
 
                 // シールプレビュー
                 if board.placements.isEmpty {
@@ -450,6 +450,26 @@ private struct BoardStickerPreviewView: View {
         .onDisappear {
             images = [:]
         }
+    }
+}
+
+// MARK: - ボードカード背景（カスタム背景画像の非同期読み込み対応）
+
+private struct BoardCardBackground: View {
+    let config: BackgroundPatternConfig
+    @State private var customImage: UIImage?
+
+    var body: some View {
+        BoardBackgroundView(config: config, customImage: customImage)
+            .task(id: config.customImageFileName) {
+                if config.patternType == .custom, let fileName = config.customImageFileName {
+                    customImage = await Task.detached {
+                        BackgroundImageStorage.load(fileName: fileName)
+                    }.value
+                } else {
+                    customImage = nil
+                }
+            }
     }
 }
 
