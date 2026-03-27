@@ -110,6 +110,12 @@ xcodebuild -project StickerBoard.xcodeproj \
   -sdk iphonesimulator \
   -arch arm64 \
   -quiet build
+
+# ユニットテスト実行（Swift Testing）
+xcodebuild -project StickerBoard.xcodeproj \
+  -scheme StickerBoard \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  test
 ```
 
 ## プロジェクト構成
@@ -166,6 +172,12 @@ StickerBoard/
         ├── BoardBackgroundView.swift        # 背景パターン描画
         ├── BackgroundPatternPickerView.swift # 背景パターン選択UI
         └── StickerBorderPickerView.swift    # 枠線設定UI（太さ・カラー選択）
+StickerBoardTests/                           # Swift Testing ユニットテスト
+    ├── StickerPlacementTests.swift          # StickerPlacement のCodable・computed properties
+    ├── BackgroundPatternTests.swift         # 背景パターン種別・設定・Color hex変換
+    ├── StickerFilterTests.swift             # フィルター種別のプロパティ・Codable
+    ├── StickerBorderTests.swift             # 枠線太さ・カラープリセット
+    └── SubscriptionProductTests.swift       # サブスクリプション商品ID・表示名
 ```
 
 ## ライセンス
