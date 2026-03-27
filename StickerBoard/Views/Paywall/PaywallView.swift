@@ -245,11 +245,15 @@ struct PaywallView: View {
             Button {
                 Task {
                     isPurchasing = true
-                    await subscriptionManager.restorePurchases()
-                    isPurchasing = false
-                    if subscriptionManager.isProUser {
-                        dismiss()
+                    do {
+                        try await subscriptionManager.restorePurchases()
+                        if subscriptionManager.isProUser {
+                            dismiss()
+                        }
+                    } catch {
+                        errorMessage = "購入の復元に失敗しました。ネットワーク接続を確認して再度お試しください。"
                     }
+                    isPurchasing = false
                 }
             } label: {
                 Text("購入を復元")

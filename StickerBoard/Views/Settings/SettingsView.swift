@@ -8,14 +8,11 @@ struct SettingsView: View {
     @State private var isRestoringPurchases = false
     @State private var showRestoreAlert = false
     @State private var restoreAlertMessage = ""
-    @State private var selectedPlan: SelectedPlan = .yearly
+    @State private var selectedPlan: SubscriptionProduct = .yearlyPro
     @State private var errorMessage: String?
+    @State private var isLoadingProducts = false
 
-    private enum SelectedPlan {
-        case monthly, yearly
-    }
-
-    // TODO: #38 で実際のURLに差し替え
+    // TODO: #38 自サービスのURLに差し替え（https://github.com/tsubasa-ito/sticker-board/issues/38）
     private static let termsURL = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
     private static let privacyURL = URL(string: "https://www.apple.com/legal/privacy/")!
 
@@ -52,6 +49,13 @@ struct SettingsView: View {
             Button("OK") {}
         } message: {
             Text(restoreAlertMessage)
+        }
+        .task {
+            if subscriptionManager.products.isEmpty {
+                isLoadingProducts = true
+                await subscriptionManager.loadProducts()
+                isLoadingProducts = false
+            }
         }
     }
 
@@ -122,6 +126,10 @@ struct SettingsView: View {
                 Text(date.formatted(.dateTime.locale(Locale(identifier: "ja_JP")).year().month().day()))
                     .font(.system(size: 15, weight: .semibold, design: .rounded))
                     .foregroundStyle(AppTheme.textSecondary)
+            } else {
+                Text("--")
+                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .foregroundStyle(AppTheme.textTertiary)
             }
         }
         .padding(.horizontal, 16)
@@ -195,54 +203,75 @@ struct SettingsView: View {
 
     private var planSelectionSection: some View {
         VStack(spacing: 12) {
-            HStack(spacing: 10) {
-                // 年額プランカード
-                if let yearly = subscriptionManager.yearlyProduct {
-                    planCard(
-                        product: yearly,
-                        label: "年額",
-                        isSelected: selectedPlan == .yearly,
-                        badge: savingsBadgeText
-                    ) {
-                        selectedPlan = .yearly
+            if isLoadingProducts {
+                ProgressView()
+                    .padding(.vertical, 20)
+            } else if subscriptionManager.products.isEmpty {
+                VStack(spacing: 12) {
+                    Text("プランの読み込みに失敗しました")
+                        .font(.system(size: 14, design: .rounded))
+                        .foregroundStyle(AppTheme.textSecondary)
+
+                    Button {
+                        Task {
+                            isLoadingProducts = true
+                            await subscriptionManager.loadProducts()
+                            isLoadingProducts = false
+                        }
+                    } label: {
+                        Text("再試行")
+                            .font(.system(size: 14, weight: .semibold, design: .rounded))
+                            .foregroundStyle(AppTheme.accent)
+                    }
+                }
+                .padding(.vertical, 20)
+            } else {
+                HStack(spacing: 10) {
+                    if let yearly = subscriptionManager.yearlyProduct {
+                        planCard(
+                            product: yearly,
+                            subscriptionProduct: .yearlyPro,
+                            isSelected: selectedPlan == .yearlyPro,
+                            badge: savingsBadgeText
+                        ) {
+                            selectedPlan = .yearlyPro
+                        }
+                    }
+
+                    if let monthly = subscriptionManager.monthlyProduct {
+                        planCard(
+                            product: monthly,
+                            subscriptionProduct: .monthlyPro,
+                            isSelected: selectedPlan == .monthlyPro,
+                            badge: nil
+                        ) {
+                            selectedPlan = .monthlyPro
+                        }
                     }
                 }
 
-                // 月額プランカード
-                if let monthly = subscriptionManager.monthlyProduct {
-                    planCard(
-                        product: monthly,
-                        label: "月額",
-                        isSelected: selectedPlan == .monthly,
-                        badge: nil
-                    ) {
-                        selectedPlan = .monthly
+                Button {
+                    Task { await purchaseSelectedPlan() }
+                } label: {
+                    HStack {
+                        if isPurchasing {
+                            ProgressView()
+                                .tint(.white)
+                        } else {
+                            Image(systemName: "crown.fill")
+                                .font(.system(size: 16, weight: .semibold))
+                            Text("Pro にアップグレード")
+                                .font(.system(size: 16, weight: .bold, design: .rounded))
+                        }
                     }
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(AppTheme.accent, in: RoundedRectangle(cornerRadius: 16))
+                    .shadow(color: AppTheme.accent.opacity(0.3), radius: 8, x: 0, y: 4)
                 }
+                .disabled(isPurchasing)
             }
-
-            // 購入ボタン
-            Button {
-                Task { await purchaseSelectedPlan() }
-            } label: {
-                HStack {
-                    if isPurchasing {
-                        ProgressView()
-                            .tint(.white)
-                    } else {
-                        Image(systemName: "crown.fill")
-                            .font(.system(size: 16, weight: .semibold))
-                        Text("Pro にアップグレード")
-                            .font(.system(size: 16, weight: .bold, design: .rounded))
-                    }
-                }
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(AppTheme.accent, in: RoundedRectangle(cornerRadius: 16))
-                .shadow(color: AppTheme.accent.opacity(0.3), radius: 8, x: 0, y: 4)
-            }
-            .disabled(isPurchasing)
 
             if let error = errorMessage {
                 Text(error)
@@ -255,7 +284,7 @@ struct SettingsView: View {
 
     private func planCard(
         product: Product,
-        label: String,
+        subscriptionProduct: SubscriptionProduct,
         isSelected: Bool,
         badge: String?,
         onTap: @escaping () -> Void
@@ -277,7 +306,7 @@ struct SettingsView: View {
                 }
                 .frame(height: 16)
 
-                Text(label)
+                Text(subscriptionProduct.displayName)
                     .font(.system(size: 13, weight: .semibold, design: .rounded))
                     .foregroundStyle(isSelected ? AppTheme.accent : AppTheme.textSecondary)
 
@@ -287,7 +316,7 @@ struct SettingsView: View {
 
                 // 補足行（固定高さで揃える）
                 Group {
-                    if label == "年額", let monthlyPrice = subscriptionManager.yearlyMonthlyPrice {
+                    if subscriptionProduct == .yearlyPro, let monthlyPrice = subscriptionManager.yearlyMonthlyPrice {
                         Text("月あたり\(monthlyPrice)")
                             .font(.system(size: 11, design: .rounded))
                             .foregroundStyle(AppTheme.textTertiary)
@@ -299,8 +328,7 @@ struct SettingsView: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
-            .background(AppTheme.backgroundCard)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .stickerCard()
             .overlay {
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(
@@ -318,13 +346,12 @@ struct SettingsView: View {
     }
 
     private func purchaseSelectedPlan() async {
-        let product: Product?
-        switch selectedPlan {
-        case .yearly: product = subscriptionManager.yearlyProduct
-        case .monthly: product = subscriptionManager.monthlyProduct
-        }
+        let product = subscriptionManager.products.first { $0.id == selectedPlan.rawValue }
 
-        guard let product else { return }
+        guard let product else {
+            errorMessage = "プランの情報を取得できませんでした。ネットワーク接続を確認して再度お試しください。"
+            return
+        }
 
         isPurchasing = true
         errorMessage = nil
@@ -347,13 +374,17 @@ struct SettingsView: View {
         Button {
             Task {
                 isRestoringPurchases = true
-                await subscriptionManager.restorePurchases()
-                isRestoringPurchases = false
-                if subscriptionManager.isProUser {
-                    restoreAlertMessage = "Proプランが復元されました"
-                } else {
-                    restoreAlertMessage = "復元可能な購入が見つかりませんでした"
+                do {
+                    try await subscriptionManager.restorePurchases()
+                    if subscriptionManager.isProUser {
+                        restoreAlertMessage = "Proプランが復元されました"
+                    } else {
+                        restoreAlertMessage = "復元可能な購入が見つかりませんでした"
+                    }
+                } catch {
+                    restoreAlertMessage = "購入の復元に失敗しました。ネットワーク接続を確認して再度お試しください。"
                 }
+                isRestoringPurchases = false
                 showRestoreAlert = true
             }
         } label: {
@@ -446,7 +477,7 @@ struct SettingsView: View {
 
                 faqItem(
                     question: "月額と年額はどちらがお得ですか？",
-                    answer: "年額プランは月額換算で約36%おトクです。長期利用の方におすすめします。"
+                    answer: "年額プランのほうがおトクです。詳しい割引率は上のプランカードをご確認ください。"
                 )
             }
             .stickerCard()

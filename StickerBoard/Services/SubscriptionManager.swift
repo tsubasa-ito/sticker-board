@@ -120,13 +120,9 @@ final class SubscriptionManager: ObservableObject {
 
     // MARK: - 購入復元
 
-    func restorePurchases() async {
-        do {
-            try await AppStore.sync()
-            await updatePurchasedProducts()
-        } catch {
-            print("[SubscriptionManager] Failed to restore purchases: \(error)")
-        }
+    func restorePurchases() async throws {
+        try await AppStore.sync()
+        await updatePurchasedProducts()
     }
 
     // MARK: - 購入状態の更新
