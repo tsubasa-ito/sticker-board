@@ -79,19 +79,25 @@ struct ImageStorage {
     }
 
     /// ファイルを削除する
-    static func delete(fileName: String) {
+    static func delete(fileName: String) throws {
         let fileURL = stickersDirectory.appendingPathComponent(fileName)
-        try? FileManager.default.removeItem(at: fileURL)
+        do {
+            try FileManager.default.removeItem(at: fileURL)
+        } catch {
+            throw ImageStorageError.deletionFailed
+        }
         ImageCacheManager.shared.removeAll(for: fileName)
     }
 }
 
 enum ImageStorageError: LocalizedError {
     case encodingFailed
+    case deletionFailed
 
     var errorDescription: String? {
         switch self {
         case .encodingFailed: return "画像の保存に失敗しました"
+        case .deletionFailed: return "画像ファイルの削除に失敗しました"
         }
     }
 }
