@@ -136,11 +136,13 @@ struct BoardBackgroundView: View {
     // MARK: - カスタム写真
 
     private var customBackground: some View {
-        Group {
+        GeometryReader { geometry in
             if let image = customImage {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFill()
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                    .clipped()
             } else {
                 Color(hexString: config.primaryColorHex)
             }
