@@ -61,14 +61,14 @@ struct BackgroundPatternPickerView: View {
                         await MainActor.run { isLoadingPhoto = false }
                         return
                     }
-                    // 以前のカスタム背景画像を削除
                     let oldFileName = await MainActor.run { config.customImageFileName }
-                    if let oldFileName {
-                        BackgroundImageStorage.delete(fileName: oldFileName)
-                    }
                     guard let fileName = try? BackgroundImageStorage.save(image) else {
                         await MainActor.run { isLoadingPhoto = false }
                         return
+                    }
+                    // 新しい画像の保存が成功してから古い画像を削除
+                    if let oldFileName {
+                        BackgroundImageStorage.delete(fileName: oldFileName)
                     }
                     let loaded = BackgroundImageStorage.load(fileName: fileName)
                     await MainActor.run {
