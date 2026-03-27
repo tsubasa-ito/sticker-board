@@ -144,7 +144,7 @@ struct SettingsView: View {
                     .foregroundStyle(AppTheme.textPrimary)
             } icon: {
                 Image(systemName: subscriptionManager.isProUser ? "checkmark.seal.fill" : "xmark.seal")
-                    .foregroundStyle(subscriptionManager.isProUser ? AppTheme.softOrange : AppTheme.textTertiary)
+                    .foregroundStyle(subscriptionManager.isProUser ? AppTheme.accent : AppTheme.textTertiary)
             }
 
             Spacer()
