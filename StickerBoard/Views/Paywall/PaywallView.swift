@@ -3,8 +3,6 @@ import StoreKit
 
 /// Pro機能のペイウォールシート
 struct PaywallView: View {
-    private static let termsURL = URL(string: "https://colorfree-map.com/sticker-board/terms")!
-    private static let privacyURL = URL(string: "https://colorfree-map.com/sticker-board/privacy")!
     @ObservedObject private var subscriptionManager = SubscriptionManager.shared
     @Environment(\.dismiss) private var dismiss
     @State private var isPurchasing = false
@@ -262,11 +260,11 @@ struct PaywallView: View {
             .disabled(isPurchasing)
 
             HStack(spacing: 16) {
-                Link("利用規約", destination: Self.termsURL)
+                Link("利用規約", destination: AppURLs.terms)
                     .font(.system(size: 11, design: .rounded))
                     .foregroundStyle(AppTheme.textTertiary)
 
-                Link("プライバシーポリシー", destination: Self.privacyURL)
+                Link("プライバシーポリシー", destination: AppURLs.privacy)
                     .font(.system(size: 11, design: .rounded))
                     .foregroundStyle(AppTheme.textTertiary)
             }

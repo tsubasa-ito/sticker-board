@@ -12,9 +12,6 @@ struct SettingsView: View {
     @State private var errorMessage: String?
     @State private var isLoadingProducts = false
 
-    private static let termsURL = URL(string: "https://colorfree-map.com/sticker-board/terms")!
-    private static let privacyURL = URL(string: "https://colorfree-map.com/sticker-board/privacy")!
-    private static let contactURL = URL(string: "https://forms.gle/Ngx3Fq5XnZJKxAaD6")!
 
     var body: some View {
         ZStack {
@@ -535,15 +532,15 @@ struct SettingsView: View {
             sectionHeader(title: "関連リンク", icon: "link")
 
             VStack(spacing: 0) {
-                linkRow(title: "利用規約", url: Self.termsURL)
+                linkRow(title: "利用規約", url: AppURLs.terms)
 
                 Divider().padding(.horizontal, 16)
 
-                linkRow(title: "プライバシーポリシー", url: Self.privacyURL)
+                linkRow(title: "プライバシーポリシー", url: AppURLs.privacy)
 
                 Divider().padding(.horizontal, 16)
 
-                linkRow(title: "お問い合わせ", url: Self.contactURL)
+                linkRow(title: "お問い合わせ", url: AppURLs.contact)
             }
             .stickerCard()
         }
