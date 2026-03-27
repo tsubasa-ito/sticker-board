@@ -107,7 +107,7 @@ struct SettingsView: View {
             Spacer()
 
             if let date = subscriptionManager.currentSubscriptionExpirationDate {
-                Text(date.formatted(.dateTime.year().month().day()))
+                Text(date.formatted(.dateTime.locale(Locale(identifier: "ja_JP")).year().month().day()))
                     .font(.system(size: 15, weight: .semibold, design: .rounded))
                     .foregroundStyle(AppTheme.textSecondary)
             }
