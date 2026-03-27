@@ -255,6 +255,8 @@ struct StickerPreviewOverlay: View {
                 .accessibilityLabel("プレビューを閉じる")
 
             VStack(spacing: 20) {
+                Spacer(minLength: 0)
+
                 Group {
                     if let image = ImageStorage.load(fileName: sticker.imageFileName) {
                         Image(uiImage: image)
@@ -266,7 +268,7 @@ struct StickerPreviewOverlay: View {
                     }
                 }
                 .matchedGeometryEffect(id: sticker.id, in: namespace)
-                .padding(32)
+                .padding(.horizontal, 32)
 
                 Text(sticker.createdAt.formatted(date: .abbreviated, time: .shortened))
                     .font(.system(size: 13, design: .rounded))
@@ -303,7 +305,10 @@ struct StickerPreviewOverlay: View {
                     .accessibilityLabel("マスクを再編集")
                 }
                 .padding(.top, 4)
+
+                Spacer(minLength: 0)
             }
+            .padding(.vertical, 60)
         }
         .transition(.opacity)
     }
