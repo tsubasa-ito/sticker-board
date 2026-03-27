@@ -20,6 +20,7 @@ struct BoardEditorView: View {
     @State private var showQuickPicks = false
     @State private var showingBackgroundPicker = false
     @State private var backgroundConfig: BackgroundPatternConfig = .default
+    @State private var customBackgroundImage: UIImage?
     @State private var showingFilterPicker = false
     @State private var showingBorderPicker = false
     @State private var loadedImages: [UUID: UIImage] = [:]
@@ -136,6 +137,7 @@ struct BoardEditorView: View {
         }
         .sheet(isPresented: $showingBackgroundPicker, onDismiss: {
             board.backgroundPattern = backgroundConfig
+            loadCustomBackgroundImage()
             saveBoard()
         }) {
             BackgroundPatternPickerView(config: $backgroundConfig)
@@ -178,6 +180,7 @@ struct BoardEditorView: View {
         .onAppear {
             placements = board.placements
             backgroundConfig = board.backgroundPattern
+            loadCustomBackgroundImage()
             rebuildFilterCache()
         }
         .onDisappear {
@@ -229,7 +232,7 @@ struct BoardEditorView: View {
     private var canvasArea: some View {
         ZStack {
             // ボードカード（背景パターン付き）
-            BoardBackgroundView(config: backgroundConfig)
+            BoardBackgroundView(config: backgroundConfig, customImage: customBackgroundImage)
                 .clipShape(RoundedRectangle(cornerRadius: 16))
                 .shadow(color: .black.opacity(0.08), radius: 20, y: 4)
                 .padding(24)
@@ -565,10 +568,19 @@ struct BoardEditorView: View {
         try? modelContext.save()
     }
 
+    private func loadCustomBackgroundImage() {
+        if backgroundConfig.patternType == .custom,
+           let fileName = backgroundConfig.customImageFileName {
+            customBackgroundImage = BackgroundImageStorage.load(fileName: fileName)
+        } else {
+            customBackgroundImage = nil
+        }
+    }
+
     // MARK: - 画像として保存
 
     private func saveBoardAsImage() {
-        let content = BoardSnapshotView(placements: sortedPlacements, size: canvasSize, backgroundConfig: backgroundConfig, showWatermark: !SubscriptionManager.shared.isProUser)
+        let content = BoardSnapshotView(placements: sortedPlacements, size: canvasSize, backgroundConfig: backgroundConfig, customBackgroundImage: customBackgroundImage, showWatermark: !SubscriptionManager.shared.isProUser)
 
         let renderer = ImageRenderer(content: content)
         renderer.scale = displayScale
@@ -637,11 +649,12 @@ private struct BoardSnapshotView: View {
     let placements: [StickerPlacement]
     let size: CGSize
     var backgroundConfig: BackgroundPatternConfig = .default
+    var customBackgroundImage: UIImage?
     var showWatermark: Bool = false
 
     var body: some View {
         ZStack {
-            BoardBackgroundView(config: backgroundConfig)
+            BoardBackgroundView(config: backgroundConfig, customImage: customBackgroundImage)
 
             ForEach(placements) { placement in
                 if let displayImage = ImageCacheManager.shared.processed(for: placement.imageFileName, filter: placement.filter, borderWidth: placement.borderWidth, borderColorHex: placement.borderColorHex) {
