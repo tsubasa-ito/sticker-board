@@ -10,6 +10,7 @@ struct StickerLibraryView: View {
     @State private var maskEditSticker: Sticker?
     @State private var maskEditOriginalImage: UIImage?
     @State private var maskEditMaskImage: UIImage?
+    @State private var maskEditSaved = false
     @State private var thumbnailRefreshID = UUID()
     @Namespace private var previewNamespace
     var onAddSticker: () -> Void = {}
@@ -63,7 +64,12 @@ struct StickerLibraryView: View {
         .fullScreenCover(isPresented: Binding(
             get: { maskEditOriginalImage != nil && maskEditMaskImage != nil },
             set: { if !$0 { maskEditSticker = nil; maskEditOriginalImage = nil; maskEditMaskImage = nil } }
-        )) {
+        ), onDismiss: {
+            if maskEditSaved {
+                thumbnailRefreshID = UUID()
+                maskEditSaved = false
+            }
+        }) {
             if let originalImage = maskEditOriginalImage,
                let maskImage = maskEditMaskImage {
                 MaskEditorView(
@@ -169,7 +175,7 @@ struct StickerLibraryView: View {
     private func saveMaskEditResult(_ composited: UIImage) {
         guard let sticker = maskEditSticker else { return }
         try? ImageStorage.overwrite(composited, fileName: sticker.imageFileName)
-        thumbnailRefreshID = UUID()
+        maskEditSaved = true
     }
 
     private func deleteSticker(_ sticker: Sticker, from usedBoards: [Board]) {
