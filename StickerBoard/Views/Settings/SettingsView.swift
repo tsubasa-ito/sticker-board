@@ -12,9 +12,6 @@ struct SettingsView: View {
     @State private var errorMessage: String?
     @State private var isLoadingProducts = false
 
-    // TODO: #38 自サービスのURLに差し替え（https://github.com/tsubasa-ito/sticker-board/issues/38）
-    private static let termsURL = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
-    private static let privacyURL = URL(string: "https://www.apple.com/legal/privacy/")!
 
     var body: some View {
         ZStack {
@@ -535,11 +532,15 @@ struct SettingsView: View {
             sectionHeader(title: "関連リンク", icon: "link")
 
             VStack(spacing: 0) {
-                linkRow(title: "利用規約", url: Self.termsURL)
+                linkRow(title: "利用規約", url: AppURLs.terms)
 
                 Divider().padding(.horizontal, 16)
 
-                linkRow(title: "プライバシーポリシー", url: Self.privacyURL)
+                linkRow(title: "プライバシーポリシー", url: AppURLs.privacy)
+
+                Divider().padding(.horizontal, 16)
+
+                linkRow(title: "お問い合わせ", url: AppURLs.contact)
             }
             .stickerCard()
         }

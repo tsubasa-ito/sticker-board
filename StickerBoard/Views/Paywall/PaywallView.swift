@@ -3,9 +3,6 @@ import StoreKit
 
 /// Pro機能のペイウォールシート
 struct PaywallView: View {
-    // TODO: #38 自サービスのURLに差し替え（https://github.com/tsubasa-ito/sticker-board/issues/38）
-    private static let termsURL = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
-    private static let privacyURL = URL(string: "https://www.apple.com/legal/privacy/")!
     @ObservedObject private var subscriptionManager = SubscriptionManager.shared
     @Environment(\.dismiss) private var dismiss
     @State private var isPurchasing = false
@@ -263,11 +260,11 @@ struct PaywallView: View {
             .disabled(isPurchasing)
 
             HStack(spacing: 16) {
-                Link("利用規約", destination: Self.termsURL)
+                Link("利用規約", destination: AppURLs.terms)
                     .font(.system(size: 11, design: .rounded))
                     .foregroundStyle(AppTheme.textTertiary)
 
-                Link("プライバシーポリシー", destination: Self.privacyURL)
+                Link("プライバシーポリシー", destination: AppURLs.privacy)
                     .font(.system(size: 11, design: .rounded))
                     .foregroundStyle(AppTheme.textTertiary)
             }

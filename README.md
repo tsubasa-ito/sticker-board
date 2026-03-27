@@ -118,7 +118,8 @@ xcodebuild -project StickerBoard.xcodeproj \
 StickerBoard/
 ├── App/
 │   ├── StickerBoardApp.swift        # エントリーポイント
-│   └── AppTheme.swift               # カラーテーマ・共通スタイル
+│   ├── AppTheme.swift               # カラーテーマ・共通スタイル
+│   └── AppURLs.swift                # 外部URL定数（利用規約・プライバシー・問い合わせ）
 ├── Models/
 │   ├── Sticker.swift                # シールデータモデル
 │   ├── Board.swift                  # ボードデータモデル
