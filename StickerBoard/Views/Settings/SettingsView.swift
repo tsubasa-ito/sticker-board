@@ -262,18 +262,20 @@ struct SettingsView: View {
     ) -> some View {
         Button(action: onTap) {
             VStack(spacing: 6) {
-                if let badge {
-                    Text(badge)
-                        .font(.system(size: 10, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 2)
-                        .background(Capsule().fill(AppTheme.accent))
-                } else {
-                    Text(" ")
-                        .font(.system(size: 10, weight: .bold, design: .rounded))
-                        .padding(.vertical, 2)
+                // バッジ行（固定高さで揃える）
+                Group {
+                    if let badge {
+                        Text(badge)
+                            .font(.system(size: 10, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 2)
+                            .background(Capsule().fill(AppTheme.accent))
+                    } else {
+                        Color.clear
+                    }
                 }
+                .frame(height: 16)
 
                 Text(label)
                     .font(.system(size: 13, weight: .semibold, design: .rounded))
@@ -283,14 +285,17 @@ struct SettingsView: View {
                     .font(.system(size: 20, weight: .bold, design: .rounded))
                     .foregroundStyle(isSelected ? AppTheme.textPrimary : AppTheme.textSecondary)
 
-                if label == "年額", let monthlyPrice = subscriptionManager.yearlyMonthlyPrice {
-                    Text("月あたり\(monthlyPrice)")
-                        .font(.system(size: 11, design: .rounded))
-                        .foregroundStyle(AppTheme.textTertiary)
-                } else {
-                    Text(" ")
-                        .font(.system(size: 11, design: .rounded))
+                // 補足行（固定高さで揃える）
+                Group {
+                    if label == "年額", let monthlyPrice = subscriptionManager.yearlyMonthlyPrice {
+                        Text("月あたり\(monthlyPrice)")
+                            .font(.system(size: 11, design: .rounded))
+                            .foregroundStyle(AppTheme.textTertiary)
+                    } else {
+                        Color.clear
+                    }
                 }
+                .frame(height: 14)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
