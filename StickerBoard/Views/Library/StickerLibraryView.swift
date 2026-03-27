@@ -7,6 +7,12 @@ struct StickerLibraryView: View {
     @Query private var boards: [Board]
     @State private var deleteInfo: (sticker: Sticker, boards: [Board])?
     @State private var previewSticker: Sticker?
+    @State private var maskEditSticker: Sticker?
+    @State private var maskEditOriginalImage: UIImage?
+    @State private var maskEditMaskImage: UIImage?
+    @State private var maskEditSaved = false
+    @State private var showOverwriteError = false
+    @State private var thumbnailRefreshID = UUID()
     @Namespace private var previewNamespace
     var onAddSticker: () -> Void = {}
 
@@ -55,6 +61,30 @@ struct StickerLibraryView: View {
             } else {
                 Text("このシールは\(info.boards.count)個のボードで使用されています。削除するとボードからも取り除かれます。")
             }
+        }
+        .fullScreenCover(isPresented: Binding(
+            get: { maskEditOriginalImage != nil && maskEditMaskImage != nil },
+            set: { if !$0 { maskEditSticker = nil; maskEditOriginalImage = nil; maskEditMaskImage = nil } }
+        ), onDismiss: {
+            if maskEditSaved {
+                thumbnailRefreshID = UUID()
+                maskEditSaved = false
+            }
+        }) {
+            if let originalImage = maskEditOriginalImage,
+               let maskImage = maskEditMaskImage {
+                MaskEditorView(
+                    originalImage: originalImage,
+                    maskImage: maskImage
+                ) { composited, _ in
+                    saveMaskEditResult(composited)
+                }
+            }
+        }
+        .alert("保存に失敗しました", isPresented: $showOverwriteError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("シールの保存中にエラーが発生しました。もう一度お試しください。")
         }
     }
 
@@ -105,7 +135,7 @@ struct StickerLibraryView: View {
                     addStickerCard
 
                     ForEach(stickers) { sticker in
-                        StickerThumbnailView(sticker: sticker)
+                        StickerThumbnailView(sticker: sticker, refreshTrigger: thumbnailRefreshID)
                             .matchedGeometryEffect(id: sticker.id, in: previewNamespace)
                             .opacity(previewSticker?.id == sticker.id ? 0 : 1)
                             .onTapGesture {
@@ -116,6 +146,11 @@ struct StickerLibraryView: View {
                             .accessibilityAddTraits(.isButton)
                             .accessibilityHint("タップしてプレビューを表示")
                             .contextMenu {
+                                Button {
+                                    startMaskEdit(sticker)
+                                } label: {
+                                    Label("不要部分を除去", systemImage: "eraser.line.dashed")
+                                }
                                 Button(role: .destructive) {
                                     deleteInfo = (sticker, boardsUsing(sticker))
                                 } label: {
@@ -132,6 +167,24 @@ struct StickerLibraryView: View {
     private func boardsUsing(_ sticker: Sticker) -> [Board] {
         boards.filter { board in
             board.placements.contains { $0.stickerId == sticker.id }
+        }
+    }
+
+    private func startMaskEdit(_ sticker: Sticker) {
+        guard let image = ImageStorage.load(fileName: sticker.imageFileName),
+              let mask = MaskCompositor.generateMaskFromAlpha(image: image) else { return }
+        maskEditSticker = sticker
+        maskEditOriginalImage = image
+        maskEditMaskImage = mask
+    }
+
+    private func saveMaskEditResult(_ composited: UIImage) {
+        guard let sticker = maskEditSticker else { return }
+        do {
+            try ImageStorage.overwrite(composited, fileName: sticker.imageFileName)
+            maskEditSaved = true
+        } catch {
+            showOverwriteError = true
         }
     }
 
@@ -217,6 +270,7 @@ struct StickerPreviewOverlay: View {
 
 struct StickerThumbnailView: View {
     let sticker: Sticker
+    var refreshTrigger: UUID = UUID()
     @State private var appeared = false
     @State private var thumbnailImage: UIImage?
 
@@ -243,7 +297,7 @@ struct StickerThumbnailView: View {
         .shadow(color: .black.opacity(0.04), radius: 4, y: 2)
         .scaleEffect(appeared ? 1 : 0.7)
         .opacity(appeared ? 1 : 0)
-        .task {
+        .task(id: refreshTrigger) {
             thumbnailImage = await Task.detached {
                 ImageStorage.loadThumbnail(fileName: sticker.imageFileName, size: 200)
             }.value

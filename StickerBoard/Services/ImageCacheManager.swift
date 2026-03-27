@@ -154,13 +154,18 @@ final class ImageCacheManager {
 
     // MARK: - キャッシュ無効化
 
+    /// サムネイルキャッシュで使用されるサイズ一覧
+    private static let knownThumbnailSizes: [CGFloat] = [112, 200]
+
     func removeAll(for fileName: String) {
         let key = fileName as NSString
         fullResolutionCache.removeObject(forKey: key)
+        for size in Self.knownThumbnailSizes {
+            thumbnailCache.removeObject(forKey: thumbnailKey(fileName: fileName, size: size))
+        }
         for filter in StickerFilter.allCases where filter != .original {
             filteredCache.removeObject(forKey: filteredKey(fileName: fileName, filter: filter))
         }
-        // サムネイルはサイズ別で複数あるため一括クリアは行わない（NSCache が LRU で自動管理）
     }
 
     @objc private func purgeAllCaches() {

@@ -62,6 +62,22 @@ struct ImageStorage {
         return UIImage(cgImage: cgImage)
     }
 
+    /// 既存ファイルに画像を上書き保存する（マスク再編集用）
+    static func overwrite(_ image: UIImage, fileName: String) throws {
+        let fileURL = stickersDirectory.appendingPathComponent(fileName)
+
+        let trimmed = image.alphaTrimmed()
+        let optimized = trimmed.resized(maxDimension: maxSaveDimension)
+
+        guard let data = optimized.pngData() else {
+            throw ImageStorageError.encodingFailed
+        }
+
+        try data.write(to: fileURL)
+        ImageCacheManager.shared.removeAll(for: fileName)
+        ImageCacheManager.shared.setFullResolution(optimized, for: fileName)
+    }
+
     /// ファイルを削除する
     static func delete(fileName: String) {
         let fileURL = stickersDirectory.appendingPathComponent(fileName)
