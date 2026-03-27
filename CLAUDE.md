@@ -22,6 +22,7 @@ StickerBoard/
     ├── Capture/  # シール撮影・切り抜きフロー・マスク手動編集
     ├── Library/  # シールライブラリ
     ├── Paywall/  # ペイウォール（Pro課金導線）
+    ├── Settings/ # 設定画面（サブスクリプション管理）
     └── Board/    # ボード編集・一覧
 ```
 
