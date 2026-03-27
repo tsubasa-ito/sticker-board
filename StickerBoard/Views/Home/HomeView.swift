@@ -141,7 +141,7 @@ struct HomeView: View {
 
     /// エディタのキャンバスと同じ比率を算出（画面からナビバー・ツールバー・パディング分を引く）
     private var boardCardAspectRatio: CGFloat {
-        let screen = UIScreen.main.bounds
+        let screen = AppTheme.screenBounds
         // エディタ: ナビバー(~56pt) + padding上下(24pt×2) + ツールバー領域(~140pt) ≒ 244pt
         let editorChromeHeight: CGFloat = 244
         let canvasWidth = screen.width - 48 // padding 24pt×2
@@ -409,8 +409,8 @@ private struct BoardStickerPreviewView: View {
 
     var body: some View {
         GeometryReader { geo in
-            let canvasWidth = UIScreen.main.bounds.width
-            let canvasHeight = UIScreen.main.bounds.height
+            let canvasWidth = AppTheme.screenBounds.width
+            let canvasHeight = AppTheme.screenBounds.height
             let previewScale = min(
                 geo.size.width / canvasWidth,
                 geo.size.height / canvasHeight

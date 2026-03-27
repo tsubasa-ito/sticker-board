@@ -113,7 +113,7 @@ struct BackgroundPatternPickerView: View {
             }
 
             GeometryReader { geometry in
-                let screen = UIScreen.main.bounds
+                let screen = AppTheme.screenBounds
                 let editorChromeHeight: CGFloat = 244
                 let editorRatio = (screen.width - 48) / (screen.height - editorChromeHeight)
                 let previewWidth = geometry.size.width * 0.55

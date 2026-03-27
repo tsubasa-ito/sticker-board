@@ -66,6 +66,20 @@ extension Color {
     }
 }
 
+// MARK: - 画面サイズ（UIScreen.main 非推奨対応）
+
+extension AppTheme {
+    /// 現在のウィンドウシーンから画面サイズを取得する
+    static var screenBounds: CGRect {
+        guard let scene = UIApplication.shared.connectedScenes
+            .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene
+        else {
+            return .zero
+        }
+        return scene.screen.bounds
+    }
+}
+
 // MARK: - 共通スタイル
 
 extension View {
