@@ -40,8 +40,7 @@ struct UIImageExtensionTests {
 
         let resized = image.resized(maxDimension: 500)
 
-        #expect(resized.size.width == 200)
-        #expect(resized.size.height == 150)
+        #expect(resized === image)
     }
 
     @Test func アスペクト比が維持される() {
