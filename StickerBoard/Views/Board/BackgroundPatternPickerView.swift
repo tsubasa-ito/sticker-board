@@ -53,18 +53,28 @@ struct BackgroundPatternPickerView: View {
             .onChange(of: selectedPhotoItem) { _, newItem in
                 guard let newItem else { return }
                 isLoadingPhoto = true
-                Task {
-                    defer { isLoadingPhoto = false }
-                    guard let data = try? await newItem.loadTransferable(type: Data.self),
-                          let image = UIImage(data: data) else { return }
+                Task.detached(priority: .userInitiated) {
+                    let data = try? await newItem.loadTransferable(type: Data.self)
+                    guard let data, let image = UIImage(data: data) else {
+                        await MainActor.run { isLoadingPhoto = false }
+                        return
+                    }
                     // 以前のカスタム背景画像を削除
-                    if let oldFileName = config.customImageFileName {
+                    let oldFileName = await MainActor.run { config.customImageFileName }
+                    if let oldFileName {
                         BackgroundImageStorage.delete(fileName: oldFileName)
                     }
-                    guard let fileName = try? BackgroundImageStorage.save(image) else { return }
-                    config.patternType = .custom
-                    config.customImageFileName = fileName
-                    customImage = BackgroundImageStorage.load(fileName: fileName)
+                    guard let fileName = try? BackgroundImageStorage.save(image) else {
+                        await MainActor.run { isLoadingPhoto = false }
+                        return
+                    }
+                    let loaded = BackgroundImageStorage.load(fileName: fileName)
+                    await MainActor.run {
+                        config.patternType = .custom
+                        config.customImageFileName = fileName
+                        customImage = loaded
+                        isLoadingPhoto = false
+                    }
                 }
             }
             .onAppear {
