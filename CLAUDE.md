@@ -13,7 +13,7 @@
 ## プロジェクト構成
 ```
 StickerBoard/
-├── App/          # エントリーポイント（MainTabView）、カラーテーマ
+├── App/          # エントリーポイント（MainTabView）、カラーテーマ、外部URL定数
 ├── Models/       # SwiftData モデル（Sticker, Board, StickerPlacement, BackgroundPattern, StickerFilter, StickerBorder, SubscriptionProduct）
 ├── Services/     # BackgroundRemover, MaskCompositor, ImageStorage, ImageCacheManager, StickerFilterService, StickerBorderService, SubscriptionManager
 └── Views/        # SwiftUI画面
