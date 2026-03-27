@@ -70,6 +70,7 @@ extension Color {
 
 extension AppTheme {
     /// 現在のウィンドウシーンから画面サイズを取得する
+    @MainActor
     static var screenBounds: CGRect {
         guard let scene = UIApplication.shared.connectedScenes
             .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene
