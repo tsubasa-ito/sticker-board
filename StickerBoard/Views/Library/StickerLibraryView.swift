@@ -44,9 +44,15 @@ struct StickerLibraryView: View {
                         }
                     },
                     onDelete: {
+                        withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
+                            previewSticker = nil
+                        }
                         deleteInfo = (sticker, boardsUsing(sticker))
                     },
                     onMaskEdit: {
+                        withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
+                            previewSticker = nil
+                        }
                         startMaskEdit(sticker)
                     }
                 )
@@ -277,7 +283,6 @@ struct StickerPreviewOverlay: View {
                 // アクションボタン
                 HStack(spacing: 16) {
                     Button {
-                        onDismiss()
                         onDelete()
                     } label: {
                         Label("削除", systemImage: "trash")
@@ -291,7 +296,6 @@ struct StickerPreviewOverlay: View {
                     .accessibilityLabel("シールを削除")
 
                     Button {
-                        onDismiss()
                         onMaskEdit()
                     } label: {
                         Label("再編集", systemImage: "eraser.line.dashed")
