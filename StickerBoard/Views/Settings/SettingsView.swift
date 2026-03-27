@@ -202,7 +202,7 @@ struct SettingsView: View {
                         product: yearly,
                         label: "年額",
                         isSelected: selectedPlan == .yearly,
-                        badge: savingsBadge
+                        badge: savingsBadgeText
                     ) {
                         selectedPlan = .yearly
                     }
@@ -312,9 +312,9 @@ struct SettingsView: View {
         .buttonStyle(.plain)
     }
 
-    private var savingsBadge: String? {
+    private var savingsBadgeText: String {
         let savings = subscriptionManager.savingsPercentage
-        return savings > 0 ? "\(savings)%おトク" : nil
+        return savings > 0 ? "\(savings)%おトク" : "おトク"
     }
 
     private func purchaseSelectedPlan() async {
