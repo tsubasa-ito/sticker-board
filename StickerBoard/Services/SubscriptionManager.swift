@@ -8,6 +8,30 @@ final class SubscriptionManager: ObservableObject {
     @Published private(set) var isProUser: Bool = false
     @Published private(set) var products: [Product] = []
     @Published private(set) var purchasedProductIDs: Set<String> = []
+    @Published private(set) var currentSubscriptionExpirationDate: Date?
+
+    enum PlanType {
+        case free
+        case monthlyPro
+        case yearlyPro
+
+        var displayName: String {
+            switch self {
+            case .free: "無料プラン"
+            case .monthlyPro: "Pro（月額）"
+            case .yearlyPro: "Pro（年額）"
+            }
+        }
+    }
+
+    var currentPlan: PlanType {
+        if purchasedProductIDs.contains(SubscriptionProduct.yearlyPro.rawValue) {
+            return .yearlyPro
+        } else if purchasedProductIDs.contains(SubscriptionProduct.monthlyPro.rawValue) {
+            return .monthlyPro
+        }
+        return .free
+    }
 
     private var transactionListener: Task<Void, Never>?
 
@@ -109,6 +133,7 @@ final class SubscriptionManager: ObservableObject {
 
     func updatePurchasedProducts() async {
         var purchased: Set<String> = []
+        var latestExpiration: Date?
 
         for await result in Transaction.currentEntitlements {
             do {
@@ -120,12 +145,20 @@ final class SubscriptionManager: ObservableObject {
                     continue
                 }
                 purchased.insert(transaction.productID)
+                if let expDate = transaction.expirationDate {
+                    if let current = latestExpiration {
+                        latestExpiration = max(current, expDate)
+                    } else {
+                        latestExpiration = expDate
+                    }
+                }
             } catch {
                 print("[SubscriptionManager] Failed to verify transaction while updating purchased products: \(error)")
             }
         }
 
         purchasedProductIDs = purchased
+        currentSubscriptionExpirationDate = latestExpiration
         let isPro = !purchased.isEmpty
         isProUser = isPro
         UserDefaults.standard.set(isPro, forKey: "isProUser_cached")
