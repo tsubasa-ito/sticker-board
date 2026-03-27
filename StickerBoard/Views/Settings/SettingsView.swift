@@ -3,11 +3,17 @@ import StoreKit
 
 struct SettingsView: View {
     @ObservedObject private var subscriptionManager = SubscriptionManager.shared
-    @State private var showingPaywall = false
     @State private var showingManageSubscription = false
+    @State private var isPurchasing = false
     @State private var isRestoringPurchases = false
     @State private var showRestoreAlert = false
     @State private var restoreAlertMessage = ""
+    @State private var selectedPlan: SelectedPlan = .yearly
+    @State private var errorMessage: String?
+
+    private enum SelectedPlan {
+        case monthly, yearly
+    }
 
     // TODO: #38 で実際のURLに差し替え
     private static let termsURL = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
@@ -38,9 +44,6 @@ struct SettingsView: View {
         }
         .navigationTitle("設定")
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $showingPaywall) {
-            PaywallView()
-        }
         .manageSubscriptionsSheet(
             isPresented: $showingManageSubscription,
             subscriptionGroupID: SubscriptionProduct.groupID
@@ -162,31 +165,176 @@ struct SettingsView: View {
 
     private var actionsSection: some View {
         VStack(spacing: 12) {
-            changePlanButton
+            if subscriptionManager.isProUser {
+                // Proユーザー: プラン管理
+                Button {
+                    showingManageSubscription = true
+                } label: {
+                    HStack {
+                        Image(systemName: "arrow.triangle.2.circlepath")
+                            .font(.system(size: 16, weight: .semibold))
+                        Text("プランを管理")
+                            .font(.system(size: 16, weight: .bold, design: .rounded))
+                    }
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(AppTheme.accent, in: RoundedRectangle(cornerRadius: 16))
+                    .shadow(color: AppTheme.accent.opacity(0.3), radius: 8, x: 0, y: 4)
+                }
+            } else {
+                // 無料ユーザー: プラン選択 + 購入
+                planSelectionSection
+            }
+
             restorePurchasesButton
         }
     }
 
-    private var changePlanButton: some View {
-        Button {
-            if subscriptionManager.isProUser {
-                showingManageSubscription = true
-            } else {
-                showingPaywall = true
-            }
-        } label: {
-            HStack {
-                Image(systemName: subscriptionManager.isProUser ? "arrow.triangle.2.circlepath" : "crown.fill")
-                    .font(.system(size: 16, weight: .semibold))
+    // MARK: - プラン選択（無料ユーザー向け）
 
-                Text(subscriptionManager.isProUser ? "プランを管理" : "Pro にアップグレード")
-                    .font(.system(size: 16, weight: .bold, design: .rounded))
+    private var planSelectionSection: some View {
+        VStack(spacing: 12) {
+            HStack(spacing: 10) {
+                // 年額プランカード
+                if let yearly = subscriptionManager.yearlyProduct {
+                    planCard(
+                        product: yearly,
+                        label: "年額",
+                        isSelected: selectedPlan == .yearly,
+                        badge: savingsBadge
+                    ) {
+                        selectedPlan = .yearly
+                    }
+                }
+
+                // 月額プランカード
+                if let monthly = subscriptionManager.monthlyProduct {
+                    planCard(
+                        product: monthly,
+                        label: "月額",
+                        isSelected: selectedPlan == .monthly,
+                        badge: nil
+                    ) {
+                        selectedPlan = .monthly
+                    }
+                }
             }
-            .foregroundStyle(.white)
+
+            // 購入ボタン
+            Button {
+                Task { await purchaseSelectedPlan() }
+            } label: {
+                HStack {
+                    if isPurchasing {
+                        ProgressView()
+                            .tint(.white)
+                    } else {
+                        Image(systemName: "crown.fill")
+                            .font(.system(size: 16, weight: .semibold))
+                        Text("Pro にアップグレード")
+                            .font(.system(size: 16, weight: .bold, design: .rounded))
+                    }
+                }
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(AppTheme.accent, in: RoundedRectangle(cornerRadius: 16))
+                .shadow(color: AppTheme.accent.opacity(0.3), radius: 8, x: 0, y: 4)
+            }
+            .disabled(isPurchasing)
+
+            if let error = errorMessage {
+                Text(error)
+                    .font(.system(size: 12, design: .rounded))
+                    .foregroundStyle(.red)
+                    .multilineTextAlignment(.center)
+            }
+        }
+    }
+
+    private func planCard(
+        product: Product,
+        label: String,
+        isSelected: Bool,
+        badge: String?,
+        onTap: @escaping () -> Void
+    ) -> some View {
+        Button(action: onTap) {
+            VStack(spacing: 6) {
+                if let badge {
+                    Text(badge)
+                        .font(.system(size: 10, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 2)
+                        .background(Capsule().fill(AppTheme.accent))
+                } else {
+                    Text(" ")
+                        .font(.system(size: 10, weight: .bold, design: .rounded))
+                        .padding(.vertical, 2)
+                }
+
+                Text(label)
+                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .foregroundStyle(isSelected ? AppTheme.accent : AppTheme.textSecondary)
+
+                Text(product.displayPrice)
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .foregroundStyle(isSelected ? AppTheme.textPrimary : AppTheme.textSecondary)
+
+                if label == "年額", let monthlyPrice = subscriptionManager.yearlyMonthlyPrice {
+                    Text("月あたり\(monthlyPrice)")
+                        .font(.system(size: 11, design: .rounded))
+                        .foregroundStyle(AppTheme.textTertiary)
+                } else {
+                    Text(" ")
+                        .font(.system(size: 11, design: .rounded))
+                }
+            }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(AppTheme.accent, in: RoundedRectangle(cornerRadius: 16))
-            .shadow(color: AppTheme.accent.opacity(0.3), radius: 8, x: 0, y: 4)
+            .padding(.vertical, 14)
+            .background(AppTheme.backgroundCard)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .overlay {
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(
+                        isSelected ? AppTheme.accent : AppTheme.borderSubtle,
+                        lineWidth: isSelected ? 2 : 1
+                    )
+            }
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var savingsBadge: String? {
+        let savings = subscriptionManager.savingsPercentage
+        return savings > 0 ? "\(savings)%おトク" : nil
+    }
+
+    private func purchaseSelectedPlan() async {
+        let product: Product?
+        switch selectedPlan {
+        case .yearly: product = subscriptionManager.yearlyProduct
+        case .monthly: product = subscriptionManager.monthlyProduct
+        }
+
+        guard let product else { return }
+
+        isPurchasing = true
+        errorMessage = nil
+        let result = await subscriptionManager.purchase(product)
+        isPurchasing = false
+
+        switch result {
+        case .success:
+            break
+        case .cancelled:
+            break
+        case .pending:
+            errorMessage = "購入処理が保留中です。しばらくお待ちください。"
+        case .failed(let error):
+            errorMessage = "購入に失敗しました: \(error.localizedDescription)"
         }
     }
 
