@@ -20,7 +20,7 @@ struct ImageStorageTests {
     @Test func 保存したファイル名がPNG拡張子を持つ() throws {
         let image = makeTestImage()
         let fileName = try ImageStorage.save(image)
-        defer { ImageStorage.delete(fileName: fileName) }
+        defer { try? ImageStorage.delete(fileName: fileName) }
 
         #expect(fileName.hasSuffix(".png"))
     }
@@ -28,7 +28,7 @@ struct ImageStorageTests {
     @Test func 保存した画像をloadFromDiskで読み込める() throws {
         let image = makeTestImage()
         let fileName = try ImageStorage.save(image)
-        defer { ImageStorage.delete(fileName: fileName) }
+        defer { try? ImageStorage.delete(fileName: fileName) }
 
         let loaded = ImageStorage.loadFromDisk(fileName: fileName)
         #expect(loaded != nil)
@@ -38,7 +38,7 @@ struct ImageStorageTests {
         let image = makeTestImage()
         let fileName = try ImageStorage.save(image)
 
-        ImageStorage.delete(fileName: fileName)
+        try ImageStorage.delete(fileName: fileName)
 
         let loaded = ImageStorage.loadFromDisk(fileName: fileName)
         #expect(loaded == nil)
@@ -54,7 +54,7 @@ struct ImageStorageTests {
     @Test func 上書き保存で同じファイル名に画像が更新される() throws {
         let original = makeTestImage(size: CGSize(width: 100, height: 100))
         let fileName = try ImageStorage.save(original)
-        defer { ImageStorage.delete(fileName: fileName) }
+        defer { try? ImageStorage.delete(fileName: fileName) }
 
         let beforeOverwrite = try #require(ImageStorage.loadFromDisk(fileName: fileName))
         let beforeData = try #require(beforeOverwrite.pngData())
@@ -72,7 +72,7 @@ struct ImageStorageTests {
     @Test func 上書き保存後もloadFromDiskで読み込める() throws {
         let image = makeTestImage()
         let fileName = try ImageStorage.save(image)
-        defer { ImageStorage.delete(fileName: fileName) }
+        defer { try? ImageStorage.delete(fileName: fileName) }
 
         let updated = makeTestImage(size: CGSize(width: 50, height: 50))
         try ImageStorage.overwrite(updated, fileName: fileName)
@@ -86,7 +86,7 @@ struct ImageStorageTests {
     @Test func 大きい画像も保存と読み込みが正常に動作する() throws {
         let image = makeTestImage(size: CGSize(width: 3000, height: 2000))
         let fileName = try ImageStorage.save(image)
-        defer { ImageStorage.delete(fileName: fileName) }
+        defer { try? ImageStorage.delete(fileName: fileName) }
 
         let loaded = try #require(ImageStorage.loadFromDisk(fileName: fileName))
         #expect(loaded.size.width > 0)

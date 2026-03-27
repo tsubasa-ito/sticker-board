@@ -12,6 +12,7 @@ struct StickerLibraryView: View {
     @State private var maskEditMaskImage: UIImage?
     @State private var maskEditSaved = false
     @State private var showOverwriteError = false
+    @State private var showDeleteError = false
     @State private var showMaskEditLoadError = false
     @State private var thumbnailRefreshID = UUID()
     @Namespace private var previewNamespace
@@ -99,6 +100,11 @@ struct StickerLibraryView: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text("シールの保存中にエラーが発生しました。もう一度お試しください。")
+        }
+        .alert("削除に失敗しました", isPresented: $showDeleteError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("シール画像の削除中にエラーが発生しました。もう一度お試しください。")
         }
         .alert("読み込みに失敗しました", isPresented: $showMaskEditLoadError) {
             Button("OK", role: .cancel) {}
@@ -211,11 +217,16 @@ struct StickerLibraryView: View {
     }
 
     private func deleteSticker(_ sticker: Sticker, from usedBoards: [Board]) {
+        do {
+            try ImageStorage.delete(fileName: sticker.imageFileName)
+        } catch {
+            showDeleteError = true
+            return
+        }
         for board in usedBoards {
             board.placements = board.placements.filter { $0.stickerId != sticker.id }
             board.updatedAt = Date()
         }
-        ImageStorage.delete(fileName: sticker.imageFileName)
         modelContext.delete(sticker)
         deleteInfo = nil
     }
