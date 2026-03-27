@@ -3,6 +3,7 @@ import StoreKit
 
 /// Pro機能のペイウォールシート
 struct PaywallView: View {
+    // TODO: #38 自サービスのURLに差し替え（https://github.com/tsubasa-ito/sticker-board/issues/38）
     private static let termsURL = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
     private static let privacyURL = URL(string: "https://www.apple.com/legal/privacy/")!
     @ObservedObject private var subscriptionManager = SubscriptionManager.shared
