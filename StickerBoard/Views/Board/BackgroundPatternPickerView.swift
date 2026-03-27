@@ -113,8 +113,11 @@ struct BackgroundPatternPickerView: View {
             }
 
             GeometryReader { geometry in
+                let screen = UIScreen.main.bounds
+                let editorChromeHeight: CGFloat = 244
+                let editorRatio = (screen.width - 48) / (screen.height - editorChromeHeight)
                 let previewWidth = geometry.size.width * 0.55
-                let previewHeight = previewWidth * 4 / 3
+                let previewHeight = previewWidth / editorRatio
 
                 BoardBackgroundView(config: config, customImage: customImage)
                     .frame(width: previewWidth, height: previewHeight)
@@ -127,7 +130,7 @@ struct BackgroundPatternPickerView: View {
                     .gesture(customImageCropGesture(containerSize: CGSize(width: previewWidth, height: previewHeight)))
                     .frame(maxWidth: .infinity)
             }
-            .aspectRatio(1.0 / 0.8, contentMode: .fit)
+            .aspectRatio(1.0 / 0.85, contentMode: .fit)
         }
     }
 

@@ -139,6 +139,16 @@ struct HomeView: View {
 
     // MARK: - ボードカード
 
+    /// エディタのキャンバスと同じ比率を算出（画面からナビバー・ツールバー・パディング分を引く）
+    private var boardCardAspectRatio: CGFloat {
+        let screen = UIScreen.main.bounds
+        // エディタ: ナビバー(~56pt) + padding上下(24pt×2) + ツールバー領域(~140pt) ≒ 244pt
+        let editorChromeHeight: CGFloat = 244
+        let canvasWidth = screen.width - 48 // padding 24pt×2
+        let canvasHeight = screen.height - editorChromeHeight
+        return canvasWidth / canvasHeight
+    }
+
     private func boardCard(_ board: Board) -> some View {
         VStack(spacing: 0) {
             // プレビューエリア
@@ -210,7 +220,7 @@ struct HomeView: View {
                     }
                 }
             }
-            .aspectRatio(3.0 / 4.0, contentMode: .fit)
+            .aspectRatio(boardCardAspectRatio, contentMode: .fit)
             .clipShape(RoundedRectangle(cornerRadius: 28))
         }
         .shadow(color: .black.opacity(0.12), radius: 24, x: 0, y: 12)
@@ -274,7 +284,7 @@ struct HomeView: View {
                 }
                 .padding(.horizontal, 24)
             }
-            .aspectRatio(3.0 / 4.0, contentMode: .fit)
+            .aspectRatio(boardCardAspectRatio, contentMode: .fit)
         }
         .buttonStyle(.plain)
         .containerRelativeFrame(.horizontal)
