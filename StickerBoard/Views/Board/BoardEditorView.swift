@@ -12,6 +12,7 @@ struct BoardEditorView: View {
     @State private var placements: [StickerPlacement] = []
     @State private var selectedPlacementId: UUID?
     @State private var showingStickerPicker = false
+    @State private var showingSaveConfirmation = false
     @State private var showingSaveResult = false
     @State private var saveResultSuccess = false
     @State private var canvasSize: CGSize = .zero
@@ -120,7 +121,7 @@ struct BoardEditorView: View {
             }
             ToolbarItem(placement: .primaryAction) {
                 Button {
-                    saveBoardAsImage()
+                    showingSaveConfirmation = true
                 } label: {
                     Image(systemName: "arrow.down.to.line")
                         .font(.system(size: 15, weight: .medium))
@@ -166,6 +167,14 @@ struct BoardEditorView: View {
                 }
                 .presentationDetents([.medium, .large])
             }
+        }
+        .alert("写真を保存", isPresented: $showingSaveConfirmation) {
+            Button("保存") {
+                saveBoardAsImage()
+            }
+            Button("キャンセル", role: .cancel) {}
+        } message: {
+            Text("ボードを写真に保存しますか？")
         }
         .alert(
             saveResultSuccess ? "保存完了" : "エラー",
