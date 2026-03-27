@@ -49,6 +49,33 @@ struct ImageStorageTests {
         #expect(result == nil)
     }
 
+    // MARK: - 上書き保存
+
+    @Test func 上書き保存で同じファイル名に画像が更新される() throws {
+        let original = makeTestImage(size: CGSize(width: 100, height: 100))
+        let fileName = try ImageStorage.save(original)
+        defer { ImageStorage.delete(fileName: fileName) }
+
+        let replacement = makeTestImage(size: CGSize(width: 80, height: 80))
+        try ImageStorage.overwrite(replacement, fileName: fileName)
+
+        let loaded = try #require(ImageStorage.loadFromDisk(fileName: fileName))
+        #expect(loaded.size.width > 0)
+        #expect(loaded.size.height > 0)
+    }
+
+    @Test func 上書き保存後もloadFromDiskで読み込める() throws {
+        let image = makeTestImage()
+        let fileName = try ImageStorage.save(image)
+        defer { ImageStorage.delete(fileName: fileName) }
+
+        let updated = makeTestImage(size: CGSize(width: 50, height: 50))
+        try ImageStorage.overwrite(updated, fileName: fileName)
+
+        let loaded = ImageStorage.loadFromDisk(fileName: fileName)
+        #expect(loaded != nil)
+    }
+
     // MARK: - リサイズ
 
     @Test func 大きい画像も保存と読み込みが正常に動作する() throws {

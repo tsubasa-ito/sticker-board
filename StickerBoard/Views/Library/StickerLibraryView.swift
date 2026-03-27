@@ -7,6 +7,9 @@ struct StickerLibraryView: View {
     @Query private var boards: [Board]
     @State private var deleteInfo: (sticker: Sticker, boards: [Board])?
     @State private var previewSticker: Sticker?
+    @State private var maskEditSticker: Sticker?
+    @State private var maskEditOriginalImage: UIImage?
+    @State private var maskEditMaskImage: UIImage?
     @Namespace private var previewNamespace
     var onAddSticker: () -> Void = {}
 
@@ -54,6 +57,20 @@ struct StickerLibraryView: View {
                 Text("このシールをコレクションから削除しますか？")
             } else {
                 Text("このシールは\(info.boards.count)個のボードで使用されています。削除するとボードからも取り除かれます。")
+            }
+        }
+        .fullScreenCover(isPresented: Binding(
+            get: { maskEditOriginalImage != nil && maskEditMaskImage != nil },
+            set: { if !$0 { maskEditSticker = nil; maskEditOriginalImage = nil; maskEditMaskImage = nil } }
+        )) {
+            if let originalImage = maskEditOriginalImage,
+               let maskImage = maskEditMaskImage {
+                MaskEditorView(
+                    originalImage: originalImage,
+                    maskImage: maskImage
+                ) { composited, _ in
+                    saveMaskEditResult(composited)
+                }
             }
         }
     }
@@ -116,6 +133,11 @@ struct StickerLibraryView: View {
                             .accessibilityAddTraits(.isButton)
                             .accessibilityHint("タップしてプレビューを表示")
                             .contextMenu {
+                                Button {
+                                    startMaskEdit(sticker)
+                                } label: {
+                                    Label("不要部分を除去", systemImage: "eraser.line.dashed")
+                                }
                                 Button(role: .destructive) {
                                     deleteInfo = (sticker, boardsUsing(sticker))
                                 } label: {
@@ -133,6 +155,19 @@ struct StickerLibraryView: View {
         boards.filter { board in
             board.placements.contains { $0.stickerId == sticker.id }
         }
+    }
+
+    private func startMaskEdit(_ sticker: Sticker) {
+        guard let image = ImageStorage.load(fileName: sticker.imageFileName),
+              let mask = MaskCompositor.generateMaskFromAlpha(image: image) else { return }
+        maskEditSticker = sticker
+        maskEditOriginalImage = image
+        maskEditMaskImage = mask
+    }
+
+    private func saveMaskEditResult(_ composited: UIImage) {
+        guard let sticker = maskEditSticker else { return }
+        try? ImageStorage.overwrite(composited, fileName: sticker.imageFileName)
     }
 
     private func deleteSticker(_ sticker: Sticker, from usedBoards: [Board]) {
