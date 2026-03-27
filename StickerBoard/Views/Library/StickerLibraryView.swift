@@ -11,6 +11,7 @@ struct StickerLibraryView: View {
     @State private var maskEditOriginalImage: UIImage?
     @State private var maskEditMaskImage: UIImage?
     @State private var maskEditSaved = false
+    @State private var showOverwriteError = false
     @State private var thumbnailRefreshID = UUID()
     @Namespace private var previewNamespace
     var onAddSticker: () -> Void = {}
@@ -79,6 +80,11 @@ struct StickerLibraryView: View {
                     saveMaskEditResult(composited)
                 }
             }
+        }
+        .alert("保存に失敗しました", isPresented: $showOverwriteError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("シールの保存中にエラーが発生しました。もう一度お試しください。")
         }
     }
 
@@ -174,8 +180,12 @@ struct StickerLibraryView: View {
 
     private func saveMaskEditResult(_ composited: UIImage) {
         guard let sticker = maskEditSticker else { return }
-        try? ImageStorage.overwrite(composited, fileName: sticker.imageFileName)
-        maskEditSaved = true
+        do {
+            try ImageStorage.overwrite(composited, fileName: sticker.imageFileName)
+            maskEditSaved = true
+        } catch {
+            showOverwriteError = true
+        }
     }
 
     private func deleteSticker(_ sticker: Sticker, from usedBoards: [Board]) {
