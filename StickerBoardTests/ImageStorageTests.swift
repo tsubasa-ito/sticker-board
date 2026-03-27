@@ -59,10 +59,9 @@ struct ImageStorageTests {
         let image = makeTestImage(size: CGSize(width: 3000, height: 2000))
         let fileName = try ImageStorage.save(image)
 
-        let loaded = ImageStorage.loadFromDisk(fileName: fileName)
-        #expect(loaded != nil)
-        #expect(loaded!.size.width > 0)
-        #expect(loaded!.size.height > 0)
+        let loaded = try #require(ImageStorage.loadFromDisk(fileName: fileName))
+        #expect(loaded.size.width > 0)
+        #expect(loaded.size.height > 0)
 
         ImageStorage.delete(fileName: fileName)
     }

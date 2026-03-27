@@ -14,25 +14,23 @@ struct MaskCompositorTests {
 
     // MARK: - マスク合成
 
-    @Test func 白マスクで合成すると元画像が保持される() {
+    @Test func 白マスクで合成すると元画像が保持される() throws {
         let original = makeOpaqueImage(color: .blue)
         let whiteMask = makeOpaqueImage(color: .white)
 
-        let result = MaskCompositor.compositeWithMask(original: original, mask: whiteMask)
+        let result = try #require(MaskCompositor.compositeWithMask(original: original, mask: whiteMask))
 
-        #expect(result != nil)
-        #expect(result?.cgImage?.width == original.cgImage?.width)
-        #expect(result?.cgImage?.height == original.cgImage?.height)
+        #expect(result.cgImage?.width == original.cgImage?.width)
+        #expect(result.cgImage?.height == original.cgImage?.height)
     }
 
-    @Test func マスクが元画像と異なるサイズでも合成できる() {
+    @Test func マスクが元画像と異なるサイズでも合成できる() throws {
         let original = makeOpaqueImage(size: CGSize(width: 200, height: 200), color: .green)
         let mask = makeOpaqueImage(size: CGSize(width: 50, height: 50), color: .white)
 
-        let result = MaskCompositor.compositeWithMask(original: original, mask: mask)
+        let result = try #require(MaskCompositor.compositeWithMask(original: original, mask: mask))
 
-        #expect(result != nil)
-        #expect(result?.cgImage?.width == original.cgImage?.width)
-        #expect(result?.cgImage?.height == original.cgImage?.height)
+        #expect(result.cgImage?.width == original.cgImage?.width)
+        #expect(result.cgImage?.height == original.cgImage?.height)
     }
 }

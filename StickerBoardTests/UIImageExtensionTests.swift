@@ -60,7 +60,7 @@ struct UIImageExtensionTests {
 
     // MARK: - alphaTrimmed
 
-    @Test func 透明余白がトリミングされる() {
+    @Test func 透明余白がトリミングされる() throws {
         // scale=1 で生成してピクセル座標を一致させる
         let format = UIGraphicsImageRendererFormat()
         format.scale = 1.0
@@ -73,12 +73,13 @@ struct UIImageExtensionTests {
         }
 
         let trimmed = image.alphaTrimmed()
+        let cgImage = try #require(trimmed.cgImage)
 
-        #expect(trimmed.cgImage!.width == 50)
-        #expect(trimmed.cgImage!.height == 50)
+        #expect(cgImage.width == 50)
+        #expect(cgImage.height == 50)
     }
 
-    @Test func 不透明画像はトリミングされない() {
+    @Test func 不透明画像はトリミングされない() throws {
         let format = UIGraphicsImageRendererFormat()
         format.scale = 1.0
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: 100, height: 80), format: format)
@@ -88,8 +89,9 @@ struct UIImageExtensionTests {
         }
 
         let trimmed = image.alphaTrimmed()
+        let cgImage = try #require(trimmed.cgImage)
 
-        #expect(trimmed.cgImage!.width == 100)
-        #expect(trimmed.cgImage!.height == 80)
+        #expect(cgImage.width == 100)
+        #expect(cgImage.height == 80)
     }
 }

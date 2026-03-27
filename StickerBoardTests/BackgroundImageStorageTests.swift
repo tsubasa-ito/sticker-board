@@ -56,10 +56,9 @@ struct BackgroundImageStorageTests {
         let image = makeTestImage(size: CGSize(width: 5000, height: 3000))
         let fileName = try BackgroundImageStorage.save(image)
 
-        let loaded = BackgroundImageStorage.load(fileName: fileName)
-        #expect(loaded != nil)
-        #expect(loaded!.size.width > 0)
-        #expect(loaded!.size.height > 0)
+        let loaded = try #require(BackgroundImageStorage.load(fileName: fileName))
+        #expect(loaded.size.width > 0)
+        #expect(loaded.size.height > 0)
 
         BackgroundImageStorage.delete(fileName: fileName)
     }
