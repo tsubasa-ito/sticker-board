@@ -6,8 +6,8 @@ import UIKit
 /// サムネイルカードにホログラフィック効果を付与するModifier
 /// 3D回転 + レインボーグラデーション + スペキュラハイライト
 struct HolographicCardModifier: ViewModifier {
-    var cornerRadius: CGFloat = 14
-    var intensity: Double = 1.0
+    let cornerRadius: CGFloat
+    let intensity: Double
 
     private let motion = MotionManager.shared
 
@@ -63,8 +63,8 @@ struct HolographicCardModifier: ViewModifier {
 /// シールのアルファチャンネルでマスクし、不透明部分のみに効果を適用
 struct HolographicStickerModifier: ViewModifier {
     let image: UIImage?
-    var intensity: Double = 0.6
-    var enableRotation: Bool = true
+    let intensity: Double
+    let enableRotation: Bool
 
     private let motion = MotionManager.shared
 

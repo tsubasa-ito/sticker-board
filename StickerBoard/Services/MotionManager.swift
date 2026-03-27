@@ -2,6 +2,7 @@ import CoreMotion
 import Observation
 
 /// デバイスの傾きを検知してホログラフィック効果に利用するマネージャー
+@MainActor
 @Observable
 final class MotionManager {
     static let shared = MotionManager()
