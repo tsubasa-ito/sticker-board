@@ -111,7 +111,8 @@ final class SubscriptionManager: ObservableObject {
         var purchased: Set<String> = []
 
         for await result in Transaction.currentEntitlements {
-            if let transaction = try? checkVerified(result) {
+            do {
+                let transaction = try checkVerified(result)
                 if transaction.revocationDate != nil {
                     continue
                 }
@@ -119,6 +120,8 @@ final class SubscriptionManager: ObservableObject {
                     continue
                 }
                 purchased.insert(transaction.productID)
+            } catch {
+                print("[SubscriptionManager] Failed to verify transaction while updating purchased products: \(error)")
             }
         }
 
