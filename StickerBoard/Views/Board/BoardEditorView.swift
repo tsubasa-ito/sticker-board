@@ -568,7 +568,7 @@ struct BoardEditorView: View {
     // MARK: - 画像として保存
 
     private func saveBoardAsImage() {
-        let content = BoardSnapshotView(placements: sortedPlacements, size: canvasSize, backgroundConfig: backgroundConfig)
+        let content = BoardSnapshotView(placements: sortedPlacements, size: canvasSize, backgroundConfig: backgroundConfig, showWatermark: !SubscriptionManager.shared.isProUser)
 
         let renderer = ImageRenderer(content: content)
         renderer.scale = displayScale
@@ -637,6 +637,7 @@ private struct BoardSnapshotView: View {
     let placements: [StickerPlacement]
     let size: CGSize
     var backgroundConfig: BackgroundPatternConfig = .default
+    var showWatermark: Bool = false
 
     var body: some View {
         ZStack {
@@ -652,6 +653,22 @@ private struct BoardSnapshotView: View {
                         .scaleEffect(placement.scale)
                         .rotationEffect(.radians(placement.rotation))
                         .offset(x: placement.positionX, y: placement.positionY)
+                }
+            }
+
+            if showWatermark {
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        Text("シールボード")
+                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white.opacity(0.7))
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .background(Capsule().fill(.black.opacity(0.3)))
+                            .padding(10)
+                    }
                 }
             }
         }
@@ -720,6 +737,11 @@ private struct PlacementBorderPickerSheet: View {
     @State private var selectedWidth: StickerBorderWidth = .none
     @State private var selectedColorHex: String = "FFFFFF"
     @State private var originalImage: UIImage?
+    @State private var showingPaywall = false
+
+    private var isPremiumWidth: Bool {
+        [StickerBorderWidth.medium, .thick].contains(selectedWidth)
+    }
 
     var body: some View {
         NavigationStack {
@@ -749,13 +771,20 @@ private struct PlacementBorderPickerSheet: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("適用") {
-                        placement.borderWidth = selectedWidth
-                        placement.borderColorHex = selectedColorHex
-                        onApply()
-                        dismiss()
+                        if !SubscriptionManager.shared.isProUser && isPremiumWidth {
+                            showingPaywall = true
+                        } else {
+                            placement.borderWidth = selectedWidth
+                            placement.borderColorHex = selectedColorHex
+                            onApply()
+                            dismiss()
+                        }
                     }
                     .fontWeight(.semibold)
                 }
+            }
+            .sheet(isPresented: $showingPaywall) {
+                PaywallView()
             }
             .onAppear {
                 selectedWidth = placement.borderWidth

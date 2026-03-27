@@ -34,6 +34,9 @@ struct StickerBoardApp: App {
         UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
         UINavigationBar.appearance().compactAppearance = navBarAppearance
         UINavigationBar.appearance().tintColor = UIColor(AppTheme.accent)
+
+        // サブスクリプションマネージャーの早期初期化
+        _ = SubscriptionManager.shared
     }
 
     var body: some Scene {

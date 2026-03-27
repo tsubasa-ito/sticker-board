@@ -9,6 +9,8 @@ struct MultiStickerSelectionView: View {
     @State private var selectedIndices: Set<Int>
     @State private var errorMessage: String?
     @State private var appeared = false
+    @State private var showingPaywall = false
+    @Query private var existingStickers: [Sticker]
 
     init(images: [UIImage], onComplete: @escaping (Int) -> Void) {
         self.images = images
@@ -29,6 +31,9 @@ struct MultiStickerSelectionView: View {
             }
         }
         .background(AppTheme.backgroundPrimary)
+        .sheet(isPresented: $showingPaywall) {
+            PaywallView()
+        }
         .onAppear {
             withAnimation(.spring(duration: 0.5, bounce: 0.3)) {
                 appeared = true
@@ -178,6 +183,13 @@ struct MultiStickerSelectionView: View {
     // MARK: - 保存
 
     private func saveSelectedStickers() {
+        let currentCount = existingStickers.count
+        let selectedCount = selectedIndices.count
+        if !SubscriptionManager.shared.isProUser && currentCount + selectedCount > 30 {
+            showingPaywall = true
+            return
+        }
+
         var savedCount = 0
         var firstError: Error?
 

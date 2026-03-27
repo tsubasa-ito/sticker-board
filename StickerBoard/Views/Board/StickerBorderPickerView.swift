@@ -62,6 +62,7 @@ struct StickerBorderPickerView: View {
             HStack(spacing: 8) {
                 ForEach(StickerBorderWidth.allCases) { width in
                     let isSelected = selectedWidth == width
+                    let isPremium = [StickerBorderWidth.medium, .thick].contains(width)
                     Button {
                         selectedWidth = width
                     } label: {
@@ -81,6 +82,12 @@ struct StickerBorderPickerView: View {
                         .overlay {
                             RoundedRectangle(cornerRadius: 12)
                                 .strokeBorder(isSelected ? AppTheme.accent : .clear, lineWidth: 1.5)
+                        }
+                        .overlay(alignment: .topTrailing) {
+                            if isPremium && !SubscriptionManager.shared.isProUser {
+                                ProBadge()
+                                    .offset(x: 4, y: -4)
+                            }
                         }
                     }
                     .buttonStyle(.plain)

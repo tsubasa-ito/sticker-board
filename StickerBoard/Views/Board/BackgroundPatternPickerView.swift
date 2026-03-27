@@ -4,6 +4,9 @@ import SwiftUI
 struct BackgroundPatternPickerView: View {
     @Binding var config: BackgroundPatternConfig
     @Environment(\.dismiss) private var dismiss
+    @State private var showingPaywall = false
+
+    private static let premiumPatterns: Set<BackgroundPatternType> = [.stripe, .gradient]
 
     var body: some View {
         NavigationStack {
@@ -29,9 +32,18 @@ struct BackgroundPatternPickerView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("完了") { dismiss() }
-                        .fontWeight(.bold)
+                    Button("完了") {
+                        if !SubscriptionManager.shared.isProUser && Self.premiumPatterns.contains(config.patternType) {
+                            showingPaywall = true
+                        } else {
+                            dismiss()
+                        }
+                    }
+                    .fontWeight(.bold)
                 }
+            }
+            .sheet(isPresented: $showingPaywall) {
+                PaywallView()
             }
         }
     }
@@ -76,9 +88,9 @@ struct BackgroundPatternPickerView: View {
     }
 
     private func patternTypeButton(_ type: BackgroundPatternType) -> some View {
-        Button {
+        let isPremium = Self.premiumPatterns.contains(type)
+        return Button {
             withAnimation(.easeInOut(duration: 0.2)) {
-                // プリセットから同じタイプのものを適用
                 if let preset = BackgroundPatternConfig.presets.first(where: { $0.patternType == type }) {
                     config = preset
                 } else {
@@ -87,7 +99,6 @@ struct BackgroundPatternPickerView: View {
             }
         } label: {
             VStack(spacing: 8) {
-                // ミニプレビュー
                 let previewConfig = BackgroundPatternConfig.presets.first(where: { $0.patternType == type }) ?? config
                 BoardBackgroundView(config: previewConfig)
                     .frame(width: 56, height: 56)
@@ -99,6 +110,12 @@ struct BackgroundPatternPickerView: View {
                                 lineWidth: 2.5
                             )
                     )
+                    .overlay(alignment: .topTrailing) {
+                        if isPremium && !SubscriptionManager.shared.isProUser {
+                            ProBadge()
+                                .offset(x: 6, y: -6)
+                        }
+                    }
 
                 Text(type.displayName)
                     .font(.system(size: 11, weight: .semibold, design: .rounded))
