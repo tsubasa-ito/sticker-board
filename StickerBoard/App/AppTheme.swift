@@ -66,6 +66,17 @@ extension Color {
     }
 }
 
+// MARK: - エディタレイアウト定数
+
+extension AppTheme {
+    enum EditorLayout {
+        /// エディタのナビバー(~56pt) + padding上下(24pt×2) + ツールバー領域(~140pt)
+        static let verticalChromeHeight: CGFloat = 244
+        /// エディタのキャンバス左右パディング
+        static let horizontalPadding: CGFloat = 24
+    }
+}
+
 // MARK: - 画面サイズ（UIScreen.main 非推奨対応）
 
 extension AppTheme {

@@ -142,10 +142,8 @@ struct HomeView: View {
     /// エディタのキャンバスと同じ比率を算出（画面からナビバー・ツールバー・パディング分を引く）
     private var boardCardAspectRatio: CGFloat {
         let screen = AppTheme.screenBounds
-        // エディタ: ナビバー(~56pt) + padding上下(24pt×2) + ツールバー領域(~140pt) ≒ 244pt
-        let editorChromeHeight: CGFloat = 244
-        let canvasWidth = screen.width - 48 // padding 24pt×2
-        let canvasHeight = screen.height - editorChromeHeight
+        let canvasWidth = screen.width - (AppTheme.EditorLayout.horizontalPadding * 2)
+        let canvasHeight = screen.height - AppTheme.EditorLayout.verticalChromeHeight
         return canvasWidth / canvasHeight
     }
 
