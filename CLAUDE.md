@@ -35,8 +35,8 @@ xcodegen generate
 # ビルド
 xcodebuild -project StickerBoard.xcodeproj -target StickerBoard -sdk iphonesimulator26.2 -arch arm64 build
 
-# テスト実行（Swift Testing）
-xcodebuild -project StickerBoard.xcodeproj -scheme StickerBoard -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test
+# テスト実行（Swift Testing）※シミュレータ名は環境に合わせて変更
+xcodebuild -project StickerBoard.xcodeproj -scheme StickerBoard -destination 'platform=iOS Simulator,name=iPhone 16 Pro' test
 
 # Xcodeで開く
 open StickerBoard.xcodeproj
