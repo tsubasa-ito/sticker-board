@@ -19,6 +19,7 @@ struct HomeView: View {
     @State private var renameBoardTitle = ""
     @State private var showingOnboarding = false
     @State private var showingPaywall = false
+    @State private var showingSettings = false
 
     var body: some View {
         ZStack {
@@ -44,6 +45,15 @@ struct HomeView: View {
         .navigationTitle("シールボード")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    showingSettings = true
+                } label: {
+                    Image(systemName: "gearshape")
+                        .font(.system(size: 17, weight: .medium))
+                        .foregroundStyle(AppTheme.textSecondary)
+                }
+            }
             ToolbarItem(placement: .principal) {
                 Text("シールボード")
                     .font(.system(size: 20, weight: .heavy, design: .rounded))
@@ -58,6 +68,11 @@ struct HomeView: View {
                         .foregroundStyle(AppTheme.textSecondary)
                 }
             }
+        }
+        .navigationDestination(isPresented: $showingSettings) {
+            SettingsView()
+                .onAppear { hideTabBar = true }
+                .onDisappear { hideTabBar = false }
         }
         .fullScreenCover(isPresented: $showingOnboarding) {
             OnboardingView()
