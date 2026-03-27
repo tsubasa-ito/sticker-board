@@ -3,6 +3,8 @@ import SwiftUI
 /// ボードの背景パターンを描画するビュー
 struct BoardBackgroundView: View {
     let config: BackgroundPatternConfig
+    /// カスタム背景画像（外部から注入、キャッシュ用）
+    var customImage: UIImage?
 
     var body: some View {
         switch config.patternType {
@@ -16,6 +18,8 @@ struct BoardBackgroundView: View {
             stripeBackground
         case .gradient:
             gradientBackground
+        case .custom:
+            customBackground
         }
     }
 
@@ -127,5 +131,32 @@ struct BoardBackgroundView: View {
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )
+    }
+
+    // MARK: - カスタム写真
+
+    private var customBackground: some View {
+        GeometryReader { geometry in
+            if let image = customImage {
+                let imageSize = image.size
+                let containerSize = geometry.size
+                let scale = max(containerSize.width / imageSize.width, containerSize.height / imageSize.height)
+                let scaledWidth = imageSize.width * scale
+                let scaledHeight = imageSize.height * scale
+                let cropX = config.customImageCropX ?? 0.5
+                let cropY = config.customImageCropY ?? 0.5
+                let offsetX = (0.5 - cropX) * (scaledWidth - containerSize.width)
+                let offsetY = (0.5 - cropY) * (scaledHeight - containerSize.height)
+
+                Image(uiImage: image)
+                    .resizable()
+                    .frame(width: scaledWidth, height: scaledHeight)
+                    .offset(x: offsetX, y: offsetY)
+                    .frame(width: containerSize.width, height: containerSize.height)
+                    .clipped()
+            } else {
+                Color(hexString: config.primaryColorHex)
+            }
+        }
     }
 }

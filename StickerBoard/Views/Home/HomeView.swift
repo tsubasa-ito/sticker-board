@@ -139,12 +139,20 @@ struct HomeView: View {
 
     // MARK: - ボードカード
 
+    /// エディタのキャンバスと同じ比率を算出（画面からナビバー・ツールバー・パディング分を引く）
+    private var boardCardAspectRatio: CGFloat {
+        let screen = AppTheme.screenBounds
+        let canvasWidth = screen.width - (AppTheme.EditorLayout.horizontalPadding * 2)
+        let canvasHeight = screen.height - AppTheme.EditorLayout.verticalChromeHeight
+        return canvasWidth / canvasHeight
+    }
+
     private func boardCard(_ board: Board) -> some View {
         VStack(spacing: 0) {
             // プレビューエリア
             ZStack {
                 // ボード背景パターン
-                BoardBackgroundView(config: board.backgroundPattern)
+                BoardCardBackground(config: board.backgroundPattern)
 
                 // シールプレビュー
                 if board.placements.isEmpty {
@@ -210,7 +218,7 @@ struct HomeView: View {
                     }
                 }
             }
-            .aspectRatio(3.0 / 4.0, contentMode: .fit)
+            .aspectRatio(boardCardAspectRatio, contentMode: .fit)
             .clipShape(RoundedRectangle(cornerRadius: 28))
         }
         .shadow(color: .black.opacity(0.12), radius: 24, x: 0, y: 12)
@@ -274,7 +282,7 @@ struct HomeView: View {
                 }
                 .padding(.horizontal, 24)
             }
-            .aspectRatio(3.0 / 4.0, contentMode: .fit)
+            .aspectRatio(boardCardAspectRatio, contentMode: .fit)
         }
         .buttonStyle(.plain)
         .containerRelativeFrame(.horizontal)
@@ -399,8 +407,8 @@ private struct BoardStickerPreviewView: View {
 
     var body: some View {
         GeometryReader { geo in
-            let canvasWidth = UIScreen.main.bounds.width
-            let canvasHeight = UIScreen.main.bounds.height
+            let canvasWidth = AppTheme.screenBounds.width
+            let canvasHeight = AppTheme.screenBounds.height
             let previewScale = min(
                 geo.size.width / canvasWidth,
                 geo.size.height / canvasHeight
@@ -450,6 +458,26 @@ private struct BoardStickerPreviewView: View {
         .onDisappear {
             images = [:]
         }
+    }
+}
+
+// MARK: - ボードカード背景（カスタム背景画像の非同期読み込み対応）
+
+private struct BoardCardBackground: View {
+    let config: BackgroundPatternConfig
+    @State private var customImage: UIImage?
+
+    var body: some View {
+        BoardBackgroundView(config: config, customImage: customImage)
+            .task(id: config.customImageFileName) {
+                if config.patternType == .custom, let fileName = config.customImageFileName {
+                    customImage = await Task.detached {
+                        BackgroundImageStorage.load(fileName: fileName)
+                    }.value
+                } else {
+                    customImage = nil
+                }
+            }
     }
 }
 

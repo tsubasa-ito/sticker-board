@@ -66,6 +66,32 @@ extension Color {
     }
 }
 
+// MARK: - エディタレイアウト定数
+
+extension AppTheme {
+    enum EditorLayout {
+        /// エディタのナビバー(~56pt) + padding上下(24pt×2) + ツールバー領域(~140pt)
+        static let verticalChromeHeight: CGFloat = 244
+        /// エディタのキャンバス左右パディング
+        static let horizontalPadding: CGFloat = 24
+    }
+}
+
+// MARK: - 画面サイズ（UIScreen.main 非推奨対応）
+
+extension AppTheme {
+    /// 現在のウィンドウシーンから画面サイズを取得する
+    @MainActor
+    static var screenBounds: CGRect {
+        guard let scene = UIApplication.shared.connectedScenes
+            .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene
+        else {
+            return .zero
+        }
+        return scene.screen.bounds
+    }
+}
+
 // MARK: - 共通スタイル
 
 extension View {
