@@ -84,7 +84,9 @@ struct ImageStorage {
         do {
             try FileManager.default.removeItem(at: fileURL)
         } catch {
-            throw ImageStorageError.deletionFailed
+            guard let cocoaError = error as? CocoaError, cocoaError.code == .fileNoSuchFile else {
+                throw ImageStorageError.deletionFailed
+            }
         }
         ImageCacheManager.shared.removeAll(for: fileName)
     }
