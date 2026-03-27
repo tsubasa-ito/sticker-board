@@ -20,22 +20,18 @@ struct ImageStorageTests {
     @Test func 保存したファイル名がPNG拡張子を持つ() throws {
         let image = makeTestImage()
         let fileName = try ImageStorage.save(image)
+        defer { ImageStorage.delete(fileName: fileName) }
 
         #expect(fileName.hasSuffix(".png"))
-
-        // クリーンアップ
-        ImageStorage.delete(fileName: fileName)
     }
 
     @Test func 保存した画像をloadFromDiskで読み込める() throws {
         let image = makeTestImage()
         let fileName = try ImageStorage.save(image)
+        defer { ImageStorage.delete(fileName: fileName) }
 
         let loaded = ImageStorage.loadFromDisk(fileName: fileName)
         #expect(loaded != nil)
-
-        // クリーンアップ
-        ImageStorage.delete(fileName: fileName)
     }
 
     @Test func 削除後はloadFromDiskでnilが返る() throws {
@@ -58,11 +54,10 @@ struct ImageStorageTests {
     @Test func 大きい画像も保存と読み込みが正常に動作する() throws {
         let image = makeTestImage(size: CGSize(width: 3000, height: 2000))
         let fileName = try ImageStorage.save(image)
+        defer { ImageStorage.delete(fileName: fileName) }
 
         let loaded = try #require(ImageStorage.loadFromDisk(fileName: fileName))
         #expect(loaded.size.width > 0)
         #expect(loaded.size.height > 0)
-
-        ImageStorage.delete(fileName: fileName)
     }
 }
