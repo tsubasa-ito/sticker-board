@@ -144,6 +144,8 @@ struct HomeView: View {
         let screen = AppTheme.screenBounds
         let canvasWidth = screen.width - (AppTheme.EditorLayout.horizontalPadding * 2)
         let canvasHeight = screen.height - AppTheme.EditorLayout.verticalChromeHeight
+        // 起動直後に screenBounds が未確定の場合は妥当なデフォルト比率を返す
+        guard canvasWidth > 0, canvasHeight > 0 else { return 0.75 }
         return canvasWidth / canvasHeight
     }
 

@@ -83,12 +83,16 @@ extension AppTheme {
     /// 現在のウィンドウシーンから画面サイズを取得する
     @MainActor
     static var screenBounds: CGRect {
-        guard let scene = UIApplication.shared.connectedScenes
-            .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene
-        else {
-            return .zero
+        let scenes = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+        // foregroundActive を優先し、なければ任意の接続済みシーンにフォールバック
+        if let active = scenes.first(where: { $0.activationState == .foregroundActive }) {
+            return active.screen.bounds
         }
-        return scene.screen.bounds
+        if let scene = scenes.first {
+            return scene.screen.bounds
+        }
+        return .zero
     }
 }
 
