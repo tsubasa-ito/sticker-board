@@ -12,6 +12,7 @@ struct StickerLibraryView: View {
     @State private var maskEditMaskImage: UIImage?
     @State private var maskEditSaved = false
     @State private var showOverwriteError = false
+    @State private var showMaskEditLoadError = false
     @State private var thumbnailRefreshID = UUID()
     @Namespace private var previewNamespace
     var onAddSticker: () -> Void = {}
@@ -99,6 +100,11 @@ struct StickerLibraryView: View {
         } message: {
             Text("シールの保存中にエラーが発生しました。もう一度お試しください。")
         }
+        .alert("読み込みに失敗しました", isPresented: $showMaskEditLoadError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("シール画像の読み込みに失敗しました。画像が破損している可能性があります。")
+        }
     }
 
     // MARK: - 空の状態
@@ -185,7 +191,10 @@ struct StickerLibraryView: View {
 
     private func startMaskEdit(_ sticker: Sticker) {
         guard let image = ImageStorage.load(fileName: sticker.imageFileName),
-              let mask = MaskCompositor.generateMaskFromAlpha(image: image) else { return }
+              let mask = MaskCompositor.generateMaskFromAlpha(image: image) else {
+            showMaskEditLoadError = true
+            return
+        }
         maskEditSticker = sticker
         maskEditOriginalImage = image
         maskEditMaskImage = mask
