@@ -195,9 +195,9 @@ struct BoardEditorView: View {
             rebuildFilterCache()
         }
         .onDisappear {
-            saveBoard()
             rebuildTask?.cancel()
             updateTask?.cancel()
+            saveBoard()
             loadedImages = [:]
         }
         .task {
@@ -481,7 +481,7 @@ struct BoardEditorView: View {
         rebuildTask = Task.detached {
             var result: [UUID: UIImage] = [:]
             for placement in currentPlacements {
-                if Task.isCancelled { return }
+                guard !Task.isCancelled else { return }
                 if let image = cache.processed(
                     for: placement.imageFileName,
                     filter: placement.filter,
@@ -491,7 +491,7 @@ struct BoardEditorView: View {
                     result[placement.id] = image
                 }
             }
-            if Task.isCancelled { return }
+            guard !Task.isCancelled else { return }
             await MainActor.run {
                 loadedImages = result
             }
@@ -513,7 +513,7 @@ struct BoardEditorView: View {
                 borderWidth: borderWidth,
                 borderColorHex: borderColorHex
             ) {
-                if Task.isCancelled { return }
+                guard !Task.isCancelled else { return }
                 await MainActor.run {
                     loadedImages[placementId] = processed
                 }
