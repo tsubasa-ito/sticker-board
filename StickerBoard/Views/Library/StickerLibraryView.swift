@@ -35,6 +35,8 @@ struct StickerLibraryView: View {
                 }
             }
         }
+        .onAppear { MotionManager.shared.start() }
+        .onDisappear { MotionManager.shared.stop() }
         .overlay {
             if let sticker = previewSticker {
                 StickerPreviewOverlay(

@@ -1,9 +1,9 @@
 import SwiftUI
 import UIKit
 
-// MARK: - ホログラフィックカード効果（矩形カード用・ポケモンカード風）
+// MARK: - ホログラフィックカード効果（矩形カード用・ホロ箔風）
 
-/// サムネイルカードにホログラフィック効果を付与するModifier
+/// 矩形カードビューにホログラフィック効果を付与するModifier
 /// 3D回転 + レインボーグラデーション + スペキュラハイライト
 struct HolographicCardModifier: ViewModifier {
     let cornerRadius: CGFloat
@@ -60,7 +60,8 @@ struct HolographicCardModifier: ViewModifier {
 // MARK: - ホログラフィックステッカー効果（自由形状シール用）
 
 /// 自由形状のシール画像にホログラフィック効果を付与するModifier
-/// シールのアルファチャンネルでマスクし、不透明部分のみに効果を適用
+/// シールのアルファチャンネルでマスクし、不透明部分のみに効果を適用。
+/// image が nil の場合はオーバーレイなし。enableRotation: false でボード上での3D回転を無効化可能
 struct HolographicStickerModifier: ViewModifier {
     let image: UIImage?
     let intensity: Double
@@ -122,7 +123,10 @@ struct HolographicStickerModifier: ViewModifier {
 
 // MARK: - 共通ヘルパー
 
-/// レインボーグラデーションのストップ配列を生成
+/// ホログラフィックバンドのグラデーションストップ配列を生成
+/// - Parameters:
+///   - center: バンドの中心位置（tiltXに連動、0.0〜1.0）
+///   - opacity: ピーク不透明度
 private func rainbowStops(center: Double, opacity: Double) -> [Gradient.Stop] {
     let cyan = Color(hue: 0.52, saturation: 0.7, brightness: 1.0)
     let purple = Color(hue: 0.75, saturation: 0.8, brightness: 0.9)
