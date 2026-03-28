@@ -84,17 +84,15 @@ struct HolographicStickerModifier: ViewModifier {
 
         content
             .overlay {
-                if image != nil {
+                if let image {
                     ZStack {
                         stickerRainbow(tiltX: tiltX, tiltY: tiltY)
                         stickerHighlight(tiltX: tiltX, tiltY: tiltY)
                     }
                     .mask {
-                        if let image {
-                            Image(uiImage: image)
-                                .resizable()
-                                .scaledToFit()
-                        }
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFit()
                     }
                     .allowsHitTesting(false)
                 }
