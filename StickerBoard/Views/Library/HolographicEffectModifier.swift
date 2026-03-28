@@ -69,6 +69,8 @@ struct HolographicStickerModifier: ViewModifier {
     let maxRotation: Double
     let perspective: Double
     let dynamicShadow: Bool
+    /// 傾きに連動してシールが上下左右に移動する量（pt）。0で無効
+    let parallaxOffset: Double
 
     private let motion = MotionManager.shared
 
@@ -77,6 +79,8 @@ struct HolographicStickerModifier: ViewModifier {
         let tiltY = motion.tiltY
         let rotDegX = enableRotation ? maxRotation * (tiltX - 0.5) * 2 : 0
         let rotDegY = enableRotation ? -maxRotation * (tiltY - 0.5) * 2 : 0
+        let offsetX = parallaxOffset * (tiltX - 0.5) * 2
+        let offsetY = parallaxOffset * (tiltY - 0.5) * 2
 
         content
             .overlay {
@@ -95,6 +99,7 @@ struct HolographicStickerModifier: ViewModifier {
                     .allowsHitTesting(false)
                 }
             }
+            .offset(x: offsetX, y: offsetY)
             .rotation3DEffect(.degrees(rotDegX), axis: (0, 1, 0), perspective: perspective)
             .rotation3DEffect(.degrees(rotDegY), axis: (1, 0, 0), perspective: perspective)
             .shadow(
@@ -162,13 +167,15 @@ extension View {
     ///   - maxRotation: 最大回転角度（度）。大きいほど傾きが目立つ
     ///   - perspective: パースペクティブ値。小さいほど奥行き感が強い
     ///   - dynamicShadow: 傾きに連動する動的シャドウの有効化
+    ///   - parallaxOffset: 傾きに連動する位置移動量（pt）。0で無効
     func holographicSticker(
         image: UIImage?,
         intensity: Double = 0.6,
         enableRotation: Bool = true,
         maxRotation: Double = 8,
         perspective: Double = 0.8,
-        dynamicShadow: Bool = false
+        dynamicShadow: Bool = false,
+        parallaxOffset: Double = 0
     ) -> some View {
         modifier(HolographicStickerModifier(
             image: image,
@@ -176,7 +183,8 @@ extension View {
             enableRotation: enableRotation,
             maxRotation: maxRotation,
             perspective: perspective,
-            dynamicShadow: dynamicShadow
+            dynamicShadow: dynamicShadow,
+            parallaxOffset: parallaxOffset
         ))
     }
 }

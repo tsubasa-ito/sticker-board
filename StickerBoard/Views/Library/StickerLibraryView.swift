@@ -295,7 +295,8 @@ struct StickerPreviewOverlay: View {
                                 intensity: 0.8,
                                 maxRotation: 15,
                                 perspective: 0.4,
-                                dynamicShadow: true
+                                dynamicShadow: true,
+                                parallaxOffset: 20
                             )
                             .accessibilityLabel("シールのプレビュー")
                     } else {
