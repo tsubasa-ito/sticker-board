@@ -63,6 +63,7 @@ struct StickerItemView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 120, height: 120)
+                .holographicSticker(image: image, intensity: 0.4, enableRotation: false)
                 .shadow(color: .black.opacity(0.15), radius: 6, y: 3)
         } else {
             ZStack {
