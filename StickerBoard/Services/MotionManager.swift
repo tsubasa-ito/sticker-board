@@ -29,13 +29,13 @@ final class MotionManager {
             forName: UIApplication.didEnterBackgroundNotification,
             object: nil, queue: .main
         ) { [weak self] _ in
-            Task { @MainActor in self?.pauseIfActive() }
+            self?.pauseIfActive()
         }
         NotificationCenter.default.addObserver(
             forName: UIApplication.willEnterForegroundNotification,
             object: nil, queue: .main
         ) { [weak self] _ in
-            Task { @MainActor in self?.resumeIfNeeded() }
+            self?.resumeIfNeeded()
         }
     }
 
@@ -97,26 +97,24 @@ final class MotionManager {
         }
         motionManager.deviceMotionUpdateInterval = 1.0 / 30.0
         motionManager.startDeviceMotionUpdates(to: .main) { [weak self] motion, error in
-            Task { @MainActor in
-                guard let self else { return }
-                if let error {
-                    print("[MotionManager] モーション更新エラー: \(error.localizedDescription)")
-                    self.tiltX = 0.5
-                    self.tiltY = 0.5
-                    return
-                }
-                guard let motion else { return }
-                let roll = motion.attitude.roll
-                let pitch = motion.attitude.pitch
-                let maxAngle = Double.pi / 4
-                let newX = max(0, min(1, 0.5 + (roll / maxAngle) * 0.5))
-                // pi/6 オフセット: ユーザーの自然な持ち方（約30度傾斜）を中央値とする
-                let newY = max(0, min(1, 0.5 + ((pitch - Double.pi / 6) / maxAngle) * 0.5))
-                // しきい値(≒角度0.1°相当)を超えた場合のみ更新（微小な揺れでSwiftUI再描画を防ぐ）
-                if abs(newX - self.tiltX) > 0.003 || abs(newY - self.tiltY) > 0.003 {
-                    self.tiltX = newX
-                    self.tiltY = newY
-                }
+            guard let self else { return }
+            if let error {
+                print("[MotionManager] モーション更新エラー: \(error.localizedDescription)")
+                self.tiltX = 0.5
+                self.tiltY = 0.5
+                return
+            }
+            guard let motion else { return }
+            let roll = motion.attitude.roll
+            let pitch = motion.attitude.pitch
+            let maxAngle = Double.pi / 4
+            let newX = max(0, min(1, 0.5 + (roll / maxAngle) * 0.5))
+            // pi/6 オフセット: ユーザーの自然な持ち方（約30度傾斜）を中央値とする
+            let newY = max(0, min(1, 0.5 + ((pitch - Double.pi / 6) / maxAngle) * 0.5))
+            // しきい値(≒角度0.1°相当)を超えた場合のみ更新（微小な揺れでSwiftUI再描画を防ぐ）
+            if abs(newX - self.tiltX) > 0.003 || abs(newY - self.tiltY) > 0.003 {
+                self.tiltX = newX
+                self.tiltY = newY
             }
         }
     }
@@ -127,12 +125,10 @@ final class MotionManager {
     #if targetEnvironment(simulator)
     private func startSimulator() {
         simulatorTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 30.0, repeats: true) { [weak self] _ in
-            Task { @MainActor in
-                guard let self else { return }
-                self.phase += 0.015
-                self.tiltX = 0.5 + sin(self.phase) * 0.35
-                self.tiltY = 0.5 + cos(self.phase * 0.7) * 0.35
-            }
+            guard let self else { return }
+            self.phase += 0.015
+            self.tiltX = 0.5 + sin(self.phase) * 0.35
+            self.tiltY = 0.5 + cos(self.phase * 0.7) * 0.35
         }
     }
     #endif
