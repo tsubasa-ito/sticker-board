@@ -9,7 +9,7 @@ struct BackgroundRemovalResult {
 
 struct MaskCompositor {
 
-    private static let ciContext = CIContext()
+    private static let ciContext = SharedCIContext.shared
 
     /// マスク画像を使って元画像の背景を透明にする
     static func compositeWithMask(original: UIImage, mask: UIImage) -> UIImage? {

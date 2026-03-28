@@ -4,7 +4,7 @@ import CoreImage.CIFilterBuiltins
 
 struct StickerFilterService {
 
-    private static let ciContext = CIContext()
+    private static let ciContext = SharedCIContext.shared
 
     /// フィルターを適用した画像を返す
     static func apply(_ filter: StickerFilter, to image: UIImage) -> UIImage {
