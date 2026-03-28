@@ -1,6 +1,6 @@
 import UIKit
 
-final class ImageCacheManager {
+final class ImageCacheManager: @unchecked Sendable {
 
     static let shared = ImageCacheManager()
 
