@@ -290,7 +290,13 @@ struct StickerPreviewOverlay: View {
                         Image(uiImage: image)
                             .resizable()
                             .scaledToFit()
-                            .holographicSticker(image: image, intensity: 0.8)
+                            .holographicSticker(
+                                image: image,
+                                intensity: 0.8,
+                                maxRotation: 15,
+                                perspective: 0.4,
+                                dynamicShadow: true
+                            )
                             .accessibilityLabel("シールのプレビュー")
                     } else {
                         ProgressView()

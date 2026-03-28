@@ -66,14 +66,17 @@ struct HolographicStickerModifier: ViewModifier {
     let image: UIImage?
     let intensity: Double
     let enableRotation: Bool
+    let maxRotation: Double
+    let perspective: Double
+    let dynamicShadow: Bool
 
     private let motion = MotionManager.shared
 
     func body(content: Content) -> some View {
         let tiltX = motion.tiltX
         let tiltY = motion.tiltY
-        let rotDegX = enableRotation ? 6 * intensity * (tiltX - 0.5) * 2 : 0
-        let rotDegY = enableRotation ? -6 * intensity * (tiltY - 0.5) * 2 : 0
+        let rotDegX = enableRotation ? maxRotation * (tiltX - 0.5) * 2 : 0
+        let rotDegY = enableRotation ? -maxRotation * (tiltY - 0.5) * 2 : 0
 
         content
             .overlay {
@@ -92,8 +95,14 @@ struct HolographicStickerModifier: ViewModifier {
                     .allowsHitTesting(false)
                 }
             }
-            .rotation3DEffect(.degrees(rotDegX), axis: (0, 1, 0), perspective: 0.8)
-            .rotation3DEffect(.degrees(rotDegY), axis: (1, 0, 0), perspective: 0.8)
+            .rotation3DEffect(.degrees(rotDegX), axis: (0, 1, 0), perspective: perspective)
+            .rotation3DEffect(.degrees(rotDegY), axis: (1, 0, 0), perspective: perspective)
+            .shadow(
+                color: dynamicShadow ? .black.opacity(0.35) : .clear,
+                radius: dynamicShadow ? 16 : 0,
+                x: dynamicShadow ? CGFloat((tiltX - 0.5) * -24) : 0,
+                y: dynamicShadow ? CGFloat((tiltY - 0.5) * -24 + 8) : 0
+            )
             .onAppear { motion.start() }
             .onDisappear { motion.stop() }
     }
@@ -149,15 +158,25 @@ extension View {
     }
 
     /// ホログラフィックステッカー効果を適用（自由形状シール用）
+    /// - Parameters:
+    ///   - maxRotation: 最大回転角度（度）。大きいほど傾きが目立つ
+    ///   - perspective: パースペクティブ値。小さいほど奥行き感が強い
+    ///   - dynamicShadow: 傾きに連動する動的シャドウの有効化
     func holographicSticker(
         image: UIImage?,
         intensity: Double = 0.6,
-        enableRotation: Bool = true
+        enableRotation: Bool = true,
+        maxRotation: Double = 8,
+        perspective: Double = 0.8,
+        dynamicShadow: Bool = false
     ) -> some View {
         modifier(HolographicStickerModifier(
             image: image,
             intensity: intensity,
-            enableRotation: enableRotation
+            enableRotation: enableRotation,
+            maxRotation: maxRotation,
+            perspective: perspective,
+            dynamicShadow: dynamicShadow
         ))
     }
 }
