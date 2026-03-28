@@ -4,7 +4,7 @@ import CoreImage.CIFilterBuiltins
 
 struct StickerBorderService {
 
-    private static let ciContext = CIContext()
+    private static let ciContext = SharedCIContext.shared
 
     /// シール画像にアルファマスクベースの枠線を追加
     static func applyBorder(to image: UIImage, width: StickerBorderWidth, colorHex: String) -> UIImage? {

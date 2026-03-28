@@ -5,7 +5,7 @@ import CoreImage.CIFilterBuiltins
 
 struct BackgroundRemover {
 
-    private static let ciContext = CIContext()
+    private static let ciContext = SharedCIContext.shared
 
     private static let maxImageDimension: CGFloat = 2048
 
