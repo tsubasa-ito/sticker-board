@@ -25,6 +25,8 @@ struct BoardEditorView: View {
     @State private var showingFilterPicker = false
     @State private var showingBorderPicker = false
     @State private var loadedImages: [UUID: UIImage] = [:]
+    @State private var rebuildTask: Task<Void, Never>?
+    @State private var updateTask: Task<Void, Never>?
 
     var body: some View {
         ZStack {
@@ -193,7 +195,10 @@ struct BoardEditorView: View {
             rebuildFilterCache()
         }
         .onDisappear {
+            rebuildTask?.cancel()
+            updateTask?.cancel()
             saveBoard()
+            loadedImages = [:]
         }
         .task {
             try? await Task.sleep(for: .seconds(3))
@@ -470,11 +475,13 @@ struct BoardEditorView: View {
     }
 
     private func rebuildFilterCache() {
+        rebuildTask?.cancel()
         let cache = ImageCacheManager.shared
         let currentPlacements = placements
-        Task.detached {
+        rebuildTask = Task.detached {
             var result: [UUID: UIImage] = [:]
             for placement in currentPlacements {
+                guard !Task.isCancelled else { return }
                 if let image = cache.processed(
                     for: placement.imageFileName,
                     filter: placement.filter,
@@ -484,26 +491,31 @@ struct BoardEditorView: View {
                     result[placement.id] = image
                 }
             }
+            guard !Task.isCancelled else { return }
             await MainActor.run {
-                loadedImages = result
+                result.merge(loadedImages) { _, existing in existing }
+                let currentIds = Set(placements.map(\.id))
+                loadedImages = result.filter { currentIds.contains($0.key) }
             }
         }
     }
 
     private func updateProcessedCache(for placement: StickerPlacement) {
+        updateTask?.cancel()
         let cache = ImageCacheManager.shared
         let fileName = placement.imageFileName
         let filter = placement.filter
         let borderWidth = placement.borderWidth
         let borderColorHex = placement.borderColorHex
         let placementId = placement.id
-        Task.detached {
+        updateTask = Task.detached {
             if let processed = cache.processed(
                 for: fileName,
                 filter: filter,
                 borderWidth: borderWidth,
                 borderColorHex: borderColorHex
             ) {
+                guard !Task.isCancelled else { return }
                 await MainActor.run {
                     loadedImages[placementId] = processed
                 }
@@ -567,6 +579,7 @@ struct BoardEditorView: View {
     }
 
     private func removeFromBoard(_ placement: StickerPlacement) {
+        loadedImages.removeValue(forKey: placement.id)
         placements.removeAll { $0.id == placement.id }
         saveBoard()
     }
