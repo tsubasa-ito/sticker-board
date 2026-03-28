@@ -493,7 +493,9 @@ struct BoardEditorView: View {
             }
             guard !Task.isCancelled else { return }
             await MainActor.run {
-                loadedImages = result
+                result.merge(loadedImages) { _, existing in existing }
+                let currentIds = Set(placements.map(\.id))
+                loadedImages = result.filter { currentIds.contains($0.key) }
             }
         }
     }
