@@ -39,8 +39,13 @@ struct StickerLibraryView: View {
                 }
             }
         }
-        .task { resetAndReload() }
-        .onAppear { refreshIfNeeded() }
+        .onAppear {
+            if displayedStickers.isEmpty {
+                resetAndReload()
+            } else {
+                refreshIfNeeded()
+            }
+        }
         .overlay {
             if let sticker = previewSticker {
                 StickerPreviewOverlay(
