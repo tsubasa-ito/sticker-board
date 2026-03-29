@@ -40,10 +40,9 @@ final class Board {
             if let cached = _cachedBackgroundPattern, _cachedBackgroundPatternData == backgroundPatternData {
                 return cached
             }
-            guard let data = backgroundPatternData else { return .default }
-            let decoded = (try? Self.decoder.decode(BackgroundPatternConfig.self, from: data)) ?? .default
+            let decoded = backgroundPatternData.flatMap { try? Self.decoder.decode(BackgroundPatternConfig.self, from: $0) } ?? .default
             _cachedBackgroundPattern = decoded
-            _cachedBackgroundPatternData = data
+            _cachedBackgroundPatternData = backgroundPatternData
             return decoded
         }
         set {
