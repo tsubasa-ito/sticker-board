@@ -340,9 +340,11 @@ struct StickerCaptureView: View {
 
     private func loadImage(from item: PhotosPickerItem?) {
         guard let item else { return }
-        Task {
+        processingTask?.cancel()
+        processingTask = Task {
             if let data = try? await item.loadTransferable(type: Data.self),
                let image = UIImage(data: data) {
+                guard !Task.isCancelled else { return }
                 withAnimation(.spring(duration: 0.4)) {
                     originalImage = image
                     errorMessage = nil
