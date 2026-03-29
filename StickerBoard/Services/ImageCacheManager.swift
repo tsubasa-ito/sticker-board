@@ -203,10 +203,12 @@ final class ImageCacheManager: @unchecked Sendable {
         let key = fileName as NSString
         fullResolutionCache.removeObject(forKey: key)
 
-        keyTrackingLock.lock()
-        let thumbKeys = trackedThumbnailKeys.removeValue(forKey: fileName) ?? []
-        let filtKeys = trackedFilteredKeys.removeValue(forKey: fileName) ?? []
-        keyTrackingLock.unlock()
+        let (thumbKeys, filtKeys) = keyTrackingLock.withLock {
+            (
+                trackedThumbnailKeys.removeValue(forKey: fileName) ?? [],
+                trackedFilteredKeys.removeValue(forKey: fileName) ?? []
+            )
+        }
 
         for thumbKey in thumbKeys {
             thumbnailCache.removeObject(forKey: thumbKey)
@@ -221,18 +223,18 @@ final class ImageCacheManager: @unchecked Sendable {
         thumbnailCache.removeAllObjects()
         filteredCache.removeAllObjects()
 
-        keyTrackingLock.lock()
-        trackedThumbnailKeys.removeAll()
-        trackedFilteredKeys.removeAll()
-        keyTrackingLock.unlock()
+        keyTrackingLock.withLock {
+            trackedThumbnailKeys.removeAll()
+            trackedFilteredKeys.removeAll()
+        }
     }
 
     // MARK: - キー追跡
 
     private func trackKey(_ key: NSString, for fileName: String, in keyPath: ReferenceWritableKeyPath<ImageCacheManager, [String: Set<NSString>]>) {
-        keyTrackingLock.lock()
-        self[keyPath: keyPath][fileName, default: []].insert(key)
-        keyTrackingLock.unlock()
+        keyTrackingLock.withLock {
+            self[keyPath: keyPath][fileName, default: []].insert(key)
+        }
     }
 
     // MARK: - キー生成
