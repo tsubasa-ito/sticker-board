@@ -23,10 +23,9 @@ final class Board {
             if let cached = _cachedPlacements, _cachedPlacementsData == placementsData {
                 return cached
             }
-            guard let data = placementsData else { return [] }
-            let decoded = (try? Self.decoder.decode([StickerPlacement].self, from: data)) ?? []
+            let decoded = placementsData.flatMap { try? Self.decoder.decode([StickerPlacement].self, from: $0) } ?? []
             _cachedPlacements = decoded
-            _cachedPlacementsData = data
+            _cachedPlacementsData = placementsData
             return decoded
         }
         set {
