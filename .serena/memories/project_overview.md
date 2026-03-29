@@ -15,7 +15,7 @@
 ## ターゲット
 - iOS 18.0+
 - iPhone専用（TARGETED_DEVICE_FAMILY: 1）
-- Bundle ID: com.solodev.StickerBoard
+- Bundle ID: com.tebasaki.StickerBoard
 
 ## プロジェクト構成
 ```

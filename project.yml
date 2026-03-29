@@ -1,6 +1,6 @@
 name: StickerBoard
 options:
-  bundleIdPrefix: com.solodev
+  bundleIdPrefix: com.tebasaki
   deploymentTarget:
     iOS: "18.0"
   xcodeVersion: "16.0"
@@ -10,7 +10,7 @@ settings:
   base:
     SWIFT_VERSION: "5.9"
     TARGETED_DEVICE_FAMILY: "1"
-    INFOPLIST_KEY_CFBundleDisplayName: "シールボード"
+    INFOPLIST_KEY_CFBundleDisplayName: "シールボード -デジタルシール帳-"
     INFOPLIST_KEY_LSApplicationCategoryType: "public.app-category.lifestyle"
 
 targets:
@@ -29,8 +29,8 @@ targets:
         INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription: "ボードを画像として写真に保存するためにフォトライブラリへのアクセスが必要です"
         GENERATE_INFOPLIST_FILE: YES
         CURRENT_PROJECT_VERSION: "1"
-        MARKETING_VERSION: "0.1.0"
-        PRODUCT_BUNDLE_IDENTIFIER: "com.solodev.StickerBoard"
+        MARKETING_VERSION: "1.0.0"
+        PRODUCT_BUNDLE_IDENTIFIER: "com.tebasaki.StickerBoard"
         CODE_SIGN_STYLE: Automatic
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
@@ -47,7 +47,7 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
-        PRODUCT_BUNDLE_IDENTIFIER: "com.solodev.StickerBoardTests"
+        PRODUCT_BUNDLE_IDENTIFIER: "com.tebasaki.StickerBoardTests"
 
 schemes:
   StickerBoard:

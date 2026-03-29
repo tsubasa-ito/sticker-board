@@ -1,0 +1,435 @@
+# シールボード App Store リリースガイド
+
+バージョン 1.0.0 を App Store にリリースするための手順書です。
+
+---
+
+## 目次
+
+1. [リリース前チェックリスト](#1-リリース前チェックリスト)
+2. [App Store Connect でアプリを作成](#2-app-store-connect-でアプリを作成)
+3. [サブスクリプション商品を登録](#3-サブスクリプション商品を登録)
+4. [App Store メタデータを入力](#4-app-store-メタデータを入力)
+5. [スクリーンショットを準備・アップロード](#5-スクリーンショットを準備アップロード)
+6. [App Privacy を設定](#6-app-privacy-を設定)
+7. [Xcode で署名を設定](#7-xcode-で署名を設定)
+8. [アーカイブを作成](#8-アーカイブを作成)
+9. [App Store Connect にアップロード](#9-app-store-connect-にアップロード)
+10. [審査に提出](#10-審査に提出)
+11. [審査通過後の公開](#11-審査通過後の公開)
+12. [Xcode Cloud で CD（継続的デプロイ）を設定](#12-xcode-cloud-で-cd継続的デプロイを設定)
+
+---
+
+## 1. リリース前チェックリスト
+
+以下がすべて完了していることを確認してください。
+
+| 項目 | 状態 | 備考 |
+|------|------|------|
+| Apple Developer Program 登録 | ✅ | 年額 $99 |
+| バージョン 1.0.0 | ✅ | project.yml で設定済み |
+| ユニットテスト全パス | ✅ | 80テスト合格 |
+| Release ビルド成功 | ✅ | エラーなし |
+| プライバシーポリシー公開 | ✅ | https://colorfree-map.com/sticker-board/privacy |
+| 利用規約公開 | ✅ | https://colorfree-map.com/sticker-board/terms |
+| アプリアイコン（1024x1024） | ✅ | Assets.xcassets に設定済み |
+| App Store メタデータ | ✅ | docs/appstore-metadata.md に準備済み |
+
+---
+
+## 2. App Store Connect でアプリを作成
+
+1. https://appstoreconnect.apple.com にログイン
+2. 左メニューの「**アプリ**」をクリック
+3. 左上の「**+**」→「**新規App**」をクリック
+4. 以下を入力:
+
+| 項目 | 入力値 |
+|------|--------|
+| プラットフォーム | iOS |
+| 名前 | シールボード -デジタルシール帳- |
+| プライマリ言語 | 日本語 |
+| バンドルID | com.tebasaki.StickerBoard ※1 |
+| SKU | StickerBoard |
+| ユーザーアクセス | フルアクセス |
+
+> ※1 バンドルIDがリストに表示されない場合は、先に [ステップ7](#7-xcode-で署名を設定) で Xcode の署名設定を完了してください。Xcode が自動的に App ID を Apple Developer ポータルに登録します。
+
+5. 「**作成**」をクリック
+
+---
+
+## 3. サブスクリプション商品を登録
+
+1. 作成したアプリのページを開く
+2. 左メニューの「**サブスクリプション**」をクリック
+3. 「**サブスクリプショングループを作成**」をクリック
+   - グループ参照名: **StickerBoard Pro**
+4. グループ内で「**サブスクリプションを作成**」を2回行う:
+
+### 月額プラン
+
+| 項目 | 入力値 |
+|------|--------|
+| 参照名 | Pro Monthly |
+| プロダクトID | com.tebasaki.StickerBoard.pro.monthly |
+| サブスクリプション期間 | 1ヶ月 |
+| 価格 | ¥380（日本）|
+| サブスクリプションの説明（日本語） | シール・ボード無制限、全枠線・背景パターン、ロゴなし書き出し |
+
+### 年額プラン
+
+| 項目 | 入力値 |
+|------|--------|
+| 参照名 | Pro Yearly |
+| プロダクトID | com.tebasaki.StickerBoard.pro.yearly |
+| サブスクリプション期間 | 1年 |
+| 価格 | ¥2,900（日本）|
+| サブスクリプションの説明（日本語） | シール・ボード無制限、全枠線・背景パターン、ロゴなし書き出し（36%おトク） |
+
+> **注意:** プロダクトIDは `Products.storekit` で設定した値と完全に一致させてください。
+
+5. 各プランの「**審査情報**」セクションにスクリーンショットを1枚添付（ペイウォール画面のスクリーンショット）
+6. 「**ローカリゼーション**」で日本語の表示名と説明を入力
+7. 「**保存**」をクリック
+
+---
+
+## 4. App Store メタデータを入力
+
+アプリのページ →「**App Store**」タブ →「**App情報**」と「**バージョン情報（1.0.0）**」を編集します。
+
+### App 情報
+
+| 項目 | 入力値 |
+|------|--------|
+| カテゴリ | ライフスタイル |
+| コンテンツ配信権 | 該当しない（第三者のコンテンツは含まない） |
+| 年齢制限 | 4+（制限なし） |
+
+### バージョン情報（1.0.0）
+
+#### プロモーションテキスト（170文字以内、審査なしでいつでも変更可）
+
+```
+お気に入りのシールをカメラで撮って、AIが自動切り抜き。デジタルシールボードに自由にレイアウトして、あなただけのコレクションを作ろう！
+```
+
+#### 説明文
+
+```
+子どもの頃、シール手帳にお気に入りのシールを集めた記憶はありませんか？
+
+「シールボード」は、リアルなシールやステッカーをカメラで撮影して、AIが背景を自動で切り抜き、スマホの中にデジタルコレクションを作れるアプリです。
+
+【主な機能】
+- カメラで撮影するだけでAIが自動切り抜き
+- 1枚の写真から複数シールを一括検出
+- ブラシツールで切り抜き結果を手動微調整
+- ボードにシールを自由に配置・回転・拡大
+- キラキラ・レトロ・パステルなど7種類のフィルター
+- 輪郭に沿ったおしゃれな枠線
+- 無地・ドット・グリッドなど5種類以上の背景パターン
+- 完成したボードを1枚の画像として保存
+
+推し活グッズのシール、旅先で集めたステッカー、イベント限定ステッカー...あなたのコレクションをデジタルで永久保存しましょう。
+
+【Proプラン】
+月額¥380 / 年額¥2,900で全機能が解放されます。
+- シール保存数・ボード作成数が無制限
+- すべての枠線・背景パターンが利用可能
+- カスタム写真背景
+- ロゴなしの画像書き出し
+```
+
+#### キーワード（100文字以内、カンマ区切り）
+
+```
+シール,ステッカー,コレクション,切り抜き,背景除去,シール帳,推し活,デコ,スクラップ,手帳
+```
+
+#### その他の情報
+
+| 項目 | 入力値 |
+|------|--------|
+| サポートURL | https://forms.gle/Ngx3Fq5XnZJKxAaD6 |
+| マーケティングURL | （空欄でOK） |
+| プライバシーポリシーURL | https://colorfree-map.com/sticker-board/privacy |
+| 著作権 | © 2026 solodev |
+| ライセンス契約 | 標準のApple EULA を使用（カスタム不要） |
+
+---
+
+## 5. スクリーンショットを準備・アップロード
+
+### 必要なサイズ
+
+| ディスプレイ | 解像度 | 対応機種例 | 必須/任意 |
+|------------|--------|-----------|----------|
+| 6.9インチ | 1320 x 2868 px | iPhone 16 Pro Max | **必須**（最新） |
+| 6.7インチ | 1290 x 2796 px | iPhone 15 Pro Max / 16 Plus | 任意（6.9で代用可） |
+| 6.5インチ | 1284 x 2778 px | iPhone 14 Plus / 13 Pro Max | 任意（6.9で代用可） |
+
+- 最低 **3枚**、最大 10枚
+
+### 推奨する5枚の構成
+
+| # | 画面 | キャプション案 |
+|---|------|--------------|
+| 1 | シール撮影・AI切り抜き | カメラで撮るだけ、AIが自動切り抜き |
+| 2 | フィルター加工 | 7種類のフィルターでシールをデコ |
+| 3 | ボード編集 | 自由にレイアウト、あなただけのボード |
+| 4 | シールライブラリ | コレクションをまとめて管理 |
+| 5 | Pro機能紹介 | Proで全機能が解放 |
+
+### 撮影方法
+
+1. **実機**でシールを数枚撮影し、ボードにレイアウトしておく
+2. 以下のいずれかでスクリーンショットを撮影:
+   - **実機:** サイドボタン + 音量アップを同時押し
+   - **シミュレータ:** `Cmd + S`（シミュレータが起動中の状態で）
+3. スクリーンショットを App Store Connect にアップロード
+
+> **Tips:** スクリーンショットにテキストやデザインフレームを追加したい場合は、Figma や Canva などのツールで加工すると見栄えが良くなります。App Store で目を引くデザインにすると、ダウンロード率が上がります。
+
+---
+
+## 6. App Privacy を設定
+
+1. アプリのページ →「**App のプライバシー**」
+2. 「**始める**」をクリック
+3. 質問に回答:
+   - 「このAppでデータを収集しますか？」→ **「いいえ、このAppではデータの収集を行っていません」** を選択
+4. 「**保存**」→「**公開**」
+
+> シールボードはすべてのデータをデバイス内にのみ保存し、外部送信は一切行わないため、「データは収集していません」が正しい回答です。
+
+---
+
+## 7. Xcode で署名を設定
+
+1. ターミナルで以下を実行してプロジェクトを開く:
+   ```bash
+   open StickerBoard.xcodeproj
+   ```
+2. 左のナビゲータでプロジェクト「**StickerBoard**」を選択
+3. TARGETS →「**StickerBoard**」を選択
+4. 「**Signing & Capabilities**」タブを開く
+5. 以下を確認・設定:
+
+| 項目 | 設定 |
+|------|------|
+| Automatically manage signing | **ON**（チェックを入れる） |
+| Team | 自分の Apple Developer アカウントを選択 |
+| Bundle Identifier | com.tebasaki.StickerBoard（自動入力済み） |
+
+> Team を選択すると、Xcode が自動的に Provisioning Profile と署名証明書を作成・ダウンロードします。
+
+---
+
+## 8. アーカイブを作成
+
+1. Xcode 上部のスキームが「**StickerBoard**」になっていることを確認
+2. Destination を「**Any iOS Device (arm64)**」に変更
+   - シミュレータが選択されているとアーカイブできません
+3. メニュー → **Product** → **Archive**
+4. ビルドが開始され、完了すると **Organizer** ウィンドウが自動で開く
+
+> ビルドエラーが出た場合は、署名設定を再確認してください。
+
+---
+
+## 9. App Store Connect にアップロード
+
+1. Organizer で作成したアーカイブが選択されていることを確認
+2. 「**Distribute App**」ボタンをクリック
+3. 配布方法: 「**App Store Connect**」を選択 →「**Next**」
+4. 配布オプション: 「**Upload**」を選択 →「**Next**」
+5. 署名オプション: 「**Automatically manage signing**」のまま →「**Next**」
+6. 内容を確認 →「**Upload**」をクリック
+7. アップロード完了まで待つ（数分かかります）
+
+### アップロード後の処理
+
+- App Store Connect 側でバイナリの処理が行われます（10〜30分）
+- 処理完了後、メールが届きます
+- App Store Connect のアプリページ →「**ビルド**」セクションにビルドが表示されます
+
+> **よくあるエラー:**
+> - 「Missing compliance」→ 暗号化の使用に関する質問。標準的な HTTPS のみの場合は「No」を選択
+> - 「Invalid binary」→ アイコンサイズや Info.plist の設定を確認
+
+---
+
+## 10. 審査に提出
+
+1. App Store Connect → アプリ → バージョン **1.0.0** のページを開く
+2. 「**ビルド**」セクションで、アップロードしたビルドの横の「**+**」をクリックして選択
+3. 「**App Review に関する情報**」セクションに審査メモを記入:
+
+```
+This app captures real stickers/decals using the camera, removes the background
+using Vision Framework (on-device AI), and lets users arrange them on digital boards.
+
+- Camera and Photo Library access is needed to capture and select sticker photos.
+- The app works fully offline; all data is stored locally on-device.
+- No user accounts or login required.
+- Subscription (Pro plan) unlocks unlimited stickers/boards and additional customization features.
+
+Note: Background removal uses VNGenerateForegroundInstanceMaskRequest and requires
+a real device to function properly. On simulator, the original image is returned as-is.
+```
+
+4. 全てのセクション（メタデータ、スクリーンショット、ビルド）が入力済みであることを確認
+5. 右上の「**審査に提出**」をクリック
+6. 暗号化に関する質問:
+   - 「App が暗号化を使用しますか？」→「**いいえ**」（標準の HTTPS 通信のみのため）
+
+### 審査の所要時間
+
+- 通常 **24〜48時間**
+- 初回提出は少し長くなることがあります
+- 審査状況は App Store Connect で確認できます（「審査待ち」→「審査中」→「承認」）
+
+---
+
+## 11. 審査通過後の公開
+
+審査に通過すると、以下の選択肢があります:
+
+| オプション | 説明 |
+|-----------|------|
+| 手動で公開 | 自分のタイミングで「リリース」ボタンを押して公開 |
+| 審査通過後に自動公開 | 承認された直後に自動で App Store に公開 |
+
+> 初回リリースは「**手動で公開**」にしておくと、SNS告知のタイミングを合わせやすくて安心です。
+
+公開後、App Store に反映されるまで最大24時間かかる場合があります。
+
+---
+
+## 12. Xcode Cloud で CD（継続的デプロイ）を設定
+
+mainブランチへのマージをトリガーに、自動で TestFlight 配信や App Store 提出を行えます。
+
+### 前提
+
+- Apple Developer Program 加入済み（月25時間のビルド無料枠付き）
+- GitHubリポジトリが App Store Connect に接続されていること
+- `ci_scripts/ci_post_clone.sh` がリポジトリに含まれていること（XcodeGen プロジェクト生成用、作成済み）
+
+### 仕組み
+
+```
+git push (main) → Xcode Cloud がトリガー
+  → ci_post_clone.sh: Homebrew + XcodeGen インストール → xcodegen generate
+  → xcodebuild: ビルド & テスト
+  → アーカイブ → TestFlight に自動配信（または App Store に提出）
+```
+
+### ワークフロー1: テスト自動実行（CI）
+
+mainへのプッシュごとにビルド＆テストを自動実行します。
+
+#### Xcode での設定手順
+
+1. Xcode でプロジェクトを開く
+2. メニュー → **Product** → **Xcode Cloud** → **Create Workflow...**
+3. 初回はGitHubリポジトリとの接続設定が表示される → **Grant Access** で許可
+4. ワークフロー設定:
+
+| 項目 | 設定値 |
+|------|--------|
+| Name | CI - Build & Test |
+| Start Condition | Branch Changes → `main` |
+| Environment | Latest Release of Xcode / Latest Release of macOS |
+| Actions | **Build** → Scheme: StickerBoard, Platform: iOS |
+| | **Test** → Scheme: StickerBoard, Platform: iOS Simulator |
+| Post-Actions | なし |
+
+5. 「**Save**」をクリック
+
+### ワークフロー2: TestFlight 自動配信（CD）
+
+タグのプッシュをトリガーに、TestFlight へ自動配信します。
+
+#### Xcode での設定手順
+
+1. Xcode Cloud → 既存プロジェクトの「**+**」→「**New Workflow**」
+2. ワークフロー設定:
+
+| 項目 | 設定値 |
+|------|--------|
+| Name | CD - Deploy to TestFlight |
+| Start Condition | Tag Changes → Tags beginning with `v` (例: v1.0.0) |
+| Environment | Latest Release of Xcode / Latest Release of macOS |
+| Actions | **Archive** → Scheme: StickerBoard, Platform: iOS |
+| Post-Actions | **TestFlight (Internal Testing)** |
+
+3. 「**Save**」をクリック
+
+#### 使い方
+
+```bash
+# バージョンタグを付けてpushするだけで TestFlight に配信される
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+### ワークフロー3: App Store 提出（CD）
+
+TestFlight で動作確認後、App Store への提出も自動化できます。
+
+#### Xcode での設定手順
+
+1. ワークフロー2（TestFlight配信）をベースにコピー
+2. Post-Actions を変更:
+   - **TestFlight (External Testing)** を選択
+   - または **App Store Connect に提出** を選択（自動提出）
+3. Start Condition を手動トリガー（Manual Start）に変更（安全のため）
+
+> **推奨:** App Store 提出は手動トリガーにしておくと、意図しないリリースを防げます。
+
+### XcodeGen + Xcode Cloud の連携
+
+このプロジェクトは XcodeGen を使用しているため、Xcode Cloud のビルド環境で `.xcodeproj` を生成する必要があります。
+
+`ci_scripts/ci_post_clone.sh` が以下を自動実行します:
+1. Homebrew のインストール（未インストールの場合）
+2. XcodeGen のインストール
+3. `xcodegen generate` でプロジェクト生成
+
+> **注意:** `.xcodeproj` はGitリポジトリに含まれていますが、Xcode Cloud は `ci_post_clone.sh` を検出すると自動的に実行します。XcodeGen 経由で生成することで、常に `project.yml` と一致した状態でビルドされます。
+
+### Xcode Cloud のダッシュボード確認
+
+- **Xcode:** Product → Xcode Cloud → ワークフローの実行履歴を確認
+- **App Store Connect:** https://appstoreconnect.apple.com → Xcode Cloud タブ → ビルドログ・ステータスを確認
+
+---
+
+## トラブルシューティング
+
+### バンドルIDがApp Store Connectに表示されない
+
+→ 先に Xcode でTeamを設定して一度ビルドすると、Apple Developer ポータルに App ID が自動登録されます。
+
+### アーカイブがグレーアウトして押せない
+
+→ Destination が「Any iOS Device (arm64)」になっているか確認。シミュレータが選択されているとアーカイブできません。
+
+### アップロード時に「Missing compliance」エラー
+
+→ Info.plist に `ITSAppUsesNonExemptEncryption` = `NO` を追加すると、毎回の質問を省略できます。project.yml に以下を追加:
+
+```yaml
+INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
+```
+
+### 審査でリジェクトされた場合
+
+→ リジェクト理由を確認し、修正後に再提出。よくあるリジェクト理由:
+- スクリーンショットがアプリの実際の画面と異なる
+- サブスクリプションの説明が不十分
+- プライバシーポリシーのURLが無効
