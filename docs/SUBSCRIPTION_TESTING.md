@@ -25,8 +25,8 @@
 
 | 商品ID | 種別 | 価格 | 期間 |
 |--------|------|------|------|
-| `com.solodev.StickerBoard.pro.monthly` | 自動更新サブスク | ¥380/月 | 1ヶ月 |
-| `com.solodev.StickerBoard.pro.yearly` | 自動更新サブスク | ¥2,900/年 | 1年 |
+| `com.tebasaki.StickerBoard.pro.monthly` | 自動更新サブスク | ¥380/月 | 1ヶ月 |
+| `com.tebasaki.StickerBoard.pro.yearly` | 自動更新サブスク | ¥2,900/年 | 1年 |
 
 ### 1-3. StoreKit Testing の特徴
 
@@ -126,8 +126,8 @@ Xcode で期限切れをシミュレート:
 
 1. **App Store Connect** でサブスクリプション商品を登録
    - サブスクリプショングループ: "StickerBoard Pro"
-   - 月額: `com.solodev.StickerBoard.pro.monthly` ¥380
-   - 年額: `com.solodev.StickerBoard.pro.yearly` ¥2,900
+   - 月額: `com.tebasaki.StickerBoard.pro.monthly` ¥380
+   - 年額: `com.tebasaki.StickerBoard.pro.yearly` ¥2,900
 2. **サンドボックステスターアカウント** を作成
    - Settings > Users and Access > Sandbox Testers
 3. 実機でサンドボックスアカウントでサインイン

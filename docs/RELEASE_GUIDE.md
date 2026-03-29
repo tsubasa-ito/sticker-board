@@ -50,7 +50,7 @@
 | プラットフォーム | iOS |
 | 名前 | シールボード -デジタルシール帳- |
 | プライマリ言語 | 日本語 |
-| バンドルID | com.solodev.StickerBoard ※1 |
+| バンドルID | com.tebasaki.StickerBoard ※1 |
 | SKU | StickerBoard |
 | ユーザーアクセス | フルアクセス |
 
@@ -73,7 +73,7 @@
 | 項目 | 入力値 |
 |------|--------|
 | 参照名 | Pro Monthly |
-| プロダクトID | com.solodev.StickerBoard.pro.monthly |
+| プロダクトID | com.tebasaki.StickerBoard.pro.monthly |
 | サブスクリプション期間 | 1ヶ月 |
 | 価格 | ¥380（日本）|
 | サブスクリプションの説明（日本語） | シール・ボード無制限、全枠線・背景パターン、ロゴなし書き出し |
@@ -83,7 +83,7 @@
 | 項目 | 入力値 |
 |------|--------|
 | 参照名 | Pro Yearly |
-| プロダクトID | com.solodev.StickerBoard.pro.yearly |
+| プロダクトID | com.tebasaki.StickerBoard.pro.yearly |
 | サブスクリプション期間 | 1年 |
 | 価格 | ¥2,900（日本）|
 | サブスクリプションの説明（日本語） | シール・ボード無制限、全枠線・背景パターン、ロゴなし書き出し（36%おトク） |
@@ -222,7 +222,7 @@
 |------|------|
 | Automatically manage signing | **ON**（チェックを入れる） |
 | Team | 自分の Apple Developer アカウントを選択 |
-| Bundle Identifier | com.solodev.StickerBoard（自動入力済み） |
+| Bundle Identifier | com.tebasaki.StickerBoard（自動入力済み） |
 
 > Team を選択すると、Xcode が自動的に Provisioning Profile と署名証明書を作成・ダウンロードします。
 

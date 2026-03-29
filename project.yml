@@ -1,6 +1,6 @@
 name: StickerBoard
 options:
-  bundleIdPrefix: com.solodev
+  bundleIdPrefix: com.tebasaki
   deploymentTarget:
     iOS: "18.0"
   xcodeVersion: "16.0"
@@ -30,7 +30,7 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
         CURRENT_PROJECT_VERSION: "1"
         MARKETING_VERSION: "1.0.0"
-        PRODUCT_BUNDLE_IDENTIFIER: "com.solodev.StickerBoard"
+        PRODUCT_BUNDLE_IDENTIFIER: "com.tebasaki.StickerBoard"
         CODE_SIGN_STYLE: Automatic
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
@@ -47,7 +47,7 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
-        PRODUCT_BUNDLE_IDENTIFIER: "com.solodev.StickerBoardTests"
+        PRODUCT_BUNDLE_IDENTIFIER: "com.tebasaki.StickerBoardTests"
 
 schemes:
   StickerBoard:

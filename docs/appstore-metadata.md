@@ -4,7 +4,7 @@
 
 - **アプリ名:** シールボード -デジタルシール帳-
 - **サブタイトル:** リアルシールをデジタルコレクション
-- **バンドルID:** com.solodev.StickerBoard
+- **バンドルID:** com.tebasaki.StickerBoard
 - **SKU:** StickerBoard
 - **カテゴリ:** ライフスタイル
 - **年齢制限:** 4+
@@ -91,7 +91,7 @@ a real device to function properly. On simulator, the original image is returned
 
 | Product ID | 表示名 | 説明文 | 価格 | 期間 |
 |-----------|--------|--------|------|------|
-| com.solodev.StickerBoard.pro.monthly | Pro月額プラン | シール・ボード無制限、全枠線・背景パターン、ロゴなし書き出し | ¥380 | 1ヶ月 |
-| com.solodev.StickerBoard.pro.yearly | Pro年額プラン | シール・ボード無制限、全枠線・背景パターン、ロゴなし書き出し（36%おトク） | ¥2,900 | 1年 |
+| com.tebasaki.StickerBoard.pro.monthly | Pro月額プラン | シール・ボード無制限、全枠線・背景パターン、ロゴなし書き出し | ¥380 | 1ヶ月 |
+| com.tebasaki.StickerBoard.pro.yearly | Pro年額プラン | シール・ボード無制限、全枠線・背景パターン、ロゴなし書き出し（36%おトク） | ¥2,900 | 1年 |
 
 サブスクリプショングループ名: StickerBoard Pro
