@@ -702,13 +702,20 @@ private struct BoardSnapshotView: View {
                     Spacer()
                     HStack {
                         Spacer()
-                        Text("シールボード")
-                            .font(.system(size: 13, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white.opacity(0.7))
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 5)
-                            .background(Capsule().fill(.black.opacity(0.3)))
-                            .padding(10)
+                        HStack(spacing: 5) {
+                            Image("AppIconSmall")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 18, height: 18)
+                                .clipShape(RoundedRectangle(cornerRadius: 4))
+                            Text("シールボード")
+                                .font(.system(size: 13, weight: .bold, design: .rounded))
+                                .foregroundStyle(.white.opacity(0.7))
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(Capsule().fill(.black.opacity(0.3)))
+                        .padding(10)
                     }
                 }
             }

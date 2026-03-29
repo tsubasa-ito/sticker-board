@@ -84,7 +84,7 @@
 		1CE8160539FD33AFF7809C92 /* BackgroundPatternPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundPatternPickerView.swift; sourceTree = "<group>"; };
 		1D878D128C4599B9F13AD702 /* StickerCaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerCaptureView.swift; sourceTree = "<group>"; };
 		24DB2CADF1571137158B612F /* OnboardingPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageView.swift; sourceTree = "<group>"; };
-		25715A103AD977A60A5C825C /* Products.storekit */ = {isa = PBXFileReference; path = Products.storekit; sourceTree = "<group>"; };
+		25715A103AD977A60A5C825C /* Products.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Products.storekit; sourceTree = "<group>"; };
 		259987BEAF660FD74A7333A2 /* BoardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardTests.swift; sourceTree = "<group>"; };
 		276A77B1063731059420BB58 /* StickerBorderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerBorderTests.swift; sourceTree = "<group>"; };
 		285EEB7B80609E9E695A678B /* SubscriptionProduct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionProduct.swift; sourceTree = "<group>"; };
@@ -105,7 +105,7 @@
 		795F7B5B94087F04001DE523 /* BackgroundImageStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundImageStorageTests.swift; sourceTree = "<group>"; };
 		82762278F79270BA92FD3D38 /* MaskCompositorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaskCompositorTests.swift; sourceTree = "<group>"; };
 		8CA42CC44A656C4DE5FDD444 /* BackgroundImageStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundImageStorage.swift; sourceTree = "<group>"; };
-		98F3C1F87DFC6BE33492062C /* StickerBoard.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = StickerBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		98F3C1F87DFC6BE33492062C /* StickerBoard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StickerBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B695157C87669CCB70690F4 /* StickerBoardTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = StickerBoardTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F51DD1916FC4B3337ADA86F /* MaskEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaskEditorView.swift; sourceTree = "<group>"; };
 		9FFB83566A2BC0906338F77F /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
@@ -492,6 +492,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6CGGS6SX69;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "シールにする写真を撮影するためにカメラへのアクセスが必要です";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "ボードを画像として写真に保存するためにフォトライブラリへのアクセスが必要です";
@@ -642,6 +643,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6CGGS6SX69;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "シールにする写真を撮影するためにカメラへのアクセスが必要です";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "ボードを画像として写真に保存するためにフォトライブラリへのアクセスが必要です";
