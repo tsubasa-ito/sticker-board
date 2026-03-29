@@ -269,14 +269,23 @@ struct StickerLibraryView: View {
     }
 
     private func refreshIfNeeded() {
-        let currentCount = (try? modelContext.fetchCount(FetchDescriptor<Sticker>())) ?? 0
-        if currentCount != totalCount {
-            resetAndReload()
+        do {
+            let currentCount = try modelContext.fetchCount(FetchDescriptor<Sticker>())
+            if currentCount != totalCount {
+                resetAndReload()
+            }
+        } catch {
+            print("Error checking sticker count: \(error)")
         }
     }
 
     private func fetchTotalCount() {
-        totalCount = (try? modelContext.fetchCount(FetchDescriptor<Sticker>())) ?? 0
+        do {
+            totalCount = try modelContext.fetchCount(FetchDescriptor<Sticker>())
+        } catch {
+            print("Error fetching total sticker count: \(error)")
+            totalCount = 0
+        }
     }
 
     private func loadNextPage() {
