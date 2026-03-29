@@ -295,9 +295,14 @@ struct StickerLibraryView: View {
         )
         descriptor.fetchOffset = displayedStickers.count
         descriptor.fetchLimit = pageSize
-        guard let page = try? modelContext.fetch(descriptor) else { return }
-        displayedStickers.append(contentsOf: page)
-        hasMorePages = page.count == pageSize
+        do {
+            let page = try modelContext.fetch(descriptor)
+            displayedStickers.append(contentsOf: page)
+            hasMorePages = page.count == pageSize
+        } catch {
+            print("Error fetching next page of stickers: \(error)")
+            hasMorePages = false
+        }
     }
 
     // MARK: - さらに追加カード
