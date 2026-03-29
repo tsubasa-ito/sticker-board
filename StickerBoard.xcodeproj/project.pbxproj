@@ -492,7 +492,6 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6CGGS6SX69;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "シールにする写真を撮影するためにカメラへのアクセスが必要です";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "ボードを画像として写真に保存するためにフォトライブラリへのアクセスが必要です";
@@ -643,7 +642,6 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6CGGS6SX69;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "シールにする写真を撮影するためにカメラへのアクセスが必要です";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "ボードを画像として写真に保存するためにフォトライブラリへのアクセスが必要です";
