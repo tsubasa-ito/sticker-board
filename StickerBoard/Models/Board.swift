@@ -10,23 +10,45 @@ final class Board {
     var placementsData: Data?
     var backgroundPatternData: Data?
 
+    private static let decoder = JSONDecoder()
+    private static let encoder = JSONEncoder()
+
+    @Transient private var _cachedPlacements: [StickerPlacement]?
+    @Transient private var _cachedPlacementsData: Data?
+    @Transient private var _cachedBackgroundPattern: BackgroundPatternConfig?
+    @Transient private var _cachedBackgroundPatternData: Data?
+
     var placements: [StickerPlacement] {
         get {
-            guard let data = placementsData else { return [] }
-            return (try? JSONDecoder().decode([StickerPlacement].self, from: data)) ?? []
+            if let cached = _cachedPlacements, _cachedPlacementsData == placementsData {
+                return cached
+            }
+            let decoded = placementsData.flatMap { try? Self.decoder.decode([StickerPlacement].self, from: $0) } ?? []
+            _cachedPlacements = decoded
+            _cachedPlacementsData = placementsData
+            return decoded
         }
         set {
-            placementsData = try? JSONEncoder().encode(newValue)
+            placementsData = try? Self.encoder.encode(newValue)
+            _cachedPlacements = newValue
+            _cachedPlacementsData = placementsData
         }
     }
 
     var backgroundPattern: BackgroundPatternConfig {
         get {
-            guard let data = backgroundPatternData else { return .default }
-            return (try? JSONDecoder().decode(BackgroundPatternConfig.self, from: data)) ?? .default
+            if let cached = _cachedBackgroundPattern, _cachedBackgroundPatternData == backgroundPatternData {
+                return cached
+            }
+            let decoded = backgroundPatternData.flatMap { try? Self.decoder.decode(BackgroundPatternConfig.self, from: $0) } ?? .default
+            _cachedBackgroundPattern = decoded
+            _cachedBackgroundPatternData = backgroundPatternData
+            return decoded
         }
         set {
-            backgroundPatternData = try? JSONEncoder().encode(newValue)
+            backgroundPatternData = try? Self.encoder.encode(newValue)
+            _cachedBackgroundPattern = newValue
+            _cachedBackgroundPatternData = backgroundPatternData
         }
     }
 
