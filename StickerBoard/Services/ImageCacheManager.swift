@@ -1,34 +1,43 @@
 import UIKit
 
-final class ImageCacheManager {
+final class ImageCacheManager: @unchecked Sendable {
 
     static let shared = ImageCacheManager()
 
     // MARK: - キャッシュ層
 
-    /// フル解像度画像キャッシュ（上限: 50MB）
+    /// フル解像度画像キャッシュ（上限: 30MB）
     private let fullResolutionCache: NSCache<NSString, UIImage> = {
         let cache = NSCache<NSString, UIImage>()
-        cache.totalCostLimit = 50 * 1024 * 1024
-        cache.countLimit = 30
+        cache.totalCostLimit = 30 * 1024 * 1024
+        cache.countLimit = 20
         return cache
     }()
 
-    /// サムネイルキャッシュ（上限: 20MB）- キーは "fileName_WxH" 形式
+    /// サムネイルキャッシュ（上限: 15MB）- キーは "fileName_WxH" 形式
     private let thumbnailCache: NSCache<NSString, UIImage> = {
         let cache = NSCache<NSString, UIImage>()
-        cache.totalCostLimit = 20 * 1024 * 1024
-        cache.countLimit = 100
+        cache.totalCostLimit = 15 * 1024 * 1024
+        cache.countLimit = 80
         return cache
     }()
 
-    /// フィルター適用済みキャッシュ（上限: 40MB）- キーは "fileName_filterType" 形式
+    /// フィルター適用済みキャッシュ（上限: 25MB）- キーは "fileName_filterType" 形式
     private let filteredCache: NSCache<NSString, UIImage> = {
         let cache = NSCache<NSString, UIImage>()
-        cache.totalCostLimit = 40 * 1024 * 1024
-        cache.countLimit = 30
+        cache.totalCostLimit = 25 * 1024 * 1024
+        cache.countLimit = 20
         return cache
     }()
+
+    /// キャッシュキー追跡（NSCacheはキー列挙不可のため、ファイル名ごとにキーを追跡）
+    private var trackedThumbnailKeys: [String: Set<NSString>] = [:]
+    private var trackedFilteredKeys: [String: Set<NSString>] = [:]
+    private let keyTrackingLock = NSLock()
+
+    /// 進行中のフル解像度読み込みタスク（同一画像の重複ディスクI/Oを防止）
+    private var fullResolutionLoadingTasks: [String: Task<UIImage?, Never>] = [:]
+    private let fullResolutionLoadingTasksLock = NSLock()
 
     // MARK: - 初期化
 
@@ -54,6 +63,36 @@ final class ImageCacheManager {
         return image
     }
 
+    func fullResolutionAsync(for fileName: String) async -> UIImage? {
+        let key = fileName as NSString
+        if let cached = fullResolutionCache.object(forKey: key) {
+            return cached
+        }
+
+        fullResolutionLoadingTasksLock.lock()
+        if let existingTask = fullResolutionLoadingTasks[fileName] {
+            fullResolutionLoadingTasksLock.unlock()
+            return await existingTask.value
+        }
+
+        let task = Task<UIImage?, Never>.detached {
+            defer {
+                self.fullResolutionLoadingTasksLock.withLock {
+                    self.fullResolutionLoadingTasks.removeValue(forKey: fileName)
+                }
+            }
+            guard let image = ImageStorage.loadFromDisk(fileName: fileName) else { return nil }
+            let cost = image.estimatedMemoryCost
+            self.fullResolutionCache.setObject(image, forKey: key, cost: cost)
+            return image
+        }
+
+        fullResolutionLoadingTasks[fileName] = task
+        fullResolutionLoadingTasksLock.unlock()
+
+        return await task.value
+    }
+
     func setFullResolution(_ image: UIImage, for fileName: String) {
         let key = fileName as NSString
         fullResolutionCache.setObject(image, forKey: key, cost: image.estimatedMemoryCost)
@@ -68,6 +107,7 @@ final class ImageCacheManager {
         }
         guard let thumbnail = ImageStorage.createThumbnailFromDisk(fileName: fileName, maxPixelSize: size) else { return nil }
         thumbnailCache.setObject(thumbnail, forKey: key, cost: thumbnail.estimatedMemoryCost)
+        trackKey(key, for: fileName, in: \.trackedThumbnailKeys)
         return thumbnail
     }
 
@@ -91,6 +131,7 @@ final class ImageCacheManager {
             image = bordered
         }
         thumbnailCache.setObject(image, forKey: key, cost: image.estimatedMemoryCost)
+        trackKey(key, for: fileName, in: \.trackedThumbnailKeys)
         return image
     }
 
@@ -105,12 +146,14 @@ final class ImageCacheManager {
         guard let original = fullResolution(for: fileName) else { return nil }
         let result = StickerFilterService.apply(filter, to: original)
         filteredCache.setObject(result, forKey: key, cost: result.estimatedMemoryCost)
+        trackKey(key, for: fileName, in: \.trackedFilteredKeys)
         return result
     }
 
     func setFiltered(_ image: UIImage, for fileName: String, filter: StickerFilter) {
         let key = filteredKey(fileName: fileName, filter: filter)
         filteredCache.setObject(image, forKey: key, cost: image.estimatedMemoryCost)
+        trackKey(key, for: fileName, in: \.trackedFilteredKeys)
     }
 
     // MARK: - フィルター＋枠線適用済み
@@ -144,27 +187,34 @@ final class ImageCacheManager {
             return base
         }
         filteredCache.setObject(result, forKey: key, cost: result.estimatedMemoryCost)
+        trackKey(key, for: fileName, in: \.trackedFilteredKeys)
         return result
     }
 
     func setProcessed(_ image: UIImage, for fileName: String, filter: StickerFilter, borderWidth: StickerBorderWidth, borderColorHex: String) {
         let key = processedKey(fileName: fileName, filter: filter, borderWidth: borderWidth, borderColorHex: borderColorHex)
         filteredCache.setObject(image, forKey: key, cost: image.estimatedMemoryCost)
+        trackKey(key, for: fileName, in: \.trackedFilteredKeys)
     }
 
     // MARK: - キャッシュ無効化
 
-    /// サムネイルキャッシュで使用されるサイズ一覧
-    private static let knownThumbnailSizes: [CGFloat] = [112, 200]
-
     func removeAll(for fileName: String) {
         let key = fileName as NSString
         fullResolutionCache.removeObject(forKey: key)
-        for size in Self.knownThumbnailSizes {
-            thumbnailCache.removeObject(forKey: thumbnailKey(fileName: fileName, size: size))
+
+        let (thumbKeys, filtKeys) = keyTrackingLock.withLock {
+            (
+                trackedThumbnailKeys.removeValue(forKey: fileName) ?? [],
+                trackedFilteredKeys.removeValue(forKey: fileName) ?? []
+            )
         }
-        for filter in StickerFilter.allCases where filter != .original {
-            filteredCache.removeObject(forKey: filteredKey(fileName: fileName, filter: filter))
+
+        for thumbKey in thumbKeys {
+            thumbnailCache.removeObject(forKey: thumbKey)
+        }
+        for filtKey in filtKeys {
+            filteredCache.removeObject(forKey: filtKey)
         }
     }
 
@@ -172,6 +222,19 @@ final class ImageCacheManager {
         fullResolutionCache.removeAllObjects()
         thumbnailCache.removeAllObjects()
         filteredCache.removeAllObjects()
+
+        keyTrackingLock.withLock {
+            trackedThumbnailKeys.removeAll()
+            trackedFilteredKeys.removeAll()
+        }
+    }
+
+    // MARK: - キー追跡
+
+    private func trackKey(_ key: NSString, for fileName: String, in keyPath: ReferenceWritableKeyPath<ImageCacheManager, [String: Set<NSString>]>) {
+        keyTrackingLock.withLock {
+            self[keyPath: keyPath][fileName, default: []].insert(key)
+        }
     }
 
     // MARK: - キー生成

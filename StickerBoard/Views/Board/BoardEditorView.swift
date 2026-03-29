@@ -536,8 +536,14 @@ struct BoardEditorView: View {
         )
         placements.append(placement)
         selectedPlacementId = placement.id
-        if let image = ImageCacheManager.shared.fullResolution(for: sticker.imageFileName) {
-            loadedImages[placement.id] = image
+        let placementId = placement.id
+        let fileName = sticker.imageFileName
+        Task {
+            if let image = await ImageCacheManager.shared.fullResolutionAsync(for: fileName) {
+                if placements.contains(where: { $0.id == placementId }) {
+                    loadedImages[placementId] = image
+                }
+            }
         }
         saveBoard()
     }

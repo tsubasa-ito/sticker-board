@@ -35,6 +35,11 @@ struct ImageStorage {
         ImageCacheManager.shared.fullResolution(for: fileName)
     }
 
+    /// ファイル名からUIImageを非同期で読み込む（キャッシュ経由、ディスクI/Oはバックグラウンド）
+    static func loadAsync(fileName: String) async -> UIImage? {
+        await ImageCacheManager.shared.fullResolutionAsync(for: fileName)
+    }
+
     /// サムネイルを読み込む（キャッシュ経由、指定サイズにリサイズ）
     static func loadThumbnail(fileName: String, size: CGFloat) -> UIImage? {
         ImageCacheManager.shared.thumbnail(for: fileName, size: size)
