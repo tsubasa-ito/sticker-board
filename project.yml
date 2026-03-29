@@ -29,7 +29,7 @@ targets:
         INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription: "ボードを画像として写真に保存するためにフォトライブラリへのアクセスが必要です"
         GENERATE_INFOPLIST_FILE: YES
         CURRENT_PROJECT_VERSION: "1"
-        MARKETING_VERSION: "0.1.0"
+        MARKETING_VERSION: "1.0.0"
         PRODUCT_BUNDLE_IDENTIFIER: "com.solodev.StickerBoard"
         CODE_SIGN_STYLE: Automatic
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
