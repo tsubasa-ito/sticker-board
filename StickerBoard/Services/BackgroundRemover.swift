@@ -80,7 +80,14 @@ struct BackgroundRemover {
             throw BackgroundRemoverError.invalidImage
         }
 
-        let (observation, handler) = try performInstanceMask(on: cgImage)
+        guard let (observation, handler) = try performInstanceMask(on: cgImage) else {
+            let renderer = UIGraphicsImageRenderer(size: image.size)
+            let whiteMask = renderer.image { ctx in
+                UIColor.white.setFill()
+                ctx.fill(CGRect(origin: .zero, size: image.size))
+            }
+            return BackgroundRemovalResult(processedImage: image, maskImage: whiteMask, originalImage: image)
+        }
 
         // マスクを UIImage として取得
         let maskPixelBuffer = try observation.generateScaledMaskForImage(forInstances: observation.allInstances, from: handler)
@@ -101,7 +108,9 @@ struct BackgroundRemover {
             throw BackgroundRemoverError.invalidImage
         }
 
-        let (observation, handler) = try performInstanceMask(on: cgImage)
+        guard let (observation, handler) = try performInstanceMask(on: cgImage) else {
+            return image
+        }
         return try applyMask(observation, instances: observation.allInstances, to: cgImage, handler: handler)
     }
 
@@ -110,7 +119,9 @@ struct BackgroundRemover {
             throw BackgroundRemoverError.invalidImage
         }
 
-        let (observation, handler) = try performInstanceMask(on: cgImage)
+        guard let (observation, handler) = try performInstanceMask(on: cgImage) else {
+            return [image]
+        }
         let allInstances = observation.allInstances
 
         if allInstances.count <= 1 {
@@ -142,13 +153,13 @@ struct BackgroundRemover {
         return results
     }
 
-    private static func performInstanceMask(on cgImage: CGImage) throws -> (VNInstanceMaskObservation, VNImageRequestHandler) {
+    private static func performInstanceMask(on cgImage: CGImage) throws -> (VNInstanceMaskObservation, VNImageRequestHandler)? {
         let request = VNGenerateForegroundInstanceMaskRequest()
         let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
         try handler.perform([request])
 
         guard let result = request.results?.first else {
-            throw BackgroundRemoverError.noResult
+            return nil
         }
         return (result, handler)
     }
