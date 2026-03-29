@@ -173,6 +173,7 @@ StickerBoard/
         ├── BackgroundPatternPickerView.swift # 背景パターン選択UI
         └── StickerBorderPickerView.swift    # 枠線設定UI（太さ・カラー選択）
 StickerBoardTests/                           # Swift Testing ユニットテスト
+    ├── BoardTests.swift                     # Board のJSON デコードキャッシュ・placements・backgroundPattern
     ├── StickerPlacementTests.swift          # StickerPlacement のCodable・computed properties
     ├── BackgroundPatternTests.swift         # 背景パターン種別・設定・Color hex変換
     ├── StickerFilterTests.swift             # フィルター種別のプロパティ・Codable
