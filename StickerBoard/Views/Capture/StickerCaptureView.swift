@@ -21,6 +21,7 @@ struct StickerCaptureView: View {
     @State private var showingMaskEditor = false
     @State private var maskEditorId = UUID()
     @State private var showingPaywall = false
+    @State private var processingTask: Task<Void, Never>?
     @Query private var allStickers: [Sticker]
 
     var body: some View {
@@ -34,6 +35,7 @@ struct StickerCaptureView: View {
                         // 複数シール選択
                         MultiStickerSelectionView(images: extractedStickers) { count in
                             savedStickerCount = count
+                            self.extractedStickers = nil
                             resetState()
                             showingSaveSuccess = true
                         }
@@ -105,6 +107,10 @@ struct StickerCaptureView: View {
             withAnimation(.easeOut(duration: 0.5)) {
                 animateIn = true
             }
+        }
+        .onDisappear {
+            processingTask?.cancel()
+            processingTask = nil
         }
     }
 
@@ -350,26 +356,39 @@ struct StickerCaptureView: View {
         withAnimation { isProcessing = true }
         errorMessage = nil
 
-        Task {
+        processingTask?.cancel()
+        processingTask = Task {
             do {
                 // まず複数オブジェクト検出を試みる
                 let results = try await BackgroundRemover.extractIndividualStickers(from: originalImage)
+
+                guard !Task.isCancelled else { return }
+
                 if results.count > 1 {
                     withAnimation(.spring(duration: 0.5)) {
                         extractedStickers = results
+                        self.originalImage = nil
                     }
                 } else {
                     // 単一シール: マスク付きで処理（手動調整を可能にする）
                     let result = try await BackgroundRemover.removeBackgroundWithMask(from: originalImage)
+
+                    guard !Task.isCancelled else { return }
+
                     withAnimation(.spring(duration: 0.5)) {
                         backgroundRemovalResult = result
                         processedImage = result.processedImage
+                        self.originalImage = nil
                     }
                 }
             } catch {
-                errorMessage = error.localizedDescription
+                if !Task.isCancelled {
+                    errorMessage = error.localizedDescription
+                }
             }
-            withAnimation { isProcessing = false }
+            if !Task.isCancelled {
+                withAnimation { isProcessing = false }
+            }
         }
     }
 
