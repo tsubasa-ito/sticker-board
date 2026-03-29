@@ -17,6 +17,7 @@
 9. [App Store Connect にアップロード](#9-app-store-connect-にアップロード)
 10. [審査に提出](#10-審査に提出)
 11. [審査通過後の公開](#11-審査通過後の公開)
+12. [Xcode Cloud で CD（継続的デプロイ）を設定](#12-xcode-cloud-で-cd継続的デプロイを設定)
 
 ---
 
@@ -304,6 +305,106 @@ a real device to function properly. On simulator, the original image is returned
 > 初回リリースは「**手動で公開**」にしておくと、SNS告知のタイミングを合わせやすくて安心です。
 
 公開後、App Store に反映されるまで最大24時間かかる場合があります。
+
+---
+
+## 12. Xcode Cloud で CD（継続的デプロイ）を設定
+
+mainブランチへのマージをトリガーに、自動で TestFlight 配信や App Store 提出を行えます。
+
+### 前提
+
+- Apple Developer Program 加入済み（月25時間のビルド無料枠付き）
+- GitHubリポジトリが App Store Connect に接続されていること
+- `ci_scripts/ci_post_clone.sh` がリポジトリに含まれていること（XcodeGen プロジェクト生成用、作成済み）
+
+### 仕組み
+
+```
+git push (main) → Xcode Cloud がトリガー
+  → ci_post_clone.sh: Homebrew + XcodeGen インストール → xcodegen generate
+  → xcodebuild: ビルド & テスト
+  → アーカイブ → TestFlight に自動配信（または App Store に提出）
+```
+
+### ワークフロー1: テスト自動実行（CI）
+
+mainへのプッシュごとにビルド＆テストを自動実行します。
+
+#### Xcode での設定手順
+
+1. Xcode でプロジェクトを開く
+2. メニュー → **Product** → **Xcode Cloud** → **Create Workflow...**
+3. 初回はGitHubリポジトリとの接続設定が表示される → **Grant Access** で許可
+4. ワークフロー設定:
+
+| 項目 | 設定値 |
+|------|--------|
+| Name | CI - Build & Test |
+| Start Condition | Branch Changes → `main` |
+| Environment | Latest Release of Xcode / Latest Release of macOS |
+| Actions | **Build** → Scheme: StickerBoard, Platform: iOS |
+| | **Test** → Scheme: StickerBoard, Platform: iOS Simulator |
+| Post-Actions | なし |
+
+5. 「**Save**」をクリック
+
+### ワークフロー2: TestFlight 自動配信（CD）
+
+タグのプッシュをトリガーに、TestFlight へ自動配信します。
+
+#### Xcode での設定手順
+
+1. Xcode Cloud → 既存プロジェクトの「**+**」→「**New Workflow**」
+2. ワークフロー設定:
+
+| 項目 | 設定値 |
+|------|--------|
+| Name | CD - Deploy to TestFlight |
+| Start Condition | Tag Changes → Tags beginning with `v` (例: v1.0.0) |
+| Environment | Latest Release of Xcode / Latest Release of macOS |
+| Actions | **Archive** → Scheme: StickerBoard, Platform: iOS |
+| Post-Actions | **TestFlight (Internal Testing)** |
+
+3. 「**Save**」をクリック
+
+#### 使い方
+
+```bash
+# バージョンタグを付けてpushするだけで TestFlight に配信される
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+### ワークフロー3: App Store 提出（CD）
+
+TestFlight で動作確認後、App Store への提出も自動化できます。
+
+#### Xcode での設定手順
+
+1. ワークフロー2（TestFlight配信）をベースにコピー
+2. Post-Actions を変更:
+   - **TestFlight (External Testing)** を選択
+   - または **App Store Connect に提出** を選択（自動提出）
+3. Start Condition を手動トリガー（Manual Start）に変更（安全のため）
+
+> **推奨:** App Store 提出は手動トリガーにしておくと、意図しないリリースを防げます。
+
+### XcodeGen + Xcode Cloud の連携
+
+このプロジェクトは XcodeGen を使用しているため、Xcode Cloud のビルド環境で `.xcodeproj` を生成する必要があります。
+
+`ci_scripts/ci_post_clone.sh` が以下を自動実行します:
+1. Homebrew のインストール（未インストールの場合）
+2. XcodeGen のインストール
+3. `xcodegen generate` でプロジェクト生成
+
+> **注意:** `.xcodeproj` はGitリポジトリに含まれていますが、Xcode Cloud は `ci_post_clone.sh` を検出すると自動的に実行します。XcodeGen 経由で生成することで、常に `project.yml` と一致した状態でビルドされます。
+
+### Xcode Cloud のダッシュボード確認
+
+- **Xcode:** Product → Xcode Cloud → ワークフローの実行履歴を確認
+- **App Store Connect:** https://appstoreconnect.apple.com → Xcode Cloud タブ → ビルドログ・ステータスを確認
 
 ---
 
