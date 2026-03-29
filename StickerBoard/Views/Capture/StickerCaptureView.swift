@@ -35,7 +35,6 @@ struct StickerCaptureView: View {
                         // 複数シール選択
                         MultiStickerSelectionView(images: extractedStickers) { count in
                             savedStickerCount = count
-                            self.extractedStickers = nil
                             resetState()
                             showingSaveSuccess = true
                         }
