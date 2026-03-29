@@ -13,6 +13,8 @@ final class MotionManager {
     private let motionManager = CMMotionManager()
     private var referenceCount = 0
     private var wasPausedInBackground = false
+    nonisolated(unsafe) private var backgroundObserver: Any?
+    nonisolated(unsafe) private var foregroundObserver: Any?
 
     /// デバイスの傾き（実機: 0.0〜1.0に正規化、シミュレータ: 自動アニメーション。中央が0.5）
     private(set) var tiltX: Double = 0.5
@@ -25,17 +27,26 @@ final class MotionManager {
     #endif
 
     private init() {
-        NotificationCenter.default.addObserver(
+        backgroundObserver = NotificationCenter.default.addObserver(
             forName: UIApplication.didEnterBackgroundNotification,
             object: nil, queue: .main
         ) { [weak self] _ in
             self?.pauseIfActive()
         }
-        NotificationCenter.default.addObserver(
+        foregroundObserver = NotificationCenter.default.addObserver(
             forName: UIApplication.willEnterForegroundNotification,
             object: nil, queue: .main
         ) { [weak self] _ in
             self?.resumeIfNeeded()
+        }
+    }
+
+    deinit {
+        if let token = backgroundObserver {
+            NotificationCenter.default.removeObserver(token)
+        }
+        if let token = foregroundObserver {
+            NotificationCenter.default.removeObserver(token)
         }
     }
 

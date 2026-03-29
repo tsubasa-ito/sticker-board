@@ -50,6 +50,10 @@ final class ImageCacheManager: @unchecked Sendable {
         )
     }
 
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
     // MARK: - フル解像度
 
     func fullResolution(for fileName: String) -> UIImage? {
