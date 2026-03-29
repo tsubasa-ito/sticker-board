@@ -3,8 +3,10 @@ import SwiftData
 
 struct StickerLibraryView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \Sticker.createdAt, order: .reverse) private var stickers: [Sticker]
     @Query private var boards: [Board]
+    @State private var displayedStickers: [Sticker] = []
+    @State private var totalCount: Int = 0
+    @State private var hasMorePages = true
     @State private var deleteInfo: (sticker: Sticker, boards: [Board])?
     @State private var previewSticker: Sticker?
     @State private var maskEditSticker: Sticker?
@@ -18,6 +20,8 @@ struct StickerLibraryView: View {
     @Namespace private var previewNamespace
     var onAddSticker: () -> Void = {}
 
+    private let pageSize = 30
+
     private let columns = [
         GridItem(.adaptive(minimum: 100), spacing: 14)
     ]
@@ -28,11 +32,18 @@ struct StickerLibraryView: View {
                 .ignoresSafeArea()
 
             Group {
-                if stickers.isEmpty {
+                if totalCount == 0 {
                     emptyState
                 } else {
                     stickerGrid
                 }
+            }
+        }
+        .onAppear {
+            if displayedStickers.isEmpty {
+                resetAndReload()
+            } else {
+                refreshIfNeeded()
             }
         }
         .overlay {
@@ -150,7 +161,7 @@ struct StickerLibraryView: View {
                     Image(systemName: "star.fill")
                         .foregroundStyle(AppTheme.accent)
                         .font(.system(size: 12))
-                    Text("\(stickers.count)枚のシール")
+                    Text("\(totalCount)枚のシール")
                         .font(.system(size: 13, weight: .medium, design: .rounded))
                         .foregroundStyle(AppTheme.textSecondary)
                 }
@@ -159,7 +170,7 @@ struct StickerLibraryView: View {
                 LazyVGrid(columns: columns, spacing: 14) {
                     addStickerCard
 
-                    ForEach(stickers) { sticker in
+                    ForEach(displayedStickers) { sticker in
                         StickerThumbnailView(sticker: sticker, refreshTrigger: thumbnailRefreshID)
                             .matchedGeometryEffect(id: sticker.id, in: previewNamespace)
                             .opacity(previewSticker?.id == sticker.id ? 0 : 1)
@@ -182,7 +193,22 @@ struct StickerLibraryView: View {
                                     Label("削除", systemImage: "trash")
                                 }
                             }
+                            .onAppear {
+                                if sticker.id == displayedStickers.last?.id {
+                                    loadNextPage()
+                                }
+                            }
                     }
+                }
+
+                if hasMorePages && !displayedStickers.isEmpty {
+                    HStack {
+                        Spacer()
+                        ProgressView()
+                            .tint(AppTheme.accent)
+                        Spacer()
+                    }
+                    .padding(.vertical, 8)
                 }
             }
             .padding(20)
@@ -228,7 +254,55 @@ struct StickerLibraryView: View {
             board.updatedAt = Date()
         }
         modelContext.delete(sticker)
+        displayedStickers.removeAll { $0.id == sticker.id }
+        totalCount = max(totalCount - 1, 0)
         deleteInfo = nil
+    }
+
+    // MARK: - ページネーション
+
+    private func resetAndReload() {
+        displayedStickers = []
+        hasMorePages = true
+        fetchTotalCount()
+        loadNextPage()
+    }
+
+    private func refreshIfNeeded() {
+        do {
+            let currentCount = try modelContext.fetchCount(FetchDescriptor<Sticker>())
+            if currentCount != totalCount {
+                resetAndReload()
+            }
+        } catch {
+            print("Error checking sticker count: \(error)")
+        }
+    }
+
+    private func fetchTotalCount() {
+        do {
+            totalCount = try modelContext.fetchCount(FetchDescriptor<Sticker>())
+        } catch {
+            print("Error fetching total sticker count: \(error)")
+            totalCount = 0
+        }
+    }
+
+    private func loadNextPage() {
+        guard hasMorePages else { return }
+        var descriptor = FetchDescriptor<Sticker>(
+            sortBy: [SortDescriptor(\Sticker.createdAt, order: .reverse)]
+        )
+        descriptor.fetchOffset = displayedStickers.count
+        descriptor.fetchLimit = pageSize
+        do {
+            let page = try modelContext.fetch(descriptor)
+            displayedStickers.append(contentsOf: page)
+            hasMorePages = page.count == pageSize
+        } catch {
+            print("Error fetching next page of stickers: \(error)")
+            hasMorePages = false
+        }
     }
 
     // MARK: - さらに追加カード
