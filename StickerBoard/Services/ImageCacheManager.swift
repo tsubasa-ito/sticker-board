@@ -35,6 +35,10 @@ final class ImageCacheManager: @unchecked Sendable {
     private var trackedFilteredKeys: [String: Set<NSString>] = [:]
     private let keyTrackingLock = NSLock()
 
+    /// 進行中のフル解像度読み込みタスク（同一画像の重複ディスクI/Oを防止）
+    private var fullResolutionLoadingTasks: [String: Task<UIImage?, Never>] = [:]
+    private let fullResolutionLoadingTasksLock = NSLock()
+
     // MARK: - 初期化
 
     private init() {
@@ -64,12 +68,29 @@ final class ImageCacheManager: @unchecked Sendable {
         if let cached = fullResolutionCache.object(forKey: key) {
             return cached
         }
-        return await Task.detached {
+
+        fullResolutionLoadingTasksLock.lock()
+        if let existingTask = fullResolutionLoadingTasks[fileName] {
+            fullResolutionLoadingTasksLock.unlock()
+            return await existingTask.value
+        }
+
+        let task = Task<UIImage?, Never>.detached {
+            defer {
+                self.fullResolutionLoadingTasksLock.withLock {
+                    self.fullResolutionLoadingTasks.removeValue(forKey: fileName)
+                }
+            }
             guard let image = ImageStorage.loadFromDisk(fileName: fileName) else { return nil }
             let cost = image.estimatedMemoryCost
             self.fullResolutionCache.setObject(image, forKey: key, cost: cost)
             return image
-        }.value
+        }
+
+        fullResolutionLoadingTasks[fileName] = task
+        fullResolutionLoadingTasksLock.unlock()
+
+        return await task.value
     }
 
     func setFullResolution(_ image: UIImage, for fileName: String) {
