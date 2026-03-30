@@ -70,8 +70,8 @@ struct PaywallAccessibilityTests {
 
     @Test func 購入中のオーバーレイがアクセシビリティ通知される() throws {
         let content = try readFile("StickerBoard/Views/Paywall/PaywallView.swift")
-        // isPurchasing 時の状態を accessibilityValue で通知
-        #expect(content.contains("isPurchasing") && content.contains("accessibilityValue"))
+        // 購入中はオーバーレイの ProgressView が accessibilityLabel で状態を通知
+        #expect(content.contains("購入処理中") && content.contains("accessibilityLabel"))
     }
 
     @Test func 月額ボタンにaccessibilityLabelがある() throws {

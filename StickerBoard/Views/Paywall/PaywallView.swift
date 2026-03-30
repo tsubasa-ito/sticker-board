@@ -207,7 +207,6 @@ struct PaywallView: View {
                 }
                 .disabled(isPurchasing)
                 .accessibilityLabel("Proではじめる、年額\(yearly.displayPrice)")
-                .accessibilityValue(isPurchasing ? "購入処理中" : "")
 
                 // 月額サブCTA
                 if let monthly = subscriptionManager.monthlyProduct {
