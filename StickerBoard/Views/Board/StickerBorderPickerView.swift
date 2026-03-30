@@ -33,14 +33,17 @@ struct StickerBorderPickerView: View {
         ZStack {
             CheckerboardBackground()
                 .clipShape(RoundedRectangle(cornerRadius: 16))
+                .accessibilityHidden(true)
 
             if let previewImage {
                 Image(uiImage: previewImage)
                     .resizable()
                     .scaledToFit()
                     .padding(16)
+                    .accessibilityLabel("枠線プレビュー")
             } else if isGenerating {
                 ProgressView()
+                    .accessibilityLabel("プレビューを生成中")
             }
         }
         .frame(height: 180)
@@ -58,6 +61,7 @@ struct StickerBorderPickerView: View {
             Text("太さ")
                 .font(.system(size: 13, weight: .semibold, design: .rounded))
                 .foregroundStyle(AppTheme.textSecondary)
+                .accessibilityHidden(true)
 
             HStack(spacing: 8) {
                 ForEach(StickerBorderWidth.allCases) { width in
@@ -69,9 +73,11 @@ struct StickerBorderPickerView: View {
                         VStack(spacing: 6) {
                             borderWidthIcon(width)
                                 .frame(width: 36, height: 36)
+                                .accessibilityHidden(true)
                             Text(width.displayName)
                                 .font(.system(size: 11, weight: isSelected ? .bold : .medium, design: .rounded))
                                 .foregroundStyle(isSelected ? AppTheme.accent : AppTheme.textSecondary)
+                                .accessibilityHidden(true)
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
@@ -87,10 +93,13 @@ struct StickerBorderPickerView: View {
                             if isPremium && !SubscriptionManager.shared.isProUser {
                                 ProBadge()
                                     .offset(x: 4, y: -4)
+                                    .accessibilityHidden(true)
                             }
                         }
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel("枠線の太さ: \(width.displayName)")
+                    .accessibilityAddTraits(isSelected ? .isSelected : [])
                 }
             }
         }
@@ -123,6 +132,7 @@ struct StickerBorderPickerView: View {
             Text("カラー")
                 .font(.system(size: 13, weight: .semibold, design: .rounded))
                 .foregroundStyle(AppTheme.textSecondary)
+                .accessibilityHidden(true)
 
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 44), spacing: 10)], spacing: 10) {
                 ForEach(StickerBorderColor.presets) { preset in
@@ -148,6 +158,8 @@ struct StickerBorderPickerView: View {
                         .frame(width: 44, height: 44)
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel(preset.displayName)
+                    .accessibilityAddTraits(isSelected ? .isSelected : [])
                 }
             }
         }
