@@ -30,10 +30,10 @@ struct FilterBorderAccessibilityTests {
         #expect(content.contains("isSelected"))
     }
 
-    @Test func FilterPicker_フィルタープレビュー画像にaccessibilityLabelがある() throws {
+    @Test func FilterPicker_フィルタープレビュー画像が装飾非表示() throws {
         let content = try readFile("StickerBoard/Views/Capture/StickerFilterPickerView.swift")
-        // プレビュー画像に「フィルタープレビュー」等の説明がある
-        #expect(content.contains("Image(uiImage:") && content.contains("accessibilityLabel"))
+        // プレビュー画像はボタンラベルで内容が伝わるため、重複を避けるために非表示
+        #expect(content.contains("Image(uiImage: preview)") && content.contains(".accessibilityHidden(true)"))
     }
 
     @Test func FilterPicker_チェッカーボード背景が装飾非表示() throws {
