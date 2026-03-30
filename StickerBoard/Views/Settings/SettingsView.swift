@@ -274,7 +274,7 @@ struct SettingsView: View {
                     .shadow(color: AppTheme.accent.opacity(0.3), radius: 8, x: 0, y: 4)
                 }
                 .disabled(isPurchasing)
-                .accessibilityLabel("Pro にアップグレード")
+                .accessibilityLabel(isPurchasing ? "" : "Pro にアップグレード")
                 .accessibilityValue(isPurchasing ? "購入処理中" : "")
             }
 
