@@ -90,6 +90,7 @@ struct SettingsView: View {
             } icon: {
                 Image(systemName: "person.crop.circle")
                     .foregroundStyle(AppTheme.accent)
+                    .accessibilityHidden(true)
             }
 
             Spacer()
@@ -104,6 +105,7 @@ struct SettingsView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
+        .accessibilityElement(children: .combine)
     }
 
     private var expirationRow: some View {
@@ -115,6 +117,7 @@ struct SettingsView: View {
             } icon: {
                 Image(systemName: "calendar")
                     .foregroundStyle(AppTheme.accent)
+                    .accessibilityHidden(true)
             }
 
             Spacer()
@@ -131,6 +134,7 @@ struct SettingsView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
+        .accessibilityElement(children: .combine)
     }
 
     private var statusRow: some View {
@@ -142,6 +146,7 @@ struct SettingsView: View {
             } icon: {
                 Image(systemName: subscriptionManager.isProUser ? "checkmark.seal.fill" : "xmark.seal")
                     .foregroundStyle(subscriptionManager.isProUser ? AppTheme.accent : AppTheme.textTertiary)
+                    .accessibilityHidden(true)
             }
 
             Spacer()
@@ -164,6 +169,7 @@ struct SettingsView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
+        .accessibilityElement(children: .combine)
     }
 
     // MARK: - アクションセクション
@@ -268,6 +274,8 @@ struct SettingsView: View {
                     .shadow(color: AppTheme.accent.opacity(0.3), radius: 8, x: 0, y: 4)
                 }
                 .disabled(isPurchasing)
+                .accessibilityLabel(isPurchasing ? "" : "Pro にアップグレード")
+                .accessibilityValue(isPurchasing ? "購入処理中" : "")
             }
 
             if let error = errorMessage {
@@ -297,6 +305,7 @@ struct SettingsView: View {
                             .padding(.horizontal, 8)
                             .padding(.vertical, 2)
                             .background(Capsule().fill(AppTheme.accent))
+                            .accessibilityHidden(true)
                     } else {
                         Color.clear
                     }
@@ -335,11 +344,24 @@ struct SettingsView: View {
             }
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(planCardAccessibilityLabel(product: product, subscriptionProduct: subscriptionProduct, badge: badge))
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
     private var savingsBadgeText: String {
         let savings = subscriptionManager.savingsPercentage
         return savings > 0 ? "\(savings)%おトク" : "おトク"
+    }
+
+    private func planCardAccessibilityLabel(product: Product, subscriptionProduct: SubscriptionProduct, badge: String?) -> String {
+        var label = "\(subscriptionProduct.displayName)、\(product.displayPrice)"
+        if subscriptionProduct == .yearlyPro, let monthlyPrice = subscriptionManager.yearlyMonthlyPrice {
+            label += "、月あたり\(monthlyPrice)"
+        }
+        if let badge {
+            label += "、\(badge)"
+        }
+        return label
     }
 
     private func purchaseSelectedPlan() async {
@@ -403,6 +425,7 @@ struct SettingsView: View {
             .background(AppTheme.accent.opacity(0.1), in: RoundedRectangle(cornerRadius: 16))
         }
         .disabled(isRestoringPurchases)
+        .accessibilityValue(isRestoringPurchases ? "復元処理中" : "")
     }
 
     // MARK: - Proメリットセクション（無料ユーザー向け）
@@ -429,6 +452,7 @@ struct SettingsView: View {
                 .font(.system(size: 13))
                 .foregroundStyle(AppTheme.accent)
                 .frame(width: 24)
+                .accessibilityHidden(true)
 
             Text(title)
                 .font(.system(size: 14, design: .rounded))
@@ -442,6 +466,7 @@ struct SettingsView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
+        .accessibilityElement(children: .combine)
     }
 
     // MARK: - よくある質問セクション（無料ユーザー向け）
@@ -518,6 +543,7 @@ struct SettingsView: View {
             Text("・")
                 .font(.system(size: 13, design: .rounded))
                 .foregroundStyle(AppTheme.textTertiary)
+                .accessibilityHidden(true)
 
             Text(text)
                 .font(.system(size: 13, design: .rounded))
@@ -558,10 +584,12 @@ struct SettingsView: View {
                 Image(systemName: "arrow.up.right.square")
                     .font(.system(size: 14))
                     .foregroundStyle(AppTheme.textTertiary)
+                    .accessibilityHidden(true)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
         }
+        .accessibilityHint("外部ブラウザで開きます")
     }
 
     // MARK: - ヘルパー
@@ -571,6 +599,7 @@ struct SettingsView: View {
             Image(systemName: icon)
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundStyle(AppTheme.accent)
+                .accessibilityHidden(true)
 
             Text(title)
                 .font(.system(size: 13, weight: .bold, design: .rounded))
