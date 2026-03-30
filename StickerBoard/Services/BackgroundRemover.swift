@@ -54,11 +54,7 @@ struct BackgroundRemover {
     static func removeBackgroundWithMask(from image: UIImage) async throws -> BackgroundRemovalResult {
         let normalized = normalizeOrientation(image)
         #if targetEnvironment(simulator)
-        let renderer = UIGraphicsImageRenderer(size: normalized.size)
-        let whiteMask = renderer.image { ctx in
-            UIColor.white.setFill()
-            ctx.fill(CGRect(origin: .zero, size: normalized.size))
-        }
+        let whiteMask = createWhiteMask(size: normalized.size)
         return BackgroundRemovalResult(processedImage: normalized, maskImage: whiteMask, originalImage: normalized)
         #else
         return try removeBackgroundWithMaskReal(from: normalized)
@@ -81,11 +77,7 @@ struct BackgroundRemover {
         }
 
         guard let (observation, handler) = try performInstanceMask(on: cgImage) else {
-            let renderer = UIGraphicsImageRenderer(size: image.size)
-            let whiteMask = renderer.image { ctx in
-                UIColor.white.setFill()
-                ctx.fill(CGRect(origin: .zero, size: image.size))
-            }
+            let whiteMask = createWhiteMask(size: image.size)
             return BackgroundRemovalResult(processedImage: image, maskImage: whiteMask, originalImage: image)
         }
 
@@ -151,6 +143,14 @@ struct BackgroundRemover {
             throw BackgroundRemoverError.noResult
         }
         return results
+    }
+
+    private static func createWhiteMask(size: CGSize) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { ctx in
+            UIColor.white.setFill()
+            ctx.fill(CGRect(origin: .zero, size: size))
+        }
     }
 
     private static func performInstanceMask(on cgImage: CGImage) throws -> (VNInstanceMaskObservation, VNImageRequestHandler)? {
