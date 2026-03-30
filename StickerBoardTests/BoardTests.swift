@@ -170,6 +170,89 @@ struct BoardTests {
         #expect(board.backgroundPattern.secondaryColorHex == "F2A7B0")
     }
 
+    // MARK: - ソート順（作成日時の昇順）
+
+    @Test func ボードはcreatedAtの昇順でソートされる_新しいボードが末尾に来る() throws {
+        let container = try makeContainer()
+        let context = ModelContext(container)
+
+        // 3つのボードを順番に作成（createdAt に差をつける）
+        let board1 = Board(title: "最初のボード")
+        context.insert(board1)
+
+        // createdAt をずらして明示的に順序を設定
+        let board2 = Board(title: "2番目のボード")
+        board2.createdAt = board1.createdAt.addingTimeInterval(1)
+        context.insert(board2)
+
+        let board3 = Board(title: "3番目のボード")
+        board3.createdAt = board1.createdAt.addingTimeInterval(2)
+        context.insert(board3)
+
+        try context.save()
+
+        // createdAt 昇順で取得（HomeView / BoardListView と同じソート）
+        var descriptor = FetchDescriptor<Board>(
+            sortBy: [SortDescriptor(\Board.createdAt, order: .forward)]
+        )
+        let boards = try context.fetch(descriptor)
+
+        #expect(boards.count == 3)
+        #expect(boards[0].title == "最初のボード")
+        #expect(boards[1].title == "2番目のボード")
+        #expect(boards[2].title == "3番目のボード")
+    }
+
+    @Test func 新しいボードを追加するとcreatedAt昇順で末尾に配置される() throws {
+        let container = try makeContainer()
+        let context = ModelContext(container)
+
+        let existingBoard = Board(title: "既存ボード")
+        context.insert(existingBoard)
+        try context.save()
+
+        // 少し後に新しいボードを作成
+        let newBoard = Board(title: "新しいボード")
+        newBoard.createdAt = existingBoard.createdAt.addingTimeInterval(10)
+        context.insert(newBoard)
+        try context.save()
+
+        var descriptor = FetchDescriptor<Board>(
+            sortBy: [SortDescriptor(\Board.createdAt, order: .forward)]
+        )
+        let boards = try context.fetch(descriptor)
+
+        #expect(boards.count == 2)
+        #expect(boards[0].title == "既存ボード")
+        #expect(boards[1].title == "新しいボード")
+    }
+
+    @Test func 既存ボードのupdatedAtを更新してもcreatedAt昇順の並び順は変わらない() throws {
+        let container = try makeContainer()
+        let context = ModelContext(container)
+
+        let board1 = Board(title: "古いボード")
+        context.insert(board1)
+
+        let board2 = Board(title: "新しいボード")
+        board2.createdAt = board1.createdAt.addingTimeInterval(1)
+        context.insert(board2)
+        try context.save()
+
+        // 古いボードの updatedAt を最新に更新
+        board1.updatedAt = Date().addingTimeInterval(100)
+        try context.save()
+
+        var descriptor = FetchDescriptor<Board>(
+            sortBy: [SortDescriptor(\Board.createdAt, order: .forward)]
+        )
+        let boards = try context.fetch(descriptor)
+
+        // createdAt 昇順なので、updatedAt に関わらず作成順が維持される
+        #expect(boards[0].title == "古いボード")
+        #expect(boards[1].title == "新しいボード")
+    }
+
     // MARK: - placementsData 直接変更時のキャッシュ無効化
 
     @Test func placementsDataを直接変更した場合もキャッシュが無効化される() throws {
