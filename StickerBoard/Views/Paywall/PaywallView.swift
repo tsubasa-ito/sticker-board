@@ -34,9 +34,11 @@ struct PaywallView: View {
             if isPurchasing {
                 Color.black.opacity(0.3)
                     .ignoresSafeArea()
+                    .accessibilityHidden(true)
                 ProgressView()
                     .tint(.white)
                     .scaleEffect(1.3)
+                    .accessibilityLabel("購入処理中")
             }
         }
         .task {
@@ -82,6 +84,7 @@ struct PaywallView: View {
                     .font(.system(size: 34))
                     .foregroundStyle(AppTheme.accent)
             }
+            .accessibilityHidden(true)
 
             VStack(spacing: 6) {
                 Text("StickerBoard Pro")
@@ -123,6 +126,7 @@ struct PaywallView: View {
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(AppTheme.accent)
             }
+            .accessibilityHidden(true)
 
             Text(text)
                 .font(.system(size: 15, weight: .medium, design: .rounded))
@@ -136,6 +140,7 @@ struct PaywallView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
+        .accessibilityElement(children: .combine)
     }
 
     // MARK: - 価格・CTA
@@ -173,6 +178,7 @@ struct PaywallView: View {
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 3)
                                     .background(Capsule().fill(AppTheme.accent))
+                                    .accessibilityHidden(true)
                             }
                         }
                     }
@@ -185,6 +191,7 @@ struct PaywallView: View {
                     RoundedRectangle(cornerRadius: 16)
                         .stroke(AppTheme.accent, lineWidth: 2)
                 }
+                .accessibilityLabel(yearlyPriceAccessibilityLabel(yearly: yearly))
 
                 // メインCTA
                 Button {
@@ -199,6 +206,8 @@ struct PaywallView: View {
                         .shadow(color: AppTheme.accent.opacity(0.3), radius: 12, y: 6)
                 }
                 .disabled(isPurchasing)
+                .accessibilityLabel("Proではじめる、年額\(yearly.displayPrice)")
+                .accessibilityValue(isPurchasing ? "購入処理中" : "")
 
                 // 月額サブCTA
                 if let monthly = subscriptionManager.monthlyProduct {
@@ -210,6 +219,7 @@ struct PaywallView: View {
                             .foregroundStyle(AppTheme.textSecondary)
                     }
                     .disabled(isPurchasing)
+                    .accessibilityLabel("月額プランで始める、\(monthly.displayPrice)毎月")
                 }
             } else {
                 // 商品読み込み失敗時のリトライ
@@ -263,12 +273,26 @@ struct PaywallView: View {
                 Link("利用規約", destination: AppURLs.terms)
                     .font(.system(size: 11, design: .rounded))
                     .foregroundStyle(AppTheme.textTertiary)
+                    .accessibilityHint("外部ブラウザで開きます")
 
                 Link("プライバシーポリシー", destination: AppURLs.privacy)
                     .font(.system(size: 11, design: .rounded))
                     .foregroundStyle(AppTheme.textTertiary)
+                    .accessibilityHint("外部ブラウザで開きます")
             }
         }
+    }
+
+    private func yearlyPriceAccessibilityLabel(yearly: Product) -> String {
+        var label = "年額\(yearly.displayPrice)"
+        if let monthlyPrice = subscriptionManager.yearlyMonthlyPrice {
+            label += "、月あたり\(monthlyPrice)"
+        }
+        let savings = subscriptionManager.savingsPercentage
+        if savings > 0 {
+            label += "、\(savings)%おトク"
+        }
+        return label
     }
 
     // MARK: - 購入処理
@@ -302,5 +326,6 @@ struct ProBadge: View {
             .padding(.horizontal, 5)
             .padding(.vertical, 2)
             .background(Capsule().fill(AppTheme.accent))
+            .accessibilityLabel("Pro限定")
     }
 }
