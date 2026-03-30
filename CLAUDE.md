@@ -6,7 +6,7 @@
 ## 技術スタック
 - Swift / SwiftUI / iOS 18+
 - Vision Framework（背景除去: VNGenerateForegroundInstanceMaskRequest）
-- SwiftData（ローカルDB）
+- SwiftData（ローカルDB + CloudKit連携によるiCloud同期）
 - StoreKit 2（自動更新サブスクリプション）
 - XcodeGen（project.yml からプロジェクト生成）
 
@@ -15,14 +15,14 @@
 StickerBoard/
 ├── App/          # エントリーポイント（MainTabView）、カラーテーマ、外部URL定数
 ├── Models/       # SwiftData モデル（Sticker, Board, StickerPlacement, BackgroundPattern, StickerFilter, StickerBorder, SubscriptionProduct）
-├── Services/     # BackgroundRemover, MaskCompositor, ImageStorage, BackgroundImageStorage, ImageCacheManager, StickerFilterService, StickerBorderService, SubscriptionManager, MotionManager
+├── Services/     # BackgroundRemover, MaskCompositor, ImageStorage, BackgroundImageStorage, ImageCacheManager, StickerFilterService, StickerBorderService, SubscriptionManager, MotionManager, ICloudSyncManager, ImageSyncService
 └── Views/        # SwiftUI画面
     ├── Home/     # MainTabView（タブナビゲーション）、HomeView（ボード一覧カルーセル）
     ├── Onboarding/ # 初回起動オンボーディング（3ページガイド）
     ├── Capture/  # シール撮影・切り抜きフロー・マスク手動編集
     ├── Library/  # シールライブラリ
     ├── Paywall/  # ペイウォール（Pro課金導線）
-    ├── Settings/ # 設定画面（サブスクリプション管理）
+    ├── Settings/ # 設定画面（サブスクリプション管理・iCloudバックアップ）
     └── Board/    # ボード編集・一覧
 StickerBoardTests/  # Swift Testing によるユニットテスト
 ```
@@ -80,3 +80,7 @@ open StickerBoard.xcodeproj
 - 画面の向き: iPhone はポートレートのみ、iPad は全方向（iPad互換モードのマルチタスク対応に必要）
 - Xcode Cloud: mainブランチへのpushで自動ビルド→TestFlight配信。ci_scripts/ci_post_clone.sh で XcodeGen インストール＆プロジェクト生成を自動化
 - GitHub Actions: develop→mainのRelease PR自動作成（.github/workflows/auto-release-pr.yml）、mainマージ時にバージョンタグ＆GitHub Release自動作成（.github/workflows/auto-tag-release.yml）
+- iCloudバックアップ（Pro限定）: ICloudSyncManager がシングルトンで同期状態を管理。StickerBoardApp.init() で早期初期化。SubscriptionStatusProviding / CloudContainerProviding / ImageSyncServiceProtocol のプロトコル抽象化でテスタブル設計
+- SwiftData モデル（Sticker, Board）は CloudKit 互換のため全属性にデフォルト値を設定。CloudKit 連携は Entitlements（iCloud.com.tebasaki.StickerBoard）で自動有効化
+- 画像ファイルの同期: ImageSyncService が Documents/Stickers/ と Documents/Backgrounds/ をiCloud Drive コンテナと双方向同期（ファイル名ベースの差分検出）
+- iCloud Entitlements は project.yml の entitlements.properties で管理（xcodegen generate 時に自動生成）
