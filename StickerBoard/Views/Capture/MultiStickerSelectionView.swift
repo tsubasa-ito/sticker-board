@@ -48,6 +48,7 @@ struct MultiStickerSelectionView: View {
             HStack(spacing: 6) {
                 Image(systemName: "sparkles")
                     .foregroundStyle(AppTheme.cream)
+                    .accessibilityHidden(true)
                 Text("\(images.count)個のシールを検出しました")
                     .font(.system(size: 16, weight: .semibold, design: .rounded))
                     .foregroundStyle(AppTheme.textPrimary)
@@ -92,6 +93,7 @@ struct MultiStickerSelectionView: View {
                     ZStack {
                         CheckerboardBackground()
                             .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .accessibilityHidden(true)
 
                         Image(uiImage: images[index])
                             .resizable()
@@ -126,6 +128,8 @@ struct MultiStickerSelectionView: View {
             .opacity(appeared ? 1 : 0)
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("シール \(index + 1)")
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
     // MARK: - アクションボタン
@@ -136,6 +140,7 @@ struct MultiStickerSelectionView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundStyle(.orange)
+                        .accessibilityHidden(true)
                     Text(errorMessage)
                         .font(.system(size: 13, weight: .medium, design: .rounded))
                         .foregroundStyle(AppTheme.textPrimary)
@@ -160,6 +165,7 @@ struct MultiStickerSelectionView: View {
                     .font(.system(size: 14, weight: .medium, design: .rounded))
                     .foregroundStyle(AppTheme.accent)
             }
+            .accessibilityValue("\(selectedIndices.count)/\(images.count)枚選択中")
 
             // 保存ボタン
             Button {
@@ -177,6 +183,8 @@ struct MultiStickerSelectionView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 14))
             }
             .disabled(selectedIndices.isEmpty)
+            .accessibilityLabel("\(selectedIndices.count)枚をコレクションに追加")
+            .accessibilityHint(selectedIndices.isEmpty ? "シールを選択してください" : "選択したシールをコレクションに保存します")
         }
     }
 

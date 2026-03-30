@@ -10,6 +10,7 @@ struct StickerPreviewView: View {
             HStack(spacing: 6) {
                 Image(systemName: "checkmark.seal.fill")
                     .foregroundStyle(AppTheme.softOrange)
+                    .accessibilityHidden(true)
                 Text("切り抜き完了")
                     .font(.system(size: 14, weight: .semibold, design: .rounded))
                     .foregroundStyle(AppTheme.textPrimary)
@@ -20,11 +21,13 @@ struct StickerPreviewView: View {
                 // チェッカーボード背景
                 CheckerboardBackground()
                     .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .accessibilityHidden(true)
 
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFit()
                     .padding(20)
+                    .accessibilityLabel("切り抜き完了したシール")
             }
             .frame(maxHeight: 300)
             .clipShape(RoundedRectangle(cornerRadius: 16))
