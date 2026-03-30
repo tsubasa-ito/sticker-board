@@ -21,6 +21,19 @@ struct StickerItemView: View {
             .simultaneousGesture(magnificationGesture)
             .simultaneousGesture(rotationGesture)
             .simultaneousGesture(TapGesture().onEnded { onTap?() })
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("シール")
+            .accessibilityValue(accessibilityDescription)
+            .accessibilityAddTraits(isSelected ? .isSelected : [])
+            .accessibilityAction(named: "選択") { onTap?() }
+            .accessibilityAction(named: "上に移動") { moveSticker(dx: 0, dy: -20) }
+            .accessibilityAction(named: "下に移動") { moveSticker(dx: 0, dy: 20) }
+            .accessibilityAction(named: "左に移動") { moveSticker(dx: -20, dy: 0) }
+            .accessibilityAction(named: "右に移動") { moveSticker(dx: 20, dy: 0) }
+            .accessibilityAction(named: "拡大") { resizeSticker(factor: 1.1) }
+            .accessibilityAction(named: "縮小") { resizeSticker(factor: 0.9) }
+            .accessibilityAction(named: "時計回りに回転") { rotateSticker(degrees: 15) }
+            .accessibilityAction(named: "反時計回りに回転") { rotateSticker(degrees: -15) }
     }
 
     // MARK: - コンテンツ
@@ -82,6 +95,35 @@ struct StickerItemView: View {
                 }
             }
         }
+    }
+
+    // MARK: - アクセシビリティ
+
+    private var accessibilityDescription: String {
+        let x = Int(placement.positionX)
+        let y = Int(placement.positionY)
+        let scale = Int(placement.scale * 100)
+        let degrees = Int(placement.rotation * 180 / .pi)
+        return "位置: \(x), \(y)、サイズ: \(scale)%、回転: \(degrees)°"
+    }
+
+    private func moveSticker(dx: CGFloat, dy: CGFloat) {
+        placement.positionX += dx
+        placement.positionY += dy
+        onGestureEnded?()
+        UIAccessibility.post(notification: .announcement, argument: "位置: \(Int(placement.positionX)), \(Int(placement.positionY))")
+    }
+
+    private func resizeSticker(factor: CGFloat) {
+        placement.scale *= factor
+        onGestureEnded?()
+        UIAccessibility.post(notification: .announcement, argument: "サイズ: \(Int(placement.scale * 100))%")
+    }
+
+    private func rotateSticker(degrees: Double) {
+        placement.rotation += degrees * .pi / 180
+        onGestureEnded?()
+        UIAccessibility.post(notification: .announcement, argument: "回転: \(Int(placement.rotation * 180 / .pi))°")
     }
 
     // MARK: - ジェスチャー
