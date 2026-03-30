@@ -69,6 +69,9 @@ struct MainTabView: View {
                 )
                 .frame(maxWidth: .infinity)
             }
+            .accessibilityLabel("ホーム")
+            .accessibilityHint("ボード一覧を表示します")
+            .accessibilityAddTraits(selectedTab == .home ? .isSelected : [])
 
             // 撮影ボタン（中央・浮き上がり）
             Button {
@@ -94,6 +97,8 @@ struct MainTabView: View {
                 }
                 .frame(maxWidth: .infinity)
             }
+            .accessibilityLabel("シールを追加")
+            .accessibilityHint("カメラを開いてシールを撮影します")
 
             // ライブラリタブ
             Button {
@@ -107,6 +112,9 @@ struct MainTabView: View {
                 )
                 .frame(maxWidth: .infinity)
             }
+            .accessibilityLabel("ライブラリ")
+            .accessibilityHint("シール一覧を表示します")
+            .accessibilityAddTraits(selectedTab == .library ? .isSelected : [])
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 10)

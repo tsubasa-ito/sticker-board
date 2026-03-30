@@ -53,6 +53,8 @@ struct HomeView: View {
                         .font(.system(size: 17, weight: .medium))
                         .foregroundStyle(AppTheme.textSecondary)
                 }
+                .accessibilityLabel("設定")
+                .accessibilityHint("設定画面を開きます")
             }
             ToolbarItem(placement: .principal) {
                 Text("シールボード")
@@ -67,6 +69,8 @@ struct HomeView: View {
                         .font(.system(size: 17, weight: .medium))
                         .foregroundStyle(AppTheme.textSecondary)
                 }
+                .accessibilityLabel("ヘルプ")
+                .accessibilityHint("使い方ガイドを表示します")
             }
         }
         .navigationDestination(isPresented: $showingSettings) {
@@ -120,6 +124,10 @@ struct HomeView: View {
                         .onTapGesture {
                             selectedBoard = board
                         }
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("\(board.title)、シール\(board.placements.count)枚")
+                        .accessibilityHint("タップしてボードを編集します")
+                        .accessibilityAddTraits(.isButton)
                         .id(board.id.uuidString)
                 }
 
@@ -214,6 +222,8 @@ struct HomeView: View {
                                     .background(.ultraThinMaterial.opacity(0.6))
                                     .clipShape(Circle())
                             }
+                            .accessibilityLabel("メニュー")
+                            .accessibilityHint("ボードの名前変更や削除ができます")
                         }
                         .padding(.horizontal, 16)
                         .padding(.bottom, 14)
@@ -287,6 +297,8 @@ struct HomeView: View {
             .aspectRatio(boardCardAspectRatio, contentMode: .fit)
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("新しいボードを作る")
+        .accessibilityHint("タップして新しいボードを作成します")
         .containerRelativeFrame(.horizontal)
     }
 
@@ -309,6 +321,9 @@ struct HomeView: View {
                     .animation(.spring(duration: 0.3), value: currentPageIndex)
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("ページ \(currentPageIndex + 1) / \(boards.count + 1)")
+        .accessibilityValue(currentPageIndex < boards.count ? boards[currentPageIndex].title : "新しいボードを作る")
     }
 
     private var currentPageIndex: Int {
@@ -372,6 +387,8 @@ struct HomeView: View {
                         .foregroundStyle(.white)
                 }
             }
+            .accessibilityLabel("新しいボードを作る")
+            .accessibilityHint("タップして新しいボードを作成します")
         }
         .opacity(animateIn ? 1 : 0)
         .offset(y: animateIn ? 0 : 20)
