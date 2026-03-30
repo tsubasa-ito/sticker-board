@@ -23,6 +23,7 @@ struct StickerCaptureView: View {
     @State private var showingPaywall = false
     @State private var processingTask: Task<Void, Never>?
     @Query private var allStickers: [Sticker]
+    var onStickerSaved: () -> Void = {}
 
     var body: some View {
         ZStack {
@@ -37,6 +38,7 @@ struct StickerCaptureView: View {
                             savedStickerCount = count
                             resetState()
                             showingSaveSuccess = true
+                            onStickerSaved()
                         }
                     } else if let processedImage {
                         // 切り抜き結果（単一）
@@ -404,6 +406,7 @@ struct StickerCaptureView: View {
             modelContext.insert(sticker)
             savedStickerCount = 1
             showingSaveSuccess = true
+            onStickerSaved()
         } catch {
             errorMessage = error.localizedDescription
         }

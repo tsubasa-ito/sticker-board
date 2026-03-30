@@ -23,6 +23,7 @@ struct MainTabView: View {
     @State private var selectedTab: Tab = .home
     @State private var showCapture = false
     @State private var hideTabBar = false
+    @State private var libraryRefreshID = UUID()
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -34,7 +35,10 @@ struct MainTabView: View {
                 .allowsHitTesting(selectedTab == .home)
 
                 NavigationStack {
-                    StickerLibraryView(onAddSticker: { showCapture = true })
+                    StickerLibraryView(
+                        refreshTrigger: libraryRefreshID,
+                        onAddSticker: { showCapture = true }
+                    )
                 }
                 .opacity(selectedTab == .library ? 1 : 0)
                 .allowsHitTesting(selectedTab == .library)
@@ -48,7 +52,9 @@ struct MainTabView: View {
         .animation(.easeInOut(duration: 0.25), value: hideTabBar)
         .sheet(isPresented: $showCapture) {
             NavigationStack {
-                StickerCaptureView()
+                StickerCaptureView(onStickerSaved: {
+                    libraryRefreshID = UUID()
+                })
             }
         }
     }

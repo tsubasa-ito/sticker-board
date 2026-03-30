@@ -18,6 +18,7 @@ struct StickerLibraryView: View {
     @State private var showMaskEditLoadError = false
     @State private var thumbnailRefreshID = UUID()
     @Namespace private var previewNamespace
+    let refreshTrigger: UUID
     var onAddSticker: () -> Void = {}
 
     private let pageSize = 30
@@ -45,6 +46,9 @@ struct StickerLibraryView: View {
             } else {
                 refreshIfNeeded()
             }
+        }
+        .onChange(of: refreshTrigger) {
+            refreshIfNeeded()
         }
         .overlay {
             if let sticker = previewSticker {
