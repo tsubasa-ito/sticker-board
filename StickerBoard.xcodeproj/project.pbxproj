@@ -43,6 +43,7 @@
 		9ADB3E6146D90A1ED01BA205 /* StickerPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F0053CD2C5B7ABC5FC4A01 /* StickerPlacement.swift */; };
 		9B6AE8CDABF573157738B32A /* Sticker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6B638736BE2DE98C1C08D4B /* Sticker.swift */; };
 		9F18F7BCD225FCCA7127FFEF /* ImageStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE93838BF2C08278A3401AE /* ImageStorage.swift */; };
+		A10D2757338DA6B28B63FD24 /* FilterBorderAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3C9D7666FCCC1875EBD61B /* FilterBorderAccessibilityTests.swift */; };
 		A9E174752B496F13389C1181 /* StickerPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6364161BD5EB2AA06CF6AE7D /* StickerPreviewView.swift */; };
 		B361D0D57A3AB393E69DA39C /* StickerBorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E5D6F908EE947CC125BAC4 /* StickerBorder.swift */; };
 		B4AA40A530C03F83FF775E31 /* BackgroundPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC1436F39A4162AD412D53A /* BackgroundPattern.swift */; };
@@ -137,6 +138,7 @@
 		E24D931F5239EB34E8311209 /* MultiStickerSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiStickerSelectionView.swift; sourceTree = "<group>"; };
 		E5D9FFAB2F480D8D2327E386 /* BackgroundRemover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundRemover.swift; sourceTree = "<group>"; };
 		EB005F042AEE62F5E35C66E2 /* BoardEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEditorView.swift; sourceTree = "<group>"; };
+		EF3C9D7666FCCC1875EBD61B /* FilterBorderAccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterBorderAccessibilityTests.swift; sourceTree = "<group>"; };
 		EFB2EBD86DD5578CEFDD4E1F /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		F297348DD96E3A76B8648C82 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		F6B638736BE2DE98C1C08D4B /* Sticker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sticker.swift; sourceTree = "<group>"; };
@@ -314,6 +316,7 @@
 				453EB379EB98A3F0EDA2660F /* BoardAccessibilityTests.swift */,
 				259987BEAF660FD74A7333A2 /* BoardTests.swift */,
 				530CD661BF00498FE8299E3E /* CaptureAccessibilityTests.swift */,
+				EF3C9D7666FCCC1875EBD61B /* FilterBorderAccessibilityTests.swift */,
 				604CC75026AD20187DC30B3F /* ImageStorageTests.swift */,
 				82762278F79270BA92FD3D38 /* MaskCompositorTests.swift */,
 				504A7665F90173671AD3B76A /* StickerBorderServiceTests.swift */,
@@ -473,6 +476,7 @@
 				E4535CB2569518D2A9E42749 /* BoardAccessibilityTests.swift in Sources */,
 				B96495C34AE5425881B553FB /* BoardTests.swift in Sources */,
 				5AAD2F7A210494638C8EEBB5 /* CaptureAccessibilityTests.swift in Sources */,
+				A10D2757338DA6B28B63FD24 /* FilterBorderAccessibilityTests.swift in Sources */,
 				E1E29CF14D41BF97D2C1B6E2 /* ImageStorageTests.swift in Sources */,
 				2B1517B2E5E84806CB242F6C /* MaskCompositorTests.swift in Sources */,
 				50D1435CD2C021AF375212FA /* StickerBorderServiceTests.swift in Sources */,
