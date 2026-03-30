@@ -6,7 +6,7 @@ struct AccessibilityRuleTests {
     private let ruleRelativePath = ".claude/rules/accessibility-check.md"
 
     private var projectRootURL: URL {
-        // #filePath → .../StickerBoardTests/AccessibilityRuleTests.swift
+        // テストファイルからプロジェクトルートへ遡る（ファイル移動時は要修正）
         URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()   // StickerBoardTests/
             .deletingLastPathComponent()   // project root
@@ -41,6 +41,7 @@ struct AccessibilityRuleTests {
     @Test func Image_accessibilityLabelチェック項目がある() throws {
         let content = try ruleContent()
         #expect(content.contains("Image(systemName:)"))
+        #expect(content.contains("Image(uiImage:)"))
         #expect(content.contains("accessibilityLabel"))
     }
 
@@ -53,6 +54,7 @@ struct AccessibilityRuleTests {
     @Test func 動的コンテンツの通知チェック項目がある() throws {
         let content = try ruleContent()
         #expect(content.contains("accessibilityValue"))
+        #expect(content.contains("AccessibilityNotification"))
         #expect(content.contains("UIAccessibility.post"))
     }
 
@@ -79,9 +81,24 @@ struct AccessibilityRuleTests {
         #expect(content.contains("未対応箇所") || content.contains("未対応"))
     }
 
+    // MARK: - 重大度・対象外セクション
+
+    @Test func 重大度の判定基準が定義されている() throws {
+        let content = try ruleContent()
+        #expect(content.contains("### 重大度の判定基準"))
+        #expect(content.contains("**高**"))
+        #expect(content.contains("**中**"))
+        #expect(content.contains("**低**"))
+    }
+
+    @Test func 対象外セクションが定義されている() throws {
+        let content = try ruleContent()
+        #expect(content.contains("## 対象外"))
+    }
+
     // MARK: - 既存ルールとの一貫性
 
-    @Test func 既存ルールと同じマークダウン見出し構造を持つ() throws {
+    @Test func ルール見出しが正しいプレフィックスで始まる() throws {
         let content = try ruleContent()
         #expect(content.hasPrefix("# ルール:"))
     }
