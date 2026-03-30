@@ -13,6 +13,7 @@
 		10EB9C33B64B186C1DA9B7AC /* StickerFilterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44F094F53D9CC5028477F0F /* StickerFilterService.swift */; };
 		17F2CCB19526F58F4BCC6D04 /* OnboardingPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24DB2CADF1571137158B612F /* OnboardingPageView.swift */; };
 		1A6D5B570ED5466E73AD8176 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32104833845A2ADD7C14A5F8 /* Board.swift */; };
+		1C62C35DEF80F9120409FB01 /* ICloudSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1F35C38727C13C5CE3E571E /* ICloudSyncManager.swift */; };
 		1EA00AE13C24C07F0760CC5B /* StickerFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3FC7C093763688E6344217F /* StickerFilter.swift */; };
 		23C844417020B51ED20D42AF /* StickerFilterServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B0FF96EE3690AFD3B800B6 /* StickerFilterServiceTests.swift */; };
 		2879C41569C30BC9D3D460E5 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BF7C58976D7F4A010B330FC /* HomeView.swift */; };
@@ -43,12 +44,14 @@
 		8A0BE5317CBBA4F680A00C60 /* HolographicEffectModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3834BB169411132599770224 /* HolographicEffectModifier.swift */; };
 		91B6DD4664FB19D95590BC04 /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FFB83566A2BC0906338F77F /* SubscriptionManager.swift */; };
 		946C3EF198BC305C48293848 /* StickerCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D878D128C4599B9F13AD702 /* StickerCaptureView.swift */; };
+		9A0347058D20072CAA88E96F /* ImageSyncServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95942C4DB2F8663068B605FC /* ImageSyncServiceTests.swift */; };
 		9ADB3E6146D90A1ED01BA205 /* StickerPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F0053CD2C5B7ABC5FC4A01 /* StickerPlacement.swift */; };
 		9B6AE8CDABF573157738B32A /* Sticker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6B638736BE2DE98C1C08D4B /* Sticker.swift */; };
 		9F18F7BCD225FCCA7127FFEF /* ImageStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE93838BF2C08278A3401AE /* ImageStorage.swift */; };
 		A10D2757338DA6B28B63FD24 /* FilterBorderAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3C9D7666FCCC1875EBD61B /* FilterBorderAccessibilityTests.swift */; };
 		A282C9579FE88F9AAA4AAB8E /* MultiStickerSelectionAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8707E62DE974CFCF4EBA7F /* MultiStickerSelectionAccessibilityTests.swift */; };
 		A9E174752B496F13389C1181 /* StickerPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6364161BD5EB2AA06CF6AE7D /* StickerPreviewView.swift */; };
+		ABE7371BD145CF738D39521E /* ICloudSyncManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 120D5A3BBBF6FF4F743A4C1E /* ICloudSyncManagerTests.swift */; };
 		B361D0D57A3AB393E69DA39C /* StickerBorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E5D6F908EE947CC125BAC4 /* StickerBorder.swift */; };
 		B4AA40A530C03F83FF775E31 /* BackgroundPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC1436F39A4162AD412D53A /* BackgroundPattern.swift */; };
 		B96495C34AE5425881B553FB /* BoardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259987BEAF660FD74A7333A2 /* BoardTests.swift */; };
@@ -73,6 +76,7 @@
 		E7FAA9CC64A91CCE9076AE66 /* CaptureGuideTipsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B201CDCE2F666FBBD15D4F72 /* CaptureGuideTipsView.swift */; };
 		EC5591236152676EACAFE16E /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB2EBD86DD5578CEFDD4E1F /* OnboardingView.swift */; };
 		EFE200E232D91B33BA4352C6 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A79F18B6EE07305097CF4B9E /* PaywallView.swift */; };
+		F3FC850B2973445C111928AC /* ImageSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB92346EFE5AF0866C025198 /* ImageSyncService.swift */; };
 		FFE2EA3515CC894BED8FEE78 /* MaskCompositor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D6802D6762B69A0CA2A7336 /* MaskCompositor.swift */; };
 /* End PBXBuildFile section */
 
@@ -89,6 +93,7 @@
 /* Begin PBXFileReference section */
 		0B6E414C38C81FDD95EBC2EE /* StickerLibraryAccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerLibraryAccessibilityTests.swift; sourceTree = "<group>"; };
 		0D6802D6762B69A0CA2A7336 /* MaskCompositor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaskCompositor.swift; sourceTree = "<group>"; };
+		120D5A3BBBF6FF4F743A4C1E /* ICloudSyncManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudSyncManagerTests.swift; sourceTree = "<group>"; };
 		19E5D6F908EE947CC125BAC4 /* StickerBorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerBorder.swift; sourceTree = "<group>"; };
 		1A6669D6CA5D4EAD5DB7BF3C /* OnboardingPageIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageIndicator.swift; sourceTree = "<group>"; };
 		1BF7C58976D7F4A010B330FC /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -118,8 +123,10 @@
 		701F95F5E765F73DE7181F78 /* BrushToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrushToolbar.swift; sourceTree = "<group>"; };
 		73436443E84517F0AAC3C265 /* BoardBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardBackgroundView.swift; sourceTree = "<group>"; };
 		795F7B5B94087F04001DE523 /* BackgroundImageStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundImageStorageTests.swift; sourceTree = "<group>"; };
+		7F33B54B676954CD018A4AA4 /* StickerBoard.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StickerBoard.entitlements; sourceTree = "<group>"; };
 		82762278F79270BA92FD3D38 /* MaskCompositorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaskCompositorTests.swift; sourceTree = "<group>"; };
 		8CA42CC44A656C4DE5FDD444 /* BackgroundImageStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundImageStorage.swift; sourceTree = "<group>"; };
+		95942C4DB2F8663068B605FC /* ImageSyncServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSyncServiceTests.swift; sourceTree = "<group>"; };
 		98F3C1F87DFC6BE33492062C /* StickerBoard.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = StickerBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B695157C87669CCB70690F4 /* StickerBoardTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = StickerBoardTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F51DD1916FC4B3337ADA86F /* MaskEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaskEditorView.swift; sourceTree = "<group>"; };
@@ -130,8 +137,10 @@
 		ABCD1438794D34A642F45B93 /* StickerBorderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerBorderService.swift; sourceTree = "<group>"; };
 		AFDF2A8C549FCAF35D5DD828 /* AccessibilityRuleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityRuleTests.swift; sourceTree = "<group>"; };
 		B03A91B141329E13EDBEAE9A /* StickerPlacementTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerPlacementTests.swift; sourceTree = "<group>"; };
+		B1F35C38727C13C5CE3E571E /* ICloudSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudSyncManager.swift; sourceTree = "<group>"; };
 		B201CDCE2F666FBBD15D4F72 /* CaptureGuideTipsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureGuideTipsView.swift; sourceTree = "<group>"; };
 		B8B41B23D775F8487A3B361B /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
+		BB92346EFE5AF0866C025198 /* ImageSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSyncService.swift; sourceTree = "<group>"; };
 		BCDBB451BECC869CD24CAF7B /* SubscriptionProductTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionProductTests.swift; sourceTree = "<group>"; };
 		BE45BBB2C51CC68C9B0C8EBB /* MotionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionManager.swift; sourceTree = "<group>"; };
 		C1211D3F280555E23A6562B3 /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
@@ -251,8 +260,10 @@
 			children = (
 				8CA42CC44A656C4DE5FDD444 /* BackgroundImageStorage.swift */,
 				E5D9FFAB2F480D8D2327E386 /* BackgroundRemover.swift */,
+				B1F35C38727C13C5CE3E571E /* ICloudSyncManager.swift */,
 				C1211D3F280555E23A6562B3 /* ImageCacheManager.swift */,
 				DFE93838BF2C08278A3401AE /* ImageStorage.swift */,
+				BB92346EFE5AF0866C025198 /* ImageSyncService.swift */,
 				0D6802D6762B69A0CA2A7336 /* MaskCompositor.swift */,
 				BE45BBB2C51CC68C9B0C8EBB /* MotionManager.swift */,
 				C94311FE1E30296BB608F927 /* SharedCIContext.swift */,
@@ -295,6 +306,7 @@
 			isa = PBXGroup;
 			children = (
 				F870EE68E060BE5480814A21 /* Assets.xcassets */,
+				7F33B54B676954CD018A4AA4 /* StickerBoard.entitlements */,
 				22130D75CEBE5A13BF65E1B7 /* App */,
 				3BC3C5091CECD67473819A76 /* Models */,
 				9942628F63D59859340644CA /* Services */,
@@ -330,7 +342,9 @@
 				530CD661BF00498FE8299E3E /* CaptureAccessibilityTests.swift */,
 				EF3C9D7666FCCC1875EBD61B /* FilterBorderAccessibilityTests.swift */,
 				3E3E385C3511299350E1EDC0 /* HolographicAccessibilityTests.swift */,
+				120D5A3BBBF6FF4F743A4C1E /* ICloudSyncManagerTests.swift */,
 				604CC75026AD20187DC30B3F /* ImageStorageTests.swift */,
+				95942C4DB2F8663068B605FC /* ImageSyncServiceTests.swift */,
 				82762278F79270BA92FD3D38 /* MaskCompositorTests.swift */,
 				EF8707E62DE974CFCF4EBA7F /* MultiStickerSelectionAccessibilityTests.swift */,
 				C772005BADEC8B242A0A39E8 /* OnboardingAccessibilityTests.swift */,
@@ -452,8 +466,10 @@
 				E7FAA9CC64A91CCE9076AE66 /* CaptureGuideTipsView.swift in Sources */,
 				8A0BE5317CBBA4F680A00C60 /* HolographicEffectModifier.swift in Sources */,
 				2879C41569C30BC9D3D460E5 /* HomeView.swift in Sources */,
+				1C62C35DEF80F9120409FB01 /* ICloudSyncManager.swift in Sources */,
 				D741DBFD1F632B3907AE5F50 /* ImageCacheManager.swift in Sources */,
 				9F18F7BCD225FCCA7127FFEF /* ImageStorage.swift in Sources */,
+				F3FC850B2973445C111928AC /* ImageSyncService.swift in Sources */,
 				DB745BDCC883E3A46CBFB7C1 /* MainTabView.swift in Sources */,
 				FFE2EA3515CC894BED8FEE78 /* MaskCompositor.swift in Sources */,
 				E6EC80AF4242054250D52AD5 /* MaskDrawingCanvas.swift in Sources */,
@@ -496,7 +512,9 @@
 				5AAD2F7A210494638C8EEBB5 /* CaptureAccessibilityTests.swift in Sources */,
 				A10D2757338DA6B28B63FD24 /* FilterBorderAccessibilityTests.swift in Sources */,
 				71630AD405448E0B887E9228 /* HolographicAccessibilityTests.swift in Sources */,
+				ABE7371BD145CF738D39521E /* ICloudSyncManagerTests.swift in Sources */,
 				E1E29CF14D41BF97D2C1B6E2 /* ImageStorageTests.swift in Sources */,
+				9A0347058D20072CAA88E96F /* ImageSyncServiceTests.swift in Sources */,
 				2B1517B2E5E84806CB242F6C /* MaskCompositorTests.swift in Sources */,
 				A282C9579FE88F9AAA4AAB8E /* MultiStickerSelectionAccessibilityTests.swift in Sources */,
 				0AB95DB882B4D5509D6E229E /* OnboardingAccessibilityTests.swift in Sources */,
@@ -529,6 +547,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = StickerBoard/StickerBoard.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -682,6 +701,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = StickerBoard/StickerBoard.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;

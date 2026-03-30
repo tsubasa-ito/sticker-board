@@ -22,6 +22,16 @@ targets:
       - path: Products.storekit
         optional: true
         buildPhase: none
+    entitlements:
+      path: StickerBoard/StickerBoard.entitlements
+      properties:
+        com.apple.developer.icloud-container-identifiers:
+          - iCloud.com.tebasaki.StickerBoard
+        com.apple.developer.icloud-services:
+          - CloudDocuments
+          - CloudKit
+        com.apple.developer.ubiquity-container-identifiers:
+          - iCloud.com.tebasaki.StickerBoard
     settings:
       base:
         INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "シールにする写真を選択するためにフォトライブラリへのアクセスが必要です"

@@ -3,6 +3,7 @@ import StoreKit
 
 struct SettingsView: View {
     @ObservedObject private var subscriptionManager = SubscriptionManager.shared
+    @State private var syncManager = ICloudSyncManager.shared
     @State private var showingManageSubscription = false
     @State private var isPurchasing = false
     @State private var isRestoringPurchases = false
@@ -22,6 +23,7 @@ struct SettingsView: View {
                 VStack(spacing: 20) {
                     subscriptionSection
                     actionsSection
+                    iCloudBackupSection
 
                     if !subscriptionManager.isProUser {
                         proBenefitsSection
@@ -428,6 +430,174 @@ struct SettingsView: View {
         .accessibilityValue(isRestoringPurchases ? "復元処理中" : "")
     }
 
+    // MARK: - iCloudバックアップセクション
+
+    private var iCloudBackupSection: some View {
+        VStack(spacing: 0) {
+            sectionHeader(title: "iCloudバックアップ", icon: "icloud")
+
+            VStack(spacing: 0) {
+                if subscriptionManager.isProUser {
+                    // Proユーザー: 同期ステータス表示
+                    backupStatusRow
+                    Divider().padding(.horizontal, 16)
+                    lastSyncRow
+                    Divider().padding(.horizontal, 16)
+                    syncButton
+                } else {
+                    // 無料ユーザー: Pro限定表示
+                    HStack(spacing: 12) {
+                        Image(systemName: "icloud.slash")
+                            .font(.system(size: 24))
+                            .foregroundStyle(AppTheme.textTertiary)
+                            .accessibilityHidden(true)
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Pro限定機能")
+                                .font(.system(size: 15, weight: .bold, design: .rounded))
+                                .foregroundStyle(AppTheme.textPrimary)
+
+                            Text("シールとボードのデータをiCloudにバックアップして、機種変更時もデータを引き継げます。")
+                                .font(.system(size: 13, design: .rounded))
+                                .foregroundStyle(AppTheme.textSecondary)
+                        }
+                    }
+                    .padding(16)
+                    .accessibilityElement(children: .combine)
+                }
+            }
+            .stickerCard()
+        }
+    }
+
+    private var backupStatusRow: some View {
+        HStack {
+            Label {
+                Text("ステータス")
+                    .font(.system(size: 15, design: .rounded))
+                    .foregroundStyle(AppTheme.textPrimary)
+            } icon: {
+                Image(systemName: syncStatusIcon)
+                    .foregroundStyle(syncStatusColor)
+                    .accessibilityHidden(true)
+            }
+
+            Spacer()
+
+            Text(syncStatusText)
+                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .foregroundStyle(syncStatusBadgeTextColor)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 4)
+                .background(syncStatusBadgeBackground, in: Capsule())
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+        .accessibilityElement(children: .combine)
+    }
+
+    private var lastSyncRow: some View {
+        HStack {
+            Label {
+                Text("最終バックアップ")
+                    .font(.system(size: 15, design: .rounded))
+                    .foregroundStyle(AppTheme.textPrimary)
+            } icon: {
+                Image(systemName: "clock")
+                    .foregroundStyle(AppTheme.accent)
+                    .accessibilityHidden(true)
+            }
+
+            Spacer()
+
+            if let date = syncManager.lastSyncDate {
+                Text(date.formatted(.dateTime.locale(Locale(identifier: "ja_JP")).month().day().hour().minute()))
+                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .foregroundStyle(AppTheme.textSecondary)
+            } else {
+                Text("未実行")
+                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .foregroundStyle(AppTheme.textTertiary)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+        .accessibilityElement(children: .combine)
+    }
+
+    private var syncButton: some View {
+        Button {
+            Task { await syncManager.startSync() }
+        } label: {
+            HStack {
+                if case .syncing = syncManager.syncStatus {
+                    ProgressView()
+                        .tint(AppTheme.accent)
+                } else {
+                    Image(systemName: "arrow.triangle.2.circlepath")
+                        .font(.system(size: 14, weight: .semibold))
+                }
+
+                Text("今すぐバックアップ")
+                    .font(.system(size: 15, weight: .bold, design: .rounded))
+            }
+            .foregroundStyle(AppTheme.accent)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+        }
+        .disabled(syncManager.syncStatus == .syncing)
+        .accessibilityLabel("今すぐバックアップ")
+        .accessibilityValue(syncManager.syncStatus == .syncing ? "バックアップ中" : "")
+    }
+
+    // MARK: - 同期ステータスヘルパー
+
+    private var syncStatusIcon: String {
+        switch syncManager.syncStatus {
+        case .disabled: "icloud.slash"
+        case .idle: "icloud"
+        case .syncing: "icloud"
+        case .synced: "checkmark.icloud"
+        case .error: "exclamationmark.icloud"
+        }
+    }
+
+    private var syncStatusColor: Color {
+        switch syncManager.syncStatus {
+        case .disabled: AppTheme.textTertiary
+        case .idle: AppTheme.accent
+        case .syncing: AppTheme.accent
+        case .synced: AppTheme.accent
+        case .error: .red
+        }
+    }
+
+    private var syncStatusText: String {
+        switch syncManager.syncStatus {
+        case .disabled: "無効"
+        case .idle: "準備完了"
+        case .syncing: "同期中..."
+        case .synced: "バックアップ済み"
+        case .error(let message): message
+        }
+    }
+
+    private var syncStatusBadgeTextColor: Color {
+        switch syncManager.syncStatus {
+        case .synced: .white
+        case .error: .white
+        default: AppTheme.textSecondary
+        }
+    }
+
+    private var syncStatusBadgeBackground: Color {
+        switch syncManager.syncStatus {
+        case .synced: AppTheme.accent
+        case .error: .red
+        default: AppTheme.textTertiary.opacity(0.12)
+        }
+    }
+
     // MARK: - Proメリットセクション（無料ユーザー向け）
 
     private var proBenefitsSection: some View {
@@ -439,6 +609,7 @@ struct SettingsView: View {
                 benefitRow(icon: "rectangle.on.rectangle.fill", title: "ボード作成", value: "無制限")
                 benefitRow(icon: "square.dashed", title: "枠線バリエーション", value: "全開放")
                 benefitRow(icon: "paintpalette.fill", title: "背景パターン", value: "全開放")
+                benefitRow(icon: "icloud.fill", title: "iCloudバックアップ", value: "対応")
                 benefitRow(icon: "square.and.arrow.down.fill", title: "画像書き出し", value: "ロゴなし")
             }
             .padding(.vertical, 4)

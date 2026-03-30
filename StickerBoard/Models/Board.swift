@@ -3,10 +3,10 @@ import SwiftData
 
 @Model
 final class Board {
-    var id: UUID
-    var title: String
-    var createdAt: Date
-    var updatedAt: Date
+    var id: UUID = UUID()
+    var title: String = ""
+    var createdAt: Date = Date()
+    var updatedAt: Date = Date()
     var placementsData: Data?
     var backgroundPatternData: Data?
 

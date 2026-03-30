@@ -37,6 +37,9 @@ struct StickerBoardApp: App {
 
         // サブスクリプションマネージャーの早期初期化
         _ = SubscriptionManager.shared
+
+        // iCloud同期マネージャーの早期初期化
+        _ = ICloudSyncManager.shared
     }
 
     var body: some Scene {
