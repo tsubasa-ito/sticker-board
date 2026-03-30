@@ -50,11 +50,11 @@ struct MainTabView: View {
             }
         }
         .animation(.easeInOut(duration: 0.25), value: hideTabBar)
-        .sheet(isPresented: $showCapture, onDismiss: {
-            libraryRefreshID = UUID()
-        }) {
+        .sheet(isPresented: $showCapture) {
             NavigationStack {
-                StickerCaptureView()
+                StickerCaptureView(onStickerSaved: {
+                    libraryRefreshID = UUID()
+                })
             }
         }
     }
