@@ -15,8 +15,8 @@ struct HolographicCardModifier: ViewModifier {
     func body(content: Content) -> some View {
         let tiltX = reduceMotion ? 0.5 : motion.tiltX
         let tiltY = reduceMotion ? 0.5 : motion.tiltY
-        let rotX = reduceMotion ? 0.0 : 8 * intensity * (tiltX - 0.5) * 2
-        let rotY = reduceMotion ? 0.0 : -8 * intensity * (tiltY - 0.5) * 2
+        let rotX = 8 * intensity * (tiltX - 0.5) * 2
+        let rotY = -8 * intensity * (tiltY - 0.5) * 2
 
         content
             .overlay {
