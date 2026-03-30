@@ -47,6 +47,7 @@ struct AccessibilityRuleTests {
     @Test func インタラクティブ要素のラベルチェック項目がある() throws {
         let content = try ruleContent()
         #expect(content.contains("Button"))
+        #expect(content.contains("onTapGesture"))
     }
 
     @Test func 動的コンテンツの通知チェック項目がある() throws {
