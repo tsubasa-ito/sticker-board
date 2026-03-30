@@ -43,6 +43,8 @@ struct BoardListView: View {
                             .foregroundStyle(.white)
                     }
                 }
+                .accessibilityLabel("新しいボードを作成")
+                .accessibilityHint("ボード名を入力して新しいボードを追加します")
             }
         }
         .sheet(isPresented: $showingPaywall) {
@@ -70,6 +72,7 @@ struct BoardListView: View {
                     .font(.system(size: 40))
                     .foregroundStyle(AppTheme.secondary.opacity(0.5))
             }
+            .accessibilityHidden(true)
 
             VStack(spacing: 6) {
                 Text("ボードがありません")
@@ -81,6 +84,8 @@ struct BoardListView: View {
                     .foregroundStyle(AppTheme.textSecondary)
                     .multilineTextAlignment(.center)
             }
+            .accessibilityElement(children: .combine)
+            .accessibilityHint("右上のプラスボタンをタップしてボードを作成できます")
         }
     }
 
@@ -139,6 +144,7 @@ struct BoardCard: View {
                     .font(.system(size: 22))
                     .foregroundStyle(AppTheme.secondary)
             }
+            .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(board.title)
@@ -161,8 +167,11 @@ struct BoardCard: View {
             Image(systemName: "chevron.right")
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundStyle(AppTheme.textTertiary)
+                .accessibilityHidden(true)
         }
         .padding(14)
         .stickerCard()
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(board.title)、シール\(board.placements.count)枚、\(board.updatedAt.formatted(.relative(presentation: .named)))")
     }
 }

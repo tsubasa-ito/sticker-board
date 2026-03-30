@@ -7,20 +7,23 @@ struct BoardBackgroundView: View {
     var customImage: UIImage?
 
     var body: some View {
-        switch config.patternType {
-        case .solid:
-            solidBackground
-        case .dot:
-            dotBackground
-        case .grid:
-            gridBackground
-        case .stripe:
-            stripeBackground
-        case .gradient:
-            gradientBackground
-        case .custom:
-            customBackground
+        Group {
+            switch config.patternType {
+            case .solid:
+                solidBackground
+            case .dot:
+                dotBackground
+            case .grid:
+                gridBackground
+            case .stripe:
+                stripeBackground
+            case .gradient:
+                gradientBackground
+            case .custom:
+                customBackground
+            }
         }
+        .accessibilityHidden(true)
     }
 
     // MARK: - 無地
@@ -154,6 +157,7 @@ struct BoardBackgroundView: View {
                     .offset(x: offsetX, y: offsetY)
                     .frame(width: containerSize.width, height: containerSize.height)
                     .clipped()
+                    .accessibilityLabel("カスタム背景画像")
             } else {
                 Color(hexString: config.primaryColorHex)
             }
