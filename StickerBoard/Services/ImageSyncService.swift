@@ -19,8 +19,10 @@ struct ImageSyncService: ImageSyncServiceProtocol {
         localBackgroundsURL: URL,
         cloudContainerURL: URL
     ) async throws -> ImageSyncResult {
-        let cloudStickersURL = cloudContainerURL.appendingPathComponent("Stickers", isDirectory: true)
-        let cloudBackgroundsURL = cloudContainerURL.appendingPathComponent("Backgrounds", isDirectory: true)
+        // iCloud Documents ディレクトリ配下に配置（CloudDocuments同期の要件）
+        let documentsURL = cloudContainerURL.appendingPathComponent("Documents", isDirectory: true)
+        let cloudStickersURL = documentsURL.appendingPathComponent("Stickers", isDirectory: true)
+        let cloudBackgroundsURL = documentsURL.appendingPathComponent("Backgrounds", isDirectory: true)
 
         // クラウドディレクトリを作成
         try FileManager.default.createDirectory(at: cloudStickersURL, withIntermediateDirectories: true)
@@ -52,44 +54,48 @@ struct ImageSyncService: ImageSyncServiceProtocol {
     }
 
     private func syncDirectory(localURL: URL, cloudURL: URL) async throws -> DirectorySyncResult {
-        let fm = FileManager.default
+        // ファイルI/Oをバックグラウンドで実行（メインスレッドブロック回避）
+        try await Task.detached {
+            let fm = FileManager.default
 
-        let localFiles = Set(fileNames(at: localURL))
-        let cloudFiles = Set(fileNames(at: cloudURL))
+            let localFiles = Set(try fileNames(at: localURL))
+            let cloudFiles = Set(try fileNames(at: cloudURL))
 
-        var uploaded = 0
-        var downloaded = 0
+            var uploaded = 0
+            var downloaded = 0
 
-        // ローカル → クラウド（ローカルにのみ存在するファイル）
-        let toUpload = localFiles.subtracting(cloudFiles)
-        for fileName in toUpload {
-            let source = localURL.appendingPathComponent(fileName)
-            let destination = cloudURL.appendingPathComponent(fileName)
-            try fm.copyItem(at: source, to: destination)
-            uploaded += 1
-        }
+            // ローカル → クラウド（ローカルにのみ存在するファイル）
+            let toUpload = localFiles.subtracting(cloudFiles)
+            for fileName in toUpload {
+                let source = localURL.appendingPathComponent(fileName)
+                let destination = cloudURL.appendingPathComponent(fileName)
+                try fm.copyItem(at: source, to: destination)
+                uploaded += 1
+            }
 
-        // クラウド → ローカル（クラウドにのみ存在するファイル）
-        let toDownload = cloudFiles.subtracting(localFiles)
-        for fileName in toDownload {
-            let source = cloudURL.appendingPathComponent(fileName)
-            let destination = localURL.appendingPathComponent(fileName)
-            try fm.copyItem(at: source, to: destination)
-            downloaded += 1
-        }
+            // クラウド → ローカル（クラウドにのみ存在するファイル）
+            let toDownload = cloudFiles.subtracting(localFiles)
+            for fileName in toDownload {
+                let source = cloudURL.appendingPathComponent(fileName)
+                let destination = localURL.appendingPathComponent(fileName)
+                try fm.copyItem(at: source, to: destination)
+                downloaded += 1
+            }
 
-        return DirectorySyncResult(uploaded: uploaded, downloaded: downloaded)
+            return DirectorySyncResult(uploaded: uploaded, downloaded: downloaded)
+        }.value
     }
 
-    private func fileNames(at directoryURL: URL) -> [String] {
+    /// ディレクトリが存在しない場合は空配列を返す（新規インストール時）。
+    /// それ以外のエラー（権限不足等）はthrowして呼び出し元に伝搬する。
+    private func fileNames(at directoryURL: URL) throws -> [String] {
         let fm = FileManager.default
-        guard let contents = try? fm.contentsOfDirectory(
+        guard fm.fileExists(atPath: directoryURL.path) else { return [] }
+        let contents = try fm.contentsOfDirectory(
             at: directoryURL,
             includingPropertiesForKeys: nil,
             options: [.skipsHiddenFiles]
-        ) else {
-            return []
-        }
+        )
         return contents.map(\.lastPathComponent)
     }
 }

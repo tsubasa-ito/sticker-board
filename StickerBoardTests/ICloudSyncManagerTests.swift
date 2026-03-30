@@ -132,7 +132,7 @@ struct ICloudSyncManagerTests {
         await manager.startSync()
 
         if case .error(let message) = manager.syncStatus {
-            #expect(message == "同期に失敗しました")
+            #expect(message == "バックアップに失敗しました。しばらく待ってから再度お試しください。")
         } else {
             Issue.record("error ステータスが期待されます")
         }
@@ -149,23 +149,11 @@ struct ICloudSyncManagerTests {
     }
 
     @Test func iCloud不可時のsync試行はerrorになる() async {
-        let syncService = MockImageSyncService()
-        let (manager, _) = makeManager(isCloudAvailable: false, imageSyncService: syncService)
+        let (manager, _) = makeManager(isPro: true, isCloudAvailable: false, containerURL: nil)
 
         await manager.startSync()
 
-        // 非Proなのでdisabledになる（iCloud不可より先にProチェック）
-        // iCloud不可 + Proの場合をテスト
-        let sub = MockSubscriptionStatus(isProUser: true)
-        let defaults = UserDefaults(suiteName: UUID().uuidString)!
-        let manager2 = ICloudSyncManager(
-            subscriptionStatusProvider: sub,
-            cloudContainerProvider: MockCloudContainer(isICloudAvailable: false, containerURL: nil),
-            imageSyncService: MockImageSyncService(),
-            userDefaults: defaults
-        )
-        await manager2.startSync()
-        if case .error = manager2.syncStatus {
+        if case .error = manager.syncStatus {
             // OK
         } else {
             Issue.record("error ステータスが期待されます")

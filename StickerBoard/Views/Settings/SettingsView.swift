@@ -3,7 +3,7 @@ import StoreKit
 
 struct SettingsView: View {
     @ObservedObject private var subscriptionManager = SubscriptionManager.shared
-    private var syncManager: ICloudSyncManager { ICloudSyncManager.shared }
+    @State private var syncManager = ICloudSyncManager.shared
     @State private var showingManageSubscription = false
     @State private var isPurchasing = false
     @State private var isRestoringPurchases = false
@@ -55,6 +55,7 @@ struct SettingsView: View {
                 await subscriptionManager.loadProducts()
                 isLoadingProducts = false
             }
+            syncManager.refreshStatus()
         }
     }
 

@@ -40,7 +40,7 @@ struct ImageSyncServiceTests {
             )
 
             #expect(result.uploadedCount == 2)
-            let cloudStickers = cloud.appendingPathComponent("Stickers")
+            let cloudStickers = cloud.appendingPathComponent("Documents/Stickers")
             #expect(fileManager.fileExists(atPath: cloudStickers.appendingPathComponent("sticker1.png").path))
             #expect(fileManager.fileExists(atPath: cloudStickers.appendingPathComponent("sticker2.png").path))
         }
@@ -58,7 +58,7 @@ struct ImageSyncServiceTests {
             )
 
             #expect(result.uploadedCount == 1)
-            let cloudBackgrounds = cloud.appendingPathComponent("Backgrounds")
+            let cloudBackgrounds = cloud.appendingPathComponent("Documents/Backgrounds")
             #expect(fileManager.fileExists(atPath: cloudBackgrounds.appendingPathComponent("bg1.jpg").path))
         }
     }
@@ -67,7 +67,7 @@ struct ImageSyncServiceTests {
 
     @Test func クラウドのシール画像がローカルにダウンロードされる() async throws {
         try await withTempDirs { localStickers, localBackgrounds, cloud in
-            let cloudStickers = cloud.appendingPathComponent("Stickers")
+            let cloudStickers = cloud.appendingPathComponent("Documents/Stickers")
             try fileManager.createDirectory(at: cloudStickers, withIntermediateDirectories: true)
             try createTestFile(at: cloudStickers, name: "cloud_sticker.png")
 
@@ -85,7 +85,7 @@ struct ImageSyncServiceTests {
 
     @Test func クラウドの背景画像がローカルにダウンロードされる() async throws {
         try await withTempDirs { localStickers, localBackgrounds, cloud in
-            let cloudBackgrounds = cloud.appendingPathComponent("Backgrounds")
+            let cloudBackgrounds = cloud.appendingPathComponent("Documents/Backgrounds")
             try fileManager.createDirectory(at: cloudBackgrounds, withIntermediateDirectories: true)
             try createTestFile(at: cloudBackgrounds, name: "cloud_bg.jpg")
 
@@ -109,7 +109,7 @@ struct ImageSyncServiceTests {
             try createTestFile(at: localStickers, name: "local_only.png")
 
             // クラウドにのみ存在
-            let cloudStickers = cloud.appendingPathComponent("Stickers")
+            let cloudStickers = cloud.appendingPathComponent("Documents/Stickers")
             try fileManager.createDirectory(at: cloudStickers, withIntermediateDirectories: true)
             try createTestFile(at: cloudStickers, name: "cloud_only.png")
 
@@ -134,7 +134,7 @@ struct ImageSyncServiceTests {
         try await withTempDirs { localStickers, localBackgrounds, cloud in
             try createTestFile(at: localStickers, name: "same.png", content: "same data")
 
-            let cloudStickers = cloud.appendingPathComponent("Stickers")
+            let cloudStickers = cloud.appendingPathComponent("Documents/Stickers")
             try fileManager.createDirectory(at: cloudStickers, withIntermediateDirectories: true)
             try createTestFile(at: cloudStickers, name: "same.png", content: "same data")
 
@@ -179,8 +179,8 @@ struct ImageSyncServiceTests {
                 cloudContainerURL: cloud
             )
 
-            let cloudStickers = cloud.appendingPathComponent("Stickers")
-            let cloudBackgrounds = cloud.appendingPathComponent("Backgrounds")
+            let cloudStickers = cloud.appendingPathComponent("Documents/Stickers")
+            let cloudBackgrounds = cloud.appendingPathComponent("Documents/Backgrounds")
             var isDir: ObjCBool = false
             #expect(fileManager.fileExists(atPath: cloudStickers.path, isDirectory: &isDir) && isDir.boolValue)
             #expect(fileManager.fileExists(atPath: cloudBackgrounds.path, isDirectory: &isDir) && isDir.boolValue)

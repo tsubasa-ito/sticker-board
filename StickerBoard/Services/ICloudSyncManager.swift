@@ -115,6 +115,7 @@ final class ICloudSyncManager {
     // MARK: - Sync
 
     func startSync() async {
+        guard syncStatus != .syncing else { return }
         guard subscriptionStatusProvider.isProUser else {
             syncStatus = .disabled
             return
@@ -141,7 +142,8 @@ final class ICloudSyncManager {
             userDefaults.set(now, forKey: Self.lastSyncDateKey)
             syncStatus = .synced(now)
         } catch {
-            syncStatus = .error(error.localizedDescription)
+            print("[ICloudSyncManager] Sync failed: \(error)")
+            syncStatus = .error("バックアップに失敗しました。しばらく待ってから再度お試しください。")
         }
     }
 
