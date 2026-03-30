@@ -1,0 +1,76 @@
+name: Auto Tag Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create-tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version from project.yml
+        id: version
+        run: |
+          VERSION=$(grep 'MARKETING_VERSION:' project.yml | head -1 | sed 's/.*MARKETING_VERSION: *"\(.*\)"/\1/')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Detected version: $VERSION"
+
+      - name: Determine tag name
+        id: tag
+        run: |
+          BASE_TAG="v${{ steps.version.outputs.version }}"
+
+          if ! git rev-parse "$BASE_TAG" >/dev/null 2>&1; then
+            echo "tag=$BASE_TAG" >> "$GITHUB_OUTPUT"
+          else
+            # 同じバージョンのタグが存在する場合、ビルド番号を付与
+            BUILD=1
+            while git rev-parse "${BASE_TAG}-${BUILD}" >/dev/null 2>&1; do
+              BUILD=$((BUILD + 1))
+            done
+            echo "tag=${BASE_TAG}-${BUILD}" >> "$GITHUB_OUTPUT"
+          fi
+          echo "Tag to create: $(grep 'tag=' "$GITHUB_OUTPUT" | tail -1)"
+
+      - name: Create tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.tag.outputs.tag }}"
+          git tag "$TAG"
+          git push origin "$TAG"
+          echo "Created tag: $TAG"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.tag.outputs.tag }}"
+
+          # 前のタグとの差分からリリースノートを生成
+          PREV_TAG=$(git tag --sort=-v:refname | grep -v "$TAG" | head -1)
+
+          if [ -n "$PREV_TAG" ]; then
+            NOTES=$(git log "${PREV_TAG}..${TAG}" --oneline --no-merges)
+          else
+            NOTES=$(git log --oneline --no-merges -20)
+          fi
+
+          {
+            echo "## Changes"
+            echo ""
+            echo "$NOTES" | while IFS= read -r line; do
+              echo "- $line"
+            done
+          } > release_notes.md
+
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --notes-file release_notes.md
