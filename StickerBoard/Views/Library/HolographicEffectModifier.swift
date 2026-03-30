@@ -9,11 +9,12 @@ struct HolographicCardModifier: ViewModifier {
     let cornerRadius: CGFloat
     let intensity: Double
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private let motion = MotionManager.shared
 
     func body(content: Content) -> some View {
-        let tiltX = motion.tiltX
-        let tiltY = motion.tiltY
+        let tiltX = reduceMotion ? 0.5 : motion.tiltX
+        let tiltY = reduceMotion ? 0.5 : motion.tiltY
         let rotX = 8 * intensity * (tiltX - 0.5) * 2
         let rotY = -8 * intensity * (tiltY - 0.5) * 2
 
@@ -28,8 +29,8 @@ struct HolographicCardModifier: ViewModifier {
             }
             .rotation3DEffect(.degrees(rotX), axis: (0, 1, 0), perspective: 0.8)
             .rotation3DEffect(.degrees(rotY), axis: (1, 0, 0), perspective: 0.8)
-            .onAppear { motion.start() }
-            .onDisappear { motion.stop() }
+            .onAppear { if !reduceMotion { motion.start() } }
+            .onDisappear { if !reduceMotion { motion.stop() } }
     }
 
     /// デバイスの傾きに追従する虹色グラデーション
@@ -72,11 +73,12 @@ struct HolographicStickerModifier: ViewModifier {
     /// 傾きに連動してシールが上下左右に移動する量（pt）。0で無効
     let parallaxOffset: Double
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private let motion = MotionManager.shared
 
     func body(content: Content) -> some View {
-        let tiltX = motion.tiltX
-        let tiltY = motion.tiltY
+        let tiltX = reduceMotion ? 0.5 : motion.tiltX
+        let tiltY = reduceMotion ? 0.5 : motion.tiltY
         let rotDegX = enableRotation ? maxRotation * (tiltX - 0.5) * 2 : 0
         let rotDegY = enableRotation ? -maxRotation * (tiltY - 0.5) * 2 : 0
         let offsetX = parallaxOffset * (tiltX - 0.5) * 2
@@ -101,13 +103,13 @@ struct HolographicStickerModifier: ViewModifier {
             .rotation3DEffect(.degrees(rotDegX), axis: (0, 1, 0), perspective: perspective)
             .rotation3DEffect(.degrees(rotDegY), axis: (1, 0, 0), perspective: perspective)
             .shadow(
-                color: dynamicShadow ? .black.opacity(0.35) : .clear,
-                radius: dynamicShadow ? 16 : 0,
-                x: dynamicShadow ? CGFloat((tiltX - 0.5) * -24) : 0,
-                y: dynamicShadow ? CGFloat((tiltY - 0.5) * -24 + 8) : 0
+                color: dynamicShadow && !reduceMotion ? .black.opacity(0.35) : .clear,
+                radius: dynamicShadow && !reduceMotion ? 16 : 0,
+                x: dynamicShadow && !reduceMotion ? CGFloat((tiltX - 0.5) * -24) : 0,
+                y: dynamicShadow && !reduceMotion ? CGFloat((tiltY - 0.5) * -24 + 8) : 0
             )
-            .onAppear { motion.start() }
-            .onDisappear { motion.stop() }
+            .onAppear { if !reduceMotion { motion.start() } }
+            .onDisappear { if !reduceMotion { motion.stop() } }
     }
 
     private func stickerRainbow(tiltX: Double, tiltY: Double) -> some View {
