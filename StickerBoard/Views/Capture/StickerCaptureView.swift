@@ -124,6 +124,7 @@ struct StickerCaptureView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "info.circle.fill")
                         .foregroundStyle(AppTheme.cream)
+                        .accessibilityHidden(true)
                     Text("シミュレータでは背景除去がスキップされます")
                         .font(.system(size: 12, weight: .medium, design: .rounded))
                         .foregroundStyle(AppTheme.textSecondary)
@@ -163,6 +164,8 @@ struct StickerCaptureView: View {
                                 color: AppTheme.accent
                             )
                         }
+                        .accessibilityLabel("カメラで撮る")
+                        .accessibilityHint("カメラを起動してシールにする写真を撮影します")
                     }
 
                     // フォトライブラリボタン
@@ -173,6 +176,8 @@ struct StickerCaptureView: View {
                             color: AppTheme.secondary
                         )
                     }
+                    .accessibilityLabel("写真から選ぶ")
+                    .accessibilityHint("フォトライブラリからシールにする写真を選択します")
                 }
             }
 
@@ -185,12 +190,14 @@ struct StickerCaptureView: View {
                         .frame(maxHeight: 220)
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                         .shadow(color: .black.opacity(0.1), radius: 8, y: 4)
+                        .accessibilityLabel("選択した写真のプレビュー")
 
                     Button {
                         processImage()
                     } label: {
                         HStack(spacing: 8) {
                             Image(systemName: "scissors")
+                                .accessibilityHidden(true)
                             Text("背景を除去する")
                                 .font(.system(size: 16, weight: .semibold, design: .rounded))
                         }
@@ -200,6 +207,8 @@ struct StickerCaptureView: View {
                         .foregroundStyle(.white)
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
+                    .accessibilityLabel("背景を除去する")
+                    .accessibilityHint("写真から背景を自動的に除去します")
                 }
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
@@ -248,6 +257,7 @@ struct StickerCaptureView: View {
                 Circle()
                     .fill(AppTheme.secondary.opacity(0.15))
                     .frame(width: 100, height: 100)
+                    .accessibilityHidden(true)
 
                 ProgressView()
                     .controlSize(.large)
@@ -266,6 +276,9 @@ struct StickerCaptureView: View {
 
             Spacer()
         }
+        .onAppear {
+            AccessibilityNotification.Announcement("背景を除去しています").post()
+        }
     }
 
     // MARK: - 結果表示
@@ -282,6 +295,7 @@ struct StickerCaptureView: View {
                 } label: {
                     HStack(spacing: 8) {
                         Image(systemName: "paintbrush.pointed.fill")
+                            .accessibilityHidden(true)
                         Text("手動で調整する")
                             .font(.system(size: 16, weight: .semibold, design: .rounded))
                     }
@@ -293,6 +307,8 @@ struct StickerCaptureView: View {
                             .strokeBorder(AppTheme.secondary, lineWidth: 2)
                     }
                 }
+                .accessibilityLabel("手動で調整する")
+                .accessibilityHint("マスクエディタを開いて切り抜き範囲を手動で調整します")
             }
 
             // 保存ボタン
@@ -301,6 +317,7 @@ struct StickerCaptureView: View {
             } label: {
                 HStack(spacing: 8) {
                     Image(systemName: "checkmark.circle.fill")
+                        .accessibilityHidden(true)
                     Text("コレクションに追加")
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
                 }
@@ -310,6 +327,8 @@ struct StickerCaptureView: View {
                 .foregroundStyle(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 14))
             }
+            .accessibilityLabel("コレクションに追加")
+            .accessibilityHint("切り抜いたシールをコレクションに保存します")
 
             Button {
                 resetState()
@@ -327,6 +346,7 @@ struct StickerCaptureView: View {
         HStack(spacing: 8) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .foregroundStyle(.orange)
+                .accessibilityHidden(true)
             Text(message)
                 .font(.system(size: 13, weight: .medium, design: .rounded))
                 .foregroundStyle(AppTheme.textPrimary)
@@ -335,6 +355,9 @@ struct StickerCaptureView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.orange.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 12))
+        .onAppear {
+            AccessibilityNotification.Announcement("エラー: \(message)").post()
+        }
     }
 
     // MARK: - ロジック

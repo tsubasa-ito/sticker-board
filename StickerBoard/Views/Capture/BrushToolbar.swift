@@ -22,10 +22,13 @@ struct BrushToolbar: View {
                 Circle()
                     .fill(brushMode == .eraser ? Color.red.opacity(0.6) : AppTheme.softOrange)
                     .frame(width: max(brushSize * 0.4, 6), height: max(brushSize * 0.4, 6))
+                    .accessibilityHidden(true)
 
                 Slider(value: $brushSize, in: 5...80)
                     .tint(AppTheme.accent)
                     .frame(maxWidth: 120)
+                    .accessibilityLabel("ブラシサイズ")
+                    .accessibilityValue("\(Int(brushSize))ポイント")
             }
 
             // Undo
@@ -35,6 +38,8 @@ struct BrushToolbar: View {
                     .foregroundStyle(canUndo ? AppTheme.accent : AppTheme.textTertiary)
             }
             .disabled(!canUndo)
+            .accessibilityLabel("取り消し")
+            .accessibilityHint(canUndo ? "直前の操作を取り消します" : "取り消せる操作がありません")
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
@@ -67,5 +72,8 @@ struct BrushToolbar: View {
                 }
             }
         }
+        .accessibilityLabel(mode == .eraser ? "消しゴムモード" : "復元モード")
+        .accessibilityHint(mode == .eraser ? "不要な部分を消します" : "消しすぎた部分を復元します")
+        .accessibilityAddTraits(brushMode == mode ? .isSelected : [])
     }
 }
