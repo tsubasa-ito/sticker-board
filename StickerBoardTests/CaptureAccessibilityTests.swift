@@ -56,6 +56,12 @@ struct CaptureAccessibilityTests {
         #expect(content.contains("accessibilityHidden"))
     }
 
+    @Test func BrushToolbar_インタラクティブ要素にaccessibilityHintがある() throws {
+        let content = try readFile("StickerBoard/Views/Capture/BrushToolbar.swift")
+        // モードボタン・Undoボタンに accessibilityHint が設定されている
+        #expect(content.contains("accessibilityHint"))
+    }
+
     // MARK: - StickerCaptureView アクセシビリティ
 
     @Test func StickerCaptureView_カメラボタンにaccessibilityLabelがある() throws {
@@ -107,6 +113,12 @@ struct CaptureAccessibilityTests {
         #expect(content.contains("accessibilityHidden"))
     }
 
+    @Test func StickerCaptureView_ボタンにaccessibilityHintがある() throws {
+        let content = try readFile("StickerBoard/Views/Capture/StickerCaptureView.swift")
+        // カメラ・写真選択・背景除去・コレクション追加・手動調整ボタンに accessibilityHint が設定されている
+        #expect(content.contains("accessibilityHint"))
+    }
+
     // MARK: - MaskEditorView アクセシビリティ
 
     @Test func MaskEditorView_ヒントテキストにaccessibilityが設定されている() throws {
@@ -127,6 +139,12 @@ struct CaptureAccessibilityTests {
         #expect(content.contains("accessibilityHidden"))
     }
 
+    @Test func MaskEditorView_ブラシモード変更時にヒントが更新される() throws {
+        let content = try readFile("StickerBoard/Views/Capture/MaskEditorView.swift")
+        // brushMode による条件分岐で異なるヒントテキストが設定されている
+        #expect(content.contains("brushMode == .eraser") && content.contains("accessibilityLabel"))
+    }
+
     // MARK: - MaskDrawingCanvas アクセシビリティ
 
     @Test func MaskDrawingCanvas_isAccessibilityElementが設定されている() throws {
@@ -142,6 +160,18 @@ struct CaptureAccessibilityTests {
     @Test func MaskDrawingCanvas_accessibilityTraitsが設定されている() throws {
         let content = try readFile("StickerBoard/Views/Capture/MaskDrawingCanvas.swift")
         #expect(content.contains("accessibilityTraits"))
+    }
+
+    @Test func MaskDrawingCanvas_accessibilityHintが設定されている() throws {
+        let content = try readFile("StickerBoard/Views/Capture/MaskDrawingCanvas.swift")
+        // カスタムジェスチャーの代替操作説明として accessibilityHint が設定されている
+        #expect(content.contains("accessibilityHint"))
+    }
+
+    @Test func MaskDrawingCanvas_allowsDirectInteractionトレイトが設定されている() throws {
+        let content = try readFile("StickerBoard/Views/Capture/MaskDrawingCanvas.swift")
+        // タッチ描画キャンバスにVoiceOver有効時も直接操作を許可するトレイトが設定されている
+        #expect(content.contains("allowsDirectInteraction"))
     }
 
     @Test func MaskDrawingCanvas_チェッカーボード背景が装飾非表示() throws {
