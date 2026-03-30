@@ -53,6 +53,7 @@ struct AccessibilityRuleTests {
     @Test func 動的コンテンツの通知チェック項目がある() throws {
         let content = try ruleContent()
         #expect(content.contains("accessibilityValue"))
+        #expect(content.contains("UIAccessibility.post"))
     }
 
     @Test func カスタムジェスチャーの代替チェック項目がある() throws {
