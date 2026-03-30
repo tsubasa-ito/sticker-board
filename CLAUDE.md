@@ -74,3 +74,9 @@ open StickerBoard.xcodeproj
 - サブスクリプション（StoreKit 2）: SubscriptionManager がシングルトンで購入状態を管理。StickerBoardApp.init() で早期初期化。UserDefaults に isProUser をキャッシュしてオフライン対応
 - フリーミアムモデル: 無料（シール30枚/ボード1枚/枠線なし・細/背景3種/ロゴ入り書き出し）、Pro（全制限解除）。「期待値駆動型ペイウォール」でプレミアム機能をプレビュー可能にし、適用・確定時にペイウォール表示
 - Products.storekit は Xcode の StoreKit Configuration Editor で編集すること（手動JSONは非推奨）。project.yml の schemes で StoreKit Configuration を自動設定済み
+- バンドルID: com.tebasaki.StickerBoard（project.yml で設定）
+- アプリ表示名: シールボード -デジタルシール帳-（CFBundleDisplayName）
+- ITSAppUsesNonExemptEncryption: NO（標準HTTPS通信のみ、App Store提出時の暗号化質問を省略）
+- 画面の向き: iPhone はポートレートのみ、iPad は全方向（iPad互換モードのマルチタスク対応に必要）
+- Xcode Cloud: mainブランチへのpushで自動ビルド→TestFlight配信。ci_scripts/ci_post_clone.sh で XcodeGen インストール＆プロジェクト生成を自動化
+- GitHub Actions: develop→mainのRelease PR自動作成（.github/workflows/auto-release-pr.yml）、mainマージ時にバージョンタグ＆GitHub Release自動作成（.github/workflows/auto-tag-release.yml）
