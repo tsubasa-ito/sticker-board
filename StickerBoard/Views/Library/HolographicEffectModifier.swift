@@ -79,10 +79,10 @@ struct HolographicStickerModifier: ViewModifier {
     func body(content: Content) -> some View {
         let tiltX = reduceMotion ? 0.5 : motion.tiltX
         let tiltY = reduceMotion ? 0.5 : motion.tiltY
-        let rotDegX = reduceMotion ? 0.0 : (enableRotation ? maxRotation * (tiltX - 0.5) * 2 : 0)
-        let rotDegY = reduceMotion ? 0.0 : (enableRotation ? -maxRotation * (tiltY - 0.5) * 2 : 0)
-        let offsetX = reduceMotion ? 0.0 : parallaxOffset * (tiltX - 0.5) * 2
-        let offsetY = reduceMotion ? 0.0 : parallaxOffset * (tiltY - 0.5) * 2
+        let rotDegX = enableRotation ? maxRotation * (tiltX - 0.5) * 2 : 0
+        let rotDegY = enableRotation ? -maxRotation * (tiltY - 0.5) * 2 : 0
+        let offsetX = parallaxOffset * (tiltX - 0.5) * 2
+        let offsetY = parallaxOffset * (tiltY - 0.5) * 2
 
         content
             .overlay {
