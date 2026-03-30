@@ -31,6 +31,7 @@
 		55E9EE6723FF659967D5B49F /* SubscriptionProductTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDBB451BECC869CD24CAF7B /* SubscriptionProductTests.swift */; };
 		564A5D5F41AB5B43E4103611 /* StickerBoardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23D569B5232A2F3DB9F3B61 /* StickerBoardApp.swift */; };
 		567094296030D6D397CCFDA2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F870EE68E060BE5480814A21 /* Assets.xcassets */; };
+		5AAD2F7A210494638C8EEBB5 /* CaptureAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530CD661BF00498FE8299E3E /* CaptureAccessibilityTests.swift */; };
 		62899C4D692BD195F7F0A16B /* OnboardingPageIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A6669D6CA5D4EAD5DB7BF3C /* OnboardingPageIndicator.swift */; };
 		720B355DF1F2E16DA0D57E85 /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B41B23D775F8487A3B361B /* CameraView.swift */; };
 		73FA13E3158C1F1BDACB6C08 /* MotionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE45BBB2C51CC68C9B0C8EBB /* MotionManager.swift */; };
@@ -98,6 +99,7 @@
 		3DE8FA1873B214DE9520E815 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		4E07374D0724CABB84AC640D /* StickerFilterPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerFilterPickerView.swift; sourceTree = "<group>"; };
 		504A7665F90173671AD3B76A /* StickerBorderServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerBorderServiceTests.swift; sourceTree = "<group>"; };
+		530CD661BF00498FE8299E3E /* CaptureAccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureAccessibilityTests.swift; sourceTree = "<group>"; };
 		54C1D00261EB4F86866F685A /* BackgroundPatternTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundPatternTests.swift; sourceTree = "<group>"; };
 		604CC75026AD20187DC30B3F /* ImageStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStorageTests.swift; sourceTree = "<group>"; };
 		6364161BD5EB2AA06CF6AE7D /* StickerPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerPreviewView.swift; sourceTree = "<group>"; };
@@ -308,6 +310,7 @@
 				795F7B5B94087F04001DE523 /* BackgroundImageStorageTests.swift */,
 				54C1D00261EB4F86866F685A /* BackgroundPatternTests.swift */,
 				259987BEAF660FD74A7333A2 /* BoardTests.swift */,
+				530CD661BF00498FE8299E3E /* CaptureAccessibilityTests.swift */,
 				604CC75026AD20187DC30B3F /* ImageStorageTests.swift */,
 				82762278F79270BA92FD3D38 /* MaskCompositorTests.swift */,
 				504A7665F90173671AD3B76A /* StickerBorderServiceTests.swift */,
@@ -465,6 +468,7 @@
 				54189D617D853C9D06F172AE /* BackgroundImageStorageTests.swift in Sources */,
 				2CB06ED23EB4FB1EA6B7C7CD /* BackgroundPatternTests.swift in Sources */,
 				B96495C34AE5425881B553FB /* BoardTests.swift in Sources */,
+				5AAD2F7A210494638C8EEBB5 /* CaptureAccessibilityTests.swift in Sources */,
 				E1E29CF14D41BF97D2C1B6E2 /* ImageStorageTests.swift in Sources */,
 				2B1517B2E5E84806CB242F6C /* MaskCompositorTests.swift in Sources */,
 				50D1435CD2C021AF375212FA /* StickerBorderServiceTests.swift in Sources */,
