@@ -27,6 +27,13 @@ StickerBoard/
 StickerBoardTests/  # Swift Testing によるユニットテスト
 ```
 
+## ブランチ運用
+- **main**: 本番リリース用。直接コミットしない
+- **develop**: 開発統合ブランチ。機能開発・バグ修正はここにマージする
+- **feature/\*、fix/\***: develop から切って develop へマージする
+- リリース時に develop → main へマージしてデプロイ
+- PRのベースブランチはデフォルトで **develop** を使用する
+
 ## 開発コマンド
 ```bash
 # プロジェクト生成（project.yml 変更時に必要）
