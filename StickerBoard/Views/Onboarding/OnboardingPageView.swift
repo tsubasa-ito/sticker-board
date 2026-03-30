@@ -87,7 +87,6 @@ struct OnboardingPageView: View {
             Image(systemName: page.icon)
                 .font(.system(size: 56))
                 .foregroundStyle(AppTheme.accent)
-                .accessibilityHidden(true)
 
             // セカンダリアイコン（右上に小さく）
             if let secondary = page.secondaryIcon {
@@ -95,7 +94,6 @@ struct OnboardingPageView: View {
                     .font(.system(size: 24))
                     .foregroundStyle(AppTheme.secondary)
                     .offset(x: 50, y: -50)
-                    .accessibilityHidden(true)
             }
         }
         .accessibilityHidden(true)
