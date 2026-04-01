@@ -49,6 +49,8 @@ struct OnboardingView: View {
                     .font(.system(.subheadline, design: .rounded, weight: .medium))
                     .foregroundStyle(AppTheme.textSecondary)
             }
+            .accessibilityLabel("スキップ")
+            .accessibilityHint("オンボーディングをスキップします")
             .padding(.trailing, 24)
             .padding(.top, 8)
         }
@@ -82,6 +84,7 @@ struct OnboardingView: View {
                     .clipShape(Capsule())
                     .shadow(color: AppTheme.accent.opacity(0.3), radius: 8, x: 0, y: 4)
             }
+            .accessibilityLabel(currentPage < pages.count - 1 ? "次へ" : "はじめる")
             .animation(.spring(duration: 0.3), value: currentPage)
         }
         .padding(.bottom, 48)

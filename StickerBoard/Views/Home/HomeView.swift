@@ -3,7 +3,7 @@ import SwiftData
 
 struct HomeView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \Board.updatedAt, order: .reverse) private var boards: [Board]
+    @Query(sort: \Board.createdAt, order: .forward) private var boards: [Board]
 
     private let newBoardCardID = "new-board"
 

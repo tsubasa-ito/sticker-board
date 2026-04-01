@@ -35,14 +35,17 @@ struct StickerFilterPickerView: View {
                 ZStack {
                     CheckerboardBackground()
                         .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .accessibilityHidden(true)
 
                     if let preview = previewImages[filter] {
                         Image(uiImage: preview)
                             .resizable()
                             .scaledToFit()
                             .padding(10)
+                            .accessibilityHidden(true)
                     } else {
                         ProgressView()
+                            .accessibilityLabel("フィルタープレビューを生成中")
                     }
                 }
                 .aspectRatio(1, contentMode: .fit)
@@ -62,9 +65,12 @@ struct StickerFilterPickerView: View {
                 Text(filter.displayName)
                     .font(.system(size: 12, weight: isSelected ? .bold : .medium, design: .rounded))
                     .foregroundStyle(isSelected ? AppTheme.accent : AppTheme.textSecondary)
+                    .accessibilityHidden(true)
             }
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("\(filter.displayName)フィルター")
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
     private func generatePreviews() async {

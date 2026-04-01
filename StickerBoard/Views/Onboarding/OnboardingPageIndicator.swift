@@ -15,5 +15,8 @@ struct OnboardingPageIndicator: View {
                     .animation(.spring(duration: 0.3), value: currentPage)
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("ページインジケーター")
+        .accessibilityValue("ページ \(currentPage + 1) / \(totalPages)")
     }
 }

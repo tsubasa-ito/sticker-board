@@ -185,6 +185,8 @@ class MaskOverlayView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         isUserInteractionEnabled = false
+        isAccessibilityElement = false
+        accessibilityElementsHidden = true
         backgroundColor = .clear
     }
 
@@ -239,6 +241,11 @@ class MaskCanvasUIView: UIView {
         super.init(frame: CGRect(origin: .zero, size: imageSize))
         backgroundColor = .clear
         isMultipleTouchEnabled = false
+
+        isAccessibilityElement = true
+        accessibilityLabel = "マスク描画キャンバス"
+        accessibilityTraits = .allowsDirectInteraction
+        accessibilityHint = "指でなぞってマスクを編集します。2本指でズームやスクロールができます"
 
         setupMaskContext(with: initialMask)
         setupDisplayLink()
@@ -384,6 +391,8 @@ class CheckerboardUIView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         isUserInteractionEnabled = false
+        isAccessibilityElement = false
+        accessibilityElementsHidden = true
         backgroundColor = .white
     }
 

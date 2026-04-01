@@ -23,6 +23,7 @@ struct CaptureGuideTipsView: View {
                     Image(systemName: "lightbulb.fill")
                         .font(.system(size: 14))
                         .foregroundStyle(AppTheme.cream)
+                        .accessibilityHidden(true)
 
                     Text("きれいに切り抜くコツ")
                         .font(.system(size: 14, weight: .semibold, design: .rounded))
@@ -33,11 +34,14 @@ struct CaptureGuideTipsView: View {
                     Image(systemName: isCollapsed ? "chevron.down" : "chevron.up")
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundStyle(AppTheme.textTertiary)
+                        .accessibilityHidden(true)
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("きれいに切り抜くコツ")
+            .accessibilityValue(isCollapsed ? "閉じている" : "開いている")
 
             // ヒント一覧
             if !isCollapsed {
@@ -48,6 +52,7 @@ struct CaptureGuideTipsView: View {
                                 .font(.system(size: 13))
                                 .foregroundStyle(AppTheme.secondary)
                                 .frame(width: 20)
+                                .accessibilityHidden(true)
 
                             Text(tip.text)
                                 .font(.system(size: 13, weight: .medium, design: .rounded))

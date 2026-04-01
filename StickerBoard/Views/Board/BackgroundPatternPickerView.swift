@@ -109,6 +109,7 @@ struct BackgroundPatternPickerView: View {
                     Label("ドラッグで位置調整", systemImage: "hand.draw")
                         .font(.system(size: 11, weight: .medium, design: .rounded))
                         .foregroundStyle(AppTheme.accent)
+                        .accessibilityHidden(true)
                 }
             }
 
@@ -127,6 +128,20 @@ struct BackgroundPatternPickerView: View {
                     )
                     .shadow(color: .black.opacity(0.06), radius: 8, y: 4)
                     .gesture(customImageCropGesture(containerSize: CGSize(width: previewWidth, height: previewHeight)))
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("背景プレビュー、\(config.patternType.displayName)")
+                    .accessibilityHint(config.patternType == .custom && customImage != nil ? "スワイプで背景画像の表示位置を調整できます" : "")
+                    .accessibilityAdjustableAction { direction in
+                        let step = 0.1
+                        switch direction {
+                        case .increment:
+                            config.customImageCropX = min(1, (config.customImageCropX ?? 0.5) + step)
+                        case .decrement:
+                            config.customImageCropX = max(0, (config.customImageCropX ?? 0.5) - step)
+                        @unknown default:
+                            break
+                        }
+                    }
                     .frame(maxWidth: .infinity)
             }
             .aspectRatio(1.0 / 0.85, contentMode: .fit)
@@ -194,6 +209,9 @@ struct BackgroundPatternPickerView: View {
             }
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(SubscriptionManager.shared.isProUser ? "写真から背景を選択" : "写真から背景を選択、Pro限定")
+        .accessibilityValue(config.patternType == .custom ? "選択中" : "")
+        .accessibilityAddTraits(config.patternType == .custom ? .isSelected : [])
     }
 
     private var customPhotoButtonLabel: some View {
@@ -245,6 +263,7 @@ struct BackgroundPatternPickerView: View {
 
     private func patternTypeButton(_ type: BackgroundPatternType) -> some View {
         let isPremium = Self.premiumPatterns.contains(type)
+        let isSelected = config.patternType == type
         return Button {
             withAnimation(.easeInOut(duration: 0.2)) {
                 if let preset = BackgroundPatternConfig.presets.first(where: { $0.patternType == type }) {
@@ -262,7 +281,7 @@ struct BackgroundPatternPickerView: View {
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(
-                                config.patternType == type ? AppTheme.accent : Color.clear,
+                                isSelected ? AppTheme.accent : Color.clear,
                                 lineWidth: 2.5
                             )
                     )
@@ -272,17 +291,21 @@ struct BackgroundPatternPickerView: View {
                                 .offset(x: 6, y: -6)
                         }
                     }
+                    .accessibilityHidden(true)
 
                 Text(type.displayName)
                     .font(.system(size: 11, weight: .semibold, design: .rounded))
                     .foregroundStyle(
-                        config.patternType == type ? AppTheme.accent : AppTheme.textSecondary
+                        isSelected ? AppTheme.accent : AppTheme.textSecondary
                     )
             }
             .padding(.vertical, 8)
             .padding(.horizontal, 4)
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(isPremium && !SubscriptionManager.shared.isProUser ? "\(type.displayName)、Pro限定" : type.displayName)
+        .accessibilityValue(isSelected ? "選択中" : "")
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
     // MARK: - カラー設定
@@ -326,11 +349,12 @@ struct BackgroundPatternPickerView: View {
             Spacer()
 
             ColorPicker(
-                "",
+                label,
                 selection: colorBinding(hex: colorHex),
                 supportsOpacity: false
             )
             .labelsHidden()
+            .accessibilityLabel("\(label)を選択")
         }
     }
 

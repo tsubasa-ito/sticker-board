@@ -1,0 +1,5 @@
+pull_request_review:
+  ignore:
+    pull_requests:
+      - base: "main"
+        head: "develop"

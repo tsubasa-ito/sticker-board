@@ -96,5 +96,6 @@ struct OnboardingPageView: View {
                     .offset(x: 50, y: -50)
             }
         }
+        .accessibilityHidden(true)
     }
 }

@@ -1,0 +1,70 @@
+name: Auto Release PR
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  create-release-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for existing PR
+        id: check_pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=$(gh pr list --base main --head develop --state open --json number --jq '.[0].number // empty')
+          echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+
+      - name: Generate PR body
+        if: steps.check_pr.outputs.pr_number == ''
+        id: pr_body
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          COMMITS=$(git log origin/main..origin/develop --oneline --no-merges)
+          MERGED_PRS=$(gh pr list --base develop --state merged --json number,title --jq '.[] | "- #\(.number) \(.title)"' | head -20)
+
+          {
+            echo "## Release PR (develop → main)"
+            echo ""
+            echo "developブランチの変更をmainにマージしてリリースします。"
+            echo ""
+            echo "### マージ済みPR"
+            if [ -n "$MERGED_PRS" ]; then
+              echo "$MERGED_PRS"
+            else
+              echo "- 直接コミットのみ"
+            fi
+            echo ""
+            echo "### コミット一覧"
+            echo '```'
+            echo "$COMMITS"
+            echo '```'
+          } > pr_body.md
+
+      - name: Create Release PR
+        if: steps.check_pr.outputs.pr_number == ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --base main \
+            --head develop \
+            --title "Release: develop → main" \
+            --body-file pr_body.md \
+            --label "release"
+
+      - name: Log existing PR
+        if: steps.check_pr.outputs.pr_number != ''
+        run: |
+          echo "Release PR already exists: #${{ steps.check_pr.outputs.pr_number }}"
+          echo "New commits will be automatically included."

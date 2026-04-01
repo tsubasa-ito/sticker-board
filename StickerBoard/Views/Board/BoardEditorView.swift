@@ -61,6 +61,8 @@ struct BoardEditorView: View {
                         .frame(height: 24)
                         .frame(maxWidth: .infinity)
                     }
+                    .accessibilityLabel("ツールバーを折りたたむ")
+                    .accessibilityHint("ツールバーを非表示にします")
 
                     if showQuickPicks && !allStickers.isEmpty {
                         stickerQuickPicks
@@ -90,6 +92,8 @@ struct BoardEditorView: View {
                         .clipShape(Capsule())
                         .shadow(color: .black.opacity(0.1), radius: 8, y: 2)
                     }
+                    .accessibilityLabel("ツールバーを展開")
+                    .accessibilityHint("ツールバーを表示します")
                     .padding(.bottom, 16)
                     .transition(.scale.combined(with: .opacity))
                 }
@@ -120,6 +124,7 @@ struct BoardEditorView: View {
                         .font(.system(size: 15, weight: .medium))
                         .foregroundStyle(AppTheme.textPrimary)
                 }
+                .accessibilityLabel("閉じる")
             }
             ToolbarItem(placement: .primaryAction) {
                 Button {
@@ -129,6 +134,7 @@ struct BoardEditorView: View {
                         .font(.system(size: 15, weight: .medium))
                         .foregroundStyle(AppTheme.textSecondary)
                 }
+                .accessibilityLabel("写真に保存")
                 .disabled(placements.isEmpty)
                 .opacity(placements.isEmpty ? 0.4 : 1)
             }
@@ -302,6 +308,8 @@ struct BoardEditorView: View {
                 .font(.system(size: 15, weight: .medium, design: .rounded))
                 .foregroundStyle(AppTheme.textTertiary)
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("キャンバスが空です。下の追加ボタンからシールを追加してください")
     }
 
     // MARK: - ヒントトースト
@@ -321,6 +329,8 @@ struct BoardEditorView: View {
                 .fill(AppTheme.editorDark.opacity(0.9))
         )
         .shadow(color: .black.opacity(0.15), radius: 8, y: 4)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("ヒント: ドラッグで移動、ピンチでサイズ変更")
     }
 
     // MARK: - シールクイックピック
@@ -352,6 +362,7 @@ struct BoardEditorView: View {
                     .background(AppTheme.editorBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
+                .accessibilityLabel("すべてのシールを表示")
             }
             .padding(.horizontal, 24)
             .padding(.vertical, 8)
@@ -447,6 +458,7 @@ struct BoardEditorView: View {
             }
             .frame(maxWidth: .infinity)
         }
+        .accessibilityLabel(label)
     }
 
     private func toolbarGroup<Content: View>(@ViewBuilder content: () -> Content) -> some View {

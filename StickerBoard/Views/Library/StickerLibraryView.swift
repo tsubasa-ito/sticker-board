@@ -18,6 +18,7 @@ struct StickerLibraryView: View {
     @State private var showMaskEditLoadError = false
     @State private var thumbnailRefreshID = UUID()
     @Namespace private var previewNamespace
+    let refreshTrigger: UUID
     var onAddSticker: () -> Void = {}
 
     private let pageSize = 30
@@ -45,6 +46,9 @@ struct StickerLibraryView: View {
             } else {
                 refreshIfNeeded()
             }
+        }
+        .onChange(of: refreshTrigger) {
+            refreshIfNeeded()
         }
         .overlay {
             if let sticker = previewSticker {
@@ -136,6 +140,7 @@ struct StickerLibraryView: View {
                 Image(systemName: "star.leadinghalf.filled")
                     .font(.system(size: 40))
                     .foregroundStyle(AppTheme.accent.opacity(0.5))
+                    .accessibilityHidden(true)
             }
 
             VStack(spacing: 6) {
@@ -149,6 +154,8 @@ struct StickerLibraryView: View {
                     .multilineTextAlignment(.center)
             }
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityHint("シールを撮影して追加してください")
     }
 
     // MARK: - グリッド
@@ -161,11 +168,14 @@ struct StickerLibraryView: View {
                     Image(systemName: "star.fill")
                         .foregroundStyle(AppTheme.accent)
                         .font(.system(size: 12))
+                        .accessibilityHidden(true)
                     Text("\(totalCount)枚のシール")
                         .font(.system(size: 13, weight: .medium, design: .rounded))
                         .foregroundStyle(AppTheme.textSecondary)
                 }
                 .padding(.horizontal, 4)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("全\(totalCount)枚のシール")
 
                 LazyVGrid(columns: columns, spacing: 14) {
                     addStickerCard
@@ -206,6 +216,7 @@ struct StickerLibraryView: View {
                         Spacer()
                         ProgressView()
                             .tint(AppTheme.accent)
+                            .accessibilityLabel("さらに読み込み中")
                         Spacer()
                     }
                     .padding(.vertical, 8)
@@ -437,6 +448,7 @@ struct StickerThumbnailView: View {
                 Image(systemName: "photo")
                     .font(.system(size: 28))
                     .foregroundStyle(AppTheme.textTertiary)
+                    .accessibilityHidden(true)
             }
         }
         .frame(width: 100, height: 100)

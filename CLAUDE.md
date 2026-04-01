@@ -15,7 +15,7 @@
 StickerBoard/
 ├── App/          # エントリーポイント（MainTabView）、カラーテーマ、外部URL定数
 ├── Models/       # SwiftData モデル（Sticker, Board, StickerPlacement, BackgroundPattern, StickerFilter, StickerBorder, SubscriptionProduct）
-├── Services/     # BackgroundRemover, MaskCompositor, ImageStorage, BackgroundImageStorage, ImageCacheManager, StickerFilterService, StickerBorderService, SubscriptionManager, MotionManager
+├── Services/     # BackgroundRemover, MaskCompositor, ImageStorage, BackgroundImageStorage, ImageCacheManager, StickerFilterService, StickerBorderService, SubscriptionManager, MotionManager, AppUpdateChecker
 └── Views/        # SwiftUI画面
     ├── Home/     # MainTabView（タブナビゲーション）、HomeView（ボード一覧カルーセル）
     ├── Onboarding/ # 初回起動オンボーディング（3ページガイド）
@@ -26,6 +26,13 @@ StickerBoard/
     └── Board/    # ボード編集・一覧
 StickerBoardTests/  # Swift Testing によるユニットテスト
 ```
+
+## ブランチ運用
+- **main**: 本番リリース用。直接コミットしない
+- **develop**: 開発統合ブランチ。機能開発・バグ修正はここにマージする
+- **feature/\*、fix/\***: develop から切って develop へマージする
+- リリース時に develop → main へマージしてデプロイ
+- PRのベースブランチはデフォルトで **develop** を使用する
 
 ## 開発コマンド
 ```bash
@@ -60,10 +67,17 @@ open StickerBoard.xcodeproj
 - 枠線（ボーダー）は StickerPlacement の borderWidthType / borderColorHex に保存し、フィルターと同様に配置単位で管理する設計
 - StickerBorderService は CIMorphologyMaximum でアルファマスクを膨張させて輪郭に沿った枠線を描画。フィルター適用後の画像に枠線を重ねる（描画順序: フィルター → 枠線）
 - ImageCacheManager の processed() メソッドがフィルター＋枠線の統合キャッシュを管理。キーは「fileName_filterType_borderWidth_borderColorHex」形式
-- ホログラフィック効果（HolographicEffectModifier）はリアルタイムのビューレベル効果であり、フィルター/ボーダーのような画像処理とは独立。CoreMotion のジャイロスコープ（MotionManager シングルトン）でデバイスの傾きに連動した3D回転・レインボーグラデーション・スペキュラハイライトを表示。シミュレータではフォールバックとして自動アニメーションを使用
+- ホログラフィック効果（HolographicEffectModifier）はリアルタイムのビューレベル効果であり、フィルター/ボーダーのような画像処理とは独立。CoreMotion のジャイロスコープ（MotionManager シングルトン）でデバイスの傾きに連動した3D回転・レインボーグラデーション・スペキュラハイライトを表示。シミュレータではフォールバックとして自動アニメーションを使用。`@Environment(\.accessibilityReduceMotion)` で「視差効果を減らす」設定時は3D回転・自動アニメーションを無効化し静的表示にフォールバック（WCAG 2.3.3準拠）
 - StickerBoardApp.init() で初回起動時（ボード0件）にデフォルトボード「はじめてのボード」を自動作成する
 - @AppStorage("hasCompletedOnboarding") で初回起動オンボーディングの表示制御。初回は .fullScreenCover で OnboardingView を表示し、完了後は非表示。HomeView のナビバー「?」ボタンから再表示可能
 - UIデザインルールは `.claude/rules/ui-design.md` を参照
 - サブスクリプション（StoreKit 2）: SubscriptionManager がシングルトンで購入状態を管理。StickerBoardApp.init() で早期初期化。UserDefaults に isProUser をキャッシュしてオフライン対応
 - フリーミアムモデル: 無料（シール30枚/ボード1枚/枠線なし・細/背景3種/ロゴ入り書き出し）、Pro（全制限解除）。「期待値駆動型ペイウォール」でプレミアム機能をプレビュー可能にし、適用・確定時にペイウォール表示
 - Products.storekit は Xcode の StoreKit Configuration Editor で編集すること（手動JSONは非推奨）。project.yml の schemes で StoreKit Configuration を自動設定済み
+- バンドルID: com.tebasaki.StickerBoard（project.yml で設定）
+- アプリ表示名: シールボード -デジタルシール帳-（CFBundleDisplayName）
+- ITSAppUsesNonExemptEncryption: NO（標準HTTPS通信のみ、App Store提出時の暗号化質問を省略）
+- 画面の向き: iPhone はポートレートのみ、iPad は全方向（iPad互換モードのマルチタスク対応に必要）
+- Xcode Cloud: mainブランチへのpushで自動ビルド→TestFlight配信。ci_scripts/ci_post_clone.sh で XcodeGen インストール＆プロジェクト生成を自動化
+- GitHub Actions: develop→mainのRelease PR自動作成（.github/workflows/auto-release-pr.yml）、mainマージ時にバージョンタグ＆GitHub Release自動作成（.github/workflows/auto-tag-release.yml）
+- AppUpdateChecker（Sendable シングルトン）がアプリ起動時に iTunes Lookup API でバージョンチェック。MainTabView の .task で呼び出し、24時間間隔で実行（@AppStorage("lastUpdateCheckDate")）。メジャーアップデートはスキップ不可（毎回表示）、マイナー/パッチは「あとで」でスキップ可能（@AppStorage("skippedVersion")）。ネットワークエラー時はサイレントにスキップし次回起動でリトライ

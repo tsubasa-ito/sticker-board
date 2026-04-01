@@ -95,6 +95,9 @@ struct MaskEditorView: View {
                  : "指でなぞって消しすぎた部分を復元します")
                 .font(.system(size: 12, weight: .medium, design: .rounded))
                 .foregroundStyle(.white.opacity(0.7))
+                .accessibilityLabel(brushMode == .eraser
+                    ? "操作ヒント: 指でなぞって不要な部分を消します"
+                    : "操作ヒント: 指でなぞって消しすぎた部分を復元します")
 
             BrushToolbar(
                 brushMode: $brushMode,
@@ -110,7 +113,9 @@ struct MaskEditorView: View {
 
     private var processingOverlay: some View {
         ZStack {
-            Color.black.opacity(0.5).ignoresSafeArea()
+            Color.black.opacity(0.5)
+                .ignoresSafeArea()
+                .accessibilityHidden(true)
             VStack(spacing: 12) {
                 ProgressView()
                     .controlSize(.large)
@@ -119,6 +124,9 @@ struct MaskEditorView: View {
                     .font(.system(size: 14, weight: .medium, design: .rounded))
                     .foregroundStyle(.white)
             }
+        }
+        .onAppear {
+            AccessibilityNotification.Announcement("合成しています").post()
         }
     }
 
