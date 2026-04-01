@@ -8,33 +8,25 @@ struct BoardShowcaseMediumView: View {
 
     var body: some View {
         if let image = entry.snapshotImage {
-            ZStack(alignment: .bottomLeading) {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFill()
+            GeometryReader { geo in
+                ZStack {
+                    // ボードの背景色でウィジェット全体を塗りつぶし
+                    Color(hex: 0xFAF0DE)
 
-                // ボトムグラデーション + タイトル
-                VStack {
-                    Spacer()
-                    HStack {
-                        Text(entry.boardTitle)
-                            .font(.system(size: 15, weight: .heavy, design: .rounded))
-                            .foregroundStyle(.white)
-                            .lineLimit(1)
-                            .shadow(color: .black.opacity(0.4), radius: 3, y: 1)
-                        Spacer()
-                    }
-                    .padding(.horizontal, 14)
-                    .padding(.bottom, 12)
-                    .background(
-                        LinearGradient(
-                            colors: [.clear, .black.opacity(0.5)],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                        .frame(height: 60)
-                        .offset(y: 10)
-                    )
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: geo.size.width, height: geo.size.height)
+                        .clipped()
+                }
+                .overlay(alignment: .bottomLeading) {
+                    Text(entry.boardTitle)
+                        .font(.system(size: 13, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.white)
+                        .lineLimit(1)
+                        .shadow(color: .black.opacity(0.5), radius: 3, y: 1)
+                        .padding(.horizontal, 12)
+                        .padding(.bottom, 10)
                 }
             }
         } else {
@@ -63,38 +55,43 @@ struct BoardShowcaseLargeView: View {
 
     var body: some View {
         if let image = entry.snapshotImage {
-            ZStack(alignment: .bottom) {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFill()
+            GeometryReader { geo in
+                ZStack {
+                    // ボードの背景色でウィジェット全体を塗りつぶし
+                    Color(hex: 0xFAF0DE)
 
-                // ボトムオーバーレイ
-                VStack {
-                    Spacer()
+                    // ボード全体を表示（切り取らない）
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: geo.size.width, height: geo.size.height)
+                }
+                .overlay(alignment: .bottomLeading) {
                     HStack(alignment: .bottom) {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(entry.boardTitle)
-                                .font(.system(size: 18, weight: .heavy, design: .rounded))
+                                .font(.system(size: 16, weight: .heavy, design: .rounded))
                                 .foregroundStyle(.white)
                                 .lineLimit(1)
-                                .shadow(color: .black.opacity(0.4), radius: 3, y: 1)
+                                .shadow(color: .black.opacity(0.5), radius: 3, y: 1)
 
                             Text("\(entry.stickerCount)枚のシール")
-                                .font(.system(size: 12, weight: .semibold, design: .rounded))
-                                .foregroundStyle(.white.opacity(0.8))
+                                .font(.system(size: 11, weight: .semibold, design: .rounded))
+                                .foregroundStyle(.white.opacity(0.85))
+                                .shadow(color: .black.opacity(0.4), radius: 2, y: 1)
                         }
                         Spacer()
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 14)
+                    .padding(.horizontal, 14)
+                    .padding(.bottom, 12)
                     .background(
                         LinearGradient(
-                            colors: [.clear, .black.opacity(0.5)],
+                            colors: [.clear, .black.opacity(0.4)],
                             startPoint: .top,
                             endPoint: .bottom
                         )
-                        .frame(height: 80)
-                        .offset(y: 14)
+                        .frame(height: 60)
+                        .offset(y: 12)
                     )
                 }
             }
