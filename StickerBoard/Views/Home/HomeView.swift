@@ -8,6 +8,7 @@ struct HomeView: View {
     private let newBoardCardID = "new-board"
 
     @Binding var hideTabBar: Bool
+    @Binding var deepLinkBoardId: UUID?
 
     @State private var showingNewBoard = false
     @State private var newBoardTitle = ""
@@ -111,6 +112,13 @@ struct HomeView: View {
                 animateIn = true
             }
         }
+        .onChange(of: deepLinkBoardId) {
+            guard let boardId = deepLinkBoardId else { return }
+            if let board = boards.first(where: { $0.id == boardId }) {
+                selectedBoard = board
+            }
+            deepLinkBoardId = nil
+        }
     }
 
     // MARK: - ボードカルーセル
@@ -210,7 +218,16 @@ struct HomeView: View {
                                 Divider()
 
                                 Button(role: .destructive) {
+                                    let deletedId = board.id
                                     modelContext.delete(board)
+                                    // ウィジェットから削除されたボードを除去
+                                    let remaining = boards.filter { $0.id != deletedId }.map { b in
+                                        WidgetDataSyncService.generateMetadata(
+                                            boardId: b.id, title: b.title,
+                                            stickerCount: b.placements.count, updatedAt: b.updatedAt
+                                        )
+                                    }
+                                    WidgetDataSyncService.removeBoard(boardId: deletedId, remainingMetadata: remaining)
                                 } label: {
                                     Label("削除", systemImage: "trash")
                                 }
@@ -502,7 +519,7 @@ private struct BoardCardBackground: View {
 
 #Preview {
     NavigationStack {
-        HomeView(hideTabBar: .constant(false))
+        HomeView(hideTabBar: .constant(false), deepLinkBoardId: .constant(nil))
     }
     .modelContainer(for: [Sticker.self, Board.self], inMemory: true)
 }

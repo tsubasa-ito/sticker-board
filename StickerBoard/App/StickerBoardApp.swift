@@ -5,6 +5,7 @@ import SwiftData
 struct StickerBoardApp: App {
     let container: ModelContainer
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @State private var deepLinkBoardId: UUID?
 
     init() {
         let container: ModelContainer
@@ -41,7 +42,7 @@ struct StickerBoardApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainTabView()
+            MainTabView(deepLinkBoardId: $deepLinkBoardId)
                 .fullScreenCover(isPresented: Binding(
                     get: { !hasCompletedOnboarding },
                     set: { _ in }
@@ -49,6 +50,9 @@ struct StickerBoardApp: App {
                     OnboardingView {
                         hasCompletedOnboarding = true
                     }
+                }
+                .onOpenURL { url in
+                    deepLinkBoardId = WidgetDataSyncService.parseBoardId(from: url)
                 }
         }
         .modelContainer(container)

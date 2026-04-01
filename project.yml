@@ -39,6 +39,31 @@ targets:
         INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait"
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        CODE_SIGN_ENTITLEMENTS: StickerBoard/StickerBoard.entitlements
+    dependencies:
+      - target: StickerBoardWidgetExtension
+        embed: true
+
+  StickerBoardWidgetExtension:
+    type: app-extension
+    platform: iOS
+    sources:
+      - StickerBoardWidget
+    info:
+      path: StickerBoardWidget/Info.plist
+      properties:
+        CFBundleDisplayName: "シールボード ウィジェット"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        CURRENT_PROJECT_VERSION: "1"
+        MARKETING_VERSION: "1.1.0"
+        PRODUCT_BUNDLE_IDENTIFIER: "com.tebasaki.StickerBoard.Widget"
+        CODE_SIGN_STYLE: Automatic
+        SWIFT_EMIT_LOC_STRINGS: YES
+        CODE_SIGN_ENTITLEMENTS: StickerBoardWidget/StickerBoardWidget.entitlements
+        TARGETED_DEVICE_FAMILY: "1"
 
   StickerBoardTests:
     type: bundle.unit-test
@@ -57,6 +82,7 @@ schemes:
     build:
       targets:
         StickerBoard: all
+        StickerBoardWidgetExtension: all
     run:
       config: Debug
       storeKitConfiguration: Products.storekit

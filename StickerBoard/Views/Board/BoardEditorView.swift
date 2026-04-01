@@ -606,6 +606,50 @@ struct BoardEditorView: View {
         board.placements = placements
         board.updatedAt = Date()
         try? modelContext.save()
+        syncBoardToWidget()
+    }
+
+    private func syncBoardToWidget() {
+        let currentBoard = board
+        let currentPlacements = sortedPlacements
+        let currentCanvasSize = canvasSize
+        let currentBgConfig = backgroundConfig
+        let currentCustomBgImage = customBackgroundImage
+
+        // 全ボードのメタデータを生成
+        let descriptor = FetchDescriptor<Board>(sortBy: [SortDescriptor(\Board.createdAt, order: .forward)])
+        guard let allBoards = try? modelContext.fetch(descriptor) else { return }
+        let allMetadata = allBoards.map { b in
+            WidgetDataSyncService.generateMetadata(
+                boardId: b.id,
+                title: b.title,
+                stickerCount: b.placements.count,
+                updatedAt: b.updatedAt
+            )
+        }
+
+        // スナップショット生成は非同期で実行
+        Task.detached {
+            let snapshotView = BoardSnapshotView(
+                placements: currentPlacements,
+                size: currentCanvasSize,
+                backgroundConfig: currentBgConfig,
+                customBackgroundImage: currentCustomBgImage,
+                showWatermark: false
+            )
+            let renderer = await ImageRenderer(content: snapshotView)
+            await MainActor.run { renderer.scale = 2.0 }
+            guard let image = await renderer.uiImage else { return }
+
+            WidgetDataSyncService.syncBoard(
+                boardId: currentBoard.id,
+                title: currentBoard.title,
+                stickerCount: currentPlacements.count,
+                updatedAt: currentBoard.updatedAt,
+                snapshotImage: image,
+                allBoardsMetadata: allMetadata
+            )
+        }
     }
 
     private func loadCustomBackgroundImage() {
@@ -683,9 +727,9 @@ private struct QuickPickThumbnail: View {
     }
 }
 
-// MARK: - ボードスナップショット（画像書き出し用）
+// MARK: - ボードスナップショット（画像書き出し・ウィジェット共有用）
 
-private struct BoardSnapshotView: View {
+struct BoardSnapshotView: View {
     let placements: [StickerPlacement]
     let size: CGSize
     var backgroundConfig: BackgroundPatternConfig = .default
