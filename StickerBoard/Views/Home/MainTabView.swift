@@ -25,6 +25,14 @@ struct MainTabView: View {
     @State private var hideTabBar = false
     @State private var libraryRefreshID = UUID()
 
+    // アップデートチェック
+    @State private var showUpdateAlert = false
+    @State private var latestVersion = ""
+    @State private var storeURL: URL?
+    @State private var isMajorUpdate = false
+    @AppStorage("skippedVersion") private var skippedVersion: String = ""
+    @AppStorage("lastUpdateCheckDate") private var lastUpdateCheckDate: Double = 0
+
     var body: some View {
         ZStack(alignment: .bottom) {
             ZStack {
@@ -56,6 +64,54 @@ struct MainTabView: View {
                     libraryRefreshID = UUID()
                 })
             }
+        }
+        .task {
+            await checkForAppUpdate()
+        }
+        .alert(
+            "アップデートのお知らせ",
+            isPresented: $showUpdateAlert
+        ) {
+            Button("アップデート") {
+                if let storeURL {
+                    UIApplication.shared.open(storeURL)
+                }
+            }
+            Button("あとで", role: .cancel) {
+                if !isMajorUpdate {
+                    skippedVersion = latestVersion
+                }
+            }
+        } message: {
+            if isMajorUpdate {
+                Text("重要なアップデート(\(latestVersion))が利用可能です。\n最新機能と改善をお楽しみください。")
+            } else {
+                Text("新しいバージョン(\(latestVersion))が利用可能です。\n最新機能をお楽しみください。")
+            }
+        }
+    }
+
+    // MARK: - アップデートチェック
+
+    private func checkForAppUpdate() async {
+        let checker = AppUpdateChecker.shared
+        guard checker.shouldCheckUpdate(lastCheckDate: lastUpdateCheckDate) else { return }
+
+        do {
+            if let info = try await checker.checkForUpdate() {
+                let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
+                let major = checker.isMajorUpdate(info.version, from: currentVersion)
+
+                if major || info.version != skippedVersion {
+                    latestVersion = info.version
+                    storeURL = info.storeURL
+                    isMajorUpdate = major
+                    showUpdateAlert = true
+                }
+            }
+            lastUpdateCheckDate = Date().timeIntervalSince1970
+        } catch {
+            // ネットワークエラー時はスキップし次回起動時にリトライ
         }
     }
 
