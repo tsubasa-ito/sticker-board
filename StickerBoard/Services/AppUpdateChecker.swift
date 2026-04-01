@@ -1,24 +1,23 @@
 import Foundation
 
-@MainActor
-final class AppUpdateChecker {
+final class AppUpdateChecker: Sendable {
     static let shared = AppUpdateChecker()
 
     private static let checkInterval: TimeInterval = 24 * 60 * 60 // 24時間
 
-    struct AppStoreInfo {
+    struct AppStoreInfo: Sendable {
         let version: String
         let storeURL: URL
     }
 
     // MARK: - iTunes Lookup API レスポンス
 
-    struct ITunesLookupResponse: Decodable {
+    struct ITunesLookupResponse: Decodable, Sendable {
         let resultCount: Int
         let results: [ITunesResult]
     }
 
-    struct ITunesResult: Decodable {
+    struct ITunesResult: Decodable, Sendable {
         let version: String
         let trackViewUrl: String
     }
@@ -52,7 +51,7 @@ final class AppUpdateChecker {
 
     // MARK: - バージョン比較
 
-    nonisolated func isNewerVersion(_ storeVersion: String, than currentVersion: String) -> Bool {
+    func isNewerVersion(_ storeVersion: String, than currentVersion: String) -> Bool {
         let storeParts = parseVersion(storeVersion)
         let currentParts = parseVersion(currentVersion)
 
@@ -65,7 +64,7 @@ final class AppUpdateChecker {
         return false
     }
 
-    nonisolated func isMajorUpdate(_ storeVersion: String, from currentVersion: String) -> Bool {
+    func isMajorUpdate(_ storeVersion: String, from currentVersion: String) -> Bool {
         let storeParts = parseVersion(storeVersion)
         let currentParts = parseVersion(currentVersion)
 
@@ -76,7 +75,7 @@ final class AppUpdateChecker {
 
     // MARK: - チェック間隔
 
-    nonisolated func shouldCheckUpdate(lastCheckDate: Double) -> Bool {
+    func shouldCheckUpdate(lastCheckDate: Double) -> Bool {
         guard lastCheckDate > 0 else { return true }
         let elapsed = Date().timeIntervalSince1970 - lastCheckDate
         return elapsed >= Self.checkInterval
@@ -84,7 +83,7 @@ final class AppUpdateChecker {
 
     // MARK: - アラート表示判定
 
-    nonisolated func shouldShowAlert(storeVersion: String, currentVersion: String, skippedVersion: String) -> Bool {
+    func shouldShowAlert(storeVersion: String, currentVersion: String, skippedVersion: String) -> Bool {
         guard isNewerVersion(storeVersion, than: currentVersion) else { return false }
 
         if isMajorUpdate(storeVersion, from: currentVersion) {
@@ -96,7 +95,7 @@ final class AppUpdateChecker {
 
     // MARK: - Private
 
-    private nonisolated func parseVersion(_ version: String) -> [Int] {
+    private func parseVersion(_ version: String) -> [Int] {
         version.split(separator: ".").compactMap { Int($0) }
     }
 }
