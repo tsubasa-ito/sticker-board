@@ -27,6 +27,7 @@ struct BoardEditorView: View {
     @State private var loadedImages: [UUID: UIImage] = [:]
     @State private var rebuildTask: Task<Void, Never>?
     @State private var updateTask: Task<Void, Never>?
+    @State private var widgetSyncTask: Task<Void, Never>?
 
     var body: some View {
         ZStack {
@@ -610,6 +611,9 @@ struct BoardEditorView: View {
     }
 
     private func syncBoardToWidget() {
+        // 前回の同期タスクをキャンセル（レースコンディション防止）
+        widgetSyncTask?.cancel()
+
         let currentBoard = board
         let currentPlacements = sortedPlacements
         let currentCanvasSize = canvasSize
@@ -628,8 +632,11 @@ struct BoardEditorView: View {
             )
         }
 
-        // スナップショット生成は非同期で実行
-        Task.detached {
+        // スナップショット生成は非同期で実行（前回タスクはキャンセル済み）
+        widgetSyncTask = Task.detached {
+            // キャンセル確認
+            guard !Task.isCancelled else { return }
+
             let snapshotView = BoardSnapshotView(
                 placements: currentPlacements,
                 size: currentCanvasSize,
@@ -639,6 +646,8 @@ struct BoardEditorView: View {
             )
             let renderer = await ImageRenderer(content: snapshotView)
             await MainActor.run { renderer.scale = 2.0 }
+
+            guard !Task.isCancelled else { return }
             guard let image = await renderer.uiImage else { return }
 
             WidgetDataSyncService.syncBoard(
