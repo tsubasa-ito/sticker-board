@@ -19,6 +19,7 @@ targets:
     platform: iOS
     sources:
       - StickerBoard
+      - Shared
       - path: Products.storekit
         optional: true
         buildPhase: none
@@ -50,6 +51,7 @@ targets:
     platform: iOS
     sources:
       - StickerBoardWidget
+      - Shared
     info:
       path: StickerBoardWidget/Info.plist
       properties:

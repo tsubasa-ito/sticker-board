@@ -4,12 +4,12 @@ import Foundation
 
 struct WidgetModelsTests {
 
-    // MARK: - BoardMetadata エンコード・デコード
+    // MARK: - SharedBoardMetadata エンコード・デコード
 
-    @Test func BoardMetadataをJSONエンコード・デコードできる() throws {
+    @Test func SharedBoardMetadataをJSONエンコード・デコードできる() throws {
         let id = UUID()
         let date = Date()
-        let metadata = BoardMetadata(
+        let metadata = SharedBoardMetadata(
             id: id.uuidString,
             title: "テストボード",
             stickerCount: 5,
@@ -23,7 +23,7 @@ struct WidgetModelsTests {
 
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        let decoded = try decoder.decode(BoardMetadata.self, from: data)
+        let decoded = try decoder.decode(SharedBoardMetadata.self, from: data)
 
         #expect(decoded.id == id.uuidString)
         #expect(decoded.title == "テストボード")
@@ -31,15 +31,15 @@ struct WidgetModelsTests {
         #expect(decoded.snapshotFileName == "\(id.uuidString).jpg")
     }
 
-    @Test func BoardMetadata配列をJSONエンコード・デコードできる() throws {
-        let metadata1 = BoardMetadata(
+    @Test func SharedBoardMetadata配列をJSONエンコード・デコードできる() throws {
+        let metadata1 = SharedBoardMetadata(
             id: UUID().uuidString,
             title: "ボード1",
             stickerCount: 3,
             updatedAt: Date(),
             snapshotFileName: "board1.jpg"
         )
-        let metadata2 = BoardMetadata(
+        let metadata2 = SharedBoardMetadata(
             id: UUID().uuidString,
             title: "ボード2",
             stickerCount: 0,
@@ -53,15 +53,15 @@ struct WidgetModelsTests {
 
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        let decoded = try decoder.decode([BoardMetadata].self, from: data)
+        let decoded = try decoder.decode([SharedBoardMetadata].self, from: data)
 
         #expect(decoded.count == 2)
         #expect(decoded[0].title == "ボード1")
         #expect(decoded[1].title == "ボード2")
     }
 
-    @Test func BoardMetadataのstickerCountが0の場合も正しくエンコードされる() throws {
-        let metadata = BoardMetadata(
+    @Test func SharedBoardMetadataのstickerCountが0の場合も正しくエンコードされる() throws {
+        let metadata = SharedBoardMetadata(
             id: UUID().uuidString,
             title: "空のボード",
             stickerCount: 0,
@@ -75,7 +75,7 @@ struct WidgetModelsTests {
 
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        let decoded = try decoder.decode(BoardMetadata.self, from: data)
+        let decoded = try decoder.decode(SharedBoardMetadata.self, from: data)
 
         #expect(decoded.stickerCount == 0)
         #expect(decoded.title == "空のボード")

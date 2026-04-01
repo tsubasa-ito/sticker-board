@@ -7,7 +7,7 @@ struct WidgetDataSyncServiceTests {
 
     // MARK: - メタデータ生成
 
-    @Test func generateMetadataで正しいBoardMetadataが生成される() {
+    @Test func generateMetadataで正しいSharedBoardMetadataが生成される() {
         let boardId = UUID()
         let updatedAt = Date()
         let metadata = WidgetDataSyncService.generateMetadata(
@@ -46,14 +46,14 @@ struct WidgetDataSyncServiceTests {
         defer { try? FileManager.default.removeItem(at: tempDir) }
 
         let metadata = [
-            BoardMetadata(
+            SharedBoardMetadata(
                 id: UUID().uuidString,
                 title: "ボード1",
                 stickerCount: 3,
                 updatedAt: Date(),
                 snapshotFileName: "board1.jpg"
             ),
-            BoardMetadata(
+            SharedBoardMetadata(
                 id: UUID().uuidString,
                 title: "ボード2",
                 stickerCount: 7,

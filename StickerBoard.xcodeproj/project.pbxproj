@@ -13,8 +13,8 @@
 		0AB95DB882B4D5509D6E229E /* OnboardingAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C772005BADEC8B242A0A39E8 /* OnboardingAccessibilityTests.swift */; };
 		10EB9C33B64B186C1DA9B7AC /* StickerFilterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44F094F53D9CC5028477F0F /* StickerFilterService.swift */; };
 		17F2CCB19526F58F4BCC6D04 /* OnboardingPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24DB2CADF1571137158B612F /* OnboardingPageView.swift */; };
-		1A06B40BF869ED352BE06378 /* WidgetModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1F582C72E4262997CA68569 /* WidgetModels.swift */; };
 		1A6D5B570ED5466E73AD8176 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32104833845A2ADD7C14A5F8 /* Board.swift */; };
+		1B9FD0643BE0A4621A5CFEEF /* SharedBoardMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27912520AF159D0D12135A2C /* SharedBoardMetadata.swift */; };
 		1EA00AE13C24C07F0760CC5B /* StickerFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3FC7C093763688E6344217F /* StickerFilter.swift */; };
 		239BFA049BCEBDA3E5B04875 /* WidgetModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C89501ABCC774418176436 /* WidgetModelsTests.swift */; };
 		23C844417020B51ED20D42AF /* StickerFilterServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B0FF96EE3690AFD3B800B6 /* StickerFilterServiceTests.swift */; };
@@ -25,6 +25,7 @@
 		2CB06ED23EB4FB1EA6B7C7CD /* BackgroundPatternTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54C1D00261EB4F86866F685A /* BackgroundPatternTests.swift */; };
 		304D7F34602544B702A146D8 /* BackgroundImageStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CA42CC44A656C4DE5FDD444 /* BackgroundImageStorage.swift */; };
 		33D1A0E16223FCAC8B67B99B /* UIImageExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 351900E2F8D31C115B9F755A /* UIImageExtensionTests.swift */; };
+		36E53A08C4668D5590BE46A1 /* SharedBoardMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27912520AF159D0D12135A2C /* SharedBoardMetadata.swift */; };
 		3C58A5E81DEC383139F9311A /* StickerFilterPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E07374D0724CABB84AC640D /* StickerFilterPickerView.swift */; };
 		3E7AC02052003DA43D669B47 /* MaskEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F51DD1916FC4B3337ADA86F /* MaskEditorView.swift */; };
 		416D0E1EC917ED9CBCFAACE4 /* BoardBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73436443E84517F0AAC3C265 /* BoardBackgroundView.swift */; };
@@ -50,6 +51,7 @@
 		91B6DD4664FB19D95590BC04 /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FFB83566A2BC0906338F77F /* SubscriptionManager.swift */; };
 		91F9C1053CEBEFD48083BA55 /* BoardShowcaseIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA79057C282BD3CE501F363 /* BoardShowcaseIntent.swift */; };
 		946C3EF198BC305C48293848 /* StickerCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D878D128C4599B9F13AD702 /* StickerCaptureView.swift */; };
+		98E01017AB164E7839FE687E /* SharedWidgetConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A9760F22EDD717B2205202 /* SharedWidgetConstants.swift */; };
 		9ADB3E6146D90A1ED01BA205 /* StickerPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F0053CD2C5B7ABC5FC4A01 /* StickerPlacement.swift */; };
 		9B6AE8CDABF573157738B32A /* Sticker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6B638736BE2DE98C1C08D4B /* Sticker.swift */; };
 		9F18F7BCD225FCCA7127FFEF /* ImageStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE93838BF2C08278A3401AE /* ImageStorage.swift */; };
@@ -65,7 +67,6 @@
 		BDC24ACEB8628C05167A1914 /* PaywallAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2647DE31B6EC1A661584CC /* PaywallAccessibilityTests.swift */; };
 		BDD4B606C0138C4D7142458D /* StickerItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF271962CA9EF750652A353 /* StickerItemView.swift */; };
 		BED979FE590B8C4D2ECA17E5 /* BoardShowcaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D580E04D977AE3825B222BDA /* BoardShowcaseView.swift */; };
-		BFDB163C65FAE2BB3F581C55 /* BoardMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EFE8DAE337B2929CD4085E3 /* BoardMetadata.swift */; };
 		C2AF5B0E2BFAC184CC8279FA /* StickerBorderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276A77B1063731059420BB58 /* StickerBorderTests.swift */; };
 		C4460E2AC4B0A01446BD3666 /* StickerLibraryAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6E414C38C81FDD95EBC2EE /* StickerLibraryAccessibilityTests.swift */; };
 		C98D76F680578FBA369FBE52 /* AccessibilityRuleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDF2A8C549FCAF35D5DD828 /* AccessibilityRuleTests.swift */; };
@@ -73,6 +74,7 @@
 		CD7F900D42AEFF5E5C1C652F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F297348DD96E3A76B8648C82 /* SettingsView.swift */; };
 		CEE293526AD847B540BF5EC7 /* BoardListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C5DFE900836F1D943C5CFB /* BoardListView.swift */; };
 		CFAF3F2916CACA75DED85E2C /* BackgroundRemover.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5D9FFAB2F480D8D2327E386 /* BackgroundRemover.swift */; };
+		D3B1EF1295C599E94649232E /* SharedWidgetConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A9760F22EDD717B2205202 /* SharedWidgetConstants.swift */; };
 		D4E664769E3A40050B09AA6A /* BackgroundPatternPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CE8160539FD33AFF7809C92 /* BackgroundPatternPickerView.swift */; };
 		D741DBFD1F632B3907AE5F50 /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1211D3F280555E23A6562B3 /* ImageCacheManager.swift */; };
 		D8FB4DBA0430E40FCFD3F87F /* StickerFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A215C34AD5CB548459350358 /* StickerFilterTests.swift */; };
@@ -133,11 +135,13 @@
 		25715A103AD977A60A5C825C /* Products.storekit */ = {isa = PBXFileReference; path = Products.storekit; sourceTree = "<group>"; };
 		259987BEAF660FD74A7333A2 /* BoardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardTests.swift; sourceTree = "<group>"; };
 		276A77B1063731059420BB58 /* StickerBorderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerBorderTests.swift; sourceTree = "<group>"; };
+		27912520AF159D0D12135A2C /* SharedBoardMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedBoardMetadata.swift; sourceTree = "<group>"; };
 		285EEB7B80609E9E695A678B /* SubscriptionProduct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionProduct.swift; sourceTree = "<group>"; };
 		2BAF06066174FD79C8F5DAD8 /* AppUpdateCheckerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdateCheckerTests.swift; sourceTree = "<group>"; };
 		2C2647DE31B6EC1A661584CC /* PaywallAccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallAccessibilityTests.swift; sourceTree = "<group>"; };
 		2C9A3FC5FB8145015E1952AD /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		32104833845A2ADD7C14A5F8 /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
+		33A9760F22EDD717B2205202 /* SharedWidgetConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedWidgetConstants.swift; sourceTree = "<group>"; };
 		351900E2F8D31C115B9F755A /* UIImageExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtensionTests.swift; sourceTree = "<group>"; };
 		37C5DFE900836F1D943C5CFB /* BoardListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardListView.swift; sourceTree = "<group>"; };
 		3834BB169411132599770224 /* HolographicEffectModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HolographicEffectModifier.swift; sourceTree = "<group>"; };
@@ -167,7 +171,6 @@
 		8CA42CC44A656C4DE5FDD444 /* BackgroundImageStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundImageStorage.swift; sourceTree = "<group>"; };
 		98F3C1F87DFC6BE33492062C /* StickerBoard.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = StickerBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B695157C87669CCB70690F4 /* StickerBoardTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = StickerBoardTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		9EFE8DAE337B2929CD4085E3 /* BoardMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardMetadata.swift; sourceTree = "<group>"; };
 		9F51DD1916FC4B3337ADA86F /* MaskEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaskEditorView.swift; sourceTree = "<group>"; };
 		9FFB83566A2BC0906338F77F /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
 		A215C34AD5CB548459350358 /* StickerFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerFilterTests.swift; sourceTree = "<group>"; };
@@ -183,7 +186,6 @@
 		BCDBB451BECC869CD24CAF7B /* SubscriptionProductTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionProductTests.swift; sourceTree = "<group>"; };
 		BE45BBB2C51CC68C9B0C8EBB /* MotionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionManager.swift; sourceTree = "<group>"; };
 		C1211D3F280555E23A6562B3 /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
-		C1F582C72E4262997CA68569 /* WidgetModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetModels.swift; sourceTree = "<group>"; };
 		C772005BADEC8B242A0A39E8 /* OnboardingAccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingAccessibilityTests.swift; sourceTree = "<group>"; };
 		C94311FE1E30296BB608F927 /* SharedCIContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedCIContext.swift; sourceTree = "<group>"; };
 		CBF271962CA9EF750652A353 /* StickerItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerItemView.swift; sourceTree = "<group>"; };
@@ -234,7 +236,6 @@
 			children = (
 				CEC1436F39A4162AD412D53A /* BackgroundPattern.swift */,
 				32104833845A2ADD7C14A5F8 /* Board.swift */,
-				9EFE8DAE337B2929CD4085E3 /* BoardMetadata.swift */,
 				F6B638736BE2DE98C1C08D4B /* Sticker.swift */,
 				19E5D6F908EE947CC125BAC4 /* StickerBorder.swift */,
 				A3FC7C093763688E6344217F /* StickerFilter.swift */,
@@ -300,6 +301,15 @@
 			path = Board;
 			sourceTree = "<group>";
 		};
+		79B6FC00FEFFD9A3235C8AC1 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				27912520AF159D0D12135A2C /* SharedBoardMetadata.swift */,
+				33A9760F22EDD717B2205202 /* SharedWidgetConstants.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
 		82217834547736AB42A4F71C /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -343,6 +353,7 @@
 			isa = PBXGroup;
 			children = (
 				25715A103AD977A60A5C825C /* Products.storekit */,
+				79B6FC00FEFFD9A3235C8AC1 /* Shared */,
 				C8D8999A6C7ED8E315EA643F /* StickerBoard */,
 				EC3FAF1E5DC66024EFC64D5B /* StickerBoardTests */,
 				442EB1419FE9DA39FC059D7B /* StickerBoardWidget */,
@@ -401,7 +412,6 @@
 			isa = PBXGroup;
 			children = (
 				B705C9966BB0F482903B62FE /* WidgetDataManager.swift */,
-				C1F582C72E4262997CA68569 /* WidgetModels.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -563,7 +573,6 @@
 				416D0E1EC917ED9CBCFAACE4 /* BoardBackgroundView.swift in Sources */,
 				51EDBBD61C732A65999AA9E4 /* BoardEditorView.swift in Sources */,
 				CEE293526AD847B540BF5EC7 /* BoardListView.swift in Sources */,
-				BFDB163C65FAE2BB3F581C55 /* BoardMetadata.swift in Sources */,
 				4724B638CB65A0DBF4794EC7 /* BrushToolbar.swift in Sources */,
 				720B355DF1F2E16DA0D57E85 /* CameraView.swift in Sources */,
 				E7FAA9CC64A91CCE9076AE66 /* CaptureGuideTipsView.swift in Sources */,
@@ -582,7 +591,9 @@
 				EC5591236152676EACAFE16E /* OnboardingView.swift in Sources */,
 				EFE200E232D91B33BA4352C6 /* PaywallView.swift in Sources */,
 				CD7F900D42AEFF5E5C1C652F /* SettingsView.swift in Sources */,
+				36E53A08C4668D5590BE46A1 /* SharedBoardMetadata.swift in Sources */,
 				8124DEAC93C46FA70F835CF0 /* SharedCIContext.swift in Sources */,
+				98E01017AB164E7839FE687E /* SharedWidgetConstants.swift in Sources */,
 				9B6AE8CDABF573157738B32A /* Sticker.swift in Sources */,
 				564A5D5F41AB5B43E4103611 /* StickerBoardApp.swift in Sources */,
 				B361D0D57A3AB393E69DA39C /* StickerBorder.swift in Sources */,
@@ -641,9 +652,10 @@
 				91F9C1053CEBEFD48083BA55 /* BoardShowcaseIntent.swift in Sources */,
 				BED979FE590B8C4D2ECA17E5 /* BoardShowcaseView.swift in Sources */,
 				F675B7EB9755F383AB8E0FA9 /* BoardShowcaseWidget.swift in Sources */,
+				1B9FD0643BE0A4621A5CFEEF /* SharedBoardMetadata.swift in Sources */,
+				D3B1EF1295C599E94649232E /* SharedWidgetConstants.swift in Sources */,
 				03B4E3F546E6911F51CF07BC /* StickerBoardWidgetBundle.swift in Sources */,
 				A2C99DBAA8B716918E186B09 /* WidgetDataManager.swift in Sources */,
-				1A06B40BF869ED352BE06378 /* WidgetModels.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

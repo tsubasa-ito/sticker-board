@@ -1,7 +1,7 @@
 import Foundation
 
 /// ウィジェットとメインアプリ間で共有するボードメタデータ
-struct WidgetBoardMetadata: Codable, Sendable {
+struct SharedBoardMetadata: Codable, Sendable {
     let id: String
     let title: String
     let stickerCount: Int
