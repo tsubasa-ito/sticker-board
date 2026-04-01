@@ -52,11 +52,13 @@ final class AppUpdateChecker: Sendable {
         let storeParts = parseVersion(storeVersion)
         let currentParts = parseVersion(currentVersion)
 
-        guard storeParts.count == 3, currentParts.count == 3 else { return false }
+        guard !storeParts.isEmpty, !currentParts.isEmpty else { return false }
 
-        for i in 0..<3 {
-            if storeParts[i] > currentParts[i] { return true }
-            if storeParts[i] < currentParts[i] { return false }
+        for i in 0..<max(storeParts.count, currentParts.count) {
+            let storePart = i < storeParts.count ? storeParts[i] : 0
+            let currentPart = i < currentParts.count ? currentParts[i] : 0
+            if storePart > currentPart { return true }
+            if storePart < currentPart { return false }
         }
         return false
     }
@@ -65,9 +67,7 @@ final class AppUpdateChecker: Sendable {
         let storeParts = parseVersion(storeVersion)
         let currentParts = parseVersion(currentVersion)
 
-        guard storeParts.count == 3, currentParts.count == 3 else { return false }
-
-        return storeParts[0] > currentParts[0]
+        return (storeParts.first ?? 0) > (currentParts.first ?? 0)
     }
 
     // MARK: - チェック間隔

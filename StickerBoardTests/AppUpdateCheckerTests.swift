@@ -43,6 +43,14 @@ struct AppUpdateCheckerTests {
         #expect(checker.isNewerVersion("", than: "1.0.0") == false)
     }
 
+    @Test func 可変長バージョン文字列を比較できる() {
+        let checker = AppUpdateChecker.shared
+
+        #expect(checker.isNewerVersion("1.1", than: "1.0") == true)
+        #expect(checker.isNewerVersion("1.0.0.1", than: "1.0.0") == true)
+        #expect(checker.isNewerVersion("1.0", than: "1.0.0") == false)
+    }
+
     // MARK: - isMajorUpdate
 
     @Test func メジャーアップデートを正しく検出する() {
@@ -70,6 +78,13 @@ struct AppUpdateCheckerTests {
 
         #expect(checker.isMajorUpdate("invalid", from: "1.0.0") == false)
         #expect(checker.isMajorUpdate("2.0.0", from: "invalid") == false)
+    }
+
+    @Test func 可変長バージョンでメジャー判定できる() {
+        let checker = AppUpdateChecker.shared
+
+        #expect(checker.isMajorUpdate("2.0", from: "1.0") == true)
+        #expect(checker.isMajorUpdate("1.1", from: "1.0") == false)
     }
 
     // MARK: - shouldCheckUpdate (24時間間隔)
