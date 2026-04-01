@@ -24,29 +24,26 @@ final class AppUpdateChecker: Sendable {
 
     // MARK: - バージョンチェック
 
-    func checkForUpdate() async -> AppStoreInfo? {
-        let urlString = "https://itunes.apple.com/lookup?bundleId=com.tebasaki.StickerBoard&country=jp"
+    func checkForUpdate() async throws -> AppStoreInfo? {
+        let bundleID = Bundle.main.bundleIdentifier ?? "com.tebasaki.StickerBoard"
+        let urlString = "https://itunes.apple.com/lookup?bundleId=\(bundleID)&country=jp"
         guard let url = URL(string: urlString) else { return nil }
 
-        do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            let response = try JSONDecoder().decode(ITunesLookupResponse.self, from: data)
+        let (data, _) = try await URLSession.shared.data(from: url)
+        let response = try JSONDecoder().decode(ITunesLookupResponse.self, from: data)
 
-            guard let result = response.results.first,
-                  let storeURL = URL(string: result.trackViewUrl) else {
-                return nil
-            }
-
-            let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
-
-            guard isNewerVersion(result.version, than: currentVersion) else {
-                return nil
-            }
-
-            return AppStoreInfo(version: result.version, storeURL: storeURL)
-        } catch {
+        guard let result = response.results.first,
+              let storeURL = URL(string: result.trackViewUrl) else {
             return nil
         }
+
+        let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
+
+        guard isNewerVersion(result.version, than: currentVersion) else {
+            return nil
+        }
+
+        return AppStoreInfo(version: result.version, storeURL: storeURL)
     }
 
     // MARK: - バージョン比較
