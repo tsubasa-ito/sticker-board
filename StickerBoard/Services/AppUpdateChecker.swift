@@ -67,7 +67,9 @@ final class AppUpdateChecker: Sendable {
         let storeParts = parseVersion(storeVersion)
         let currentParts = parseVersion(currentVersion)
 
-        return (storeParts.first ?? 0) > (currentParts.first ?? 0)
+        guard !storeParts.isEmpty, !currentParts.isEmpty else { return false }
+
+        return storeParts[0] > currentParts[0]
     }
 
     // MARK: - チェック間隔

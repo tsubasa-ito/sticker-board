@@ -95,26 +95,24 @@ struct MainTabView: View {
 
     private func checkForAppUpdate() async {
         let checker = AppUpdateChecker.shared
-
         guard checker.shouldCheckUpdate(lastCheckDate: lastUpdateCheckDate) else { return }
 
-        guard let info = await checker.checkForUpdate() else { return }
+        do {
+            if let info = try await checker.checkForUpdate() {
+                let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
+                let major = checker.isMajorUpdate(info.version, from: currentVersion)
 
-        lastUpdateCheckDate = Date().timeIntervalSince1970
-
-        let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
-        let major = checker.isMajorUpdate(info.version, from: currentVersion)
-
-        guard checker.shouldShowAlert(
-            storeVersion: info.version,
-            currentVersion: currentVersion,
-            skippedVersion: skippedVersion
-        ) else { return }
-
-        latestVersion = info.version
-        storeURL = info.storeURL
-        isMajorUpdate = major
-        showUpdateAlert = true
+                if major || info.version != skippedVersion {
+                    latestVersion = info.version
+                    storeURL = info.storeURL
+                    isMajorUpdate = major
+                    showUpdateAlert = true
+                }
+            }
+            lastUpdateCheckDate = Date().timeIntervalSince1970
+        } catch {
+            // ネットワークエラー時はスキップし次回起動時にリトライ
+        }
     }
 
     // MARK: - フローティングタブバー
