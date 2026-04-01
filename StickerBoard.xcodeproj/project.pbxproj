@@ -15,6 +15,7 @@
 		1A6D5B570ED5466E73AD8176 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32104833845A2ADD7C14A5F8 /* Board.swift */; };
 		1EA00AE13C24C07F0760CC5B /* StickerFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3FC7C093763688E6344217F /* StickerFilter.swift */; };
 		23C844417020B51ED20D42AF /* StickerFilterServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B0FF96EE3690AFD3B800B6 /* StickerFilterServiceTests.swift */; };
+		25745C4F441381F490112536 /* AppUpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBDA121148C553378F3C860 /* AppUpdateChecker.swift */; };
 		2879C41569C30BC9D3D460E5 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BF7C58976D7F4A010B330FC /* HomeView.swift */; };
 		29094CE9A81C80A82A9FE337 /* StickerBorderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABCD1438794D34A642F45B93 /* StickerBorderService.swift */; };
 		2B1517B2E5E84806CB242F6C /* MaskCompositorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82762278F79270BA92FD3D38 /* MaskCompositorTests.swift */; };
@@ -52,6 +53,7 @@
 		B361D0D57A3AB393E69DA39C /* StickerBorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E5D6F908EE947CC125BAC4 /* StickerBorder.swift */; };
 		B4AA40A530C03F83FF775E31 /* BackgroundPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC1436F39A4162AD412D53A /* BackgroundPattern.swift */; };
 		B96495C34AE5425881B553FB /* BoardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259987BEAF660FD74A7333A2 /* BoardTests.swift */; };
+		BD758AE1F44F9E566222251D /* AppUpdateCheckerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BAF06066174FD79C8F5DAD8 /* AppUpdateCheckerTests.swift */; };
 		BDC24ACEB8628C05167A1914 /* PaywallAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2647DE31B6EC1A661584CC /* PaywallAccessibilityTests.swift */; };
 		BDD4B606C0138C4D7142458D /* StickerItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF271962CA9EF750652A353 /* StickerItemView.swift */; };
 		C2AF5B0E2BFAC184CC8279FA /* StickerBorderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276A77B1063731059420BB58 /* StickerBorderTests.swift */; };
@@ -99,6 +101,7 @@
 		259987BEAF660FD74A7333A2 /* BoardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardTests.swift; sourceTree = "<group>"; };
 		276A77B1063731059420BB58 /* StickerBorderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerBorderTests.swift; sourceTree = "<group>"; };
 		285EEB7B80609E9E695A678B /* SubscriptionProduct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionProduct.swift; sourceTree = "<group>"; };
+		2BAF06066174FD79C8F5DAD8 /* AppUpdateCheckerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdateCheckerTests.swift; sourceTree = "<group>"; };
 		2C2647DE31B6EC1A661584CC /* PaywallAccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallAccessibilityTests.swift; sourceTree = "<group>"; };
 		2C9A3FC5FB8145015E1952AD /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		32104833845A2ADD7C14A5F8 /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
@@ -132,6 +135,7 @@
 		B03A91B141329E13EDBEAE9A /* StickerPlacementTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerPlacementTests.swift; sourceTree = "<group>"; };
 		B201CDCE2F666FBBD15D4F72 /* CaptureGuideTipsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureGuideTipsView.swift; sourceTree = "<group>"; };
 		B8B41B23D775F8487A3B361B /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
+		BCBDA121148C553378F3C860 /* AppUpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdateChecker.swift; sourceTree = "<group>"; };
 		BCDBB451BECC869CD24CAF7B /* SubscriptionProductTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionProductTests.swift; sourceTree = "<group>"; };
 		BE45BBB2C51CC68C9B0C8EBB /* MotionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionManager.swift; sourceTree = "<group>"; };
 		C1211D3F280555E23A6562B3 /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
@@ -249,6 +253,7 @@
 		9942628F63D59859340644CA /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				BCBDA121148C553378F3C860 /* AppUpdateChecker.swift */,
 				8CA42CC44A656C4DE5FDD444 /* BackgroundImageStorage.swift */,
 				E5D9FFAB2F480D8D2327E386 /* BackgroundRemover.swift */,
 				C1211D3F280555E23A6562B3 /* ImageCacheManager.swift */,
@@ -323,6 +328,7 @@
 			isa = PBXGroup;
 			children = (
 				AFDF2A8C549FCAF35D5DD828 /* AccessibilityRuleTests.swift */,
+				2BAF06066174FD79C8F5DAD8 /* AppUpdateCheckerTests.swift */,
 				795F7B5B94087F04001DE523 /* BackgroundImageStorageTests.swift */,
 				54C1D00261EB4F86866F685A /* BackgroundPatternTests.swift */,
 				453EB379EB98A3F0EDA2660F /* BoardAccessibilityTests.swift */,
@@ -439,6 +445,7 @@
 			files = (
 				E2D14D4429193D3C436BA5D2 /* AppTheme.swift in Sources */,
 				08ADD0896E6540848CAB00C7 /* AppURLs.swift in Sources */,
+				25745C4F441381F490112536 /* AppUpdateChecker.swift in Sources */,
 				304D7F34602544B702A146D8 /* BackgroundImageStorage.swift in Sources */,
 				B4AA40A530C03F83FF775E31 /* BackgroundPattern.swift in Sources */,
 				D4E664769E3A40050B09AA6A /* BackgroundPatternPickerView.swift in Sources */,
@@ -489,6 +496,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C98D76F680578FBA369FBE52 /* AccessibilityRuleTests.swift in Sources */,
+				BD758AE1F44F9E566222251D /* AppUpdateCheckerTests.swift in Sources */,
 				54189D617D853C9D06F172AE /* BackgroundImageStorageTests.swift in Sources */,
 				2CB06ED23EB4FB1EA6B7C7CD /* BackgroundPatternTests.swift in Sources */,
 				E4535CB2569518D2A9E42749 /* BoardAccessibilityTests.swift in Sources */,
