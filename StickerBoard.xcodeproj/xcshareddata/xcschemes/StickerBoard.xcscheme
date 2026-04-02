@@ -21,6 +21,20 @@
                ReferencedContainer = "container:StickerBoard.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "E6863102A9D6F5B44450D9F3"
+               BuildableName = "StickerBoardWidgetExtension.appex"
+               BlueprintName = "StickerBoardWidgetExtension"
+               ReferencedContainer = "container:StickerBoard.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

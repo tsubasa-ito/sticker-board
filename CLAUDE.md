@@ -8,6 +8,7 @@
 - Vision Framework（背景除去: VNGenerateForegroundInstanceMaskRequest）
 - SwiftData（ローカルDB）
 - StoreKit 2（自動更新サブスクリプション）
+- WidgetKit + AppIntentConfiguration（ボードショーケースウィジェット）
 - XcodeGen（project.yml からプロジェクト生成）
 
 ## プロジェクト構成
@@ -15,7 +16,7 @@
 StickerBoard/
 ├── App/          # エントリーポイント（MainTabView）、カラーテーマ、外部URL定数
 ├── Models/       # SwiftData モデル（Sticker, Board, StickerPlacement, BackgroundPattern, StickerFilter, StickerBorder, SubscriptionProduct）
-├── Services/     # BackgroundRemover, MaskCompositor, ImageStorage, BackgroundImageStorage, ImageCacheManager, StickerFilterService, StickerBorderService, SubscriptionManager, MotionManager, AppUpdateChecker
+├── Services/     # BackgroundRemover, MaskCompositor, ImageStorage, BackgroundImageStorage, ImageCacheManager, StickerFilterService, StickerBorderService, SubscriptionManager, MotionManager, AppUpdateChecker, WidgetDataSyncService
 └── Views/        # SwiftUI画面
     ├── Home/     # MainTabView（タブナビゲーション）、HomeView（ボード一覧カルーセル）
     ├── Onboarding/ # 初回起動オンボーディング（3ページガイド）
@@ -24,6 +25,8 @@ StickerBoard/
     ├── Paywall/  # ペイウォール（Pro課金導線）
     ├── Settings/ # 設定画面（サブスクリプション管理）
     └── Board/    # ボード編集・一覧
+Shared/             # メインアプリ・ウィジェット間の共有コード（SharedBoardMetadata, SharedWidgetConstants）
+StickerBoardWidget/ # Widget Extension（ボードショーケースウィジェット）
 StickerBoardTests/  # Swift Testing によるユニットテスト
 ```
 
@@ -80,4 +83,8 @@ open StickerBoard.xcodeproj
 - 画面の向き: iPhone はポートレートのみ、iPad は全方向（iPad互換モードのマルチタスク対応に必要）
 - Xcode Cloud: mainブランチへのpushで自動ビルド→TestFlight配信。ci_scripts/ci_post_clone.sh で XcodeGen インストール＆プロジェクト生成を自動化
 - GitHub Actions: develop→mainのRelease PR自動作成（.github/workflows/auto-release-pr.yml）、mainマージ時にバージョンタグ＆GitHub Release自動作成（.github/workflows/auto-tag-release.yml）
+- WidgetKit: App Group（`group.com.tebasaki.StickerBoard`）でメインアプリ⇔ウィジェット間のデータ共有。スナップショット画像（JPEG）とメタデータJSON（`boards_meta.json`）を `AppGroup/WidgetData/` に保存。ボード保存時に `WidgetDataSyncService.syncBoard()` → `WidgetCenter.reloadTimelines()` で自動更新
+- ディープリンク: `stickerboard://board/{boardId}` でウィジェットタップ → ボード編集画面に直接遷移。StickerBoardApp の `.onOpenURL` でハンドリング
+- `Shared/` ディレクトリのファイルはメインアプリ・ウィジェット両ターゲットに含まれる（project.yml の sources で指定）。共有型や定数はここに配置する
+- Widget Extension（`StickerBoardWidgetExtension`）は `AppIntentConfiguration` でボード選択。`BoardEntity` が `AppEntity` として機能する
 - AppUpdateChecker（Sendable シングルトン）がアプリ起動時に iTunes Lookup API でバージョンチェック。MainTabView の .task で呼び出し、24時間間隔で実行（@AppStorage("lastUpdateCheckDate")）。メジャーアップデートはスキップ不可（毎回表示）、マイナー/パッチは「あとで」でスキップ可能（@AppStorage("skippedVersion")）。ネットワークエラー時はサイレントにスキップし次回起動でリトライ

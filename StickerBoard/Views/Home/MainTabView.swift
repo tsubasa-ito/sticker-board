@@ -20,6 +20,8 @@ struct MainTabView: View {
         }
     }
 
+    @Binding var deepLinkBoardId: UUID?
+
     @State private var selectedTab: Tab = .home
     @State private var showCapture = false
     @State private var hideTabBar = false
@@ -37,7 +39,7 @@ struct MainTabView: View {
         ZStack(alignment: .bottom) {
             ZStack {
                 NavigationStack {
-                    HomeView(hideTabBar: $hideTabBar)
+                    HomeView(hideTabBar: $hideTabBar, deepLinkBoardId: $deepLinkBoardId)
                 }
                 .opacity(selectedTab == .home ? 1 : 0)
                 .allowsHitTesting(selectedTab == .home)
@@ -67,6 +69,11 @@ struct MainTabView: View {
         }
         .task {
             await checkForAppUpdate()
+        }
+        .onChange(of: deepLinkBoardId) {
+            if deepLinkBoardId != nil {
+                selectedTab = .home
+            }
         }
         .alert(
             "アップデートのお知らせ",
