@@ -1,21 +1,36 @@
 import UIKit
+import os
 import WidgetKit
 
 /// メインアプリからウィジェットへのデータ同期を管理する
 enum WidgetDataSyncService {
 
+    private static let logger = Logger(subsystem: "com.tebasaki.StickerBoard", category: "WidgetSync")
+
     // MARK: - App Group ディレクトリ
 
     /// App Group の共有コンテナURL
     static var containerURL: URL? {
-        FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: SharedWidgetConstants.appGroupID)
+        let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: SharedWidgetConstants.appGroupID)
+        if url == nil {
+            logger.error("App Group container is unavailable. Verify entitlement for: \(SharedWidgetConstants.appGroupID)")
+            #if DEBUG
+            assertionFailure("[WidgetSync] App Group container URL is nil -- check entitlements")
+            #endif
+        }
+        return url
     }
 
     /// ウィジェットデータのルートディレクトリ
     static var widgetDataURL: URL? {
         guard let container = containerURL else { return nil }
         let url = container.appendingPathComponent(SharedWidgetConstants.widgetDataDirectory, isDirectory: true)
-        try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+        do {
+            try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+        } catch {
+            logger.error("Failed to create widget data directory: \(error.localizedDescription)")
+            return nil
+        }
         return url
     }
 
@@ -23,7 +38,12 @@ enum WidgetDataSyncService {
     static var snapshotsURL: URL? {
         guard let widgetData = widgetDataURL else { return nil }
         let url = widgetData.appendingPathComponent(SharedWidgetConstants.snapshotsDirectory, isDirectory: true)
-        try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+        do {
+            try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+        } catch {
+            logger.error("Failed to create snapshots directory: \(error.localizedDescription)")
+            return nil
+        }
         return url
     }
 
@@ -81,7 +101,13 @@ enum WidgetDataSyncService {
 
     /// スナップショット画像を削除する
     static func deleteSnapshot(at url: URL) {
-        try? FileManager.default.removeItem(at: url)
+        do {
+            try FileManager.default.removeItem(at: url)
+        } catch let error as NSError where error.domain == NSCocoaErrorDomain && error.code == NSFileNoSuchFileError {
+            // ファイルが既に削除済み: 正常
+        } catch {
+            logger.warning("Failed to delete snapshot at \(url.lastPathComponent): \(error.localizedDescription)")
+        }
     }
 
     // MARK: - 同期メソッド（メインアプリから呼び出す）
@@ -96,7 +122,10 @@ enum WidgetDataSyncService {
         allBoardsMetadata: [SharedBoardMetadata]
     ) {
         guard let snapshotsDir = snapshotsURL,
-              let metaURL = metadataURL else { return }
+              let metaURL = metadataURL else {
+            logger.error("Cannot sync board: App Group directories unavailable")
+            return
+        }
 
         let snapshotURL = snapshotsDir.appendingPathComponent("\(boardId.uuidString).jpg")
 
@@ -105,25 +134,31 @@ enum WidgetDataSyncService {
             try writeMetadataJSON(allBoardsMetadata, to: metaURL)
             WidgetCenter.shared.reloadTimelines(ofKind: SharedWidgetConstants.widgetKind)
         } catch {
-            print("[WidgetSync] Failed to sync board: \(error)")
+            logger.error("Failed to sync board \(boardId.uuidString): \(error.localizedDescription)")
         }
     }
 
     /// 全ボードのメタデータを一括同期する
     static func syncAllMetadata(_ metadata: [SharedBoardMetadata]) {
-        guard let metaURL = metadataURL else { return }
+        guard let metaURL = metadataURL else {
+            logger.error("Cannot sync metadata: App Group directories unavailable")
+            return
+        }
         do {
             try writeMetadataJSON(metadata, to: metaURL)
             WidgetCenter.shared.reloadTimelines(ofKind: SharedWidgetConstants.widgetKind)
         } catch {
-            print("[WidgetSync] Failed to sync metadata: \(error)")
+            logger.error("Failed to sync metadata: \(error.localizedDescription)")
         }
     }
 
     /// 削除されたボードのスナップショットをクリーンアップする
     static func removeBoard(boardId: UUID, remainingMetadata: [SharedBoardMetadata]) {
         guard let snapshotsDir = snapshotsURL,
-              let metaURL = metadataURL else { return }
+              let metaURL = metadataURL else {
+            logger.error("Cannot remove board: App Group directories unavailable")
+            return
+        }
 
         let snapshotURL = snapshotsDir.appendingPathComponent("\(boardId.uuidString).jpg")
         deleteSnapshot(at: snapshotURL)
@@ -132,7 +167,7 @@ enum WidgetDataSyncService {
             try writeMetadataJSON(remainingMetadata, to: metaURL)
             WidgetCenter.shared.reloadTimelines(ofKind: SharedWidgetConstants.widgetKind)
         } catch {
-            print("[WidgetSync] Failed to remove board: \(error)")
+            logger.error("Failed to remove board \(boardId.uuidString): \(error.localizedDescription)")
         }
     }
 

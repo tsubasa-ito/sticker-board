@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import Photos
+import os
 
 struct BoardEditorView: View {
     @Bindable var board: Board
@@ -626,7 +627,14 @@ struct BoardEditorView: View {
 
         // 全ボードのメタデータを生成
         let descriptor = FetchDescriptor<Board>(sortBy: [SortDescriptor(\Board.createdAt, order: .forward)])
-        guard let allBoards = try? modelContext.fetch(descriptor) else { return }
+        let allBoards: [Board]
+        do {
+            allBoards = try modelContext.fetch(descriptor)
+        } catch {
+            Logger(subsystem: "com.tebasaki.StickerBoard", category: "WidgetSync")
+                .error("Failed to fetch boards for widget sync: \(error.localizedDescription)")
+            return
+        }
         let allMetadata = allBoards.map { b in
             WidgetDataSyncService.generateMetadata(
                 boardId: b.id,
@@ -652,7 +660,11 @@ struct BoardEditorView: View {
             await MainActor.run { renderer.scale = 2.0 }
 
             guard !Task.isCancelled else { return }
-            guard let image = await renderer.uiImage else { return }
+            guard let image = await renderer.uiImage else {
+                Logger(subsystem: "com.tebasaki.StickerBoard", category: "WidgetSync")
+                    .error("Failed to render board snapshot for board \(boardId.uuidString)")
+                return
+            }
 
             WidgetDataSyncService.syncBoard(
                 boardId: boardId,
