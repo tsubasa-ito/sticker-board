@@ -614,11 +614,15 @@ struct BoardEditorView: View {
         // 前回の同期タスクをキャンセル（レースコンディション防止）
         widgetSyncTask?.cancel()
 
-        let currentBoard = board
+        // @Model の値を値型にコピー（Task.detached 内で @Model を参照しない）
+        let boardId = board.id
+        let boardTitle = board.title
+        let boardUpdatedAt = board.updatedAt
         let currentPlacements = sortedPlacements
         let currentCanvasSize = canvasSize
         let currentBgConfig = backgroundConfig
         let currentCustomBgImage = customBackgroundImage
+        let stickerCount = currentPlacements.count
 
         // 全ボードのメタデータを生成
         let descriptor = FetchDescriptor<Board>(sortBy: [SortDescriptor(\Board.createdAt, order: .forward)])
@@ -651,10 +655,10 @@ struct BoardEditorView: View {
             guard let image = await renderer.uiImage else { return }
 
             WidgetDataSyncService.syncBoard(
-                boardId: currentBoard.id,
-                title: currentBoard.title,
-                stickerCount: currentPlacements.count,
-                updatedAt: currentBoard.updatedAt,
+                boardId: boardId,
+                title: boardTitle,
+                stickerCount: stickerCount,
+                updatedAt: boardUpdatedAt,
                 snapshotImage: image,
                 allBoardsMetadata: allMetadata
             )
