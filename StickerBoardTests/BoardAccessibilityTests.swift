@@ -127,4 +127,12 @@ struct BoardAccessibilityTests {
         // カスタム画像背景に accessibilityLabel が設定されている
         #expect(content.contains("accessibilityLabel"))
     }
+
+    // MARK: - BoardEditorView ナビゲーション (Issue #128)
+
+    @Test func BoardEditorView_xmarkの閉じるボタンが存在しない() throws {
+        let content = try readFile("StickerBoard/Views/Board/BoardEditorView.swift")
+        // Issue #128: iOS標準の戻るボタンと重複するxmark閉じるボタンは不要
+        #expect(!content.contains("Image(systemName: \"xmark\")"))
+    }
 }
