@@ -118,16 +118,6 @@ struct BoardEditorView: View {
         .toolbarBackground(AppTheme.editorBackground, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundStyle(AppTheme.textPrimary)
-                }
-                .accessibilityLabel("閉じる")
-            }
             ToolbarItem(placement: .primaryAction) {
                 Button {
                     showingSaveConfirmation = true
