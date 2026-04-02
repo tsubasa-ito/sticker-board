@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import Photos
+import os
 
 struct BoardEditorView: View {
     @Bindable var board: Board
@@ -27,6 +28,7 @@ struct BoardEditorView: View {
     @State private var loadedImages: [UUID: UIImage] = [:]
     @State private var rebuildTask: Task<Void, Never>?
     @State private var updateTask: Task<Void, Never>?
+    @State private var widgetSyncTask: Task<Void, Never>?
 
     var body: some View {
         ZStack {
@@ -606,6 +608,73 @@ struct BoardEditorView: View {
         board.placements = placements
         board.updatedAt = Date()
         try? modelContext.save()
+        syncBoardToWidget()
+    }
+
+    private func syncBoardToWidget() {
+        // 前回の同期タスクをキャンセル（レースコンディション防止）
+        widgetSyncTask?.cancel()
+
+        // @Model の値を値型にコピー（Task.detached 内で @Model を参照しない）
+        let boardId = board.id
+        let boardTitle = board.title
+        let boardUpdatedAt = board.updatedAt
+        let currentPlacements = sortedPlacements
+        let currentCanvasSize = canvasSize
+        let currentBgConfig = backgroundConfig
+        let currentCustomBgImage = customBackgroundImage
+        let stickerCount = currentPlacements.count
+
+        // 全ボードのメタデータを生成
+        let descriptor = FetchDescriptor<Board>(sortBy: [SortDescriptor(\Board.createdAt, order: .forward)])
+        let allBoards: [Board]
+        do {
+            allBoards = try modelContext.fetch(descriptor)
+        } catch {
+            Logger(subsystem: "com.tebasaki.StickerBoard", category: "WidgetSync")
+                .error("Failed to fetch boards for widget sync: \(error.localizedDescription)")
+            return
+        }
+        let allMetadata = allBoards.map { b in
+            WidgetDataSyncService.generateMetadata(
+                boardId: b.id,
+                title: b.title,
+                stickerCount: b.placements.count,
+                updatedAt: b.updatedAt
+            )
+        }
+
+        // スナップショット生成は非同期で実行（前回タスクはキャンセル済み）
+        widgetSyncTask = Task.detached {
+            // キャンセル確認
+            guard !Task.isCancelled else { return }
+
+            let snapshotView = BoardSnapshotView(
+                placements: currentPlacements,
+                size: currentCanvasSize,
+                backgroundConfig: currentBgConfig,
+                customBackgroundImage: currentCustomBgImage,
+                showWatermark: false
+            )
+            let renderer = await ImageRenderer(content: snapshotView)
+            await MainActor.run { renderer.scale = 2.0 }
+
+            guard !Task.isCancelled else { return }
+            guard let image = await renderer.uiImage else {
+                Logger(subsystem: "com.tebasaki.StickerBoard", category: "WidgetSync")
+                    .error("Failed to render board snapshot for board \(boardId.uuidString)")
+                return
+            }
+
+            WidgetDataSyncService.syncBoard(
+                boardId: boardId,
+                title: boardTitle,
+                stickerCount: stickerCount,
+                updatedAt: boardUpdatedAt,
+                snapshotImage: image,
+                allBoardsMetadata: allMetadata
+            )
+        }
     }
 
     private func loadCustomBackgroundImage() {
@@ -683,9 +752,9 @@ private struct QuickPickThumbnail: View {
     }
 }
 
-// MARK: - ボードスナップショット（画像書き出し用）
+// MARK: - ボードスナップショット（画像書き出し・ウィジェット共有用）
 
-private struct BoardSnapshotView: View {
+struct BoardSnapshotView: View {
     let placements: [StickerPlacement]
     let size: CGSize
     var backgroundConfig: BackgroundPatternConfig = .default
