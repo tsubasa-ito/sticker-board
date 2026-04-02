@@ -367,16 +367,13 @@ struct BoardEditorView: View {
     private var floatingToolbar: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 16) {
+                // --- 高頻度（左側） ---
+
                 // 追加
                 toolbarButton(icon: "plus.circle.fill", label: "追加", color: AppTheme.accent) {
                     withAnimation(.spring(duration: 0.3)) {
                         showQuickPicks.toggle()
                     }
-                }
-
-                // 背景
-                toolbarButton(icon: "paintpalette.fill", label: "背景", color: AppTheme.secondary) {
-                    showingBackgroundPicker = true
                 }
 
                 // 効果
@@ -406,6 +403,13 @@ struct BoardEditorView: View {
                     applyToSelected { sendToBack($0) }
                 }
                 .disabled(selectedPlacementId == nil)
+
+                // --- 低頻度（右側） ---
+
+                // 背景
+                toolbarButton(icon: "paintpalette.fill", label: "背景", color: AppTheme.secondary) {
+                    showingBackgroundPicker = true
+                }
 
                 // 削除
                 toolbarButton(icon: "trash", label: "削除",
