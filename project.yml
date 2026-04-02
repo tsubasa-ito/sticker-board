@@ -23,6 +23,12 @@ targets:
       - path: Products.storekit
         optional: true
         buildPhase: none
+    info:
+      properties:
+        CFBundleURLTypes:
+          - CFBundleURLSchemes:
+              - stickerboard
+            CFBundleURLName: com.tebasaki.StickerBoard
     settings:
       base:
         INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "シールにする写真を選択するためにフォトライブラリへのアクセスが必要です"
