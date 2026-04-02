@@ -113,6 +113,6 @@ struct BoardShowcaseWidget: Widget {
 
     private func widgetURL(for entry: BoardShowcaseEntry) -> URL? {
         guard let boardId = entry.boardId else { return nil }
-        return URL(string: "stickerboard://board/\(boardId)")
+        return URL(string: "\(SharedWidgetConstants.deepLinkScheme)://\(SharedWidgetConstants.deepLinkBoardHost)/\(boardId)")
     }
 }

@@ -10,8 +10,6 @@ settings:
   base:
     SWIFT_VERSION: "5.9"
     TARGETED_DEVICE_FAMILY: "1"
-    INFOPLIST_KEY_CFBundleDisplayName: "シールボード -デジタルシール帳-"
-    INFOPLIST_KEY_LSApplicationCategoryType: "public.app-category.lifestyle"
 
 targets:
   StickerBoard:
@@ -24,17 +22,28 @@ targets:
         optional: true
         buildPhase: none
     info:
+      path: StickerBoard/Info.plist
       properties:
         CFBundleURLTypes:
           - CFBundleURLSchemes:
               - stickerboard
             CFBundleURLName: com.tebasaki.StickerBoard
+        NSPhotoLibraryUsageDescription: "シールにする写真を選択するためにフォトライブラリへのアクセスが必要です"
+        NSCameraUsageDescription: "シールにする写真を撮影するためにカメラへのアクセスが必要です"
+        NSPhotoLibraryAddUsageDescription: "ボードを画像として写真に保存するためにフォトライブラリへのアクセスが必要です"
+        UILaunchScreen: {}
+        ITSAppUsesNonExemptEncryption: false
+        LSApplicationCategoryType: "public.app-category.lifestyle"
+        CFBundleDisplayName: "シールボード -デジタルシール帳-"
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
     settings:
       base:
-        INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "シールにする写真を選択するためにフォトライブラリへのアクセスが必要です"
-        INFOPLIST_KEY_NSCameraUsageDescription: "シールにする写真を撮影するためにカメラへのアクセスが必要です"
-        INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription: "ボードを画像として写真に保存するためにフォトライブラリへのアクセスが必要です"
-        GENERATE_INFOPLIST_FILE: YES
         CURRENT_PROJECT_VERSION: "1"
         MARKETING_VERSION: "1.1.0"
         PRODUCT_BUNDLE_IDENTIFIER: "com.tebasaki.StickerBoard"
@@ -43,10 +52,6 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         SWIFT_EMIT_LOC_STRINGS: YES
-        INFOPLIST_KEY_UILaunchScreen_Generation: YES
-        INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
-        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait"
-        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
         CODE_SIGN_ENTITLEMENTS: StickerBoard/StickerBoard.entitlements
     dependencies:
       - target: StickerBoardWidgetExtension
