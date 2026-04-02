@@ -167,4 +167,55 @@ struct WidgetDataSyncServiceTests {
         let parsedId = WidgetDataSyncService.parseBoardId(from: url)
         #expect(parsedId == nil)
     }
+
+    @Test func ディープリンクURLのroundtripが正しく動作する() {
+        let boardId = UUID()
+        let generatedURL = WidgetDataSyncService.deepLinkURL(for: boardId)
+        let parsedId = WidgetDataSyncService.parseBoardId(from: generatedURL)
+        #expect(parsedId == boardId)
+    }
+
+    @Test func 異なるスキームのURLからはnilが返る() {
+        let boardId = UUID()
+        let url = URL(string: "https://board/\(boardId.uuidString)")!
+        let parsedId = WidgetDataSyncService.parseBoardId(from: url)
+        #expect(parsedId == nil)
+    }
+
+    // MARK: - readMetadataJSON エラーケース
+
+    @Test func 存在しないファイルからの読み込みはthrowする() {
+        let nonexistentURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString)
+            .appendingPathComponent("nonexistent.json")
+
+        #expect(throws: (any Error).self) {
+            _ = try WidgetDataSyncService.readMetadataJSON(from: nonexistentURL)
+        }
+    }
+
+    @Test func 不正なJSONデータからの読み込みはthrowする() throws {
+        let tempDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: tempDir) }
+
+        let jsonURL = tempDir.appendingPathComponent("corrupt.json")
+        try Data("this is not valid json".utf8).write(to: jsonURL)
+
+        #expect(throws: (any Error).self) {
+            _ = try WidgetDataSyncService.readMetadataJSON(from: jsonURL)
+        }
+    }
+
+    // MARK: - deleteSnapshot 存在しないファイル
+
+    @Test func 存在しないファイルのdeleteSnapshotはクラッシュしない() {
+        let nonexistentURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString)
+            .appendingPathComponent("nonexistent.jpg")
+
+        // クラッシュせずに正常終了すればOK
+        WidgetDataSyncService.deleteSnapshot(at: nonexistentURL)
+    }
 }
