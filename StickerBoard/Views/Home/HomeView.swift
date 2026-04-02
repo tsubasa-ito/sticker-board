@@ -219,14 +219,14 @@ struct HomeView: View {
 
                                 Button(role: .destructive) {
                                     let deletedId = board.id
-                                    modelContext.delete(board)
-                                    // ウィジェットから削除されたボードを除去
+                                    // delete 前にメタデータを生成（@Query が stale になる前に）
                                     let remaining = boards.filter { $0.id != deletedId }.map { b in
                                         WidgetDataSyncService.generateMetadata(
                                             boardId: b.id, title: b.title,
                                             stickerCount: b.placements.count, updatedAt: b.updatedAt
                                         )
                                     }
+                                    modelContext.delete(board)
                                     WidgetDataSyncService.removeBoard(boardId: deletedId, remainingMetadata: remaining)
                                 } label: {
                                     Label("削除", systemImage: "trash")
