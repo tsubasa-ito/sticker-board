@@ -133,6 +133,8 @@ struct BoardAccessibilityTests {
     @Test func BoardEditorView_xmarkの閉じるボタンが存在しない() throws {
         let content = try readFile("StickerBoard/Views/Board/BoardEditorView.swift")
         // Issue #128: iOS標準の戻るボタンと重複するxmark閉じるボタンは不要
+        // 注意: 別の正当な理由でxmarkアイコンが追加された場合に失敗する可能性あり。
+        // 失敗時はその変更が正当かどうかを確認すること。
         #expect(!content.contains("Image(systemName: \"xmark\")"))
     }
 }
