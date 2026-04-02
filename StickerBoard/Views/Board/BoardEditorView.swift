@@ -365,63 +365,63 @@ struct BoardEditorView: View {
     // MARK: - フローティングツールバー
 
     private var floatingToolbar: some View {
-        HStack(spacing: 10) {
-            // 追加
-            toolbarButton(icon: "plus.circle.fill", label: "追加", color: AppTheme.accent) {
-                withAnimation(.spring(duration: 0.3)) {
-                    showQuickPicks.toggle()
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 16) {
+                // 追加
+                toolbarButton(icon: "plus.circle.fill", label: "追加", color: AppTheme.accent) {
+                    withAnimation(.spring(duration: 0.3)) {
+                        showQuickPicks.toggle()
+                    }
                 }
-            }
 
-            // 背景
-            toolbarButton(icon: "paintpalette.fill", label: "背景", color: AppTheme.secondary) {
-                showingBackgroundPicker = true
-            }
+                // 背景
+                toolbarButton(icon: "paintpalette.fill", label: "背景", color: AppTheme.secondary) {
+                    showingBackgroundPicker = true
+                }
 
-            // 効果・枠線グループ
-            toolbarGroup {
+                // 効果
                 toolbarButton(icon: "wand.and.stars", label: "効果",
                               color: selectedPlacementId != nil ? AppTheme.accent : AppTheme.textTertiary) {
                     showingFilterPicker = true
                 }
                 .disabled(selectedPlacementId == nil)
 
+                // 枠線
                 toolbarButton(icon: "square.dashed", label: "枠線",
                               color: selectedPlacementId != nil ? AppTheme.accent : AppTheme.textTertiary) {
                     showingBorderPicker = true
                 }
                 .disabled(selectedPlacementId == nil)
-            }
 
-            // レイヤー操作グループ
-            toolbarGroup {
+                // 前面
                 toolbarButton(icon: "square.2.layers.3d.top.filled", label: "前面",
                               color: selectedPlacementId != nil ? AppTheme.textPrimary : AppTheme.textTertiary) {
                     applyToSelected { bringToFront($0) }
                 }
                 .disabled(selectedPlacementId == nil)
 
+                // 背面
                 toolbarButton(icon: "square.2.layers.3d.bottom.filled", label: "背面",
                               color: selectedPlacementId != nil ? AppTheme.textPrimary : AppTheme.textTertiary) {
                     applyToSelected { sendToBack($0) }
                 }
                 .disabled(selectedPlacementId == nil)
-            }
 
-            // 削除
-            toolbarButton(icon: "trash", label: "削除",
-                          color: selectedPlacementId != nil ? .red : AppTheme.textTertiary) {
-                if let id = selectedPlacementId,
-                   let placement = placements.first(where: { $0.id == id }) {
-                    withAnimation {
-                        removeFromBoard(placement)
-                        selectedPlacementId = nil
+                // 削除
+                toolbarButton(icon: "trash", label: "削除",
+                              color: selectedPlacementId != nil ? .red : AppTheme.textTertiary) {
+                    if let id = selectedPlacementId,
+                       let placement = placements.first(where: { $0.id == id }) {
+                        withAnimation {
+                            removeFromBoard(placement)
+                            selectedPlacementId = nil
+                        }
                     }
                 }
+                .disabled(selectedPlacementId == nil)
             }
-            .disabled(selectedPlacementId == nil)
+            .padding(.horizontal, 16)
         }
-        .padding(.horizontal, 12)
         .frame(height: 64)
         .frame(maxWidth: .infinity)
         .background(
@@ -437,32 +437,19 @@ struct BoardEditorView: View {
 
     private func toolbarButton(icon: String, label: String, color: Color, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            VStack(spacing: 3) {
+            VStack(spacing: 4) {
                 Image(systemName: icon)
-                    .font(.system(size: 18))
+                    .font(.system(size: 22))
                     .foregroundStyle(color)
-                    .frame(height: 24)
+                    .frame(height: 28)
                 Text(label)
-                    .font(.system(size: 9, weight: .semibold, design: .rounded))
+                    .font(.system(size: 10, weight: .semibold, design: .rounded))
                     .foregroundStyle(AppTheme.textSecondary)
                     .lineLimit(1)
-                    .minimumScaleFactor(0.7)
             }
-            .frame(maxWidth: .infinity)
+            .frame(minWidth: 44, minHeight: 44)
         }
         .accessibilityLabel(label)
-    }
-
-    private func toolbarGroup<Content: View>(@ViewBuilder content: () -> Content) -> some View {
-        HStack(spacing: 4) {
-            content()
-        }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 6)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(AppTheme.editorBackground.opacity(0.5))
-        )
     }
 
     // MARK: - ロジック
