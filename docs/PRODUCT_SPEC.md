@@ -83,6 +83,16 @@
 | 折りたたみ式ツールバー | ボード編集時のツールバーは折りたたみ可能 |
 | アップデート通知 | 起動時にApp Storeの最新バージョンをチェックし、アラートで通知（24時間間隔、メジャー/マイナー区別、スキップ管理） |
 
+### ウィジェット
+
+| 機能 | 説明 |
+|------|------|
+| ボードショーケースウィジェット | WidgetKit でお気に入りのボードをホーム画面に飾れるウィジェット（Medium / Large 対応、完全無料） |
+| ボード選択 | ウィジェット長押し →「ウィジェットを編集」で表示するボードを選択（AppIntentConfiguration） |
+| 自動更新 | ボード編集・保存時にスナップショットを自動生成しウィジェットに反映 |
+| ディープリンク | ウィジェットタップで `stickerboard://board/{boardId}` → ボード編集画面に直接遷移 |
+| データ共有 | App Group（`group.com.tebasaki.StickerBoard`）でスナップショット画像＋メタデータJSONを共有 |
+
 ---
 
 ## 4. デザイン方針
@@ -118,6 +128,7 @@
 | フィルター・画像処理 | Core Image（CIFilter） |
 | データ保存 | SwiftData + FileManager（PNG） |
 | 課金 | StoreKit 2（自動更新サブスクリプション） |
+| ウィジェット | WidgetKit + AppIntentConfiguration |
 | プロジェクト管理 | XcodeGen |
 | 対応OS | iOS 18+ |
 
