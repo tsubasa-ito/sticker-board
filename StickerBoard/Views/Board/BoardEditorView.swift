@@ -424,18 +424,34 @@ struct BoardEditorView: View {
                 }
                 .disabled(selectedPlacementId == nil)
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 28)
         }
         .frame(height: 64)
         .frame(maxWidth: .infinity)
         .background(
             Capsule()
                 .fill(.ultraThinMaterial)
-                .shadow(color: .black.opacity(0.12), radius: 16, y: 4)
                 .overlay(
                     Capsule()
                         .stroke(.white.opacity(0.2), lineWidth: 1)
                 )
+        )
+        .clipShape(Capsule())
+        .shadow(color: .black.opacity(0.12), radius: 16, y: 4)
+        .overlay(
+            HStack {
+                Image(systemName: "chevron.compact.left")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(AppTheme.textTertiary.opacity(0.5))
+                    .padding(.leading, 8)
+                Spacer()
+                Image(systemName: "chevron.compact.right")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(AppTheme.textTertiary.opacity(0.5))
+                    .padding(.trailing, 8)
+            }
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
         )
     }
 
