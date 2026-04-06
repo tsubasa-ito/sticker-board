@@ -224,6 +224,7 @@ struct StickerLibraryView: View {
             }
             .padding(20)
         }
+        .safeAreaPadding(.bottom, 80)
     }
 
     private func boardsUsing(_ sticker: Sticker) -> [Board] {
