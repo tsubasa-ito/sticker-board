@@ -223,6 +223,7 @@ struct StickerLibraryView: View {
                 }
             }
             .padding(20)
+            .padding(.bottom, 80)
         }
     }
 
