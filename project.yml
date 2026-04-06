@@ -47,7 +47,7 @@ targets:
     settings:
       base:
         CURRENT_PROJECT_VERSION: "1"
-        MARKETING_VERSION: "1.2.0"
+        MARKETING_VERSION: "1.2.1"
         PRODUCT_BUNDLE_IDENTIFIER: "com.tebasaki.StickerBoard"
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: 6CGGS6SX69
@@ -76,7 +76,7 @@ targets:
     settings:
       base:
         CURRENT_PROJECT_VERSION: "1"
-        MARKETING_VERSION: "1.2.0"
+        MARKETING_VERSION: "1.2.1"
         PRODUCT_BUNDLE_IDENTIFIER: "com.tebasaki.StickerBoard.Widget"
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: 6CGGS6SX69
