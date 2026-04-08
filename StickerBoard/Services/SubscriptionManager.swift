@@ -86,7 +86,8 @@ final class SubscriptionManager: ObservableObject {
             let ids = SubscriptionProduct.allIdentifiers
             Self.logger.debug("Loading products for IDs: \(ids)")
             let storeProducts = try await Product.products(for: ids)
-            Self.logger.debug("Loaded \(storeProducts.count) products")
+            let productInfo = storeProducts.map { "\($0.id) - \($0.displayPrice)" }.joined(separator: ", ")
+            Self.logger.debug("Loaded \(storeProducts.count) products: \(productInfo)")
             products = storeProducts.sorted { $0.price > $1.price }
         } catch {
             Self.logger.error("Failed to load products: \(error)")
