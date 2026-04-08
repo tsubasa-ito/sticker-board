@@ -41,6 +41,7 @@ struct MainTabView: View {
     @Environment(\.modelContext) private var modelContext
     @AppStorage("reviewRequestDatesJSON") private var reviewRequestDatesJSON: String = "[]"
     @AppStorage("appLaunchCount") private var appLaunchCount: Int = 0
+    @State private var pendingReviewTrigger = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -49,7 +50,13 @@ struct MainTabView: View {
                     HomeView(
                         hideTabBar: $hideTabBar,
                         deepLinkBoardId: $deepLinkBoardId,
-                        onBoardCreated: { triggerReviewIfNeeded() }
+                        onBoardCreated: {
+                            Task { @MainActor in
+                                // alert の dismiss アニメーション完了を待つ
+                                try? await Task.sleep(for: .milliseconds(600))
+                                triggerReviewIfNeeded()
+                            }
+                        }
                     )
                 }
                 .opacity(selectedTab == .home ? 1 : 0)
@@ -71,13 +78,18 @@ struct MainTabView: View {
             }
         }
         .animation(.easeInOut(duration: 0.25), value: hideTabBar)
-        .sheet(isPresented: $showCapture) {
+        .sheet(isPresented: $showCapture, onDismiss: {
+            if pendingReviewTrigger {
+                pendingReviewTrigger = false
+                triggerReviewIfNeeded()
+            }
+        }) {
             NavigationStack {
                 StickerCaptureView(onStickerSaved: {
                     libraryRefreshID = UUID()
                     let stickerCount = (try? modelContext.fetchCount(FetchDescriptor<Sticker>())) ?? 0
                     if ReviewRequestManager.shared.isStickerMilestone(stickerCount) {
-                        triggerReviewIfNeeded()
+                        pendingReviewTrigger = true
                     }
                 })
             }
