@@ -8,6 +8,8 @@ struct BoardListView: View {
     @State private var showingNewBoard = false
     @State private var newBoardTitle = ""
     @State private var showingPaywall = false
+    @State private var boardToDelete: Board?
+    @State private var showingDeleteConfirmation = false
 
     var body: some View {
         ZStack {
@@ -57,6 +59,12 @@ struct BoardListView: View {
         } message: {
             Text("ボードの名前を入力してください")
         }
+        .alert("削除の確認", isPresented: $showingDeleteConfirmation, presenting: boardToDelete) { board in
+            Button("削除", role: .destructive) { deleteBoard(board) }
+            Button("キャンセル", role: .cancel) { boardToDelete = nil }
+        } message: { board in
+            Text("「\(board.title)」を削除しますか？\nこの操作は取り消せません。")
+        }
     }
 
     // MARK: - 空の状態
@@ -103,7 +111,8 @@ struct BoardListView: View {
                     .buttonStyle(.plain)
                     .contextMenu {
                         Button(role: .destructive) {
-                            modelContext.delete(board)
+                            boardToDelete = board
+                            showingDeleteConfirmation = true
                         } label: {
                             Label("削除", systemImage: "trash")
                         }
@@ -120,6 +129,20 @@ struct BoardListView: View {
         let board = Board(title: title)
         modelContext.insert(board)
         newBoardTitle = ""
+    }
+
+    private func deleteBoard(_ board: Board) {
+        let deletedId = board.id
+        // delete 前にメタデータを生成（@Query が stale になる前に）
+        let remaining = boards.filter { $0.id != deletedId }.map { b in
+            WidgetDataSyncService.generateMetadata(
+                boardId: b.id, title: b.title,
+                stickerCount: b.placements.count, updatedAt: b.updatedAt
+            )
+        }
+        modelContext.delete(board)
+        WidgetDataSyncService.removeBoard(boardId: deletedId, remainingMetadata: remaining)
+        boardToDelete = nil
     }
 }
 
