@@ -333,6 +333,49 @@ struct StickerCaptureView: View {
         VStack(spacing: 20) {
             StickerPreviewView(image: image)
 
+            // 回転ボタン
+            HStack(spacing: 12) {
+                Button {
+                    processedImage = image.rotatedBy90Degrees(clockwise: false)
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "rotate.left")
+                            .accessibilityHidden(true)
+                        Text("左に回転")
+                            .font(.system(size: 14, weight: .medium, design: .rounded))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .foregroundStyle(AppTheme.secondary)
+                    .background {
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(AppTheme.secondary.opacity(0.6), lineWidth: 1.5)
+                    }
+                }
+                .accessibilityLabel("左に90度回転")
+                .accessibilityHint("シールを反時計回りに90度回転します")
+
+                Button {
+                    processedImage = image.rotatedBy90Degrees(clockwise: true)
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "rotate.right")
+                            .accessibilityHidden(true)
+                        Text("右に回転")
+                            .font(.system(size: 14, weight: .medium, design: .rounded))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .foregroundStyle(AppTheme.secondary)
+                    .background {
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(AppTheme.secondary.opacity(0.6), lineWidth: 1.5)
+                    }
+                }
+                .accessibilityLabel("右に90度回転")
+                .accessibilityHint("シールを時計回りに90度回転します")
+            }
+
             // マスク手動調整ボタン
             if backgroundRemovalResult != nil {
                 Button {

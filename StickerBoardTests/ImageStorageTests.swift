@@ -92,4 +92,41 @@ struct ImageStorageTests {
         #expect(loaded.size.width > 0)
         #expect(loaded.size.height > 0)
     }
+
+    // MARK: - 回転
+
+    @Test func 時計回りに回転後は幅と高さが入れ替わる() throws {
+        let image = makeTestImage(size: CGSize(width: 200, height: 100))
+        let fileName = try ImageStorage.save(image)
+        defer { try? ImageStorage.delete(fileName: fileName) }
+
+        try ImageStorage.rotateAndOverwrite(fileName: fileName, clockwise: true)
+
+        let loaded = try #require(ImageStorage.loadFromDisk(fileName: fileName))
+        // 元画像200×100 → alphaTrimmed+resized後の寸法が変わることを確認
+        // 回転後は縦長になるはず（幅 < 高さ）
+        #expect(loaded.size.width < loaded.size.height)
+    }
+
+    @Test func 反時計回りに回転後は幅と高さが入れ替わる() throws {
+        let image = makeTestImage(size: CGSize(width: 200, height: 100))
+        let fileName = try ImageStorage.save(image)
+        defer { try? ImageStorage.delete(fileName: fileName) }
+
+        try ImageStorage.rotateAndOverwrite(fileName: fileName, clockwise: false)
+
+        let loaded = try #require(ImageStorage.loadFromDisk(fileName: fileName))
+        #expect(loaded.size.width < loaded.size.height)
+    }
+
+    @Test func 回転後もファイルが存在する() throws {
+        let image = makeTestImage()
+        let fileName = try ImageStorage.save(image)
+        defer { try? ImageStorage.delete(fileName: fileName) }
+
+        try ImageStorage.rotateAndOverwrite(fileName: fileName, clockwise: true)
+
+        let loaded = ImageStorage.loadFromDisk(fileName: fileName)
+        #expect(loaded != nil)
+    }
 }
