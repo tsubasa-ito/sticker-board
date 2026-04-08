@@ -10,7 +10,7 @@ import Foundation
 /// テストのパターンマッチを実態に合わせて更新してください。
 struct BoardEditorBindingTests {
 
-    // MARK: - ファイル読み込みヘルパー
+    // MARK: - ヘルパー
 
     private var projectRootURL: URL {
         URL(fileURLWithPath: #filePath)
@@ -29,62 +29,40 @@ struct BoardEditorBindingTests {
         }
     }
 
+    private func extractBindingMethodBody() throws -> String {
+        let content = try editorContent
+        let pattern = #"func binding\(for placement:.*?\{[\s\S]*?^\s{4}\}"#
+        let regex = try Regex(pattern).anchorsMatchLineEndings()
+        let match = try #require(
+            content.firstMatch(of: regex),
+            "binding(for:) メソッドが見つかりません"
+        )
+        return String(content[match.range])
+    }
+
     // MARK: - binding(for:) の安全性テスト
 
-    @Test func bindingForメソッドにfatalErrorが含まれていない() throws {
-        let content = try editorContent
-
-        // binding(for:) メソッドの範囲を抽出
-        let bindingMethodPattern = #"func binding\(for placement:.*?\{[\s\S]*?^\s{4}\}"#
-        let regex = try Regex(bindingMethodPattern).anchorsMatchLineEndings()
-        let match = content.firstMatch(of: regex)
-
-        #expect(match != nil, "binding(for:) メソッドが見つかりません")
-
-        if let methodBody = match {
-            let methodText = String(content[methodBody.range])
-            #expect(
-                !methodText.contains("fatalError"),
-                "binding(for:) に fatalError が含まれています。クラッシュの原因となるため安全な処理に置換してください"
-            )
-        }
+    @Test func bindingForにfatalErrorが含まれていない() throws {
+        let methodText = try extractBindingMethodBody()
+        #expect(
+            !methodText.contains("fatalError"),
+            "binding(for:) に fatalError が含まれています。安全な処理に置換してください"
+        )
     }
 
-    @Test func bindingForメソッドがconstantフォールバックを使用している() throws {
-        let content = try editorContent
-
-        // binding(for:) メソッドの範囲を抽出
-        let bindingMethodPattern = #"func binding\(for placement:.*?\{[\s\S]*?^\s{4}\}"#
-        let regex = try Regex(bindingMethodPattern).anchorsMatchLineEndings()
-        let match = content.firstMatch(of: regex)
-
-        #expect(match != nil, "binding(for:) メソッドが見つかりません")
-
-        if let methodBody = match {
-            let methodText = String(content[methodBody.range])
-            #expect(
-                methodText.contains(".constant(placement)"),
-                "binding(for:) に .constant(placement) フォールバックが含まれていません。Placement未検出時の安全なハンドリングが必要です"
-            )
-        }
+    @Test func bindingForがconstantフォールバックを使用している() throws {
+        let methodText = try extractBindingMethodBody()
+        #expect(
+            methodText.contains(".constant(placement)"),
+            "binding(for:) に .constant(placement) フォールバックが必要です"
+        )
     }
 
-    @Test func bindingForメソッドがguardLetを使用している() throws {
-        let content = try editorContent
-
-        // binding(for:) メソッドの範囲を抽出
-        let bindingMethodPattern = #"func binding\(for placement:.*?\{[\s\S]*?^\s{4}\}"#
-        let regex = try Regex(bindingMethodPattern).anchorsMatchLineEndings()
-        let match = content.firstMatch(of: regex)
-
-        #expect(match != nil, "binding(for:) メソッドが見つかりません")
-
-        if let methodBody = match {
-            let methodText = String(content[methodBody.range])
-            #expect(
-                methodText.contains("guard let") || methodText.contains("guard let index"),
-                "binding(for:) に guard let パターンが含まれていません"
-            )
-        }
+    @Test func bindingForがguardLetを使用している() throws {
+        let methodText = try extractBindingMethodBody()
+        #expect(
+            methodText.contains("guard let"),
+            "binding(for:) に guard let パターンが含まれていません"
+        )
     }
 }
