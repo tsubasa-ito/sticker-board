@@ -480,7 +480,7 @@ struct BoardEditorView: View {
 
     private func binding(for placement: StickerPlacement) -> Binding<StickerPlacement> {
         guard let index = placements.firstIndex(where: { $0.id == placement.id }) else {
-            fatalError("Placement not found")
+            return .constant(placement)
         }
         return $placements[index]
     }
