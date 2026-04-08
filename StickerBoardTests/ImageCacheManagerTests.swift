@@ -2,7 +2,7 @@ import Testing
 import UIKit
 @testable import StickerBoard
 
-struct ImageCacheManagerTests {
+@MainActor struct ImageCacheManagerTests {
 
     // MARK: - ヘルパー
 
