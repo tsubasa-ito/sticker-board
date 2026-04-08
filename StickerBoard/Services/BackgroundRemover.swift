@@ -127,7 +127,7 @@ struct BackgroundRemover {
         }
         let maskImage = UIImage(cgImage: maskCGImage)
 
-        let processedImage = try applyMask(observation, instances: selectedInstances, to: cgImage, handler: handler)
+        let processedImage = try applyMask(maskPixelBuffer: maskPixelBuffer, to: cgImage)
 
         return BackgroundRemovalResult(processedImage: processedImage, maskImage: maskImage, originalImage: image)
     }
@@ -227,7 +227,10 @@ struct BackgroundRemover {
 
     private static func applyMask(_ observation: VNInstanceMaskObservation, instances: IndexSet, to cgImage: CGImage, handler: VNImageRequestHandler) throws -> UIImage {
         let maskPixelBuffer = try observation.generateScaledMaskForImage(forInstances: instances, from: handler)
+        return try applyMask(maskPixelBuffer: maskPixelBuffer, to: cgImage)
+    }
 
+    private static func applyMask(maskPixelBuffer: CVPixelBuffer, to cgImage: CGImage) throws -> UIImage {
         let ciMask = CIImage(cvPixelBuffer: maskPixelBuffer)
         let ciImage = CIImage(cgImage: cgImage)
 
