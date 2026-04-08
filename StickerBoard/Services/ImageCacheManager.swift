@@ -89,15 +89,15 @@ final class ImageCacheManager: @unchecked Sendable {
             if let existingTask = fullResolutionLoadingTasks[fileName] {
                 return existingTask
             }
-            let newTask = Task<UIImage?, Never>.detached { [weak self] in
+            let newTask = Task<UIImage?, Never>.detached {
                 defer {
-                    self?.fullResolutionLoadingTasksLock.withLock {
-                        self?.fullResolutionLoadingTasks.removeValue(forKey: fileName)
+                    self.fullResolutionLoadingTasksLock.withLock {
+                        self.fullResolutionLoadingTasks.removeValue(forKey: fileName)
                     }
                 }
                 guard let image = ImageStorage.loadFromDisk(fileName: fileName) else { return nil }
                 let cost = image.estimatedMemoryCost
-                self?.fullResolutionCache.setObject(image, forKey: key, cost: cost)
+                self.fullResolutionCache.setObject(image, forKey: key, cost: cost)
                 return image
             }
             fullResolutionLoadingTasks[fileName] = newTask

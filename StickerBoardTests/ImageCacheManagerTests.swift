@@ -114,42 +114,6 @@ struct ImageCacheManagerTests {
         #expect(cached == nil)
     }
 
-    // MARK: - メモリ警告ハンドラ
-
-    @Test func メモリ警告後はsetFullResolutionで保存したキャッシュがクリアされる() throws {
-        let fileName = "test_\(UUID().uuidString).png"
-        let image = makeTestImage()
-
-        ImageCacheManager.shared.setFullResolution(image, for: fileName)
-        defer { ImageCacheManager.shared.removeAll(for: fileName) }
-
-        // メモリ警告通知を手動発火
-        NotificationCenter.default.post(
-            name: UIApplication.didReceiveMemoryWarningNotification,
-            object: nil
-        )
-
-        // ディスクに存在しないためnilになる
-        let cached = ImageCacheManager.shared.fullResolution(for: fileName)
-        #expect(cached == nil)
-    }
-
-    @Test func メモリ警告後はsetFilteredで保存したキャッシュがクリアされる() throws {
-        let fileName = "test_\(UUID().uuidString).png"
-        let image = makeTestImage()
-
-        ImageCacheManager.shared.setFiltered(image, for: fileName, filter: .neon)
-        defer { ImageCacheManager.shared.removeAll(for: fileName) }
-
-        NotificationCenter.default.post(
-            name: UIApplication.didReceiveMemoryWarningNotification,
-            object: nil
-        )
-
-        let cached = ImageCacheManager.shared.filtered(for: fileName, filter: .neon)
-        #expect(cached == nil)
-    }
-
     // MARK: - 並行アクセス（スレッドセーフティ）
 
     @Test func 複数スレッドからsetとremoveを同時実行してもクラッシュしない() async {
@@ -189,5 +153,56 @@ struct ImageCacheManagerTests {
         }
         // クラッシュせずに完了すればスレッドセーフ確認済み
         ImageCacheManager.shared.removeAll(for: savedName)
+    }
+}
+
+// MARK: - メモリ警告ハンドラ
+// didReceiveMemoryWarningNotification は全キャッシュを一括削除するため、
+// 並行実行すると他のテストのキャッシュも消えてしまう。.serialized で直列化する。
+@Suite("メモリ警告ハンドラ", .serialized)
+struct ImageCacheManagerMemoryWarningTests {
+
+    private func makeTestImage() -> UIImage {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1.0
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 100, height: 100), format: format)
+        return renderer.image { ctx in
+            UIColor.blue.setFill()
+            ctx.fill(CGRect(origin: .zero, size: CGSize(width: 100, height: 100)))
+        }
+    }
+
+    @Test func メモリ警告後はsetFullResolutionで保存したキャッシュがクリアされる() {
+        let fileName = "test_\(UUID().uuidString).png"
+        let image = makeTestImage()
+
+        ImageCacheManager.shared.setFullResolution(image, for: fileName)
+        defer { ImageCacheManager.shared.removeAll(for: fileName) }
+
+        // メモリ警告通知を手動発火（全キャッシュを一括削除）
+        NotificationCenter.default.post(
+            name: UIApplication.didReceiveMemoryWarningNotification,
+            object: nil
+        )
+
+        // ディスクに存在しないためnilになる
+        let cached = ImageCacheManager.shared.fullResolution(for: fileName)
+        #expect(cached == nil)
+    }
+
+    @Test func メモリ警告後はsetFilteredで保存したキャッシュがクリアされる() {
+        let fileName = "test_\(UUID().uuidString).png"
+        let image = makeTestImage()
+
+        ImageCacheManager.shared.setFiltered(image, for: fileName, filter: .neon)
+        defer { ImageCacheManager.shared.removeAll(for: fileName) }
+
+        NotificationCenter.default.post(
+            name: UIApplication.didReceiveMemoryWarningNotification,
+            object: nil
+        )
+
+        let cached = ImageCacheManager.shared.filtered(for: fileName, filter: .neon)
+        #expect(cached == nil)
     }
 }
