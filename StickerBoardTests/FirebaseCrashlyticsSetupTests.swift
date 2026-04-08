@@ -23,11 +23,27 @@ struct FirebaseCrashlyticsSetupTests {
 
     // MARK: - StickerBoardApp の初期化設定
 
+    @Test func stickerBoardAppがFirebaseCoreをimportしている() throws {
+        let content = try readFile("StickerBoard/App/StickerBoardApp.swift")
+        #expect(
+            content.contains("import FirebaseCore"),
+            "StickerBoardApp.swift に 'import FirebaseCore' が必要です（FirebaseApp.configure() の提供元）"
+        )
+    }
+
     @Test func stickerBoardAppがFirebaseCrashlyticsをimportしている() throws {
         let content = try readFile("StickerBoard/App/StickerBoardApp.swift")
         #expect(
             content.contains("import FirebaseCrashlytics"),
             "StickerBoardApp.swift に 'import FirebaseCrashlytics' が必要です"
+        )
+    }
+
+    @Test func debugビルドでCrashlyticsの収集が無効化される() throws {
+        let content = try readFile("StickerBoard/App/StickerBoardApp.swift")
+        #expect(
+            content.contains("setCrashlyticsCollectionEnabled(false)"),
+            "Debug ビルドで Crashlytics の収集を無効化する setCrashlyticsCollectionEnabled(false) が必要です"
         )
     }
 
