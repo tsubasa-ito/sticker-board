@@ -210,18 +210,24 @@ struct StickerCaptureView: View {
                             GeometryReader { geometry in
                                 Color.clear
                                     .contentShape(Rectangle())
-                                    .simultaneousGesture(
-                                        DragGesture(minimumDistance: 0)
+                                    .gesture(
+                                        LongPressGesture(minimumDuration: 0.5)
+                                            .sequenced(before: DragGesture(minimumDistance: 0))
                                             .onChanged { value in
-                                                pressLocation = value.startLocation
-                                                longPressImageViewSize = geometry.size
+                                                switch value {
+                                                case .second(true, let drag):
+                                                    if let drag, !isProcessing {
+                                                        pressLocation = drag.startLocation
+                                                        longPressImageViewSize = geometry.size
+                                                        let generator = UIImpactFeedbackGenerator(style: .medium)
+                                                        generator.impactOccurred()
+                                                        processImageAtPoint()
+                                                    }
+                                                default:
+                                                    break
+                                                }
                                             }
                                     )
-                                    .onLongPressGesture(minimumDuration: 0.5) {
-                                        let generator = UIImpactFeedbackGenerator(style: .medium)
-                                        generator.impactOccurred()
-                                        processImageAtPoint()
-                                    }
                             }
                         }
                         .accessibilityLabel("選択した写真のプレビュー")
