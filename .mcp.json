@@ -3,6 +3,13 @@
     "xcode": {
       "command": "xcrun",
       "args": ["mcpbridge"]
+    },
+    "firebase": {
+      "command": "npx",
+      "args": ["-y", "firebase-tools@latest", "mcp"],
+      "env": {
+        "FIREBASE_PROJECT_ID": "stickerboard-5987a"
+      }
     }
   }
 }
