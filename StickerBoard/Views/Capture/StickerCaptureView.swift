@@ -226,6 +226,9 @@ struct StickerCaptureView: View {
                         }
                         .accessibilityLabel("選択した写真のプレビュー")
                         .accessibilityHint("被写体を長押しして選択できます")
+                        .accessibilityAction(named: "すべて自動で切り抜く") {
+                            processImage()
+                        }
 
                     Button {
                         processImage()
@@ -416,6 +419,7 @@ struct StickerCaptureView: View {
 
     private func processImageAtPoint() {
         guard let originalImage else { return }
+        guard longPressImageViewSize != .zero else { return }
         let normalizedPoint = convertToNormalizedImagePoint(
             pressLocation,
             imageSize: originalImage.size,

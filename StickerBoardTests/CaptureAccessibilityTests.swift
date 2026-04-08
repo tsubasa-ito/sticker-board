@@ -145,6 +145,12 @@ struct CaptureAccessibilityTests {
         #expect(content.contains("すべての被写体を自動的に検出して切り抜きます"))
     }
 
+    @Test func StickerCaptureView_長押しジェスチャーにaccessibilityAction代替がある() throws {
+        let content = try readFile("StickerBoard/Views/Capture/StickerCaptureView.swift")
+        // 長押しジェスチャーの代替操作として accessibilityAction が設定されている
+        #expect(content.contains("accessibilityAction(named:"))
+    }
+
     @Test func StickerCaptureView_scissorsアイコンが装飾非表示() throws {
         let content = try readFile("StickerBoard/Views/Capture/StickerCaptureView.swift")
         // scissors アイコン（すべて自動で切り抜くボタン内）は装飾のため accessibilityHidden
