@@ -1,7 +1,12 @@
+import os
 import SwiftUI
 import SwiftData
 
 struct StickerLibraryView: View {
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier ?? "com.tebasaki.StickerBoard",
+        category: "StickerLibraryView"
+    )
     @Environment(\.modelContext) private var modelContext
     @Query private var boards: [Board]
     @State private var displayedStickers: [Sticker] = []
@@ -287,7 +292,7 @@ struct StickerLibraryView: View {
                 resetAndReload()
             }
         } catch {
-            print("Error checking sticker count: \(error)")
+            Self.logger.error("Error checking sticker count: \(error)")
         }
     }
 
@@ -295,7 +300,7 @@ struct StickerLibraryView: View {
         do {
             totalCount = try modelContext.fetchCount(FetchDescriptor<Sticker>())
         } catch {
-            print("Error fetching total sticker count: \(error)")
+            Self.logger.error("Error fetching total sticker count: \(error)")
             totalCount = 0
         }
     }
@@ -312,7 +317,7 @@ struct StickerLibraryView: View {
             displayedStickers.append(contentsOf: page)
             hasMorePages = page.count == pageSize
         } catch {
-            print("Error fetching next page of stickers: \(error)")
+            Self.logger.error("Error fetching next page of stickers: \(error)")
             hasMorePages = false
         }
     }

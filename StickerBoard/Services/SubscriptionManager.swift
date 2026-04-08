@@ -1,9 +1,14 @@
 import Foundation
+import os
 import StoreKit
 
 @MainActor
 final class SubscriptionManager: ObservableObject {
     static let shared = SubscriptionManager()
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier ?? "com.tebasaki.StickerBoard",
+        category: "SubscriptionManager"
+    )
 
     @Published private(set) var isProUser: Bool = false
     @Published private(set) var products: [Product] = []
@@ -79,12 +84,13 @@ final class SubscriptionManager: ObservableObject {
     func loadProducts() async {
         do {
             let ids = SubscriptionProduct.allIdentifiers
-            print("[SubscriptionManager] Loading products for IDs: \(ids)")
+            Self.logger.debug("Loading products for IDs: \(ids)")
             let storeProducts = try await Product.products(for: ids)
-            print("[SubscriptionManager] Loaded \(storeProducts.count) products: \(storeProducts.map { "\($0.id) - \($0.displayPrice)" })")
+            let productInfo = storeProducts.map { "\($0.id) - \($0.displayPrice)" }.joined(separator: ", ")
+            Self.logger.debug("Loaded \(storeProducts.count) products: \(productInfo)")
             products = storeProducts.sorted { $0.price > $1.price }
         } catch {
-            print("[SubscriptionManager] Failed to load products: \(error)")
+            Self.logger.error("Failed to load products: \(error)")
         }
     }
 
@@ -149,7 +155,7 @@ final class SubscriptionManager: ObservableObject {
                     }
                 }
             } catch {
-                print("[SubscriptionManager] Failed to verify transaction while updating purchased products: \(error)")
+                Self.logger.error("Failed to verify transaction while updating purchased products: \(error)")
             }
         }
 
@@ -170,7 +176,7 @@ final class SubscriptionManager: ObservableObject {
                     await transaction.finish()
                     await updatePurchasedProducts()
                 } catch {
-                    print("[SubscriptionManager] Failed to verify transaction from updates: \(error)")
+                    Self.logger.error("Failed to verify transaction from updates: \(error)")
                 }
             }
         }

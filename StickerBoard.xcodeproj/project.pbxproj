@@ -51,6 +51,7 @@
 		91B6DD4664FB19D95590BC04 /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FFB83566A2BC0906338F77F /* SubscriptionManager.swift */; };
 		91F9C1053CEBEFD48083BA55 /* BoardShowcaseIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA79057C282BD3CE501F363 /* BoardShowcaseIntent.swift */; };
 		946C3EF198BC305C48293848 /* StickerCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D878D128C4599B9F13AD702 /* StickerCaptureView.swift */; };
+		968265A0068025FDA475B948 /* DebugPrintRemovalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 184AC63B41CB824E00123DE8 /* DebugPrintRemovalTests.swift */; };
 		98E01017AB164E7839FE687E /* SharedWidgetConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A9760F22EDD717B2205202 /* SharedWidgetConstants.swift */; };
 		9ADB3E6146D90A1ED01BA205 /* StickerPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F0053CD2C5B7ABC5FC4A01 /* StickerPlacement.swift */; };
 		9B6AE8CDABF573157738B32A /* Sticker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6B638736BE2DE98C1C08D4B /* Sticker.swift */; };
@@ -129,6 +130,7 @@
 		0B6E414C38C81FDD95EBC2EE /* StickerLibraryAccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerLibraryAccessibilityTests.swift; sourceTree = "<group>"; };
 		0D6802D6762B69A0CA2A7336 /* MaskCompositor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaskCompositor.swift; sourceTree = "<group>"; };
 		11C89501ABCC774418176436 /* WidgetModelsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetModelsTests.swift; sourceTree = "<group>"; };
+		184AC63B41CB824E00123DE8 /* DebugPrintRemovalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugPrintRemovalTests.swift; sourceTree = "<group>"; };
 		19E5D6F908EE947CC125BAC4 /* StickerBorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerBorder.swift; sourceTree = "<group>"; };
 		1A6669D6CA5D4EAD5DB7BF3C /* OnboardingPageIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageIndicator.swift; sourceTree = "<group>"; };
 		1BF7C58976D7F4A010B330FC /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -434,6 +436,7 @@
 				BFB6A08C090537657BB85CAD /* BoardEditorToolbarTests.swift */,
 				259987BEAF660FD74A7333A2 /* BoardTests.swift */,
 				530CD661BF00498FE8299E3E /* CaptureAccessibilityTests.swift */,
+				184AC63B41CB824E00123DE8 /* DebugPrintRemovalTests.swift */,
 				EF3C9D7666FCCC1875EBD61B /* FilterBorderAccessibilityTests.swift */,
 				3E3E385C3511299350E1EDC0 /* HolographicAccessibilityTests.swift */,
 				604CC75026AD20187DC30B3F /* ImageStorageTests.swift */,
@@ -634,6 +637,7 @@
 				B64557CBC40B089B6FDFB338 /* BoardEditorToolbarTests.swift in Sources */,
 				B96495C34AE5425881B553FB /* BoardTests.swift in Sources */,
 				5AAD2F7A210494638C8EEBB5 /* CaptureAccessibilityTests.swift in Sources */,
+				968265A0068025FDA475B948 /* DebugPrintRemovalTests.swift in Sources */,
 				A10D2757338DA6B28B63FD24 /* FilterBorderAccessibilityTests.swift in Sources */,
 				71630AD405448E0B887E9228 /* HolographicAccessibilityTests.swift in Sources */,
 				E1E29CF14D41BF97D2C1B6E2 /* ImageStorageTests.swift in Sources */,
