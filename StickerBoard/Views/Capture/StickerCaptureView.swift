@@ -19,7 +19,6 @@ struct StickerCaptureView: View {
     @State private var cameraImage: UIImage?
     @State private var backgroundRemovalResult: BackgroundRemovalResult?
     @State private var showingMaskEditor = false
-    @State private var rotationAngle: Double = 0
     @State private var maskEditorId = UUID()
     @State private var showingPaywall = false
     @State private var processingTask: Task<Void, Never>?
@@ -333,14 +332,11 @@ struct StickerCaptureView: View {
     private func resultSection(_ image: UIImage) -> some View {
         VStack(spacing: 20) {
             StickerPreviewView(image: image)
-                .rotationEffect(.degrees(rotationAngle))
-                .animation(.spring(duration: 0.3), value: rotationAngle)
 
             // 回転ボタン
             HStack(spacing: 12) {
                 Button {
                     processedImage = image.rotatedBy90Degrees(clockwise: false)
-                    rotationAngle = 0
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "rotate.left")
@@ -361,7 +357,6 @@ struct StickerCaptureView: View {
 
                 Button {
                     processedImage = image.rotatedBy90Degrees(clockwise: true)
-                    rotationAngle = 0
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "rotate.right")
@@ -607,6 +602,5 @@ struct StickerCaptureView: View {
         cameraImage = nil
         errorMessage = nil
         backgroundRemovalResult = nil
-        rotationAngle = 0
     }
 }

@@ -61,6 +61,7 @@ struct StickerLibraryView: View {
                 StickerPreviewOverlay(
                     sticker: sticker,
                     namespace: previewNamespace,
+                    refreshTrigger: thumbnailRefreshID,
                     onDismiss: {
                         withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
                             previewSticker = nil
@@ -258,12 +259,17 @@ struct StickerLibraryView: View {
     }
 
     private func rotateSticker(_ sticker: Sticker, clockwise: Bool) {
-        do {
-            try ImageStorage.rotateAndOverwrite(fileName: sticker.imageFileName, clockwise: clockwise)
-            thumbnailRefreshID = UUID()
-            AccessibilityNotification.Announcement(clockwise ? "右に回転しました" : "左に回転しました").post()
-        } catch {
-            showRotateError = true
+        Task {
+            do {
+                let fileName = sticker.imageFileName
+                try await Task.detached {
+                    try ImageStorage.rotateAndOverwrite(fileName: fileName, clockwise: clockwise)
+                }.value
+                thumbnailRefreshID = UUID()
+                AccessibilityNotification.Announcement(clockwise ? "右に回転しました" : "左に回転しました").post()
+            } catch {
+                showRotateError = true
+            }
         }
     }
 
@@ -388,10 +394,13 @@ struct StickerLibraryView: View {
 struct StickerPreviewOverlay: View {
     let sticker: Sticker
     let namespace: Namespace.ID
+    var refreshTrigger: UUID = UUID()
     var onDismiss: () -> Void
     var onDelete: () -> Void = {}
     var onMaskEdit: () -> Void = {}
     var onRotate: (Bool) -> Void = { _ in }
+
+    @State private var previewImage: UIImage?
 
     var body: some View {
         ZStack {
@@ -405,7 +414,7 @@ struct StickerPreviewOverlay: View {
                 Spacer(minLength: 0)
 
                 Group {
-                    if let image = ImageStorage.load(fileName: sticker.imageFileName) {
+                    if let image = previewImage {
                         Image(uiImage: image)
                             .resizable()
                             .scaledToFit()
@@ -424,6 +433,11 @@ struct StickerPreviewOverlay: View {
                 }
                 .matchedGeometryEffect(id: sticker.id, in: namespace)
                 .padding(.horizontal, 32)
+                .task(id: refreshTrigger) {
+                    previewImage = await Task.detached {
+                        ImageStorage.load(fileName: sticker.imageFileName)
+                    }.value
+                }
 
                 Text(sticker.createdAt.formatted(date: .abbreviated, time: .shortened))
                     .font(.system(size: 13, design: .rounded))
