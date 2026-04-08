@@ -1,5 +1,14 @@
 import UIKit
 
+/// 3層（フル解像度・サムネイル・フィルター適用済み）のインメモリ画像キャッシュ。
+///
+/// ## スレッドセーフティ
+/// `@unchecked Sendable` を採用しているが、内部の可変状態はすべてロックで保護されている:
+/// - `fullResolutionCache` / `thumbnailCache` / `filteredCache`: `NSCache` は本来スレッドセーフ
+/// - `trackedThumbnailKeys` / `trackedFilteredKeys`: `keyTrackingLock` で保護
+/// - `fullResolutionLoadingTasks`: `fullResolutionLoadingTasksLock` で保護
+/// - メモリ警告ハンドラ (`purgeAllCaches`) は全 NSCache を一括削除したうえで
+///   `keyTrackingLock` を取得して追跡辞書をクリアするため、安全に動作する
 final class ImageCacheManager: @unchecked Sendable {
 
     static let shared = ImageCacheManager()
@@ -31,11 +40,13 @@ final class ImageCacheManager: @unchecked Sendable {
     }()
 
     /// キャッシュキー追跡（NSCacheはキー列挙不可のため、ファイル名ごとにキーを追跡）
+    /// アクセスは `keyTrackingLock` で保護する
     private var trackedThumbnailKeys: [String: Set<NSString>] = [:]
     private var trackedFilteredKeys: [String: Set<NSString>] = [:]
     private let keyTrackingLock = NSLock()
 
     /// 進行中のフル解像度読み込みタスク（同一画像の重複ディスクI/Oを防止）
+    /// アクセスは `fullResolutionLoadingTasksLock` で保護する
     private var fullResolutionLoadingTasks: [String: Task<UIImage?, Never>] = [:]
     private let fullResolutionLoadingTasksLock = NSLock()
 
@@ -73,26 +84,25 @@ final class ImageCacheManager: @unchecked Sendable {
             return cached
         }
 
-        fullResolutionLoadingTasksLock.lock()
-        if let existingTask = fullResolutionLoadingTasks[fileName] {
-            fullResolutionLoadingTasksLock.unlock()
-            return await existingTask.value
-        }
-
-        let task = Task<UIImage?, Never>.detached {
-            defer {
-                self.fullResolutionLoadingTasksLock.withLock {
-                    self.fullResolutionLoadingTasks.removeValue(forKey: fileName)
-                }
+        // 既存タスクへの参照、または新規タスクを withLock 内で一括取得
+        let task: Task<UIImage?, Never> = fullResolutionLoadingTasksLock.withLock {
+            if let existingTask = fullResolutionLoadingTasks[fileName] {
+                return existingTask
             }
-            guard let image = ImageStorage.loadFromDisk(fileName: fileName) else { return nil }
-            let cost = image.estimatedMemoryCost
-            self.fullResolutionCache.setObject(image, forKey: key, cost: cost)
-            return image
+            let newTask = Task<UIImage?, Never>.detached {
+                defer {
+                    self.fullResolutionLoadingTasksLock.withLock {
+                        self.fullResolutionLoadingTasks.removeValue(forKey: fileName)
+                    }
+                }
+                guard let image = ImageStorage.loadFromDisk(fileName: fileName) else { return nil }
+                let cost = image.estimatedMemoryCost
+                self.fullResolutionCache.setObject(image, forKey: key, cost: cost)
+                return image
+            }
+            fullResolutionLoadingTasks[fileName] = newTask
+            return newTask
         }
-
-        fullResolutionLoadingTasks[fileName] = task
-        fullResolutionLoadingTasksLock.unlock()
 
         return await task.value
     }
