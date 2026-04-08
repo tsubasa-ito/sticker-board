@@ -52,6 +52,8 @@ xcodebuild -project StickerBoard.xcodeproj -scheme StickerBoard -destination 'pl
 open StickerBoard.xcodeproj
 ```
 
+> **注意（Xcode 26 beta）:** Swift Testing の `@Test func` の関数名を数字（`0`〜`9`）で始めると `build-for-testing` がクラッシュする。関数名は必ず文字またはアンダースコアで始めること（例: `180度...` → `百八十度...` or `回転後...`）
+
 ## 注意事項
 - Vision Frameworkの背景除去はシミュレータでは動作しない（実機のみ）
 - シミュレータではフォールバックとして元画像をそのまま返す
@@ -66,6 +68,8 @@ open StickerBoard.xcodeproj
 - StickerFilterService は CIFilter ベースでオンザフライ処理。BoardEditorView ではフィルター適用画像をキャッシュして body 再評価時の再計算を回避
 - ImageCacheManager（NSCache ベース）がフル解像度・サムネイル・フィルター適用済みの3層キャッシュを管理。メモリ警告時に自動パージ
 - ImageStorage.save() は保存時にアルファトリミング（透明余白の除去）→ 長辺1024pxリサイズの順で処理する（バウンディングボックスの最適化 + ステッカー用途のサイズ最適化）
+- ImageStorage.rotateAndOverwrite(fileName:clockwise:) はディスクからの読み込み → UIImage.rotatedBy90Degrees(clockwise:) で90度回転 → overwrite() の順で処理する。回転メソッドは ImageCacheManager.swift の UIImage 拡張に定義。UIGraphicsImageRendererFormat.scale に元画像のスケールを引き継がないとピクセル寸法が変わるため注意
+- ImageStorageError には encodingFailed / deletionFailed / loadFailed の3ケースあり。loadFailed は rotateAndOverwrite で対象ファイルが見つからない場合に投げる
 - StickerLibraryView は @Query ではなく FetchDescriptor + fetchLimit/fetchOffset によるページネーション（30枚ずつ無限スクロール）でシールを取得する設計（大量シール時のメモリ最適化）
 - サムネイル表示（StickerThumbnailView, QuickPickThumbnail, BoardStickerPreviewView）は ImageStorage.loadThumbnail() 経由で縮小画像を使用
 - 枠線（ボーダー）は StickerPlacement の borderWidthType / borderColorHex に保存し、フィルターと同様に配置単位で管理する設計
