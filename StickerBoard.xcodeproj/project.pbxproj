@@ -85,6 +85,7 @@
 		DB745BDCC883E3A46CBFB7C1 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9A3FC5FB8145015E1952AD /* MainTabView.swift */; };
 		E0546E3252F1E756FEC85DA1 /* StickerPlacementTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B03A91B141329E13EDBEAE9A /* StickerPlacementTests.swift */; };
 		E1E29CF14D41BF97D2C1B6E2 /* ImageStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604CC75026AD20187DC30B3F /* ImageStorageTests.swift */; };
+		E2C654B1A92506E96A3EA2E3 /* ImageCacheManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBA6E251F33AFE7D815B51E /* ImageCacheManagerTests.swift */; };
 		E2D14D4429193D3C436BA5D2 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DE8FA1873B214DE9520E815 /* AppTheme.swift */; };
 		E4535CB2569518D2A9E42749 /* BoardAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453EB379EB98A3F0EDA2660F /* BoardAccessibilityTests.swift */; };
 		E6EC80AF4242054250D52AD5 /* MaskDrawingCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D95F00C228CAD698E6DB326 /* MaskDrawingCanvas.swift */; };
@@ -132,6 +133,7 @@
 /* Begin PBXFileReference section */
 		05D64C35BE0EE1118E31B7E3 /* BoardEditorBindingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEditorBindingTests.swift; sourceTree = "<group>"; };
 		0B6E414C38C81FDD95EBC2EE /* StickerLibraryAccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerLibraryAccessibilityTests.swift; sourceTree = "<group>"; };
+		0CBA6E251F33AFE7D815B51E /* ImageCacheManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManagerTests.swift; sourceTree = "<group>"; };
 		0D6802D6762B69A0CA2A7336 /* MaskCompositor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaskCompositor.swift; sourceTree = "<group>"; };
 		11C89501ABCC774418176436 /* WidgetModelsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetModelsTests.swift; sourceTree = "<group>"; };
 		184AC63B41CB824E00123DE8 /* DebugPrintRemovalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugPrintRemovalTests.swift; sourceTree = "<group>"; };
@@ -450,6 +452,7 @@
 				184AC63B41CB824E00123DE8 /* DebugPrintRemovalTests.swift */,
 				EF3C9D7666FCCC1875EBD61B /* FilterBorderAccessibilityTests.swift */,
 				3E3E385C3511299350E1EDC0 /* HolographicAccessibilityTests.swift */,
+				0CBA6E251F33AFE7D815B51E /* ImageCacheManagerTests.swift */,
 				604CC75026AD20187DC30B3F /* ImageStorageTests.swift */,
 				82762278F79270BA92FD3D38 /* MaskCompositorTests.swift */,
 				EF8707E62DE974CFCF4EBA7F /* MultiStickerSelectionAccessibilityTests.swift */,
@@ -655,6 +658,7 @@
 				968265A0068025FDA475B948 /* DebugPrintRemovalTests.swift in Sources */,
 				A10D2757338DA6B28B63FD24 /* FilterBorderAccessibilityTests.swift in Sources */,
 				71630AD405448E0B887E9228 /* HolographicAccessibilityTests.swift in Sources */,
+				E2C654B1A92506E96A3EA2E3 /* ImageCacheManagerTests.swift in Sources */,
 				E1E29CF14D41BF97D2C1B6E2 /* ImageStorageTests.swift in Sources */,
 				2B1517B2E5E84806CB242F6C /* MaskCompositorTests.swift in Sources */,
 				A282C9579FE88F9AAA4AAB8E /* MultiStickerSelectionAccessibilityTests.swift in Sources */,
