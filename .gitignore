@@ -19,6 +19,9 @@ Packages/
 Package.pins
 Package.resolved
 
+# Firebase
+StickerBoard/GoogleService-Info.plist
+
 # Misc
 *.swp
 *~

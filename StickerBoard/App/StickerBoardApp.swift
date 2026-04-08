@@ -1,3 +1,4 @@
+import Firebase
 import SwiftUI
 import SwiftData
 
@@ -8,6 +9,9 @@ struct StickerBoardApp: App {
     @State private var deepLinkBoardId: UUID?
 
     init() {
+        // Firebase の初期化（Crashlytics によるクラッシュ検知）
+        FirebaseApp.configure()
+
         let container: ModelContainer
         do {
             container = try ModelContainer(for: Sticker.self, Board.self)
