@@ -38,7 +38,7 @@ struct MainTabView: View {
 
     // レビュー訴求
     @Environment(\.requestReview) private var requestReview
-    @Query private var allStickers: [Sticker]
+    @Environment(\.modelContext) private var modelContext
     @AppStorage("reviewLastRequestDate") private var reviewLastRequestDate: Double = 0
     @AppStorage("reviewRequestCountThisYear") private var reviewRequestCountThisYear: Int = 0
     @AppStorage("reviewRequestYear") private var reviewRequestYear: Int = 0
@@ -77,7 +77,8 @@ struct MainTabView: View {
             NavigationStack {
                 StickerCaptureView(onStickerSaved: {
                     libraryRefreshID = UUID()
-                    if ReviewRequestManager.shared.isStickerMilestone(allStickers.count) {
+                    let stickerCount = (try? modelContext.fetchCount(FetchDescriptor<Sticker>())) ?? 0
+                    if ReviewRequestManager.shared.isStickerMilestone(stickerCount) {
                         triggerReviewIfNeeded()
                     }
                 })
