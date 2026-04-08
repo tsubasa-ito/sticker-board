@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import StoreKit
 
 struct MainTabView: View {
     enum Tab {
@@ -35,11 +36,23 @@ struct MainTabView: View {
     @AppStorage("skippedVersion") private var skippedVersion: String = ""
     @AppStorage("lastUpdateCheckDate") private var lastUpdateCheckDate: Double = 0
 
+    // レビュー訴求
+    @Environment(\.requestReview) private var requestReview
+    @Query private var allStickers: [Sticker]
+    @AppStorage("reviewLastRequestDate") private var reviewLastRequestDate: Double = 0
+    @AppStorage("reviewRequestCountThisYear") private var reviewRequestCountThisYear: Int = 0
+    @AppStorage("reviewRequestYear") private var reviewRequestYear: Int = 0
+    @AppStorage("appLaunchCount") private var appLaunchCount: Int = 0
+
     var body: some View {
         ZStack(alignment: .bottom) {
             ZStack {
                 NavigationStack {
-                    HomeView(hideTabBar: $hideTabBar, deepLinkBoardId: $deepLinkBoardId)
+                    HomeView(
+                        hideTabBar: $hideTabBar,
+                        deepLinkBoardId: $deepLinkBoardId,
+                        onBoardCreated: { triggerReviewIfNeeded() }
+                    )
                 }
                 .opacity(selectedTab == .home ? 1 : 0)
                 .allowsHitTesting(selectedTab == .home)
@@ -64,11 +77,17 @@ struct MainTabView: View {
             NavigationStack {
                 StickerCaptureView(onStickerSaved: {
                     libraryRefreshID = UUID()
+                    if ReviewRequestManager.shared.isStickerMilestone(allStickers.count) {
+                        triggerReviewIfNeeded()
+                    }
                 })
             }
         }
         .task {
             await checkForAppUpdate()
+            if ReviewRequestManager.shared.isLaunchMilestone(appLaunchCount) {
+                triggerReviewIfNeeded()
+            }
         }
         .onChange(of: deepLinkBoardId) {
             if deepLinkBoardId != nil {
@@ -95,6 +114,27 @@ struct MainTabView: View {
             } else {
                 Text("新しいバージョン(\(latestVersion))が利用可能です。\n最新機能をお楽しみください。")
             }
+        }
+    }
+
+    // MARK: - レビュー訴求
+
+    private func triggerReviewIfNeeded() {
+        let manager = ReviewRequestManager.shared
+        guard manager.shouldRequestReview(
+            lastRequestDate: reviewLastRequestDate,
+            requestCountThisYear: reviewRequestCountThisYear,
+            lastRequestYear: reviewRequestYear
+        ) else { return }
+
+        requestReview()
+        reviewLastRequestDate = Date().timeIntervalSince1970
+        let currentYear = manager.currentYear()
+        if currentYear != reviewRequestYear {
+            reviewRequestYear = currentYear
+            reviewRequestCountThisYear = 1
+        } else {
+            reviewRequestCountThisYear += 1
         }
     }
 

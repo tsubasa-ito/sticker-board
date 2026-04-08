@@ -69,6 +69,7 @@
 		BDC24ACEB8628C05167A1914 /* PaywallAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2647DE31B6EC1A661584CC /* PaywallAccessibilityTests.swift */; };
 		BDD4B606C0138C4D7142458D /* StickerItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF271962CA9EF750652A353 /* StickerItemView.swift */; };
 		BED979FE590B8C4D2ECA17E5 /* BoardShowcaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D580E04D977AE3825B222BDA /* BoardShowcaseView.swift */; };
+		BFF87E82B1ACC34DD2F9E78E /* ReviewRequestManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C592ED5BC9F9E05F81F080EB /* ReviewRequestManagerTests.swift */; };
 		C2AF5B0E2BFAC184CC8279FA /* StickerBorderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276A77B1063731059420BB58 /* StickerBorderTests.swift */; };
 		C4460E2AC4B0A01446BD3666 /* StickerLibraryAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6E414C38C81FDD95EBC2EE /* StickerLibraryAccessibilityTests.swift */; };
 		C98D76F680578FBA369FBE52 /* AccessibilityRuleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDF2A8C549FCAF35D5DD828 /* AccessibilityRuleTests.swift */; };
@@ -91,6 +92,7 @@
 		ED41EDEDCF9EB89E47B5B802 /* BackgroundRemoverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB6EDAB9B790B0F91276B35D /* BackgroundRemoverTests.swift */; };
 		EF33BC7291CF1E7AC2831ED8 /* BoardEditorBindingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D64C35BE0EE1118E31B7E3 /* BoardEditorBindingTests.swift */; };
 		EFE200E232D91B33BA4352C6 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A79F18B6EE07305097CF4B9E /* PaywallView.swift */; };
+		F24EB63262D42F1F0D61D1A9 /* ReviewRequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829436B4B4B3D87B24B6F5D4 /* ReviewRequestManager.swift */; };
 		F675B7EB9755F383AB8E0FA9 /* BoardShowcaseWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4850F2EEA934F5007C5453 /* BoardShowcaseWidget.swift */; };
 		FFE2EA3515CC894BED8FEE78 /* MaskCompositor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D6802D6762B69A0CA2A7336 /* MaskCompositor.swift */; };
 /* End PBXBuildFile section */
@@ -175,6 +177,7 @@
 		7FA79057C282BD3CE501F363 /* BoardShowcaseIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardShowcaseIntent.swift; sourceTree = "<group>"; };
 		82762278F79270BA92FD3D38 /* MaskCompositorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaskCompositorTests.swift; sourceTree = "<group>"; };
 		827CF4CCF758CF7D72CCC423 /* WidgetDataSyncServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataSyncServiceTests.swift; sourceTree = "<group>"; };
+		829436B4B4B3D87B24B6F5D4 /* ReviewRequestManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewRequestManager.swift; sourceTree = "<group>"; };
 		8CA42CC44A656C4DE5FDD444 /* BackgroundImageStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundImageStorage.swift; sourceTree = "<group>"; };
 		98F3C1F87DFC6BE33492062C /* StickerBoard.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = StickerBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B695157C87669CCB70690F4 /* StickerBoardTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = StickerBoardTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -194,6 +197,7 @@
 		BE45BBB2C51CC68C9B0C8EBB /* MotionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionManager.swift; sourceTree = "<group>"; };
 		BFB6A08C090537657BB85CAD /* BoardEditorToolbarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEditorToolbarTests.swift; sourceTree = "<group>"; };
 		C1211D3F280555E23A6562B3 /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
+		C592ED5BC9F9E05F81F080EB /* ReviewRequestManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewRequestManagerTests.swift; sourceTree = "<group>"; };
 		C772005BADEC8B242A0A39E8 /* OnboardingAccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingAccessibilityTests.swift; sourceTree = "<group>"; };
 		C94311FE1E30296BB608F927 /* SharedCIContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedCIContext.swift; sourceTree = "<group>"; };
 		CBF271962CA9EF750652A353 /* StickerItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerItemView.swift; sourceTree = "<group>"; };
@@ -339,6 +343,7 @@
 				DFE93838BF2C08278A3401AE /* ImageStorage.swift */,
 				0D6802D6762B69A0CA2A7336 /* MaskCompositor.swift */,
 				BE45BBB2C51CC68C9B0C8EBB /* MotionManager.swift */,
+				829436B4B4B3D87B24B6F5D4 /* ReviewRequestManager.swift */,
 				C94311FE1E30296BB608F927 /* SharedCIContext.swift */,
 				ABCD1438794D34A642F45B93 /* StickerBorderService.swift */,
 				D44F094F53D9CC5028477F0F /* StickerFilterService.swift */,
@@ -447,6 +452,7 @@
 				EF8707E62DE974CFCF4EBA7F /* MultiStickerSelectionAccessibilityTests.swift */,
 				C772005BADEC8B242A0A39E8 /* OnboardingAccessibilityTests.swift */,
 				2C2647DE31B6EC1A661584CC /* PaywallAccessibilityTests.swift */,
+				C592ED5BC9F9E05F81F080EB /* ReviewRequestManagerTests.swift */,
 				FEA269B34011892E6EAED96D /* SettingsAccessibilityTests.swift */,
 				504A7665F90173671AD3B76A /* StickerBorderServiceTests.swift */,
 				276A77B1063731059420BB58 /* StickerBorderTests.swift */,
@@ -604,6 +610,7 @@
 				17F2CCB19526F58F4BCC6D04 /* OnboardingPageView.swift in Sources */,
 				EC5591236152676EACAFE16E /* OnboardingView.swift in Sources */,
 				EFE200E232D91B33BA4352C6 /* PaywallView.swift in Sources */,
+				F24EB63262D42F1F0D61D1A9 /* ReviewRequestManager.swift in Sources */,
 				CD7F900D42AEFF5E5C1C652F /* SettingsView.swift in Sources */,
 				36E53A08C4668D5590BE46A1 /* SharedBoardMetadata.swift in Sources */,
 				8124DEAC93C46FA70F835CF0 /* SharedCIContext.swift in Sources */,
@@ -649,6 +656,7 @@
 				A282C9579FE88F9AAA4AAB8E /* MultiStickerSelectionAccessibilityTests.swift in Sources */,
 				0AB95DB882B4D5509D6E229E /* OnboardingAccessibilityTests.swift in Sources */,
 				BDC24ACEB8628C05167A1914 /* PaywallAccessibilityTests.swift in Sources */,
+				BFF87E82B1ACC34DD2F9E78E /* ReviewRequestManagerTests.swift in Sources */,
 				57ADA124B508F310C9786DDD /* SettingsAccessibilityTests.swift in Sources */,
 				50D1435CD2C021AF375212FA /* StickerBorderServiceTests.swift in Sources */,
 				C2AF5B0E2BFAC184CC8279FA /* StickerBorderTests.swift in Sources */,

@@ -38,6 +38,10 @@ struct StickerBoardApp: App {
 
         // サブスクリプションマネージャーの早期初期化
         _ = SubscriptionManager.shared
+
+        // アプリ起動回数カウント
+        let launchCount = UserDefaults.standard.integer(forKey: "appLaunchCount") + 1
+        UserDefaults.standard.set(launchCount, forKey: "appLaunchCount")
     }
 
     var body: some Scene {
