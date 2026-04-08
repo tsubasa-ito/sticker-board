@@ -9,6 +9,7 @@ struct HomeView: View {
 
     @Binding var hideTabBar: Bool
     @Binding var deepLinkBoardId: UUID?
+    var onBoardCreated: () -> Void = {}
 
     @State private var showingNewBoard = false
     @State private var newBoardTitle = ""
@@ -419,6 +420,7 @@ struct HomeView: View {
         let board = Board(title: title)
         modelContext.insert(board)
         newBoardTitle = ""
+        onBoardCreated()
     }
 
     private func renameBoard() {

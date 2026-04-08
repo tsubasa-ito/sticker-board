@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import StoreKit
 
 struct MainTabView: View {
     enum Tab {
@@ -35,11 +36,28 @@ struct MainTabView: View {
     @AppStorage("skippedVersion") private var skippedVersion: String = ""
     @AppStorage("lastUpdateCheckDate") private var lastUpdateCheckDate: Double = 0
 
+    // レビュー訴求
+    @Environment(\.requestReview) private var requestReview
+    @Environment(\.modelContext) private var modelContext
+    @AppStorage("reviewRequestDatesJSON") private var reviewRequestDatesJSON: String = "[]"
+    @AppStorage("appLaunchCount") private var appLaunchCount: Int = 0
+    @State private var pendingReviewTrigger = false
+
     var body: some View {
         ZStack(alignment: .bottom) {
             ZStack {
                 NavigationStack {
-                    HomeView(hideTabBar: $hideTabBar, deepLinkBoardId: $deepLinkBoardId)
+                    HomeView(
+                        hideTabBar: $hideTabBar,
+                        deepLinkBoardId: $deepLinkBoardId,
+                        onBoardCreated: {
+                            Task { @MainActor in
+                                // alert の dismiss アニメーション完了を待つ
+                                try? await Task.sleep(for: .milliseconds(600))
+                                triggerReviewIfNeeded()
+                            }
+                        }
+                    )
                 }
                 .opacity(selectedTab == .home ? 1 : 0)
                 .allowsHitTesting(selectedTab == .home)
@@ -58,17 +76,30 @@ struct MainTabView: View {
                 floatingTabBar
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
+
         }
         .animation(.easeInOut(duration: 0.25), value: hideTabBar)
-        .sheet(isPresented: $showCapture) {
+        .sheet(isPresented: $showCapture, onDismiss: {
+            if pendingReviewTrigger {
+                pendingReviewTrigger = false
+                triggerReviewIfNeeded()
+            }
+        }) {
             NavigationStack {
                 StickerCaptureView(onStickerSaved: {
                     libraryRefreshID = UUID()
+                    let stickerCount = (try? modelContext.fetchCount(FetchDescriptor<Sticker>())) ?? 0
+                    if ReviewRequestManager.shared.isStickerMilestone(stickerCount) {
+                        pendingReviewTrigger = true
+                    }
                 })
             }
         }
         .task {
             await checkForAppUpdate()
+            if ReviewRequestManager.shared.isLaunchMilestone(appLaunchCount) {
+                triggerReviewIfNeeded()
+            }
         }
         .onChange(of: deepLinkBoardId) {
             if deepLinkBoardId != nil {
@@ -96,6 +127,22 @@ struct MainTabView: View {
                 Text("新しいバージョン(\(latestVersion))が利用可能です。\n最新機能をお楽しみください。")
             }
         }
+    }
+
+    // MARK: - レビュー訴求
+
+    private var reviewRequestDates: [Double] {
+        (try? JSONDecoder().decode([Double].self, from: Data(reviewRequestDatesJSON.utf8))) ?? []
+    }
+
+    private func triggerReviewIfNeeded() {
+        let manager = ReviewRequestManager.shared
+        let dates = reviewRequestDates
+        guard manager.shouldRequestReview(requestDates: dates) else { return }
+
+        requestReview()
+        let updatedDates = manager.updatedRequestDates(dates)
+        reviewRequestDatesJSON = (try? String(data: JSONEncoder().encode(updatedDates), encoding: .utf8)) ?? "[]"
     }
 
     // MARK: - アップデートチェック
