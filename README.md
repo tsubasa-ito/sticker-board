@@ -40,6 +40,7 @@
 | データ保存 | SwiftData + FileManager |
 | 課金 | StoreKit 2（自動更新サブスクリプション） |
 | ウィジェット | WidgetKit + AppIntentConfiguration |
+| クラッシュ検知 | Firebase Crashlytics |
 | プロジェクト管理 | XcodeGen |
 | 対応OS | iOS 18+ |
 
@@ -68,6 +69,8 @@ open StickerBoard.xcodeproj
 ```
 
 Xcode が開いたら、Signing & Capabilities で自分の Apple ID（Team）を設定してください。
+
+> **Firebase Crashlytics の設定:** クラッシュ検知を有効にするには、[Firebase コンソール](https://console.firebase.google.com/) でプロジェクトを作成し、`GoogleService-Info.plist` を `StickerBoard/` 直下に配置してください（このファイルは `.gitignore` で除外されています）。詳細は [`docs/MCP_CRASHLYTICS.md`](docs/MCP_CRASHLYTICS.md) を参照。
 
 ## 動作確認の方法
 
