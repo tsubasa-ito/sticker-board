@@ -39,9 +39,7 @@ struct MainTabView: View {
     // レビュー訴求
     @Environment(\.requestReview) private var requestReview
     @Environment(\.modelContext) private var modelContext
-    @AppStorage("reviewLastRequestDate") private var reviewLastRequestDate: Double = 0
-    @AppStorage("reviewRequestCountThisYear") private var reviewRequestCountThisYear: Int = 0
-    @AppStorage("reviewRequestYear") private var reviewRequestYear: Int = 0
+    @AppStorage("reviewRequestDatesJSON") private var reviewRequestDatesJSON: String = "[]"
     @AppStorage("appLaunchCount") private var appLaunchCount: Int = 0
 
     var body: some View {
@@ -120,23 +118,18 @@ struct MainTabView: View {
 
     // MARK: - レビュー訴求
 
+    private var reviewRequestDates: [Double] {
+        (try? JSONDecoder().decode([Double].self, from: Data(reviewRequestDatesJSON.utf8))) ?? []
+    }
+
     private func triggerReviewIfNeeded() {
         let manager = ReviewRequestManager.shared
-        guard manager.shouldRequestReview(
-            lastRequestDate: reviewLastRequestDate,
-            requestCountThisYear: reviewRequestCountThisYear,
-            lastRequestYear: reviewRequestYear
-        ) else { return }
+        let dates = reviewRequestDates
+        guard manager.shouldRequestReview(requestDates: dates) else { return }
 
         requestReview()
-        reviewLastRequestDate = Date().timeIntervalSince1970
-        let currentYear = manager.currentYear()
-        if currentYear != reviewRequestYear {
-            reviewRequestYear = currentYear
-            reviewRequestCountThisYear = 1
-        } else {
-            reviewRequestCountThisYear += 1
-        }
+        let updatedDates = manager.updatedRequestDates(dates)
+        reviewRequestDatesJSON = (try? String(data: JSONEncoder().encode(updatedDates), encoding: .utf8)) ?? "[]"
     }
 
     // MARK: - アップデートチェック
