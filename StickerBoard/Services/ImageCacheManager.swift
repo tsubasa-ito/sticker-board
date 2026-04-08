@@ -280,6 +280,27 @@ extension UIImage {
         }
     }
 
+    /// 画像を90度単位で回転させる
+    func rotatedBy90Degrees(clockwise: Bool) -> UIImage {
+        let srcWidth = size.width
+        let srcHeight = size.height
+        let rotatedSize = CGSize(width: srcHeight, height: srcWidth)
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = scale
+        let renderer = UIGraphicsImageRenderer(size: rotatedSize, format: format)
+        return renderer.image { _ in
+            let ctx = UIGraphicsGetCurrentContext()!
+            if clockwise {
+                ctx.translateBy(x: srcHeight, y: 0)
+                ctx.rotate(by: .pi / 2)
+            } else {
+                ctx.translateBy(x: 0, y: srcWidth)
+                ctx.rotate(by: -.pi / 2)
+            }
+            draw(in: CGRect(origin: .zero, size: CGSize(width: srcWidth, height: srcHeight)))
+        }
+    }
+
     /// 透明ピクセルの余白をトリミングして、不透明領域の外接矩形で切り抜く
     func alphaTrimmed() -> UIImage {
         guard let cgImage else { return self }

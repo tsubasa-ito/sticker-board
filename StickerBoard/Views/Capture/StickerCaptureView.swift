@@ -19,6 +19,7 @@ struct StickerCaptureView: View {
     @State private var cameraImage: UIImage?
     @State private var backgroundRemovalResult: BackgroundRemovalResult?
     @State private var showingMaskEditor = false
+    @State private var rotationAngle: Double = 0
     @State private var maskEditorId = UUID()
     @State private var showingPaywall = false
     @State private var processingTask: Task<Void, Never>?
@@ -332,6 +333,53 @@ struct StickerCaptureView: View {
     private func resultSection(_ image: UIImage) -> some View {
         VStack(spacing: 20) {
             StickerPreviewView(image: image)
+                .rotationEffect(.degrees(rotationAngle))
+                .animation(.spring(duration: 0.3), value: rotationAngle)
+
+            // 回転ボタン
+            HStack(spacing: 12) {
+                Button {
+                    processedImage = image.rotatedBy90Degrees(clockwise: false)
+                    rotationAngle = 0
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "rotate.left")
+                            .accessibilityHidden(true)
+                        Text("左に回転")
+                            .font(.system(size: 14, weight: .medium, design: .rounded))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .foregroundStyle(AppTheme.secondary)
+                    .background {
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(AppTheme.secondary.opacity(0.6), lineWidth: 1.5)
+                    }
+                }
+                .accessibilityLabel("左に90度回転")
+                .accessibilityHint("シールを反時計回りに90度回転します")
+
+                Button {
+                    processedImage = image.rotatedBy90Degrees(clockwise: true)
+                    rotationAngle = 0
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "rotate.right")
+                            .accessibilityHidden(true)
+                        Text("右に回転")
+                            .font(.system(size: 14, weight: .medium, design: .rounded))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .foregroundStyle(AppTheme.secondary)
+                    .background {
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(AppTheme.secondary.opacity(0.6), lineWidth: 1.5)
+                    }
+                }
+                .accessibilityLabel("右に90度回転")
+                .accessibilityHint("シールを時計回りに90度回転します")
+            }
 
             // マスク手動調整ボタン
             if backgroundRemovalResult != nil {
@@ -559,5 +607,6 @@ struct StickerCaptureView: View {
         cameraImage = nil
         errorMessage = nil
         backgroundRemovalResult = nil
+        rotationAngle = 0
     }
 }

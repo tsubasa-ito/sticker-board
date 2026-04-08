@@ -22,6 +22,7 @@ struct StickerLibraryView: View {
     @State private var showDeleteError = false
     @State private var showMaskEditLoadError = false
     @State private var thumbnailRefreshID = UUID()
+    @State private var showRotateError = false
     @Namespace private var previewNamespace
     let refreshTrigger: UUID
     var onAddSticker: () -> Void = {}
@@ -76,6 +77,9 @@ struct StickerLibraryView: View {
                             previewSticker = nil
                         }
                         startMaskEdit(sticker)
+                    },
+                    onRotate: { clockwise in
+                        rotateSticker(sticker, clockwise: clockwise)
                     }
                 )
             }
@@ -115,6 +119,11 @@ struct StickerLibraryView: View {
                     saveMaskEditResult(composited)
                 }
             }
+        }
+        .alert("回転に失敗しました", isPresented: $showRotateError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("シールの回転中にエラーが発生しました。もう一度お試しください。")
         }
         .alert("保存に失敗しました", isPresented: $showOverwriteError) {
             Button("OK", role: .cancel) {}
@@ -198,6 +207,16 @@ struct StickerLibraryView: View {
                             .accessibilityHint("タップしてプレビューを表示")
                             .contextMenu {
                                 Button {
+                                    rotateSticker(sticker, clockwise: false)
+                                } label: {
+                                    Label("左に回転", systemImage: "rotate.left")
+                                }
+                                Button {
+                                    rotateSticker(sticker, clockwise: true)
+                                } label: {
+                                    Label("右に回転", systemImage: "rotate.right")
+                                }
+                                Button {
                                     startMaskEdit(sticker)
                                 } label: {
                                     Label("不要部分を除去", systemImage: "eraser.line.dashed")
@@ -235,6 +254,16 @@ struct StickerLibraryView: View {
     private func boardsUsing(_ sticker: Sticker) -> [Board] {
         boards.filter { board in
             board.placements.contains { $0.stickerId == sticker.id }
+        }
+    }
+
+    private func rotateSticker(_ sticker: Sticker, clockwise: Bool) {
+        do {
+            try ImageStorage.rotateAndOverwrite(fileName: sticker.imageFileName, clockwise: clockwise)
+            thumbnailRefreshID = UUID()
+            AccessibilityNotification.Announcement(clockwise ? "右に回転しました" : "左に回転しました").post()
+        } catch {
+            showRotateError = true
         }
     }
 
@@ -362,6 +391,7 @@ struct StickerPreviewOverlay: View {
     var onDismiss: () -> Void
     var onDelete: () -> Void = {}
     var onMaskEdit: () -> Void = {}
+    var onRotate: (Bool) -> Void = { _ in }
 
     var body: some View {
         ZStack {
@@ -398,6 +428,35 @@ struct StickerPreviewOverlay: View {
                 Text(sticker.createdAt.formatted(date: .abbreviated, time: .shortened))
                     .font(.system(size: 13, design: .rounded))
                     .foregroundStyle(.white.opacity(0.6))
+
+                // 回転ボタン
+                HStack(spacing: 12) {
+                    Button {
+                        onRotate(false)
+                    } label: {
+                        Image(systemName: "rotate.left")
+                            .font(.system(size: 20))
+                            .foregroundStyle(.white)
+                            .frame(width: 44, height: 44)
+                            .background(.white.opacity(0.15))
+                            .clipShape(Circle())
+                    }
+                    .accessibilityLabel("左に90度回転")
+                    .accessibilityHint("シールを反時計回りに90度回転します")
+
+                    Button {
+                        onRotate(true)
+                    } label: {
+                        Image(systemName: "rotate.right")
+                            .font(.system(size: 20))
+                            .foregroundStyle(.white)
+                            .frame(width: 44, height: 44)
+                            .background(.white.opacity(0.15))
+                            .clipShape(Circle())
+                    }
+                    .accessibilityLabel("右に90度回転")
+                    .accessibilityHint("シールを時計回りに90度回転します")
+                }
 
                 // アクションボタン
                 HStack(spacing: 16) {
