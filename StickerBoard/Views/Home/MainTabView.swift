@@ -77,26 +77,6 @@ struct MainTabView: View {
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
 
-            #if DEBUG
-            VStack {
-                HStack {
-                    Spacer()
-                    Button("🔔 Review") {
-                        reviewRequestDatesJSON = "[]"
-                        requestReview()
-                    }
-                    .font(.caption)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .background(Color.red.opacity(0.8))
-                    .foregroundStyle(.white)
-                    .clipShape(Capsule())
-                    .padding(.trailing, 12)
-                    .padding(.top, 8)
-                }
-                Spacer()
-            }
-            #endif
         }
         .animation(.easeInOut(duration: 0.25), value: hideTabBar)
         .sheet(isPresented: $showCapture, onDismiss: {
