@@ -11,6 +11,7 @@
 		03B4E3F546E6911F51CF07BC /* StickerBoardWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A5D91A35FA8C43BD1C0C8A /* StickerBoardWidgetBundle.swift */; };
 		08ADD0896E6540848CAB00C7 /* AppURLs.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8B7F0F5A52456C43D5F45E /* AppURLs.swift */; };
 		0AB95DB882B4D5509D6E229E /* OnboardingAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C772005BADEC8B242A0A39E8 /* OnboardingAccessibilityTests.swift */; };
+		103E0F35038CF9AD4E516EB9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 99CAE97373C4DC7BACB4C029 /* GoogleService-Info.plist */; };
 		10EB9C33B64B186C1DA9B7AC /* StickerFilterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44F094F53D9CC5028477F0F /* StickerFilterService.swift */; };
 		17F2CCB19526F58F4BCC6D04 /* OnboardingPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24DB2CADF1571137158B612F /* OnboardingPageView.swift */; };
 		1A6D5B570ED5466E73AD8176 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32104833845A2ADD7C14A5F8 /* Board.swift */; };
@@ -187,6 +188,7 @@
 		8CA42CC44A656C4DE5FDD444 /* BackgroundImageStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundImageStorage.swift; sourceTree = "<group>"; };
 		97AF12BF2EFB04266319388A /* FirebaseCrashlyticsSetupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseCrashlyticsSetupTests.swift; sourceTree = "<group>"; };
 		98F3C1F87DFC6BE33492062C /* StickerBoard.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = StickerBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		99CAE97373C4DC7BACB4C029 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9B695157C87669CCB70690F4 /* StickerBoardTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = StickerBoardTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F51DD1916FC4B3337ADA86F /* MaskEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaskEditorView.swift; sourceTree = "<group>"; };
 		9FFB83566A2BC0906338F77F /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
@@ -405,6 +407,7 @@
 			isa = PBXGroup;
 			children = (
 				F870EE68E060BE5480814A21 /* Assets.xcassets */,
+				99CAE97373C4DC7BACB4C029 /* GoogleService-Info.plist */,
 				7CD06747BFE70CBCA6E9F737 /* Info.plist */,
 				481D3899B8F8B2A414930953 /* PrivacyInfo.xcprivacy */,
 				7F33B54B676954CD018A4AA4 /* StickerBoard.entitlements */,
@@ -599,6 +602,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				567094296030D6D397CCFDA2 /* Assets.xcassets in Resources */,
+				103E0F35038CF9AD4E516EB9 /* GoogleService-Info.plist in Resources */,
 				9A0AB01CE180AFFE5DD3A5C9 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
