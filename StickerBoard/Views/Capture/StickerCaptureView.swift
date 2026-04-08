@@ -22,6 +22,8 @@ struct StickerCaptureView: View {
     @State private var maskEditorId = UUID()
     @State private var showingPaywall = false
     @State private var processingTask: Task<Void, Never>?
+    @State private var pressLocation: CGPoint = .zero
+    @State private var longPressImageViewSize: CGSize = .zero
     @Query private var allStickers: [Sticker]
     var onStickerSaved: () -> Void = {}
 
@@ -184,13 +186,55 @@ struct StickerCaptureView: View {
             // 選択された写真のプレビュー
             if let originalImage {
                 VStack(spacing: 16) {
+                    // 長押し選択の案内
+                    HStack(spacing: 8) {
+                        Image(systemName: "hand.tap.fill")
+                            .foregroundStyle(AppTheme.accent)
+                            .accessibilityHidden(true)
+                        Text("シールにしたい被写体を長押しで選択")
+                            .font(.system(size: 14, weight: .medium, design: .rounded))
+                            .foregroundStyle(AppTheme.textPrimary)
+                    }
+                    .padding(12)
+                    .frame(maxWidth: .infinity)
+                    .background(AppTheme.accent.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+
                     Image(uiImage: originalImage)
                         .resizable()
                         .scaledToFit()
-                        .frame(maxHeight: 220)
+                        .frame(maxHeight: 280)
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                         .shadow(color: .black.opacity(0.1), radius: 8, y: 4)
+                        .overlay {
+                            GeometryReader { geometry in
+                                Color.clear
+                                    .contentShape(Rectangle())
+                                    .gesture(
+                                        LongPressGesture(minimumDuration: 0.5)
+                                            .sequenced(before: DragGesture(minimumDistance: 0))
+                                            .onChanged { value in
+                                                switch value {
+                                                case .second(true, let drag):
+                                                    if let drag, !isProcessing {
+                                                        pressLocation = drag.startLocation
+                                                        longPressImageViewSize = geometry.size
+                                                        let generator = UIImpactFeedbackGenerator(style: .medium)
+                                                        generator.impactOccurred()
+                                                        processImageAtPoint()
+                                                    }
+                                                default:
+                                                    break
+                                                }
+                                            }
+                                    )
+                            }
+                        }
                         .accessibilityLabel("選択した写真のプレビュー")
+                        .accessibilityHint("被写体を長押しして選択できます")
+                        .accessibilityAction(named: "すべて自動で切り抜く") {
+                            processImage()
+                        }
 
                     Button {
                         processImage()
@@ -198,17 +242,19 @@ struct StickerCaptureView: View {
                         HStack(spacing: 8) {
                             Image(systemName: "scissors")
                                 .accessibilityHidden(true)
-                            Text("背景を除去する")
+                            Text("すべて自動で切り抜く")
                                 .font(.system(size: 16, weight: .semibold, design: .rounded))
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
-                        .background(AppTheme.accent)
-                        .foregroundStyle(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .foregroundStyle(AppTheme.secondary)
+                        .background {
+                            RoundedRectangle(cornerRadius: 14)
+                                .strokeBorder(AppTheme.secondary, lineWidth: 2)
+                        }
                     }
-                    .accessibilityLabel("背景を除去する")
-                    .accessibilityHint("写真から背景を自動的に除去します")
+                    .accessibilityLabel("すべて自動で切り抜く")
+                    .accessibilityHint("写真内のすべての被写体を自動的に検出して切り抜きます")
                 }
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
@@ -375,6 +421,76 @@ struct StickerCaptureView: View {
                 }
             }
         }
+    }
+
+    private func processImageAtPoint() {
+        guard let originalImage else { return }
+        guard longPressImageViewSize != .zero else { return }
+        let normalizedPoint = convertToNormalizedImagePoint(
+            pressLocation,
+            imageSize: originalImage.size,
+            viewSize: longPressImageViewSize
+        )
+        withAnimation { isProcessing = true }
+        errorMessage = nil
+
+        processingTask?.cancel()
+        processingTask = Task {
+            do {
+                let result = try await BackgroundRemover.removeBackgroundAtPoint(
+                    from: originalImage,
+                    normalizedPoint: normalizedPoint
+                )
+
+                guard !Task.isCancelled else { return }
+
+                withAnimation(.spring(duration: 0.5)) {
+                    backgroundRemovalResult = result
+                    processedImage = result.processedImage
+                    self.originalImage = nil
+                }
+            } catch {
+                if !Task.isCancelled {
+                    if (error as? BackgroundRemoverError) == .noSubjectAtPoint {
+                        let generator = UINotificationFeedbackGenerator()
+                        generator.notificationOccurred(.warning)
+                    }
+                    errorMessage = error.localizedDescription
+                }
+            }
+            if !Task.isCancelled {
+                withAnimation { isProcessing = false }
+            }
+        }
+    }
+
+    /// ビュー座標を画像の正規化座標（0-1）に変換する
+    private func convertToNormalizedImagePoint(_ viewPoint: CGPoint, imageSize: CGSize, viewSize: CGSize) -> CGPoint {
+        let imageAspect = imageSize.width / imageSize.height
+        let viewAspect = viewSize.width / viewSize.height
+
+        let displayRect: CGRect
+        if imageAspect > viewAspect {
+            // 画像の方が横長 → 幅にフィット、上下中央
+            let displayWidth = viewSize.width
+            let displayHeight = displayWidth / imageAspect
+            let yOffset = (viewSize.height - displayHeight) / 2
+            displayRect = CGRect(x: 0, y: yOffset, width: displayWidth, height: displayHeight)
+        } else {
+            // 画像の方が縦長 → 高さにフィット、左右中央
+            let displayHeight = viewSize.height
+            let displayWidth = displayHeight * imageAspect
+            let xOffset = (viewSize.width - displayWidth) / 2
+            displayRect = CGRect(x: xOffset, y: 0, width: displayWidth, height: displayHeight)
+        }
+
+        let normalizedX = (viewPoint.x - displayRect.minX) / displayRect.width
+        let normalizedY = (viewPoint.y - displayRect.minY) / displayRect.height
+
+        return CGPoint(
+            x: max(0, min(1, normalizedX)),
+            y: max(0, min(1, normalizedY))
+        )
     }
 
     private func processImage() {
