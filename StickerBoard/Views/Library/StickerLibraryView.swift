@@ -3,7 +3,10 @@ import SwiftUI
 import SwiftData
 
 struct StickerLibraryView: View {
-    private static let logger = Logger(subsystem: "com.tebasaki.StickerBoard", category: "StickerLibraryView")
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier ?? "com.tebasaki.StickerBoard",
+        category: "StickerLibraryView"
+    )
     @Environment(\.modelContext) private var modelContext
     @Query private var boards: [Board]
     @State private var displayedStickers: [Sticker] = []

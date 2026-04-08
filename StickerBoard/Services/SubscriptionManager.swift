@@ -5,7 +5,10 @@ import StoreKit
 @MainActor
 final class SubscriptionManager: ObservableObject {
     static let shared = SubscriptionManager()
-    private static let logger = Logger(subsystem: "com.tebasaki.StickerBoard", category: "SubscriptionManager")
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier ?? "com.tebasaki.StickerBoard",
+        category: "SubscriptionManager"
+    )
 
     @Published private(set) var isProUser: Bool = false
     @Published private(set) var products: [Product] = []

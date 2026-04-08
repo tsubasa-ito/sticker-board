@@ -10,7 +10,10 @@ import UIKit
 @Observable
 final class MotionManager {
     static let shared = MotionManager()
-    private static let logger = Logger(subsystem: "com.tebasaki.StickerBoard", category: "MotionManager")
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier ?? "com.tebasaki.StickerBoard",
+        category: "MotionManager"
+    )
 
     private let motionManager = CMMotionManager()
     private var referenceCount = 0
