@@ -119,6 +119,38 @@ struct CaptureAccessibilityTests {
         #expect(content.contains("accessibilityHint"))
     }
 
+    // MARK: - 長押し選択のアクセシビリティ（Issue #142）
+
+    @Test func StickerCaptureView_長押し案内アイコンが装飾非表示() throws {
+        let content = try readFile("StickerBoard/Views/Capture/StickerCaptureView.swift")
+        // hand.tap.fill アイコンは装飾のため accessibilityHidden
+        #expect(content.contains("hand.tap.fill") && content.contains("accessibilityHidden(true)"))
+    }
+
+    @Test func StickerCaptureView_写真プレビューに長押しのaccessibilityHintがある() throws {
+        let content = try readFile("StickerBoard/Views/Capture/StickerCaptureView.swift")
+        // 長押しジェスチャーの説明として accessibilityHint が設定されている
+        #expect(content.contains("被写体を長押しして選択できます"))
+    }
+
+    @Test func StickerCaptureView_すべて自動で切り抜くボタンにaccessibilityLabelがある() throws {
+        let content = try readFile("StickerBoard/Views/Capture/StickerCaptureView.swift")
+        // 「すべて自動で切り抜く」ボタンに accessibilityLabel が設定されている
+        #expect(content.contains("すべて自動で切り抜く") && content.contains("accessibilityLabel"))
+    }
+
+    @Test func StickerCaptureView_すべて自動で切り抜くボタンにaccessibilityHintがある() throws {
+        let content = try readFile("StickerBoard/Views/Capture/StickerCaptureView.swift")
+        // 「すべて自動で切り抜く」ボタンに accessibilityHint が設定されている
+        #expect(content.contains("すべての被写体を自動的に検出して切り抜きます"))
+    }
+
+    @Test func StickerCaptureView_scissorsアイコンが装飾非表示() throws {
+        let content = try readFile("StickerBoard/Views/Capture/StickerCaptureView.swift")
+        // scissors アイコン（すべて自動で切り抜くボタン内）は装飾のため accessibilityHidden
+        #expect(content.contains("\"scissors\"") && content.contains("accessibilityHidden(true)"))
+    }
+
     // MARK: - MaskEditorView アクセシビリティ
 
     @Test func MaskEditorView_ヒントテキストにaccessibilityが設定されている() throws {
