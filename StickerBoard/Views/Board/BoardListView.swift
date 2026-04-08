@@ -132,7 +132,16 @@ struct BoardListView: View {
     }
 
     private func deleteBoard(_ board: Board) {
+        let deletedId = board.id
+        // delete 前にメタデータを生成（@Query が stale になる前に）
+        let remaining = boards.filter { $0.id != deletedId }.map { b in
+            WidgetDataSyncService.generateMetadata(
+                boardId: b.id, title: b.title,
+                stickerCount: b.placements.count, updatedAt: b.updatedAt
+            )
+        }
         modelContext.delete(board)
+        WidgetDataSyncService.removeBoard(boardId: deletedId, remainingMetadata: remaining)
         boardToDelete = nil
     }
 }
