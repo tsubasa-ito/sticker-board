@@ -1,4 +1,4 @@
-import Firebase
+import FirebaseCrashlytics
 import SwiftUI
 import SwiftData
 
@@ -10,7 +10,10 @@ struct StickerBoardApp: App {
 
     init() {
         // Firebase の初期化（Crashlytics によるクラッシュ検知）
-        FirebaseApp.configure()
+        // GoogleService-Info.plist が未配置の場合はスキップ（開発環境対応）
+        if Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") != nil {
+            FirebaseApp.configure()
+        }
 
         let container: ModelContainer
         do {

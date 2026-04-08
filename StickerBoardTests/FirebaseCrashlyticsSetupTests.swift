@@ -23,11 +23,11 @@ struct FirebaseCrashlyticsSetupTests {
 
     // MARK: - StickerBoardApp の初期化設定
 
-    @Test func stickerBoardAppがFirebaseをimportしている() throws {
+    @Test func stickerBoardAppがFirebaseCrashlyticsをimportしている() throws {
         let content = try readFile("StickerBoard/App/StickerBoardApp.swift")
         #expect(
-            content.contains("import Firebase"),
-            "StickerBoardApp.swift に 'import Firebase' が必要です"
+            content.contains("import FirebaseCrashlytics"),
+            "StickerBoardApp.swift に 'import FirebaseCrashlytics' が必要です"
         )
     }
 
@@ -60,8 +60,12 @@ struct FirebaseCrashlyticsSetupTests {
     @Test func projectYmlにdSYMアップロードビルドフェーズが含まれている() throws {
         let content = try readFile("project.yml")
         #expect(
-            content.contains("Crashlytics") && content.contains("run"),
-            "project.yml に Crashlytics dSYM アップロードの Build Phase が必要です"
+            content.contains("postBuildScripts"),
+            "project.yml に postBuildScripts キーが必要です（XcodeGen のスクリプトフェーズ定義）"
+        )
+        #expect(
+            content.contains("Crashlytics"),
+            "project.yml に Crashlytics dSYM アップロードスクリプトが必要です"
         )
     }
 
