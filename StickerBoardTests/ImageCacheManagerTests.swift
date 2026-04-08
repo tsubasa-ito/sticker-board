@@ -159,6 +159,7 @@ import UIKit
 // MARK: - メモリ警告ハンドラ
 // didReceiveMemoryWarningNotification は全キャッシュを一括削除するため、
 // 並行実行すると他のテストのキャッシュも消えてしまう。.serialized で直列化する。
+@MainActor
 @Suite("メモリ警告ハンドラ", .serialized)
 struct ImageCacheManagerMemoryWarningTests {
 
