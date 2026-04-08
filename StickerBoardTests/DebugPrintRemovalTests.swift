@@ -22,13 +22,15 @@ struct DebugPrintRemovalTests {
     }
 
     /// ソースコード内の print( 呼び出し行を抽出する（コメント行は除外）
+    ///
+    /// - Note: 文字列マッチングによる検出のため、文字列リテラル内の "print(" にも反応する可能性がある。
+    ///   誤検知で失敗した場合は、正規表現パターンを調整して対処すること。
     private func findPrintCalls(in content: String) -> [String] {
         content.components(separatedBy: .newlines)
             .filter { line in
                 let trimmed = line.trimmingCharacters(in: .whitespaces)
-                return trimmed.contains("print(") &&
-                    !trimmed.hasPrefix("//") &&
-                    !trimmed.hasPrefix("*")
+                guard !trimmed.hasPrefix("//"), !trimmed.hasPrefix("*") else { return false }
+                return line.range(of: #"\bprint\s*\("#, options: .regularExpression) != nil
             }
     }
 
