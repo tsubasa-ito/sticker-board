@@ -132,6 +132,7 @@
 | データ保存 | SwiftData + FileManager（PNG） |
 | 課金 | StoreKit 2（自動更新サブスクリプション） |
 | ウィジェット | WidgetKit + AppIntentConfiguration |
+| クラッシュ検知 | Firebase Crashlytics |
 | プロジェクト管理 | XcodeGen |
 | 対応OS | iOS 18+ |
 
