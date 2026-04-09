@@ -11,6 +11,7 @@
 		03B4E3F546E6911F51CF07BC /* StickerBoardWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A5D91A35FA8C43BD1C0C8A /* StickerBoardWidgetBundle.swift */; };
 		08ADD0896E6540848CAB00C7 /* AppURLs.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8B7F0F5A52456C43D5F45E /* AppURLs.swift */; };
 		0AB95DB882B4D5509D6E229E /* OnboardingAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C772005BADEC8B242A0A39E8 /* OnboardingAccessibilityTests.swift */; };
+		103E0F35038CF9AD4E516EB9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 99CAE97373C4DC7BACB4C029 /* GoogleService-Info.plist */; };
 		10EB9C33B64B186C1DA9B7AC /* StickerFilterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44F094F53D9CC5028477F0F /* StickerFilterService.swift */; };
 		17F2CCB19526F58F4BCC6D04 /* OnboardingPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24DB2CADF1571137158B612F /* OnboardingPageView.swift */; };
 		1A6D5B570ED5466E73AD8176 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32104833845A2ADD7C14A5F8 /* Board.swift */; };
@@ -26,6 +27,7 @@
 		304D7F34602544B702A146D8 /* BackgroundImageStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CA42CC44A656C4DE5FDD444 /* BackgroundImageStorage.swift */; };
 		33D1A0E16223FCAC8B67B99B /* UIImageExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 351900E2F8D31C115B9F755A /* UIImageExtensionTests.swift */; };
 		36E53A08C4668D5590BE46A1 /* SharedBoardMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27912520AF159D0D12135A2C /* SharedBoardMetadata.swift */; };
+		3730FADF312F90DA57192388 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = A31113F8EC8EE2854EDFEF78 /* FirebaseCrashlytics */; };
 		39D882D756B491224A0C519C /* BoardDeleteConfirmationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C642A18BD372D652AF5FF3B /* BoardDeleteConfirmationTests.swift */; };
 		3C58A5E81DEC383139F9311A /* StickerFilterPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E07374D0724CABB84AC640D /* StickerFilterPickerView.swift */; };
 		3E7AC02052003DA43D669B47 /* MaskEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F51DD1916FC4B3337ADA86F /* MaskEditorView.swift */; };
@@ -45,6 +47,7 @@
 		71630AD405448E0B887E9228 /* HolographicAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3E385C3511299350E1EDC0 /* HolographicAccessibilityTests.swift */; };
 		720B355DF1F2E16DA0D57E85 /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B41B23D775F8487A3B361B /* CameraView.swift */; };
 		73FA13E3158C1F1BDACB6C08 /* MotionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE45BBB2C51CC68C9B0C8EBB /* MotionManager.swift */; };
+		79F486B12087DEA652D55542 /* FirebaseCrashlyticsSetupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97AF12BF2EFB04266319388A /* FirebaseCrashlyticsSetupTests.swift */; };
 		8124DEAC93C46FA70F835CF0 /* SharedCIContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94311FE1E30296BB608F927 /* SharedCIContext.swift */; };
 		8834A7A836ECA4320FA81370 /* MultiStickerSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24D931F5239EB34E8311209 /* MultiStickerSelectionView.swift */; };
 		89ABB4288877EB39D9B22BD7 /* StickerBoardWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5FF690E061C9B4C41740689C /* StickerBoardWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -54,6 +57,7 @@
 		946C3EF198BC305C48293848 /* StickerCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D878D128C4599B9F13AD702 /* StickerCaptureView.swift */; };
 		968265A0068025FDA475B948 /* DebugPrintRemovalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 184AC63B41CB824E00123DE8 /* DebugPrintRemovalTests.swift */; };
 		98E01017AB164E7839FE687E /* SharedWidgetConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A9760F22EDD717B2205202 /* SharedWidgetConstants.swift */; };
+		9A0AB01CE180AFFE5DD3A5C9 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 481D3899B8F8B2A414930953 /* PrivacyInfo.xcprivacy */; };
 		9ADB3E6146D90A1ED01BA205 /* StickerPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F0053CD2C5B7ABC5FC4A01 /* StickerPlacement.swift */; };
 		9B6AE8CDABF573157738B32A /* Sticker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6B638736BE2DE98C1C08D4B /* Sticker.swift */; };
 		9F18F7BCD225FCCA7127FFEF /* ImageStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE93838BF2C08278A3401AE /* ImageStorage.swift */; };
@@ -161,6 +165,7 @@
 		3DE8FA1873B214DE9520E815 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		3E3E385C3511299350E1EDC0 /* HolographicAccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HolographicAccessibilityTests.swift; sourceTree = "<group>"; };
 		453EB379EB98A3F0EDA2660F /* BoardAccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardAccessibilityTests.swift; sourceTree = "<group>"; };
+		481D3899B8F8B2A414930953 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		4C642A18BD372D652AF5FF3B /* BoardDeleteConfirmationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardDeleteConfirmationTests.swift; sourceTree = "<group>"; };
 		4E07374D0724CABB84AC640D /* StickerFilterPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerFilterPickerView.swift; sourceTree = "<group>"; };
 		504A7665F90173671AD3B76A /* StickerBorderServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerBorderServiceTests.swift; sourceTree = "<group>"; };
@@ -183,7 +188,9 @@
 		827CF4CCF758CF7D72CCC423 /* WidgetDataSyncServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataSyncServiceTests.swift; sourceTree = "<group>"; };
 		829436B4B4B3D87B24B6F5D4 /* ReviewRequestManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewRequestManager.swift; sourceTree = "<group>"; };
 		8CA42CC44A656C4DE5FDD444 /* BackgroundImageStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundImageStorage.swift; sourceTree = "<group>"; };
+		97AF12BF2EFB04266319388A /* FirebaseCrashlyticsSetupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseCrashlyticsSetupTests.swift; sourceTree = "<group>"; };
 		98F3C1F87DFC6BE33492062C /* StickerBoard.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = StickerBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		99CAE97373C4DC7BACB4C029 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9B695157C87669CCB70690F4 /* StickerBoardTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = StickerBoardTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F51DD1916FC4B3337ADA86F /* MaskEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaskEditorView.swift; sourceTree = "<group>"; };
 		9FFB83566A2BC0906338F77F /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
@@ -227,6 +234,17 @@
 		FEA269B34011892E6EAED96D /* SettingsAccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAccessibilityTests.swift; sourceTree = "<group>"; };
 		FFE0B8E6513901BD9D46F2FA /* StickerBorderPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerBorderPickerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AADA2285CB8F4BD3ADD9308E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3730FADF312F90DA57192388 /* FirebaseCrashlytics in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		021C610C6A61CFEE5EB53ECC /* Library */ = {
@@ -391,7 +409,9 @@
 			isa = PBXGroup;
 			children = (
 				F870EE68E060BE5480814A21 /* Assets.xcassets */,
+				99CAE97373C4DC7BACB4C029 /* GoogleService-Info.plist */,
 				7CD06747BFE70CBCA6E9F737 /* Info.plist */,
+				481D3899B8F8B2A414930953 /* PrivacyInfo.xcprivacy */,
 				7F33B54B676954CD018A4AA4 /* StickerBoard.entitlements */,
 				22130D75CEBE5A13BF65E1B7 /* App */,
 				3BC3C5091CECD67473819A76 /* Models */,
@@ -451,6 +471,7 @@
 				530CD661BF00498FE8299E3E /* CaptureAccessibilityTests.swift */,
 				184AC63B41CB824E00123DE8 /* DebugPrintRemovalTests.swift */,
 				EF3C9D7666FCCC1875EBD61B /* FilterBorderAccessibilityTests.swift */,
+				97AF12BF2EFB04266319388A /* FirebaseCrashlyticsSetupTests.swift */,
 				3E3E385C3511299350E1EDC0 /* HolographicAccessibilityTests.swift */,
 				0CBA6E251F33AFE7D815B51E /* ImageCacheManagerTests.swift */,
 				604CC75026AD20187DC30B3F /* ImageStorageTests.swift */,
@@ -483,7 +504,9 @@
 			buildPhases = (
 				244E956BA0A3E92638ED40CF /* Sources */,
 				67AA63EB3485544E3214CF75 /* Resources */,
+				AADA2285CB8F4BD3ADD9308E /* Frameworks */,
 				0D23EACB30CDB529AC0E81EE /* Embed Foundation Extensions */,
+				2790C8F9957BF9FF35BB67BF /* [Firebase] Upload dSYMs to Crashlytics */,
 			);
 			buildRules = (
 			);
@@ -492,6 +515,7 @@
 			);
 			name = StickerBoard;
 			packageProductDependencies = (
+				A31113F8EC8EE2854EDFEF78 /* FirebaseCrashlytics */,
 			);
 			productName = StickerBoard;
 			productReference = 98F3C1F87DFC6BE33492062C /* StickerBoard.app */;
@@ -560,6 +584,9 @@
 			);
 			mainGroup = AEE31375B1000485F271BCDA;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				71552BC30DDD3B76097B0A3C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 82217834547736AB42A4F71C /* Products */;
 			projectDirPath = "";
@@ -578,10 +605,35 @@
 			buildActionMask = 2147483647;
 			files = (
 				567094296030D6D397CCFDA2 /* Assets.xcassets in Resources */,
+				103E0F35038CF9AD4E516EB9 /* GoogleService-Info.plist in Resources */,
+				9A0AB01CE180AFFE5DD3A5C9 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		2790C8F9957BF9FF35BB67BF /* [Firebase] Upload dSYMs to Crashlytics */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}",
+				"$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+			);
+			name = "[Firebase] Upload dSYMs to Crashlytics";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		244E956BA0A3E92638ED40CF /* Sources */ = {
@@ -657,6 +709,7 @@
 				5AAD2F7A210494638C8EEBB5 /* CaptureAccessibilityTests.swift in Sources */,
 				968265A0068025FDA475B948 /* DebugPrintRemovalTests.swift in Sources */,
 				A10D2757338DA6B28B63FD24 /* FilterBorderAccessibilityTests.swift in Sources */,
+				79F486B12087DEA652D55542 /* FirebaseCrashlyticsSetupTests.swift in Sources */,
 				71630AD405448E0B887E9228 /* HolographicAccessibilityTests.swift in Sources */,
 				E2C654B1A92506E96A3EA2E3 /* ImageCacheManagerTests.swift in Sources */,
 				E1E29CF14D41BF97D2C1B6E2 /* ImageStorageTests.swift in Sources */,
@@ -992,6 +1045,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		71552BC30DDD3B76097B0A3C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A31113F8EC8EE2854EDFEF78 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 71552BC30DDD3B76097B0A3C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2DBE7030B31B36E4D7BFC99F /* Project object */;
 }

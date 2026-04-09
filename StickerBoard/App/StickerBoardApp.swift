@@ -1,3 +1,5 @@
+import FirebaseCore
+import FirebaseCrashlytics
 import SwiftUI
 import SwiftData
 
@@ -8,6 +10,15 @@ struct StickerBoardApp: App {
     @State private var deepLinkBoardId: UUID?
 
     init() {
+        // Firebase の初期化（Crashlytics によるクラッシュ検知）
+        // GoogleService-Info.plist が未配置の場合はスキップ（開発環境対応）
+        if Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") != nil {
+            FirebaseApp.configure()
+            #if DEBUG
+            Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(false)
+            #endif
+        }
+
         let container: ModelContainer
         do {
             container = try ModelContainer(for: Sticker.self, Board.self)
