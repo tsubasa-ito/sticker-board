@@ -577,11 +577,11 @@
 				};
 			};
 			buildConfigurationList = 8772A176C103444BF7720D23 /* Build configuration list for PBXProject "StickerBoard" */;
-			developmentRegion = en;
+			developmentRegion = ja;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				Base,
-				en,
+				ja,
 			);
 			mainGroup = AEE31375B1000485F271BCDA;
 			minimizedProjectReferenceProxies = 1;

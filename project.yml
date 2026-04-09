@@ -5,6 +5,7 @@ options:
     iOS: "18.0"
   xcodeVersion: "16.0"
   generateEmptyDirectories: true
+  developmentLanguage: ja
 
 packages:
   FirebaseiOSSDK:
