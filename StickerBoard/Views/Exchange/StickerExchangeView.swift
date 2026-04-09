@@ -114,7 +114,7 @@ struct StickerExchangeView: View {
                 .foregroundStyle(AppTheme.textPrimary)
             Spacer()
             Circle()
-                .fill(isActive ? Color.green : AppTheme.textTertiary)
+                .fill(isActive ? AppTheme.softOrange : AppTheme.textTertiary)
                 .frame(width: 8, height: 8)
         }
         .padding(.horizontal, 16)
@@ -192,8 +192,10 @@ struct StickerExchangeView: View {
                     .foregroundStyle(AppTheme.textPrimary)
                 Text(isConnected ? "接続済み" : "タップして接続")
                     .font(.system(size: 12, design: .rounded))
-                    .foregroundStyle(isConnected ? Color.green : AppTheme.textTertiary)
+                    .foregroundStyle(isConnected ? AppTheme.softOrange : AppTheme.textTertiary)
             }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("\(peer.displayName), \(isConnected ? "接続済み" : "未接続")")
 
             Spacer()
 
@@ -211,7 +213,6 @@ struct StickerExchangeView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .accessibilityElement(children: .combine)
     }
 
     // MARK: - 使い方セクション
@@ -330,7 +331,7 @@ private struct ExchangeStickerPickerView: View {
                     .fill(AppTheme.backgroundCard)
                     .shadow(color: .black.opacity(0.06), radius: 6, x: 0, y: 3)
 
-                if let image = ImageStorage.load(fileName: sticker.imageFileName) {
+                if let image = ImageStorage.loadThumbnail(fileName: sticker.imageFileName, size: 90) {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFit()
@@ -383,7 +384,7 @@ private struct ReceivedStickerSheet: View {
     let manager: MultipeerConnectivityManager
     let modelContext: ModelContext
     @State private var isSaving = false
-    @State private var savedCount = 0
+    @State private var saveError: String?
 
     var body: some View {
         NavigationStack {
@@ -401,6 +402,14 @@ private struct ReceivedStickerSheet: View {
             }
             .navigationTitle("受け取ったシール")
             .navigationBarTitleDisplayMode(.inline)
+            .alert("保存エラー", isPresented: Binding(
+                get: { saveError != nil },
+                set: { if !$0 { saveError = nil } }
+            )) {
+                Button("OK") { saveError = nil }
+            } message: {
+                Text(saveError ?? "")
+            }
         }
     }
 
@@ -462,9 +471,8 @@ private struct ReceivedStickerSheet: View {
             let sticker = Sticker(imageFileName: fileName)
             modelContext.insert(sticker)
             manager.dismissReceivedSticker(received.id)
-            savedCount += 1
         } catch {
-            // 保存失敗はサイレントに処理（ユーザーが再試行可能）
+            saveError = "シールの保存に失敗しました。再度お試しください。"
         }
     }
 }

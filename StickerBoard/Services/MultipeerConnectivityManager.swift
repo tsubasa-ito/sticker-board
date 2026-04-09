@@ -118,9 +118,11 @@ final class MultipeerConnectivityManager: NSObject {
     func disconnect() {
         stopAdvertising()
         stopBrowsing()
+        pendingInvitation?.invitationHandler(false, nil)
+        pendingInvitation = nil
+        session?.delegate = nil
         session?.disconnect()
         connectedPeers.removeAll()
-        pendingInvitation = nil
         resetSession()
         Self.logger.info("全接続を切断")
     }
@@ -193,8 +195,11 @@ extension MultipeerConnectivityManager: MCSessionDelegate {
 
     nonisolated func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         Task { @MainActor in
-            guard MultipeerConnectivityManager.isValidImageData(data) else {
-                Self.logger.warning("受信データが無効: \(data.count) bytes")
+            // data は JSON エンベロープなので image サイズ上限ではなく、JSON ペイロード上限で弾く
+            // base64 オーバーヘッド (~33%) を考慮して maxImageDataSize × 2 をペイロード上限とする
+            let maxPayloadSize = MultipeerConnectivityManager.maxImageDataSize * 2
+            guard !data.isEmpty, data.count <= maxPayloadSize else {
+                Self.logger.warning("受信ペイロードが無効: \(data.count) bytes")
                 return
             }
             guard let message = try? JSONDecoder().decode(ExchangeMessage.self, from: data) else {
@@ -229,6 +234,8 @@ extension MultipeerConnectivityManager: MCNearbyServiceAdvertiserDelegate {
         invitationHandler: @escaping (Bool, MCSession?) -> Void
     ) {
         Task { @MainActor in
+            // 未処理の招待が残っている場合は先に拒否してリソースリークを防ぐ
+            pendingInvitation?.invitationHandler(false, nil)
             pendingInvitation = (peerId: peerID, invitationHandler: invitationHandler)
             Self.logger.info("招待受信: \(peerID.displayName)")
         }
