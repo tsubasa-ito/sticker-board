@@ -5,16 +5,21 @@ struct StickerPreviewView: View {
     @State private var appeared = false
 
     var body: some View {
-        VStack(spacing: 12) {
-            // ラベル
+        VStack(spacing: 16) {
+            // 完了バッジ
             HStack(spacing: 6) {
                 Image(systemName: "checkmark.seal.fill")
-                    .foregroundStyle(AppTheme.softOrange)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(.white)
                     .accessibilityHidden(true)
                 Text("切り抜き完了")
-                    .font(.system(size: 14, weight: .semibold, design: .rounded))
-                    .foregroundStyle(AppTheme.textPrimary)
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
             }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 7)
+            .background(AppTheme.softOrange, in: Capsule())
+            .shadow(color: AppTheme.softOrange.opacity(0.4), radius: 8, y: 3)
 
             // プレビュー画像
             ZStack {
