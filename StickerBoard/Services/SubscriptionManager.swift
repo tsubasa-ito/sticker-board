@@ -38,6 +38,9 @@ final class SubscriptionManager: ObservableObject {
         return .free
     }
 
+    private let keychain = KeychainHelper()
+    private static let keychainKey = "isProUser_cached"
+
     private var transactionListener: Task<Void, Never>?
 
     var monthlyProduct: Product? {
@@ -66,7 +69,7 @@ final class SubscriptionManager: ObservableObject {
     }
 
     private init() {
-        isProUser = UserDefaults.standard.bool(forKey: "isProUser_cached")
+        isProUser = keychain.bool(forKey: Self.keychainKey)
         transactionListener = listenForTransactions()
 
         Task {
@@ -163,7 +166,7 @@ final class SubscriptionManager: ObservableObject {
         currentSubscriptionExpirationDate = latestExpiration
         let isPro = !purchased.isEmpty
         isProUser = isPro
-        UserDefaults.standard.set(isPro, forKey: "isProUser_cached")
+        keychain.save(bool: isPro, forKey: Self.keychainKey)
     }
 
     // MARK: - トランザクション監視

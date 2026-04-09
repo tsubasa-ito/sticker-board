@@ -67,7 +67,9 @@ targets:
         product: FirebaseCrashlytics
     postBuildScripts:
       - script: |
-          "${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run"
+          if [ -f "${SRCROOT}/StickerBoard/GoogleService-Info.plist" ]; then
+            "${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run"
+          fi
         name: "[Firebase] Upload dSYMs to Crashlytics"
         inputFiles:
           - "${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}"
