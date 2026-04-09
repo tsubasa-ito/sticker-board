@@ -31,12 +31,20 @@ struct StickerLibraryView: View {
     private let pageSize = 30
 
     private var sortBinding: Binding<Bool> {
+        Binding(get: { sortNewest }, set: { newVal in
+            sortNewest = newVal
+            resetAndReload()
+        })
+    }
+
+    private var deleteAlertBinding: Binding<Bool> {
+        Binding(get: { deleteInfo != nil }, set: { if !$0 { deleteInfo = nil } })
+    }
+
+    private var maskEditBinding: Binding<Bool> {
         Binding(
-            get: { sortNewest },
-            set: { newVal in
-                sortNewest = newVal
-                resetAndReload()
-            }
+            get: { maskEditOriginalImage != nil && maskEditMaskImage != nil },
+            set: { if !$0 { maskEditSticker = nil; maskEditOriginalImage = nil; maskEditMaskImage = nil } }
         )
     }
 
@@ -45,6 +53,95 @@ struct StickerLibraryView: View {
     ]
 
     var body: some View {
+        libraryContent
+            .alert("回転に失敗しました", isPresented: $showRotateError) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("シールの回転中にエラーが発生しました。もう一度お試しください。")
+            }
+            .alert("保存に失敗しました", isPresented: $showOverwriteError) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("シールの保存中にエラーが発生しました。もう一度お試しください。")
+            }
+            .alert("削除に失敗しました", isPresented: $showDeleteError) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("シール画像の削除中にエラーが発生しました。もう一度お試しください。")
+            }
+            .alert("読み込みに失敗しました", isPresented: $showMaskEditLoadError) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("シール画像の読み込みに失敗しました。画像が破損している可能性があります。")
+            }
+    }
+
+    private var libraryContent: some View {
+        mainStack
+            .overlay {
+                if let sticker = previewSticker {
+                    StickerPreviewOverlay(
+                        sticker: sticker,
+                        namespace: previewNamespace,
+                        refreshTrigger: thumbnailRefreshID,
+                        onDismiss: {
+                            withAnimation(.spring(duration: 0.35, bounce: 0.2)) { previewSticker = nil }
+                        },
+                        onDelete: {
+                            withAnimation(.spring(duration: 0.35, bounce: 0.2)) { previewSticker = nil }
+                            deleteInfo = (sticker, boardsUsing(sticker))
+                        },
+                        onMaskEdit: {
+                            withAnimation(.spring(duration: 0.35, bounce: 0.2)) { previewSticker = nil }
+                            startMaskEdit(sticker)
+                        },
+                        onRotate: { clockwise in rotateSticker(sticker, clockwise: clockwise) }
+                    )
+                }
+            }
+            .navigationTitle("ライブラリ")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        Picker("並び替え", selection: sortBinding) {
+                            Text("新着順").tag(true)
+                            Text("古い順").tag(false)
+                        }
+                    } label: {
+                        Image(systemName: "arrow.up.arrow.down")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundStyle(sortNewest ? AppTheme.textSecondary : AppTheme.accent)
+                    }
+                    .accessibilityLabel("並び替え")
+                }
+            }
+            .alert("シールを削除", isPresented: deleteAlertBinding, presenting: deleteInfo) { info in
+                Button("削除", role: .destructive) { deleteSticker(info.sticker, from: info.boards) }
+                Button("キャンセル", role: .cancel) {}
+            } message: { info in
+                if info.boards.isEmpty {
+                    Text("このシールをコレクションから削除しますか？")
+                } else {
+                    Text("このシールは\(info.boards.count)個のボードで使用されています。削除するとボードからも取り除かれます。")
+                }
+            }
+            .fullScreenCover(isPresented: maskEditBinding, onDismiss: {
+                if maskEditSaved {
+                    thumbnailRefreshID = UUID()
+                    maskEditSaved = false
+                }
+            }) {
+                if let originalImage = maskEditOriginalImage,
+                   let maskImage = maskEditMaskImage {
+                    MaskEditorView(originalImage: originalImage, maskImage: maskImage) { composited, _ in
+                        saveMaskEditResult(composited)
+                    }
+                }
+            }
+    }
+
+    private var mainStack: some View {
         ZStack {
             AppTheme.backgroundPrimary
                 .ignoresSafeArea()
@@ -66,106 +163,6 @@ struct StickerLibraryView: View {
         }
         .onChange(of: refreshTrigger) {
             refreshIfNeeded()
-        }
-        .overlay {
-            if let sticker = previewSticker {
-                StickerPreviewOverlay(
-                    sticker: sticker,
-                    namespace: previewNamespace,
-                    refreshTrigger: thumbnailRefreshID,
-                    onDismiss: {
-                        withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
-                            previewSticker = nil
-                        }
-                    },
-                    onDelete: {
-                        withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
-                            previewSticker = nil
-                        }
-                        deleteInfo = (sticker, boardsUsing(sticker))
-                    },
-                    onMaskEdit: {
-                        withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
-                            previewSticker = nil
-                        }
-                        startMaskEdit(sticker)
-                    },
-                    onRotate: { clockwise in
-                        rotateSticker(sticker, clockwise: clockwise)
-                    }
-                )
-            }
-        }
-        .navigationTitle("ライブラリ")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Menu {
-                    Picker("並び替え", selection: sortBinding) {
-                        Text("新着順").tag(true)
-                        Text("古い順").tag(false)
-                    }
-                } label: {
-                    Image(systemName: "arrow.up.arrow.down")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundStyle(sortNewest ? AppTheme.textSecondary : AppTheme.accent)
-                }
-                .accessibilityLabel("並び替え")
-            }
-        }
-        .alert("シールを削除", isPresented: Binding(
-            get: { deleteInfo != nil },
-            set: { if !$0 { deleteInfo = nil } }
-        ), presenting: deleteInfo) { info in
-            Button("削除", role: .destructive) {
-                deleteSticker(info.sticker, from: info.boards)
-            }
-            Button("キャンセル", role: .cancel) {}
-        } message: { info in
-            if info.boards.isEmpty {
-                Text("このシールをコレクションから削除しますか？")
-            } else {
-                Text("このシールは\(info.boards.count)個のボードで使用されています。削除するとボードからも取り除かれます。")
-            }
-        }
-        .fullScreenCover(isPresented: Binding(
-            get: { maskEditOriginalImage != nil && maskEditMaskImage != nil },
-            set: { if !$0 { maskEditSticker = nil; maskEditOriginalImage = nil; maskEditMaskImage = nil } }
-        ), onDismiss: {
-            if maskEditSaved {
-                thumbnailRefreshID = UUID()
-                maskEditSaved = false
-            }
-        }) {
-            if let originalImage = maskEditOriginalImage,
-               let maskImage = maskEditMaskImage {
-                MaskEditorView(
-                    originalImage: originalImage,
-                    maskImage: maskImage
-                ) { composited, _ in
-                    saveMaskEditResult(composited)
-                }
-            }
-        }
-        .alert("回転に失敗しました", isPresented: $showRotateError) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text("シールの回転中にエラーが発生しました。もう一度お試しください。")
-        }
-        .alert("保存に失敗しました", isPresented: $showOverwriteError) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text("シールの保存中にエラーが発生しました。もう一度お試しください。")
-        }
-        .alert("削除に失敗しました", isPresented: $showDeleteError) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text("シール画像の削除中にエラーが発生しました。もう一度お試しください。")
-        }
-        .alert("読み込みに失敗しました", isPresented: $showMaskEditLoadError) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text("シール画像の読み込みに失敗しました。画像が破損している可能性があります。")
         }
     }
 
