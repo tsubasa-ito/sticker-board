@@ -104,15 +104,12 @@ struct PaywallView: View {
 
     private var featureListSection: some View {
         VStack(spacing: 0) {
-            featureRow(icon: "star.fill", text: "シール保存", value: "無制限", iconColor: AppTheme.accent)
-            Divider().padding(.horizontal, 16)
-            featureRow(icon: "rectangle.on.rectangle.fill", text: "ボード作成", value: "無制限", iconColor: AppTheme.secondary)
-            Divider().padding(.horizontal, 16)
-            featureRow(icon: "square.dashed", text: "枠線バリエーション", value: "全開放", iconColor: AppTheme.softOrange)
-            Divider().padding(.horizontal, 16)
-            featureRow(icon: "paintpalette.fill", text: "背景パターン", value: "全開放", iconColor: AppTheme.baby)
-            Divider().padding(.horizontal, 16)
-            featureRow(icon: "arrow.down.to.line", text: "画像書き出し", value: "ロゴなし", iconColor: AppTheme.secondary)
+            ForEach(Array(ProBenefit.allCases.enumerated()), id: \.element) { index, benefit in
+                featureRow(icon: benefit.icon, text: benefit.title, value: benefit.value, iconColor: benefit.iconColor)
+                if index < ProBenefit.allCases.count - 1 {
+                    Divider().padding(.horizontal, 16)
+                }
+            }
         }
         .stickerCard()
     }
