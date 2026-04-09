@@ -1,9 +1,14 @@
 import Foundation
+import os
 import StoreKit
 
 @MainActor
 final class SubscriptionManager: ObservableObject {
     static let shared = SubscriptionManager()
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier ?? "com.tebasaki.StickerBoard",
+        category: "SubscriptionManager"
+    )
 
     @Published private(set) var isProUser: Bool = false
     @Published private(set) var products: [Product] = []
@@ -33,6 +38,10 @@ final class SubscriptionManager: ObservableObject {
         return .free
     }
 
+    private let keychain = KeychainHelper()
+    private static let keychainKey = "isProUser_cached"
+    private static let migrationKey = "didMigrateProCacheToKeychain"
+
     private var transactionListener: Task<Void, Never>?
 
     var monthlyProduct: Product? {
@@ -61,7 +70,14 @@ final class SubscriptionManager: ObservableObject {
     }
 
     private init() {
-        isProUser = UserDefaults.standard.bool(forKey: "isProUser_cached")
+        // 既存ユーザー向け: UserDefaults → Keychain への一回限りの移行
+        if !UserDefaults.standard.bool(forKey: Self.migrationKey) {
+            let oldValue = UserDefaults.standard.bool(forKey: Self.keychainKey)
+            keychain.save(bool: oldValue, forKey: Self.keychainKey)
+            UserDefaults.standard.set(true, forKey: Self.migrationKey)
+            UserDefaults.standard.removeObject(forKey: Self.keychainKey)
+        }
+        isProUser = keychain.bool(forKey: Self.keychainKey)
         transactionListener = listenForTransactions()
 
         Task {
@@ -79,12 +95,13 @@ final class SubscriptionManager: ObservableObject {
     func loadProducts() async {
         do {
             let ids = SubscriptionProduct.allIdentifiers
-            print("[SubscriptionManager] Loading products for IDs: \(ids)")
+            Self.logger.debug("Loading products for IDs: \(ids)")
             let storeProducts = try await Product.products(for: ids)
-            print("[SubscriptionManager] Loaded \(storeProducts.count) products: \(storeProducts.map { "\($0.id) - \($0.displayPrice)" })")
+            let productInfo = storeProducts.map { "\($0.id) - \($0.displayPrice)" }.joined(separator: ", ")
+            Self.logger.debug("Loaded \(storeProducts.count) products: \(productInfo)")
             products = storeProducts.sorted { $0.price > $1.price }
         } catch {
-            print("[SubscriptionManager] Failed to load products: \(error)")
+            Self.logger.error("Failed to load products: \(error)")
         }
     }
 
@@ -149,7 +166,7 @@ final class SubscriptionManager: ObservableObject {
                     }
                 }
             } catch {
-                print("[SubscriptionManager] Failed to verify transaction while updating purchased products: \(error)")
+                Self.logger.error("Failed to verify transaction while updating purchased products: \(error)")
             }
         }
 
@@ -157,7 +174,7 @@ final class SubscriptionManager: ObservableObject {
         currentSubscriptionExpirationDate = latestExpiration
         let isPro = !purchased.isEmpty
         isProUser = isPro
-        UserDefaults.standard.set(isPro, forKey: "isProUser_cached")
+        keychain.save(bool: isPro, forKey: Self.keychainKey)
     }
 
     // MARK: - トランザクション監視
@@ -170,7 +187,7 @@ final class SubscriptionManager: ObservableObject {
                     await transaction.finish()
                     await updatePurchasedProducts()
                 } catch {
-                    print("[SubscriptionManager] Failed to verify transaction from updates: \(error)")
+                    Self.logger.error("Failed to verify transaction from updates: \(error)")
                 }
             }
         }

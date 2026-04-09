@@ -61,6 +61,20 @@ struct BackgroundRemover {
         #endif
     }
 
+    /// 指定された位置の被写体のみを切り抜いて背景を透明にする（長押し選択用）
+    /// - Parameters:
+    ///   - image: 元画像
+    ///   - normalizedPoint: 画像座標系での正規化座標（0-1）
+    static func removeBackgroundAtPoint(from image: UIImage, normalizedPoint: CGPoint) async throws -> BackgroundRemovalResult {
+        let normalized = normalizeOrientation(image)
+        #if targetEnvironment(simulator)
+        let whiteMask = createWhiteMask(size: normalized.size)
+        return BackgroundRemovalResult(processedImage: normalized, maskImage: whiteMask, originalImage: normalized)
+        #else
+        return try removeBackgroundAtPointReal(from: normalized, normalizedPoint: normalizedPoint)
+        #endif
+    }
+
     /// 画像内の複数オブジェクトを個別に切り抜いて返す
     static func extractIndividualStickers(from image: UIImage) async throws -> [UIImage] {
         let normalized = normalizeOrientation(image)
@@ -69,6 +83,53 @@ struct BackgroundRemover {
         #else
         return try extractIndividualStickersReal(from: normalized)
         #endif
+    }
+
+    private static func removeBackgroundAtPointReal(from image: UIImage, normalizedPoint: CGPoint) throws -> BackgroundRemovalResult {
+        guard let cgImage = image.cgImage else {
+            throw BackgroundRemoverError.invalidImage
+        }
+
+        guard let (observation, handler) = try performInstanceMask(on: cgImage) else {
+            throw BackgroundRemoverError.noSubjectAtPoint
+        }
+
+        // インスタンスマスクのピクセルバッファからタップ位置のインスタンスIDを取得
+        let instanceMask = observation.instanceMask
+        CVPixelBufferLockBaseAddress(instanceMask, .readOnly)
+        defer { CVPixelBufferUnlockBaseAddress(instanceMask, .readOnly) }
+
+        let maskWidth = CVPixelBufferGetWidth(instanceMask)
+        let maskHeight = CVPixelBufferGetHeight(instanceMask)
+        let bytesPerRow = CVPixelBufferGetBytesPerRow(instanceMask)
+
+        guard let baseAddress = CVPixelBufferGetBaseAddress(instanceMask) else {
+            throw BackgroundRemoverError.noSubjectAtPoint
+        }
+
+        let pixelX = max(0, min(Int(normalizedPoint.x * CGFloat(maskWidth)), maskWidth - 1))
+        let pixelY = max(0, min(Int(normalizedPoint.y * CGFloat(maskHeight)), maskHeight - 1))
+
+        let buffer = baseAddress.assumingMemoryBound(to: UInt8.self)
+        let instanceIndex = Int(buffer[pixelY * bytesPerRow + pixelX])
+
+        guard instanceIndex != 0, observation.allInstances.contains(instanceIndex) else {
+            throw BackgroundRemoverError.noSubjectAtPoint
+        }
+
+        let selectedInstances = IndexSet(integer: instanceIndex)
+
+        // 選択されたインスタンスのマスクを生成
+        let maskPixelBuffer = try observation.generateScaledMaskForImage(forInstances: selectedInstances, from: handler)
+        let ciMask = CIImage(cvPixelBuffer: maskPixelBuffer)
+        guard let maskCGImage = ciContext.createCGImage(ciMask, from: ciMask.extent) else {
+            throw BackgroundRemoverError.renderFailed
+        }
+        let maskImage = UIImage(cgImage: maskCGImage)
+
+        let processedImage = try applyMask(maskPixelBuffer: maskPixelBuffer, to: cgImage)
+
+        return BackgroundRemovalResult(processedImage: processedImage, maskImage: maskImage, originalImage: image)
     }
 
     private static func removeBackgroundWithMaskReal(from image: UIImage) throws -> BackgroundRemovalResult {
@@ -166,7 +227,10 @@ struct BackgroundRemover {
 
     private static func applyMask(_ observation: VNInstanceMaskObservation, instances: IndexSet, to cgImage: CGImage, handler: VNImageRequestHandler) throws -> UIImage {
         let maskPixelBuffer = try observation.generateScaledMaskForImage(forInstances: instances, from: handler)
+        return try applyMask(maskPixelBuffer: maskPixelBuffer, to: cgImage)
+    }
 
+    private static func applyMask(maskPixelBuffer: CVPixelBuffer, to cgImage: CGImage) throws -> UIImage {
         let ciMask = CIImage(cvPixelBuffer: maskPixelBuffer)
         let ciImage = CIImage(cgImage: cgImage)
 
@@ -198,6 +262,7 @@ enum BackgroundRemoverError: LocalizedError {
     case noResult
     case filterFailed
     case renderFailed
+    case noSubjectAtPoint
 
     var errorDescription: String? {
         switch self {
@@ -205,6 +270,7 @@ enum BackgroundRemoverError: LocalizedError {
         case .noResult: return "背景除去の結果を取得できませんでした"
         case .filterFailed: return "画像フィルタの適用に失敗しました"
         case .renderFailed: return "画像の生成に失敗しました"
+        case .noSubjectAtPoint: return "選択した位置に被写体が見つかりませんでした。被写体の上を長押ししてください"
         }
     }
 }

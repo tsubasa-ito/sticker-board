@@ -1,5 +1,6 @@
 import CoreMotion
 import Observation
+import os
 import UIKit
 
 /// デバイスの傾きを検知してホログラフィック効果に利用するマネージャー
@@ -9,6 +10,10 @@ import UIKit
 @Observable
 final class MotionManager {
     static let shared = MotionManager()
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier ?? "com.tebasaki.StickerBoard",
+        category: "MotionManager"
+    )
 
     private let motionManager = CMMotionManager()
     private var referenceCount = 0
@@ -103,14 +108,14 @@ final class MotionManager {
     #if !targetEnvironment(simulator)
     private func startDevice() {
         guard motionManager.isDeviceMotionAvailable else {
-            print("[MotionManager] デバイスモーション非対応 — エフェクトは静止状態で表示")
+            Self.logger.info("デバイスモーション非対応 — エフェクトは静止状態で表示")
             return
         }
         motionManager.deviceMotionUpdateInterval = 1.0 / 30.0
         motionManager.startDeviceMotionUpdates(to: .main) { [weak self] motion, error in
             guard let self else { return }
             if let error {
-                print("[MotionManager] モーション更新エラー: \(error.localizedDescription)")
+                Self.logger.error("モーション更新エラー: \(error.localizedDescription)")
                 self.tiltX = 0.5
                 self.tiltY = 0.5
                 return

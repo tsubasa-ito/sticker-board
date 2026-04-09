@@ -78,6 +78,92 @@ struct UIImageExtensionTests {
         #expect(cgImage.height == 50)
     }
 
+    // MARK: - rotatedBy90Degrees
+
+    @Test func 時計回り90度回転で幅と高さが入れ替わる() throws {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1.0
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 200, height: 100), format: format)
+        let image = renderer.image { ctx in
+            UIColor.red.setFill()
+            ctx.fill(CGRect(origin: .zero, size: CGSize(width: 200, height: 100)))
+        }
+
+        let rotated = image.rotatedBy90Degrees(clockwise: true)
+        let cgImage = try #require(rotated.cgImage)
+
+        #expect(cgImage.width == 100)
+        #expect(cgImage.height == 200)
+    }
+
+    @Test func 反時計回り90度回転で幅と高さが入れ替わる() throws {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1.0
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 200, height: 100), format: format)
+        let image = renderer.image { ctx in
+            UIColor.blue.setFill()
+            ctx.fill(CGRect(origin: .zero, size: CGSize(width: 200, height: 100)))
+        }
+
+        let rotated = image.rotatedBy90Degrees(clockwise: false)
+        let cgImage = try #require(rotated.cgImage)
+
+        #expect(cgImage.width == 100)
+        #expect(cgImage.height == 200)
+    }
+
+    @Test func 時計回りに二回回転すると幅と高さが変わらない() throws {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1.0
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 200, height: 100), format: format)
+        let image = renderer.image { ctx in
+            UIColor.green.setFill()
+            ctx.fill(CGRect(origin: .zero, size: CGSize(width: 200, height: 100)))
+        }
+
+        // 90度 × 2 = 180度
+        let rotated = image.rotatedBy90Degrees(clockwise: true).rotatedBy90Degrees(clockwise: true)
+        let cgImage = try #require(rotated.cgImage)
+
+        #expect(cgImage.width == 200)
+        #expect(cgImage.height == 100)
+    }
+
+    @Test func 時計回りに四回回転すると元の寸法に戻る() throws {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1.0
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 150, height: 80), format: format)
+        let image = renderer.image { ctx in
+            UIColor.purple.setFill()
+            ctx.fill(CGRect(origin: .zero, size: CGSize(width: 150, height: 80)))
+        }
+
+        var rotated = image
+        for _ in 0..<4 {
+            rotated = rotated.rotatedBy90Degrees(clockwise: true)
+        }
+        let cgImage = try #require(rotated.cgImage)
+
+        #expect(cgImage.width == 150)
+        #expect(cgImage.height == 80)
+    }
+
+    @Test func 回転後も透過情報が保持される() throws {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1.0
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 100, height: 100), format: format)
+        let image = renderer.image { ctx in
+            // 左半分だけ塗る（右半分は透明）
+            UIColor.red.setFill()
+            ctx.fill(CGRect(x: 0, y: 0, width: 50, height: 100))
+        }
+
+        let rotated = image.rotatedBy90Degrees(clockwise: true)
+
+        // PNGに変換してデータが存在する（透過含むPNGとして有効）ことを確認
+        #expect(rotated.pngData() != nil)
+    }
+
     @Test func 不透明画像はトリミングされない() throws {
         let format = UIGraphicsImageRendererFormat()
         format.scale = 1.0

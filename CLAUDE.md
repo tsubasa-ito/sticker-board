@@ -9,6 +9,7 @@
 - SwiftData（ローカルDB）
 - StoreKit 2（自動更新サブスクリプション）
 - WidgetKit + AppIntentConfiguration（ボードショーケースウィジェット）
+- Firebase Crashlytics（クラッシュ検知）
 - XcodeGen（project.yml からプロジェクト生成）
 
 ## プロジェクト構成
@@ -16,7 +17,7 @@
 StickerBoard/
 ├── App/          # エントリーポイント（MainTabView）、カラーテーマ、外部URL定数
 ├── Models/       # SwiftData モデル（Sticker, Board, StickerPlacement, BackgroundPattern, StickerFilter, StickerBorder, SubscriptionProduct）
-├── Services/     # BackgroundRemover, MaskCompositor, ImageStorage, BackgroundImageStorage, ImageCacheManager, StickerFilterService, StickerBorderService, SubscriptionManager, MotionManager, AppUpdateChecker, WidgetDataSyncService
+├── Services/     # BackgroundRemover, MaskCompositor, ImageStorage, BackgroundImageStorage, ImageCacheManager, StickerFilterService, StickerBorderService, SubscriptionManager, MotionManager, AppUpdateChecker, WidgetDataSyncService, ReviewRequestManager
 └── Views/        # SwiftUI画面
     ├── Home/     # MainTabView（タブナビゲーション）、HomeView（ボード一覧カルーセル）
     ├── Onboarding/ # 初回起動オンボーディング（3ページガイド）
@@ -52,6 +53,8 @@ xcodebuild -project StickerBoard.xcodeproj -scheme StickerBoard -destination 'pl
 open StickerBoard.xcodeproj
 ```
 
+> **注意（Xcode 26 beta）:** Swift Testing の `@Test func` の関数名を数字（`0`〜`9`）で始めると `build-for-testing` がクラッシュする。関数名は必ず文字またはアンダースコアで始めること（例: `180度...` → `百八十度...` or `回転後...`）
+
 ## 注意事項
 - Vision Frameworkの背景除去はシミュレータでは動作しない（実機のみ）
 - シミュレータではフォールバックとして元画像をそのまま返す
@@ -61,10 +64,13 @@ open StickerBoard.xcodeproj
 - StickerPlacement に imageFileName を直接保持する設計（SwiftDataのID問題回避のため）
 - Board の backgroundPatternData も placements と同様に Codable struct を JSON シリアライズして Data? に格納する設計
 - BackgroundRemover は入力画像の EXIF 向きを正規化し、長辺2048pxにリサイズする（cgImage とマスクの整合性確保 + メモリ最適化）
+- BackgroundRemover.removeBackgroundAtPoint(from:normalizedPoint:) は、VNInstanceMaskObservation の instanceMask ピクセルバッファからタップ位置のインスタンスIDを特定し、その被写体のみを切り抜く。StickerCaptureView で写真プレビューの長押しジェスチャーから呼び出される
 - フィルター（キラキラ・レトロ・パステル・ネオン・ぷっくり・ワッペン）は StickerPlacement の filterType に保存し、ボード配置単位で適用する設計（シール自体ではなく配置ごとにフィルターが異なる）
 - StickerFilterService は CIFilter ベースでオンザフライ処理。BoardEditorView ではフィルター適用画像をキャッシュして body 再評価時の再計算を回避
 - ImageCacheManager（NSCache ベース）がフル解像度・サムネイル・フィルター適用済みの3層キャッシュを管理。メモリ警告時に自動パージ
 - ImageStorage.save() は保存時にアルファトリミング（透明余白の除去）→ 長辺1024pxリサイズの順で処理する（バウンディングボックスの最適化 + ステッカー用途のサイズ最適化）
+- ImageStorage.rotateAndOverwrite(fileName:clockwise:) はディスクからの読み込み → UIImage.rotatedBy90Degrees(clockwise:) で90度回転 → overwrite() の順で処理する。回転メソッドは ImageCacheManager.swift の UIImage 拡張に定義。UIGraphicsImageRendererFormat.scale に元画像のスケールを引き継がないとピクセル寸法が変わるため注意
+- ImageStorageError には encodingFailed / deletionFailed / loadFailed の3ケースあり。loadFailed は rotateAndOverwrite で対象ファイルが見つからない場合に投げる
 - StickerLibraryView は @Query ではなく FetchDescriptor + fetchLimit/fetchOffset によるページネーション（30枚ずつ無限スクロール）でシールを取得する設計（大量シール時のメモリ最適化）
 - サムネイル表示（StickerThumbnailView, QuickPickThumbnail, BoardStickerPreviewView）は ImageStorage.loadThumbnail() 経由で縮小画像を使用
 - 枠線（ボーダー）は StickerPlacement の borderWidthType / borderColorHex に保存し、フィルターと同様に配置単位で管理する設計
@@ -89,3 +95,5 @@ open StickerBoard.xcodeproj
 - `Shared/` ディレクトリのファイルはメインアプリ・ウィジェット両ターゲットに含まれる（project.yml の sources で指定）。共有型や定数はここに配置する
 - Widget Extension（`StickerBoardWidgetExtension`）は `AppIntentConfiguration` でボード選択。`BoardEntity` が `AppEntity` として機能する
 - AppUpdateChecker（Sendable シングルトン）がアプリ起動時に iTunes Lookup API でバージョンチェック。MainTabView の .task で呼び出し、24時間間隔で実行（@AppStorage("lastUpdateCheckDate")）。メジャーアップデートはスキップ不可（毎回表示）、マイナー/パッチは「あとで」でスキップ可能（@AppStorage("skippedVersion")）。ネットワークエラー時はサイレントにスキップし次回起動でリトライ
+- ReviewRequestManager（Sendable シングルトン）がアプリ内レビュー訴求を管理。`@Environment(\.requestReview)` による iOS 標準ダイアログのみ使用（カスタムUIなし・Appleガイドライン準拠）。トリガー条件: シール5/15/30枚目（`StickerCaptureView` sheet の onDismiss で呼び出し）、ボード新規作成時（alert dismiss 後 Task.sleep 600ms）、起動5回目（StickerBoardApp.init() で UserDefaults の "appLaunchCount" をインクリメント）。表示制御は 90日クールダウン＋365日ローリングウィンドウで年3回上限（@AppStorage("reviewRequestDatesJSON") に JSON 配列で最大3件の日時を保存）
+- Firebase Crashlytics: `StickerBoardApp.init()` の先頭で `FirebaseApp.configure()` を呼び出してクラッシュ検知を初期化。`GoogleService-Info.plist` はFirebaseコンソールからダウンロードして `StickerBoard/` 直下に配置する（.gitignore で除外）。Privacy Manifest（`StickerBoard/PrivacyInfo.xcprivacy`）にクラッシュデータ・パフォーマンスデータ・デバイスIDの申告を記載済み。Claude Code から MCP 経由でクラッシュ分析する方法は `docs/MCP_CRASHLYTICS.md` を参照
