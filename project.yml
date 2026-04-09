@@ -55,7 +55,6 @@ targets:
         MARKETING_VERSION: "1.2.1"
         PRODUCT_BUNDLE_IDENTIFIER: "com.tebasaki.StickerBoard"
         CODE_SIGN_STYLE: Automatic
-        DEVELOPMENT_TEAM: 6CGGS6SX69
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         SWIFT_EMIT_LOC_STRINGS: YES
@@ -67,7 +66,9 @@ targets:
         product: FirebaseCrashlytics
     postBuildScripts:
       - script: |
-          "${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run"
+          if [ -f "${SRCROOT}/StickerBoard/GoogleService-Info.plist" ]; then
+            "${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run"
+          fi
         name: "[Firebase] Upload dSYMs to Crashlytics"
         inputFiles:
           - "${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}"
@@ -93,7 +94,6 @@ targets:
         MARKETING_VERSION: "1.2.1"
         PRODUCT_BUNDLE_IDENTIFIER: "com.tebasaki.StickerBoard.Widget"
         CODE_SIGN_STYLE: Automatic
-        DEVELOPMENT_TEAM: 6CGGS6SX69
         SWIFT_EMIT_LOC_STRINGS: YES
         CODE_SIGN_ENTITLEMENTS: StickerBoardWidget/StickerBoardWidget.entitlements
         TARGETED_DEVICE_FAMILY: "1"

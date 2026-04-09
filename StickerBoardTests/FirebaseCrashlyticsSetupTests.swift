@@ -65,7 +65,7 @@ struct FirebaseCrashlyticsSetupTests {
         )
     }
 
-    @Test func projectYmlにFirebase iOS SDKのSPMパッケージURLが含まれている() throws {
+    @Test func projectYmlにFirebaseiOSSDKのSPMパッケージURLが含まれている() throws {
         let content = try readFile("project.yml")
         #expect(
             content.contains("firebase-ios-sdk"),
