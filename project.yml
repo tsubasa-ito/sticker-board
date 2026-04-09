@@ -36,6 +36,10 @@ targets:
           - CFBundleURLSchemes:
               - stickerboard
             CFBundleURLName: com.tebasaki.StickerBoard
+        NSLocalNetworkUsageDescription: "近くのデバイスとシールを交換するためにローカルネットワークへのアクセスが必要です"
+        NSBonjourServices:
+          - _stickerboard._tcp
+          - _stickerboard._udp
         NSPhotoLibraryUsageDescription: "シールにする写真を選択するためにフォトライブラリへのアクセスが必要です"
         NSCameraUsageDescription: "シールにする写真を撮影するためにカメラへのアクセスが必要です"
         NSPhotoLibraryAddUsageDescription: "ボードを画像として写真に保存するためにフォトライブラリへのアクセスが必要です"

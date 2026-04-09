@@ -28,6 +28,7 @@ struct SettingsView: View {
                         faqSection
                     }
 
+                    betaSection
                     noticesSection
                     relatedLinksSection
                 }
@@ -519,6 +520,56 @@ struct SettingsView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
+    }
+
+    // MARK: - β機能セクション
+
+    private var betaSection: some View {
+        VStack(spacing: 0) {
+            sectionHeader(title: "β機能", icon: "testtube.2")
+
+            NavigationLink {
+                StickerExchangeView()
+            } label: {
+                HStack {
+                    Image(systemName: "arrow.triangle.2.circlepath")
+                        .font(.system(size: 14))
+                        .foregroundStyle(AppTheme.accent)
+                        .frame(width: 28)
+                        .accessibilityHidden(true)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        HStack(spacing: 6) {
+                            Text("シール交換")
+                                .font(.system(size: 15, design: .rounded))
+                                .foregroundStyle(AppTheme.textPrimary)
+                            Text("β")
+                                .font(.system(size: 10, weight: .bold, design: .rounded))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 2)
+                                .background(AppTheme.accent, in: Capsule())
+                                .accessibilityHidden(true)
+                        }
+                        Text("近くのデバイスとシールを交換できます")
+                            .font(.system(size: 12, design: .rounded))
+                            .foregroundStyle(AppTheme.textSecondary)
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 13))
+                        .foregroundStyle(AppTheme.textTertiary)
+                        .accessibilityHidden(true)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 14)
+            }
+            .buttonStyle(.plain)
+            .stickerCard()
+            .accessibilityLabel("シール交換 β版 — 近くのデバイスとシールを交換できます")
+        }
     }
 
     // MARK: - 注意事項セクション
