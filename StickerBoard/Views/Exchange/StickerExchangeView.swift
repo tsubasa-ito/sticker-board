@@ -8,6 +8,7 @@ struct StickerExchangeView: View {
     @State private var showStickerPicker = false
     @State private var showReceivedSheet = false
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         ZStack {
@@ -16,7 +17,11 @@ struct StickerExchangeView: View {
             ScrollView {
                 VStack(spacing: 20) {
                     betaBanner
-                    statusSection
+                    statusPills
+
+                    if manager.discoveredPeers.isEmpty && manager.connectedPeers.isEmpty {
+                        scanningHero
+                    }
 
                     if !manager.discoveredPeers.isEmpty {
                         discoveredPeersSection
@@ -66,61 +71,94 @@ struct StickerExchangeView: View {
         }
     }
 
-    // MARK: - βバナー
+    // MARK: - βバナー（ダッシュ枠 + アイコン背景）
 
     private var betaBanner: some View {
-        HStack(spacing: 10) {
-            Image(systemName: "testtube.2")
-                .foregroundStyle(AppTheme.accent)
-                .accessibilityHidden(true)
-            VStack(alignment: .leading, spacing: 2) {
-                Text("β版機能")
-                    .font(.system(size: 13, weight: .bold, design: .rounded))
+        HStack(spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(AppTheme.accent.opacity(0.12))
+                    .frame(width: 44, height: 44)
+                Image(systemName: "testtube.2")
+                    .font(.system(size: 20, weight: .semibold))
                     .foregroundStyle(AppTheme.accent)
-                Text("この機能は試験的に提供しています。仕様が変更される場合があります。")
+            }
+            .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 6) {
+                    Text("β版機能")
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .foregroundStyle(AppTheme.accent)
+                    Text("試験的")
+                        .font(.system(size: 10, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(AppTheme.accent, in: Capsule())
+                        .accessibilityHidden(true)
+                }
+                Text("仕様が変更される場合があります")
                     .font(.system(size: 12, design: .rounded))
                     .foregroundStyle(AppTheme.textSecondary)
             }
+
+            Spacer(minLength: 0)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(12)
-        .background(AppTheme.accent.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
-    }
-
-    // MARK: - 接続状態セクション
-
-    private var statusSection: some View {
-        VStack(spacing: 0) {
-            sectionHeader(title: "接続状態", icon: "antenna.radiowaves.left.and.right")
-
-            VStack(spacing: 0) {
-                statusRow(icon: "dot.radiowaves.up.forward", title: "アドバタイズ（発見待機中）", isActive: manager.isAdvertising)
-                Divider().padding(.horizontal, 16)
-                statusRow(icon: "magnifyingglass", title: "デバイスを検索中", isActive: manager.isBrowsing)
-            }
-            .stickerCard()
-        }
-    }
-
-    private func statusRow(icon: String, title: String, isActive: Bool) -> some View {
-        HStack {
-            Image(systemName: icon)
-                .font(.system(size: 13))
-                .foregroundStyle(isActive ? AppTheme.accent : AppTheme.textTertiary)
-                .frame(width: 24)
-                .accessibilityHidden(true)
-            Text(title)
-                .font(.system(size: 14, design: .rounded))
-                .foregroundStyle(AppTheme.textPrimary)
-            Spacer()
-            Circle()
-                .fill(isActive ? AppTheme.softOrange : AppTheme.textTertiary)
-                .frame(width: 8, height: 8)
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
+        .padding(14)
+        .background(AppTheme.backgroundCard)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(
+                    style: StrokeStyle(lineWidth: 1.5, dash: [6, 3])
+                )
+                .foregroundStyle(AppTheme.accent.opacity(0.35))
+        )
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(title): \(isActive ? "アクティブ" : "停止中")")
+        .accessibilityLabel("β版機能: 試験的提供のため仕様が変更される場合があります")
+    }
+
+    // MARK: - ステータス Pill（横並び + パルスアニメーション）
+
+    private var statusPills: some View {
+        HStack(spacing: 10) {
+            StatusPillView(
+                icon: "dot.radiowaves.up.forward",
+                title: "発見待機",
+                isActive: manager.isAdvertising,
+                reduceMotion: reduceMotion
+            )
+            StatusPillView(
+                icon: "magnifyingglass",
+                title: "デバイス検索",
+                isActive: manager.isBrowsing,
+                reduceMotion: reduceMotion
+            )
+        }
+    }
+
+    // MARK: - スキャン中ヒーロー（デバイス未発見時）
+
+    private var scanningHero: some View {
+        VStack(spacing: 16) {
+            ScanningRingsView(reduceMotion: reduceMotion)
+                .frame(height: 140)
+                .accessibilityHidden(true)
+
+            Text("近くのデバイスを探しています…")
+                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                .foregroundStyle(AppTheme.textPrimary)
+
+            Text("相手も同じ画面を開いてください")
+                .font(.system(size: 13, design: .rounded))
+                .foregroundStyle(AppTheme.textSecondary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 32)
+        .padding(.horizontal, 16)
+        .stickerCard()
     }
 
     // MARK: - 発見済みデバイスセクション
@@ -162,8 +200,8 @@ struct StickerExchangeView: View {
             Button {
                 showStickerPicker = true
             } label: {
-                HStack {
-                    Image(systemName: "seal")
+                HStack(spacing: 8) {
+                    Image(systemName: "seal.fill")
                         .font(.system(size: 16, weight: .semibold))
                     Text("シールを送る")
                         .font(.system(size: 16, weight: .bold, design: .rounded))
@@ -174,23 +212,27 @@ struct StickerExchangeView: View {
                 .background(AppTheme.accent, in: RoundedRectangle(cornerRadius: 16))
                 .shadow(color: AppTheme.accent.opacity(0.3), radius: 8, x: 0, y: 4)
             }
-            .accessibilityLabel("シールを選んで送る")
+            .accessibilityLabel("シールを選んで接続中のデバイスに送る")
         }
     }
 
     private func peerRow(peer: MCPeerID, isConnected: Bool) -> some View {
-        HStack {
-            Image(systemName: isConnected ? "iphone.gen3" : "iphone.gen3.badge.questionmark")
-                .font(.system(size: 20))
-                .foregroundStyle(isConnected ? AppTheme.accent : AppTheme.textSecondary)
-                .frame(width: 36)
-                .accessibilityHidden(true)
+        HStack(spacing: 14) {
+            ZStack {
+                Circle()
+                    .fill(isConnected ? AppTheme.accent.opacity(0.1) : AppTheme.borderSubtle)
+                    .frame(width: 40, height: 40)
+                Image(systemName: isConnected ? "iphone.gen3" : "iphone.gen3.badge.questionmark")
+                    .font(.system(size: 18))
+                    .foregroundStyle(isConnected ? AppTheme.accent : AppTheme.textSecondary)
+            }
+            .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(peer.displayName)
                     .font(.system(size: 15, weight: .medium, design: .rounded))
                     .foregroundStyle(AppTheme.textPrimary)
-                Text(isConnected ? "接続済み" : "タップして接続")
+                Text(isConnected ? "接続済み" : "接続待機中")
                     .font(.system(size: 12, design: .rounded))
                     .foregroundStyle(isConnected ? AppTheme.softOrange : AppTheme.textTertiary)
             }
@@ -203,10 +245,10 @@ struct StickerExchangeView: View {
                 Button("接続") {
                     manager.invitePeer(peer)
                 }
-                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                .font(.system(size: 14, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 7)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
                 .background(AppTheme.accent, in: Capsule())
                 .accessibilityLabel("\(peer.displayName) に接続申請を送る")
             }
@@ -215,37 +257,50 @@ struct StickerExchangeView: View {
         .padding(.vertical, 12)
     }
 
-    // MARK: - 使い方セクション
+    // MARK: - 使い方（2×2 ステップカード）
 
     private var howToUseSection: some View {
         VStack(spacing: 0) {
             sectionHeader(title: "使い方", icon: "info.circle")
 
-            VStack(alignment: .leading, spacing: 10) {
-                howToRow(step: "1", text: "相手も「シール交換」画面を開く")
-                howToRow(step: "2", text: "「近くのデバイス」に相手が表示されたら「接続」をタップ")
-                howToRow(step: "3", text: "相手が承諾すると接続完了。「シールを送る」でシールを選択！")
-                howToRow(step: "4", text: "受け取ったシールは保存するとライブラリに追加されます")
+            VStack(spacing: 8) {
+                HStack(spacing: 8) {
+                    stepCard(step: "1", text: "相手も\nこの画面を開く", icon: "iphone.gen3")
+                    stepCard(step: "2", text: "「接続」を\nタップ", icon: "hand.tap.fill")
+                }
+                HStack(spacing: 8) {
+                    stepCard(step: "3", text: "シールを\n選んで送る", icon: "seal.fill")
+                    stepCard(step: "4", text: "受け取って\nライブラリに保存", icon: "square.and.arrow.down.fill")
+                }
             }
-            .padding(16)
-            .stickerCard()
         }
     }
 
-    private func howToRow(step: String, text: String) -> some View {
-        HStack(alignment: .top, spacing: 10) {
-            Text(step)
-                .font(.system(size: 12, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
-                .frame(width: 20, height: 20)
-                .background(AppTheme.accent, in: Circle())
-                .accessibilityHidden(true)
+    private func stepCard(step: String, text: String, icon: String) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text(step)
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+                    .frame(width: 22, height: 22)
+                    .background(AppTheme.accent, in: Circle())
+                    .accessibilityHidden(true)
+                Spacer()
+                Image(systemName: icon)
+                    .font(.system(size: 20))
+                    .foregroundStyle(AppTheme.accent.opacity(0.4))
+                    .accessibilityHidden(true)
+            }
             Text(text)
-                .font(.system(size: 13, design: .rounded))
+                .font(.system(size: 13, weight: .medium, design: .rounded))
                 .foregroundStyle(AppTheme.textSecondary)
+                .lineSpacing(3)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(14)
+        .stickerCard()
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("手順\(step): \(text)")
+        .accessibilityLabel("手順\(step): \(text.replacingOccurrences(of: "\n", with: ""))")
     }
 
     // MARK: - ヘルパー
@@ -263,6 +318,114 @@ struct StickerExchangeView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 4)
         .padding(.bottom, 8)
+    }
+}
+
+// MARK: - ステータス Pill（独立アニメーション状態）
+
+private struct StatusPillView: View {
+    let icon: String
+    let title: String
+    let isActive: Bool
+    let reduceMotion: Bool
+
+    @State private var isAnimating = false
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: icon)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(isActive ? AppTheme.accent : AppTheme.textTertiary)
+                .frame(width: 20)
+                .accessibilityHidden(true)
+
+            Text(title)
+                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                .foregroundStyle(isActive ? AppTheme.textPrimary : AppTheme.textTertiary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.85)
+
+            Spacer(minLength: 4)
+
+            ZStack {
+                if isActive && !reduceMotion {
+                    Circle()
+                        .fill(AppTheme.softOrange)
+                        .frame(width: 16, height: 16)
+                        .scaleEffect(isAnimating ? 2.4 : 1.0)
+                        .opacity(isAnimating ? 0.0 : 0.45)
+                }
+                Circle()
+                    .fill(isActive ? AppTheme.softOrange : AppTheme.borderSubtle)
+                    .frame(width: 8, height: 8)
+            }
+            .frame(width: 20, height: 20)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 14)
+        .frame(maxWidth: .infinity)
+        .background(
+            isActive ? AppTheme.accent.opacity(0.06) : AppTheme.backgroundCard
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(
+                    isActive ? AppTheme.accent.opacity(0.25) : AppTheme.borderSubtle,
+                    lineWidth: 1
+                )
+        )
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(title): \(isActive ? "アクティブ" : "停止中")")
+        .onAppear {
+            guard isActive && !reduceMotion else { return }
+            withAnimation(
+                .easeOut(duration: 1.4).repeatForever(autoreverses: false)
+            ) {
+                isAnimating = true
+            }
+        }
+    }
+}
+
+// MARK: - スキャン中リングアニメーション
+
+private struct ScanningRingsView: View {
+    let reduceMotion: Bool
+    @State private var isAnimating = false
+
+    var body: some View {
+        ZStack {
+            ForEach([0, 1, 2], id: \.self) { index in
+                Circle()
+                    .stroke(AppTheme.accent.opacity(0.12 - Double(index) * 0.03), lineWidth: 1)
+                    .frame(
+                        width: CGFloat(60 + index * 30),
+                        height: CGFloat(60 + index * 30)
+                    )
+                    .scaleEffect(isAnimating && !reduceMotion ? 1.25 : 1.0)
+                    .opacity(isAnimating && !reduceMotion ? 0.4 : 1.0)
+                    .animation(
+                        reduceMotion ? nil :
+                            .easeOut(duration: 2.0)
+                            .repeatForever(autoreverses: false)
+                            .delay(Double(index) * 0.5),
+                        value: isAnimating
+                    )
+            }
+
+            Circle()
+                .fill(AppTheme.accent.opacity(0.1))
+                .frame(width: 60, height: 60)
+
+            Image(systemName: "iphone.radiowaves.left.and.right")
+                .font(.system(size: 26, weight: .medium))
+                .foregroundStyle(AppTheme.accent)
+        }
+        .onAppear {
+            guard !reduceMotion else { return }
+            isAnimating = true
+        }
     }
 }
 
@@ -306,7 +469,7 @@ private struct ExchangeStickerPickerView: View {
             .overlay {
                 if isSending {
                     Color.black.opacity(0.3).ignoresSafeArea()
-                    ProgressView("送信中...")
+                    ProgressView("送信中…")
                         .padding(24)
                         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
                 }
@@ -340,6 +503,7 @@ private struct ExchangeStickerPickerView: View {
                     Image(systemName: "photo")
                         .font(.system(size: 24))
                         .foregroundStyle(AppTheme.textTertiary)
+                        .accessibilityHidden(true)
                 }
             }
             .frame(width: 90, height: 90)
@@ -378,7 +542,7 @@ private struct ExchangeStickerPickerView: View {
     }
 }
 
-// MARK: - 受信シートシート
+// MARK: - 受信シート
 
 private struct ReceivedStickerSheet: View {
     let manager: MultipeerConnectivityManager
@@ -440,18 +604,18 @@ private struct ReceivedStickerSheet: View {
                 Button {
                     Task { await saveSticker(received) }
                 } label: {
-                    if isSaving {
-                        ProgressView()
-                            .tint(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                    } else {
-                        Text("ライブラリに保存")
-                            .font(.system(size: 15, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
+                    Group {
+                        if isSaving {
+                            ProgressView()
+                                .tint(.white)
+                        } else {
+                            Text("ライブラリに保存")
+                                .font(.system(size: 15, weight: .bold, design: .rounded))
+                                .foregroundStyle(.white)
+                        }
                     }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
                 }
                 .background(AppTheme.accent, in: RoundedRectangle(cornerRadius: 12))
                 .disabled(isSaving)
