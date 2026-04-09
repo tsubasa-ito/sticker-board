@@ -40,6 +40,7 @@ final class SubscriptionManager: ObservableObject {
 
     private let keychain = KeychainHelper()
     private static let keychainKey = "isProUser_cached"
+    private static let migrationKey = "didMigrateProCacheToKeychain"
 
     private var transactionListener: Task<Void, Never>?
 
@@ -69,6 +70,13 @@ final class SubscriptionManager: ObservableObject {
     }
 
     private init() {
+        // 既存ユーザー向け: UserDefaults → Keychain への一回限りの移行
+        if !UserDefaults.standard.bool(forKey: Self.migrationKey) {
+            let oldValue = UserDefaults.standard.bool(forKey: Self.keychainKey)
+            keychain.save(bool: oldValue, forKey: Self.keychainKey)
+            UserDefaults.standard.removeObject(forKey: Self.keychainKey)
+            UserDefaults.standard.set(true, forKey: Self.migrationKey)
+        }
         isProUser = keychain.bool(forKey: Self.keychainKey)
         transactionListener = listenForTransactions()
 

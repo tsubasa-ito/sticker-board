@@ -1,9 +1,14 @@
 import Foundation
+import os
 import Security
 
 /// Keychain に bool 値を安全に保存するヘルパー
 final class KeychainHelper: Sendable {
     private let service: String
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier ?? "com.tebasaki.StickerBoard",
+        category: "KeychainHelper"
+    )
 
     init(service: String = Bundle.main.bundleIdentifier ?? "com.tebasaki.StickerBoard") {
         self.service = service
@@ -29,12 +34,20 @@ final class KeychainHelper: Sendable {
     }
 
     private func save(data: Data, forKey key: String) {
-        let query = baseQuery(forKey: key).merging([
-            kSecValueData as String: data
-        ]) { _, new in new }
+        let query = baseQuery(forKey: key)
+        let attributes: [String: Any] = [kSecValueData as String: data]
 
-        SecItemDelete(query as CFDictionary)
-        SecItemAdd(query as CFDictionary, nil)
+        // 既存アイテムの更新を試みる。存在しない場合は新規追加する
+        let updateStatus = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
+        if updateStatus == errSecItemNotFound {
+            let addQuery = query.merging(attributes) { _, new in new }
+            let addStatus = SecItemAdd(addQuery as CFDictionary, nil)
+            if addStatus != errSecSuccess {
+                Self.logger.error("Keychain add failed for key '\(key)': \(addStatus)")
+            }
+        } else if updateStatus != errSecSuccess {
+            Self.logger.error("Keychain update failed for key '\(key)': \(updateStatus)")
+        }
     }
 
     private func load(forKey key: String) -> Data? {
