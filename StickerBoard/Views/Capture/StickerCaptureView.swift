@@ -139,15 +139,32 @@ struct StickerCaptureView: View {
 
             if originalImage == nil {
                 // 取得方法の選択
-                VStack(spacing: 8) {
-                    Text("シールにしたい写真を選ぼう")
-                        .font(.system(size: 18, weight: .semibold, design: .rounded))
-                        .foregroundStyle(AppTheme.textPrimary)
-                        .scaleEffect(animateIn ? 1 : 0.8)
+                VStack(spacing: 12) {
+                    ZStack {
+                        Circle()
+                            .fill(AppTheme.accent.opacity(0.06))
+                            .frame(width: 96, height: 96)
+                        Circle()
+                            .fill(AppTheme.accent.opacity(0.12))
+                            .frame(width: 72, height: 72)
+                        Image(systemName: "scissors")
+                            .font(.system(size: 32))
+                            .foregroundStyle(AppTheme.accent.opacity(0.8))
+                    }
+                    .accessibilityHidden(true)
+                    .scaleEffect(animateIn ? 1 : 0.6)
+                    .opacity(animateIn ? 1 : 0)
 
-                    Text("カメラで撮影するか、ライブラリから選択できます")
-                        .font(.system(size: 13, weight: .regular, design: .rounded))
-                        .foregroundStyle(AppTheme.textSecondary)
+                    VStack(spacing: 6) {
+                        Text("シールにしたい写真を選ぼう")
+                            .font(.system(size: 18, weight: .semibold, design: .rounded))
+                            .foregroundStyle(AppTheme.textPrimary)
+                            .scaleEffect(animateIn ? 1 : 0.8)
+
+                        Text("カメラで撮影するか、ライブラリから選択できます")
+                            .font(.system(size: 13, weight: .regular, design: .rounded))
+                            .foregroundStyle(AppTheme.textSecondary)
+                    }
                 }
                 .padding(.top, 8)
 
@@ -262,34 +279,31 @@ struct StickerCaptureView: View {
     }
 
     private func sourceButton(icon: String, title: String, color: Color) -> some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 14) {
             ZStack {
                 Circle()
-                    .fill(color)
-                    .frame(width: 64, height: 64)
-
+                    .fill(color.opacity(0.1))
+                    .frame(width: 78, height: 78)
+                Circle()
+                    .fill(color.opacity(0.18))
+                    .frame(width: 60, height: 60)
                 Image(systemName: icon)
                     .font(.system(size: 26))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(color)
             }
             .scaleEffect(animateIn ? 1 : 0.6)
 
             Text(title)
-                .font(.system(size: 14, weight: .semibold, design: .rounded))
-                .foregroundStyle(AppTheme.textPrimary)
+                .font(.system(size: 15, weight: .bold, design: .rounded))
+                .foregroundStyle(color)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 32)
-        .background {
+        .padding(.vertical, 28)
+        .background(color.opacity(0.05), in: RoundedRectangle(cornerRadius: 20))
+        .shadow(color: color.opacity(0.18), radius: 10, x: 0, y: 4)
+        .overlay {
             RoundedRectangle(cornerRadius: 20)
-                .fill(AppTheme.backgroundCard)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 20)
-                        .strokeBorder(
-                            AppTheme.accent.opacity(0.3),
-                            style: StrokeStyle(lineWidth: 2, dash: [8, 6])
-                        )
-                }
+                .strokeBorder(color.opacity(0.2), lineWidth: 1.5)
         }
     }
 
@@ -301,14 +315,16 @@ struct StickerCaptureView: View {
 
             ZStack {
                 Circle()
+                    .fill(AppTheme.secondary.opacity(0.08))
+                    .frame(width: 116, height: 116)
+                Circle()
                     .fill(AppTheme.secondary.opacity(0.15))
-                    .frame(width: 100, height: 100)
-                    .accessibilityHidden(true)
-
+                    .frame(width: 88, height: 88)
                 ProgressView()
                     .controlSize(.large)
                     .tint(AppTheme.secondary)
             }
+            .accessibilityHidden(true)
 
             VStack(spacing: 4) {
                 Text("背景を除去しています...")
@@ -411,10 +427,11 @@ struct StickerCaptureView: View {
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
+                .padding(.vertical, 17)
                 .background(AppTheme.accent)
                 .foregroundStyle(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 14))
+                .shadow(color: AppTheme.accent.opacity(0.4), radius: 12, x: 0, y: 6)
             }
             .accessibilityLabel("コレクションに追加")
             .accessibilityHint("切り抜いたシールをコレクションに保存します")

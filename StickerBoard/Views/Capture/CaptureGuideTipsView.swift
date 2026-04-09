@@ -19,10 +19,12 @@ struct CaptureGuideTipsView: View {
                     isCollapsed.toggle()
                 }
             } label: {
-                HStack(spacing: 8) {
+                HStack(spacing: 10) {
                     Image(systemName: "lightbulb.fill")
-                        .font(.system(size: 14))
-                        .foregroundStyle(AppTheme.cream)
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(AppTheme.accent)
+                        .frame(width: 28, height: 28)
+                        .background(AppTheme.accent.opacity(0.12), in: RoundedRectangle(cornerRadius: 7))
                         .accessibilityHidden(true)
 
                     Text("きれいに切り抜くコツ")
@@ -45,13 +47,14 @@ struct CaptureGuideTipsView: View {
 
             // ヒント一覧
             if !isCollapsed {
-                VStack(spacing: 8) {
+                VStack(spacing: 10) {
                     ForEach(tips, id: \.text) { tip in
                         HStack(spacing: 10) {
                             Image(systemName: tip.icon)
-                                .font(.system(size: 13))
+                                .font(.system(size: 12, weight: .medium))
                                 .foregroundStyle(AppTheme.secondary)
-                                .frame(width: 20)
+                                .frame(width: 28, height: 28)
+                                .background(AppTheme.secondary.opacity(0.1), in: RoundedRectangle(cornerRadius: 7))
                                 .accessibilityHidden(true)
 
                             Text(tip.text)
@@ -67,13 +70,6 @@ struct CaptureGuideTipsView: View {
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
-        .background(
-            RoundedRectangle(cornerRadius: 14)
-                .fill(AppTheme.cream.opacity(0.2))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(AppTheme.cream.opacity(0.4), lineWidth: 1)
-        )
+        .stickerCard()
     }
 }
