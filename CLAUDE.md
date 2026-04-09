@@ -86,6 +86,7 @@ open StickerBoard.xcodeproj
 - バージョン管理: MARKETING_VERSION / CURRENT_PROJECT_VERSION は project.yml の settings.base で管理。Info.plist では `$(MARKETING_VERSION)` / `$(CURRENT_PROJECT_VERSION)` で参照する（project.yml の info.properties で指定済み）。Info.plist にバージョンを直接ハードコードしない
 - バンドルID: com.tebasaki.StickerBoard（project.yml で設定）
 - アプリ表示名: シールボード -デジタルシール帳-（CFBundleDisplayName）
+- 開発言語: ja（project.yml の `options.developmentLanguage` で設定。`developmentRegion = ja` / `knownRegions = (Base, ja)` として生成される）
 - ITSAppUsesNonExemptEncryption: NO（標準HTTPS通信のみ、App Store提出時の暗号化質問を省略）
 - 画面の向き: iPhone はポートレートのみ、iPad は全方向（iPad互換モードのマルチタスク対応に必要）
 - Xcode Cloud: mainブランチへのpushで自動ビルド→TestFlight配信。ci_scripts/ci_post_clone.sh で XcodeGen インストール＆プロジェクト生成を自動化
