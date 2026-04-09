@@ -28,8 +28,8 @@ struct SettingsView: View {
                         faqSection
                     }
 
-                    betaSection
                     noticesSection
+                    betaSection
                     relatedLinksSection
                 }
                 .padding(.horizontal, 16)
@@ -190,9 +190,9 @@ struct SettingsView: View {
                     }
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
+                    .padding(.vertical, 17)
                     .background(AppTheme.accent, in: RoundedRectangle(cornerRadius: 16))
-                    .shadow(color: AppTheme.accent.opacity(0.3), radius: 8, x: 0, y: 4)
+                    .shadow(color: AppTheme.accent.opacity(0.4), radius: 12, x: 0, y: 6)
                 }
             } else {
                 // 無料ユーザー: プラン選択 + 購入
@@ -270,9 +270,9 @@ struct SettingsView: View {
                     }
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
+                    .padding(.vertical, 17)
                     .background(AppTheme.accent, in: RoundedRectangle(cornerRadius: 16))
-                    .shadow(color: AppTheme.accent.opacity(0.3), radius: 8, x: 0, y: 4)
+                    .shadow(color: AppTheme.accent.opacity(0.4), radius: 12, x: 0, y: 6)
                 }
                 .disabled(isPurchasing)
                 .accessibilityLabel(isPurchasing ? "" : "Pro にアップグレード")
@@ -335,12 +335,12 @@ struct SettingsView: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
-            .stickerCard()
+            .selectableCard(isSelected: isSelected)
             .overlay {
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(
                         isSelected ? AppTheme.accent : AppTheme.borderSubtle,
-                        lineWidth: isSelected ? 2 : 1
+                        lineWidth: isSelected ? 2.5 : 1
                     )
             }
         }
@@ -436,23 +436,24 @@ struct SettingsView: View {
             sectionHeader(title: "Pro にアップグレードすると", icon: "crown")
 
             VStack(spacing: 0) {
-                benefitRow(icon: "star.fill", title: "シール保存", value: "無制限")
-                benefitRow(icon: "rectangle.on.rectangle.fill", title: "ボード作成", value: "無制限")
-                benefitRow(icon: "square.dashed", title: "枠線バリエーション", value: "全開放")
-                benefitRow(icon: "paintpalette.fill", title: "背景パターン", value: "全開放")
-                benefitRow(icon: "square.and.arrow.down.fill", title: "画像書き出し", value: "ロゴなし")
+                benefitRow(icon: "star.fill", title: "シール保存", value: "無制限", iconColor: AppTheme.accent)
+                benefitRow(icon: "rectangle.on.rectangle.fill", title: "ボード作成", value: "無制限", iconColor: AppTheme.secondary)
+                benefitRow(icon: "square.dashed", title: "枠線バリエーション", value: "全開放", iconColor: AppTheme.softOrange)
+                benefitRow(icon: "paintpalette.fill", title: "背景パターン", value: "全開放", iconColor: AppTheme.baby)
+                benefitRow(icon: "square.and.arrow.down.fill", title: "画像書き出し", value: "ロゴなし", iconColor: AppTheme.secondary)
             }
             .padding(.vertical, 4)
             .stickerCard()
         }
     }
 
-    private func benefitRow(icon: String, title: String, value: String) -> some View {
-        HStack {
+    private func benefitRow(icon: String, title: String, value: String, iconColor: Color) -> some View {
+        HStack(spacing: 12) {
             Image(systemName: icon)
-                .font(.system(size: 13))
-                .foregroundStyle(AppTheme.accent)
-                .frame(width: 24)
+                .font(.system(size: 15))
+                .foregroundStyle(iconColor)
+                .frame(width: 34, height: 34)
+                .background(iconColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 8))
                 .accessibilityHidden(true)
 
             Text(title)
@@ -462,11 +463,14 @@ struct SettingsView: View {
             Spacer()
 
             Text(value)
-                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .font(.system(size: 12, weight: .bold, design: .rounded))
                 .foregroundStyle(AppTheme.accent)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 4)
+                .background(AppTheme.accent.opacity(0.1), in: Capsule())
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 8)
+        .padding(.vertical, 10)
         .accessibilityElement(children: .combine)
     }
 
@@ -648,17 +652,17 @@ struct SettingsView: View {
     private func sectionHeader(title: String, icon: String) -> some View {
         HStack(spacing: 6) {
             Image(systemName: icon)
-                .font(.system(size: 13, weight: .semibold))
+                .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(AppTheme.accent)
                 .accessibilityHidden(true)
 
             Text(title)
-                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .font(.system(size: 14, weight: .bold, design: .rounded))
                 .foregroundStyle(AppTheme.textSecondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 4)
-        .padding(.bottom, 8)
+        .padding(.bottom, 10)
     }
 }
 

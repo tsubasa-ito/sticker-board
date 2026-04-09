@@ -114,4 +114,19 @@ extension View {
             .clipShape(RoundedRectangle(cornerRadius: 16))
             .shadow(color: .black.opacity(0.08), radius: 12, x: 0, y: 6)
     }
+
+    /// 選択状態を持つプランカード（選択時はアクセントカラーの薄い背景＋強いシャドウ）
+    func selectableCard(isSelected: Bool) -> some View {
+        self
+            .background(
+                isSelected ? AppTheme.accent.opacity(0.06) : AppTheme.backgroundCard,
+                in: RoundedRectangle(cornerRadius: 16)
+            )
+            .shadow(
+                color: isSelected ? AppTheme.accent.opacity(0.22) : .black.opacity(0.06),
+                radius: isSelected ? 10 : 6,
+                x: 0,
+                y: isSelected ? 5 : 3
+            )
+    }
 }
