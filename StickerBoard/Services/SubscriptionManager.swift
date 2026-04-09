@@ -74,8 +74,8 @@ final class SubscriptionManager: ObservableObject {
         if !UserDefaults.standard.bool(forKey: Self.migrationKey) {
             let oldValue = UserDefaults.standard.bool(forKey: Self.keychainKey)
             keychain.save(bool: oldValue, forKey: Self.keychainKey)
-            UserDefaults.standard.removeObject(forKey: Self.keychainKey)
             UserDefaults.standard.set(true, forKey: Self.migrationKey)
+            UserDefaults.standard.removeObject(forKey: Self.keychainKey)
         }
         isProUser = keychain.bool(forKey: Self.keychainKey)
         transactionListener = listenForTransactions()
