@@ -52,7 +52,7 @@ targets:
     settings:
       base:
         CURRENT_PROJECT_VERSION: "1"
-        MARKETING_VERSION: "1.2.1"
+        MARKETING_VERSION: "1.3.0"
         PRODUCT_BUNDLE_IDENTIFIER: "com.tebasaki.StickerBoard"
         CODE_SIGN_STYLE: Automatic
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
@@ -91,7 +91,7 @@ targets:
     settings:
       base:
         CURRENT_PROJECT_VERSION: "1"
-        MARKETING_VERSION: "1.2.1"
+        MARKETING_VERSION: "1.3.0"
         PRODUCT_BUNDLE_IDENTIFIER: "com.tebasaki.StickerBoard.Widget"
         CODE_SIGN_STYLE: Automatic
         SWIFT_EMIT_LOC_STRINGS: YES
