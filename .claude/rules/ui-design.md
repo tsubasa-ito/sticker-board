@@ -19,3 +19,4 @@ SwiftUI の View を新規作成・修正するとき。
 
 ### カードスタイル
 - 角丸16pt + 薄い影（`.stickerCard()` / `.glassCard()` modifier を使用）
+- 選択状態を持つカード（プランカード等）は `.selectableCard(isSelected:)` modifier を使用（`AppTheme.swift` に定義）
