@@ -124,11 +124,10 @@ struct BoardEditorView: View {
                 } label: {
                     Image(systemName: "arrow.down.to.line")
                         .font(.system(size: 15, weight: .medium))
-                        .foregroundStyle(AppTheme.textSecondary)
+                        .foregroundStyle(placements.isEmpty ? AppTheme.textTertiary : AppTheme.accent)
                 }
                 .accessibilityLabel("写真に保存")
                 .disabled(placements.isEmpty)
-                .opacity(placements.isEmpty ? 0.4 : 1)
             }
         }
         .sheet(isPresented: $showingStickerPicker) {
@@ -291,14 +290,24 @@ struct BoardEditorView: View {
     // MARK: - 空のヒント
 
     private var emptyCanvasHint: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "hand.tap")
-                .font(.system(size: 36))
-                .foregroundStyle(AppTheme.textTertiary)
+        VStack(spacing: 16) {
+            ZStack {
+                Circle()
+                    .fill(AppTheme.accent.opacity(0.1))
+                    .frame(width: 72, height: 72)
+                Image(systemName: "plus.circle.fill")
+                    .font(.system(size: 38))
+                    .foregroundStyle(AppTheme.accent.opacity(0.5))
+            }
 
-            Text("下の＋からシールを追加")
-                .font(.system(size: 15, weight: .medium, design: .rounded))
-                .foregroundStyle(AppTheme.textTertiary)
+            VStack(spacing: 4) {
+                Text("シールを追加しよう")
+                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                    .foregroundStyle(AppTheme.textSecondary)
+                Text("下の ＋ ボタンからシールを選択")
+                    .font(.system(size: 13, design: .rounded))
+                    .foregroundStyle(AppTheme.textTertiary)
+            }
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel("キャンバスが空です。下の追加ボタンからシールを追加してください")
@@ -345,14 +354,20 @@ struct BoardEditorView: View {
                 } label: {
                     VStack(spacing: 4) {
                         Image(systemName: "square.grid.2x2")
-                            .font(.system(size: 18))
+                            .font(.system(size: 16))
                         Text("全て")
                             .font(.system(size: 9, weight: .medium, design: .rounded))
                     }
-                    .foregroundStyle(AppTheme.textSecondary)
-                    .frame(width: 64, height: 64)
-                    .background(AppTheme.editorBackground)
+                    .foregroundStyle(AppTheme.accent)
+                    .frame(width: 56, height: 56)
+                    .padding(4)
+                    .background(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 14))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14)
+                            .stroke(AppTheme.accent.opacity(0.3), lineWidth: 1.5)
+                    )
+                    .shadow(color: .black.opacity(0.06), radius: 4, y: 2)
                 }
                 .accessibilityLabel("すべてのシールを表示")
             }
