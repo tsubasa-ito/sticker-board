@@ -27,7 +27,8 @@
 - **Pro サブスクリプション** — フリーミアムモデル（無料: シール30枚・ボード1枚・基本枠線・基本背景 / Pro: 無制限・全機能・ロゴなし書き出し）。StoreKit 2 による月額¥380 / 年額¥2,900
 - **アップデート通知** — アプリ起動時にApp Storeの最新バージョンをチェックし、アップデートがある場合にアラートで通知（24時間間隔、メジャー/マイナー区別、スキップ管理）
 - **アプリ内レビュー訴求** — 達成感のあるタイミング（シール5/15/30枚目、ボード新規作成、起動5回目）でApple標準のレビューダイアログを表示。90日クールダウン＋365日ローリングウィンドウで年3回上限（Appleガイドライン準拠）
-- **設定画面** — 現在のプラン表示・有効期限確認・月額/年額プラン選択＆直接購入・プラン管理（Pro→App Storeサブスクリプション管理）・購入復元・Proメリット一覧・よくある質問・注意事項・関連リンク
+- **設定画面** — 現在のプラン表示・有効期限確認・月額/年額プラン選択＆直接購入・プラン管理（Pro→App Storeサブスクリプション管理）・購入復元・Proメリット一覧・よくある質問・注意事項・関連リンク・β機能（シール交換）へのリンク
+- **シール交換 β版** — MultipeerConnectivity（近距離Bluetooth/Wi-Fi P2P）を使って近くのデバイスとシールを交換できるβ版機能。設定画面の「β機能」セクションからアクセス。デバイス検索 → 接続申請 → シール選択 → 送信 → 受信したシールをライブラリに保存する一連のフローをサポート
 - **ボードショーケースウィジェット** — WidgetKit でお気に入りのボードをホーム画面に飾れるウィジェット機能（Medium / Large サイズ対応）。ウィジェット長押しでボード選択、タップでボード編集画面に直接遷移（完全無料）
 
 ## 技術スタック
@@ -142,7 +143,8 @@ StickerBoard/
 │   ├── StickerFilter.swift          # フィルター種別（オリジナル・キラキラ・レトロ・パステル・ネオン・ぷっくり・ワッペン）
 │   ├── StickerBorder.swift          # 枠線の太さ・カラープリセット定義
 │   ├── BackgroundPattern.swift      # 背景パターン種別・設定
-│   └── SubscriptionProduct.swift    # サブスクリプション商品ID定義
+│   ├── SubscriptionProduct.swift    # サブスクリプション商品ID定義
+│   └── ExchangeMessage.swift        # MultipeerConnectivity転送用Codableモデル（β版）
 ├── Services/
 │   ├── BackgroundRemover.swift      # Vision Framework 背景除去
 │   ├── MaskCompositor.swift         # マスク合成・手動編集結果の適用
@@ -153,7 +155,8 @@ StickerBoard/
 │   ├── BackgroundImageStorage.swift # ボード背景画像の保存・読み込み
 │   ├── SubscriptionManager.swift    # StoreKit 2 サブスクリプション管理
 │   ├── AppUpdateChecker.swift       # App Storeバージョンチェック・アップデート通知
-│   └── WidgetDataSyncService.swift  # ウィジェットへのスナップショット・メタデータ同期
+│   ├── WidgetDataSyncService.swift  # ウィジェットへのスナップショット・メタデータ同期
+│   └── MultipeerConnectivityManager.swift # β版シール交換（P2P近距離通信）
 └── Views/
     ├── Home/
     │   ├── MainTabView.swift        # タブナビゲーション・フローティングタブバー
@@ -176,6 +179,8 @@ StickerBoard/
     │   └── PaywallView.swift         # ペイウォール・ProBadge
     ├── Library/
     │   └── StickerLibraryView.swift  # シール一覧
+    ├── Exchange/
+    │   └── StickerExchangeView.swift # β版シール交換（MultipeerConnectivity）
     └── Board/
         ├── BoardListView.swift              # ボード一覧
         ├── BoardEditorView.swift            # ボード編集キャンバス
