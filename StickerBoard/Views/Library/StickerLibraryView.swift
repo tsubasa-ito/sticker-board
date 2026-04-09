@@ -30,6 +30,16 @@ struct StickerLibraryView: View {
 
     private let pageSize = 30
 
+    private var sortBinding: Binding<Bool> {
+        Binding(
+            get: { sortNewest },
+            set: { newVal in
+                sortNewest = newVal
+                resetAndReload()
+            }
+        )
+    }
+
     private let columns = [
         GridItem(.adaptive(minimum: 100), spacing: 14)
     ]
@@ -91,13 +101,7 @@ struct StickerLibraryView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
-                    Picker("並び替え", selection: Binding(
-                        get: { sortNewest },
-                        set: { newVal in
-                            sortNewest = newVal
-                            resetAndReload()
-                        }
-                    )) {
+                    Picker("並び替え", selection: sortBinding) {
                         Text("新着順").tag(true)
                         Text("古い順").tag(false)
                     }
