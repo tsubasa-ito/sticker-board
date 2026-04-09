@@ -35,8 +35,15 @@
 	<false/>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.lifestyle</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_stickerboard._tcp</string>
+		<string>_stickerboard._udp</string>
+	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>シールにする写真を撮影するためにカメラへのアクセスが必要です</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>近くのデバイスとシールを交換するためにローカルネットワークへのアクセスが必要です</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>ボードを画像として写真に保存するためにフォトライブラリへのアクセスが必要です</string>
 	<key>NSPhotoLibraryUsageDescription</key>
