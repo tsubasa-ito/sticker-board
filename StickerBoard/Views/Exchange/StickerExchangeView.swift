@@ -636,7 +636,7 @@ private struct ReceivedStickerSheet: View {
             modelContext.insert(sticker)
             manager.dismissReceivedSticker(received.id)
         } catch {
-            saveError = "シールの保存に失敗しました。再度お試しください。"
+            saveError = error.localizedDescription
         }
     }
 }
