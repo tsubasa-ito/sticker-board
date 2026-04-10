@@ -1,6 +1,13 @@
 import Foundation
 import SwiftData
 
+enum BoardType: String, Codable {
+    case standard
+    case widgetLarge
+
+    static let widgetLargeAspectRatio: CGFloat = 364.0 / 382.0
+}
+
 @Model
 final class Board {
     var id: UUID
@@ -9,6 +16,12 @@ final class Board {
     var updatedAt: Date
     var placementsData: Data?
     var backgroundPatternData: Data?
+    var boardTypeRawValue: String = BoardType.standard.rawValue
+
+    var boardType: BoardType {
+        get { BoardType(rawValue: boardTypeRawValue) ?? .standard }
+        set { boardTypeRawValue = newValue.rawValue }
+    }
 
     private static let decoder = JSONDecoder()
     private static let encoder = JSONEncoder()
@@ -52,12 +65,13 @@ final class Board {
         }
     }
 
-    init(title: String) {
+    init(title: String, boardType: BoardType = .standard) {
         self.id = UUID()
         self.title = title
         self.createdAt = Date()
         self.updatedAt = Date()
         self.placementsData = nil
         self.backgroundPatternData = nil
+        self.boardTypeRawValue = boardType.rawValue
     }
 }

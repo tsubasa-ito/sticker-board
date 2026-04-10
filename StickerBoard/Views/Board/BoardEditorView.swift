@@ -240,7 +240,17 @@ struct BoardEditorView: View {
 
     // MARK: - キャンバスエリア
 
+    @ViewBuilder
     private var canvasArea: some View {
+        if board.boardType == .widgetLarge {
+            boardCanvasZStack
+                .aspectRatio(BoardType.widgetLargeAspectRatio, contentMode: .fit)
+        } else {
+            boardCanvasZStack
+        }
+    }
+
+    private var boardCanvasZStack: some View {
         ZStack {
             // ボードカード（背景パターン付き）
             BoardBackgroundView(config: backgroundConfig, customImage: customBackgroundImage)
@@ -285,6 +295,23 @@ struct BoardEditorView: View {
         } action: { newSize in
             canvasSize = newSize
         }
+        .overlay(alignment: .topTrailing) {
+            if board.boardType == .widgetLarge {
+                widgetBadge
+            }
+        }
+    }
+
+    private var widgetBadge: some View {
+        Label("ウィジェット", systemImage: "apps.iphone")
+            .font(.system(size: 11, weight: .semibold, design: .rounded))
+            .foregroundStyle(.white)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(AppTheme.accent.opacity(0.85), in: Capsule())
+            .padding(.top, 32)
+            .padding(.trailing, 32)
+            .accessibilityHidden(true)
     }
 
     // MARK: - 空のヒント
