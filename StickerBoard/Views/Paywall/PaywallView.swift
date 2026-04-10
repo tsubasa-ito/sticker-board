@@ -74,12 +74,14 @@ struct PaywallView: View {
                 }
             }
 
-            // アイコン
+            // アイコン（二重リングで存在感を強調）
             ZStack {
                 Circle()
-                    .fill(AppTheme.accent.opacity(0.12))
-                    .frame(width: 80, height: 80)
-
+                    .fill(AppTheme.accent.opacity(0.06))
+                    .frame(width: 96, height: 96)
+                Circle()
+                    .fill(AppTheme.accent.opacity(0.13))
+                    .frame(width: 76, height: 76)
                 Image(systemName: "crown.fill")
                     .font(.system(size: 34))
                     .foregroundStyle(AppTheme.accent)
@@ -102,31 +104,24 @@ struct PaywallView: View {
 
     private var featureListSection: some View {
         VStack(spacing: 0) {
-            featureRow(icon: "star.fill", text: "シール保存", value: "無制限")
-            Divider().padding(.horizontal, 16)
-            featureRow(icon: "rectangle.on.rectangle.fill", text: "ボード作成", value: "無制限")
-            Divider().padding(.horizontal, 16)
-            featureRow(icon: "square.dashed", text: "枠線バリエーション", value: "全開放")
-            Divider().padding(.horizontal, 16)
-            featureRow(icon: "paintpalette.fill", text: "背景パターン", value: "全開放")
-            Divider().padding(.horizontal, 16)
-            featureRow(icon: "arrow.down.to.line", text: "画像書き出し", value: "ロゴなし")
+            ForEach(Array(ProBenefit.allCases.enumerated()), id: \.element) { index, benefit in
+                featureRow(icon: benefit.icon, text: benefit.title, value: benefit.value, iconColor: benefit.iconColor)
+                if index < ProBenefit.allCases.count - 1 {
+                    Divider().padding(.horizontal, 16)
+                }
+            }
         }
         .stickerCard()
     }
 
-    private func featureRow(icon: String, text: String, value: String) -> some View {
+    private func featureRow(icon: String, text: String, value: String, iconColor: Color) -> some View {
         HStack(spacing: 14) {
-            ZStack {
-                Circle()
-                    .fill(AppTheme.accent.opacity(0.1))
-                    .frame(width: 36, height: 36)
-
-                Image(systemName: icon)
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(AppTheme.accent)
-            }
-            .accessibilityHidden(true)
+            Image(systemName: icon)
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(iconColor)
+                .frame(width: 36, height: 36)
+                .background(iconColor.opacity(0.12), in: RoundedRectangle(cornerRadius: 9))
+                .accessibilityHidden(true)
 
             Text(text)
                 .font(.system(size: 15, weight: .medium, design: .rounded))
@@ -135,8 +130,11 @@ struct PaywallView: View {
             Spacer()
 
             Text(value)
-                .font(.system(size: 14, weight: .bold, design: .rounded))
+                .font(.system(size: 12, weight: .bold, design: .rounded))
                 .foregroundStyle(AppTheme.accent)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 4)
+                .background(AppTheme.accent.opacity(0.1), in: Capsule())
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
@@ -153,40 +151,39 @@ struct PaywallView: View {
                     .padding(.vertical, 20)
             } else if let yearly = subscriptionManager.yearlyProduct {
                 // 年額カード
-                VStack(spacing: 6) {
-                    HStack(alignment: .firstTextBaseline) {
-                        Text(yearly.displayPrice)
-                            .font(.system(size: 28, weight: .bold, design: .rounded))
-                            .foregroundStyle(AppTheme.textPrimary)
+                VStack(spacing: 8) {
+                    // おトクバッジを上部に配置
+                    let savings = subscriptionManager.savingsPercentage
+                    if savings > 0 {
+                        Text("\(savings)% おトク")
+                            .font(.system(size: 12, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 5)
+                            .background(Capsule().fill(AppTheme.accent))
+                            .accessibilityHidden(true)
+                    }
 
+                    HStack(alignment: .firstTextBaseline, spacing: 4) {
+                        Text(yearly.displayPrice)
+                            .font(.system(size: 30, weight: .bold, design: .rounded))
+                            .foregroundStyle(AppTheme.textPrimary)
                         Text("/年")
                             .font(.system(size: 15, weight: .medium, design: .rounded))
                             .foregroundStyle(AppTheme.textSecondary)
                     }
 
                     if let monthlyPrice = subscriptionManager.yearlyMonthlyPrice {
-                        HStack(spacing: 6) {
-                            Text("月あたり\(monthlyPrice)")
-                                .font(.system(size: 13, design: .rounded))
-                                .foregroundStyle(AppTheme.textSecondary)
-
-                            let savings = subscriptionManager.savingsPercentage
-                            if savings > 0 {
-                                Text("\(savings)%おトク")
-                                    .font(.system(size: 11, weight: .bold, design: .rounded))
-                                    .foregroundStyle(.white)
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 3)
-                                    .background(Capsule().fill(AppTheme.accent))
-                                    .accessibilityHidden(true)
-                            }
-                        }
+                        Text("月あたり\(monthlyPrice)")
+                            .font(.system(size: 13, design: .rounded))
+                            .foregroundStyle(AppTheme.textSecondary)
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 20)
+                .padding(.vertical, 22)
                 .background(AppTheme.backgroundCard)
                 .clipShape(RoundedRectangle(cornerRadius: 16))
+                .shadow(color: AppTheme.accent.opacity(0.15), radius: 12, x: 0, y: 4)
                 .overlay {
                     RoundedRectangle(cornerRadius: 16)
                         .stroke(AppTheme.accent, lineWidth: 2)
@@ -203,7 +200,7 @@ struct PaywallView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 18)
                         .background(Capsule().fill(AppTheme.accent))
-                        .shadow(color: AppTheme.accent.opacity(0.3), radius: 12, y: 6)
+                        .shadow(color: AppTheme.accent.opacity(0.4), radius: 12, y: 6)
                 }
                 .disabled(isPurchasing)
                 .accessibilityLabel("Proではじめる、年額\(yearly.displayPrice)")

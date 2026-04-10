@@ -19,3 +19,8 @@ SwiftUI の View を新規作成・修正するとき。
 
 ### カードスタイル
 - 角丸16pt + 薄い影（`.stickerCard()` / `.glassCard()` modifier を使用）
+- 選択状態を持つカード（プランカード等）は `.selectableCard(isSelected:)` modifier を使用（`AppTheme.swift` に定義）
+
+### CTAボタン
+- アクセントカラーの主要ボタン（設定画面のプラン管理・アップグレード等）は `.primaryButton()` modifier を使用（`AppTheme.swift` に定義）
+- Capsule形のCTAボタン（ペイウォール・オンボーディング等）は `.background(AppTheme.accent, in: Capsule())` + `.shadow(color: AppTheme.accent.opacity(0.4), radius: 12, x: 0, y: 6)` で統一

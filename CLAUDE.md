@@ -83,6 +83,7 @@ open StickerBoard.xcodeproj
 - UIデザインルールは `.claude/rules/ui-design.md` を参照
 - サブスクリプション（StoreKit 2）: SubscriptionManager がシングルトンで購入状態を管理。StickerBoardApp.init() で早期初期化。UserDefaults に isProUser をキャッシュしてオフライン対応
 - フリーミアムモデル: 無料（シール30枚/ボード1枚/枠線なし・細/背景3種/ロゴ入り書き出し）、Pro（全制限解除）。「期待値駆動型ペイウォール」でプレミアム機能をプレビュー可能にし、適用・確定時にペイウォール表示
+- Pro特典データ: `AppTheme.swift` の `ProBenefit` enum に一元管理（icon / title / value / iconColor）。SettingsView・PaywallView で `ProBenefit.allCases` を使用。特典を変更・追加する場合はこの enum を編集する
 - Products.storekit は Xcode の StoreKit Configuration Editor で編集すること（手動JSONは非推奨）。project.yml の schemes で StoreKit Configuration を自動設定済み
 - バージョン管理: MARKETING_VERSION / CURRENT_PROJECT_VERSION は project.yml の settings.base で管理。Info.plist では `$(MARKETING_VERSION)` / `$(CURRENT_PROJECT_VERSION)` で参照する（project.yml の info.properties で指定済み）。Info.plist にバージョンを直接ハードコードしない
 - バンドルID: com.tebasaki.StickerBoard（project.yml で設定）
@@ -96,6 +97,7 @@ open StickerBoard.xcodeproj
 - ディープリンク: `stickerboard://board/{boardId}` でウィジェットタップ → ボード編集画面に直接遷移。StickerBoardApp の `.onOpenURL` でハンドリング
 - `Shared/` ディレクトリのファイルはメインアプリ・ウィジェット両ターゲットに含まれる（project.yml の sources で指定）。共有型や定数はここに配置する
 - Widget Extension（`StickerBoardWidgetExtension`）は `AppIntentConfiguration` でボード選択。`BoardEntity` が `AppEntity` として機能する
+- BoardType enum（`Board.swift` に定義）: `.standard`（通常の縦長キャンバス）/ `.widgetLarge`（364×382pt比率のウィジェット専用キャンバス）。`boardTypeRawValue: String = "standard"` で SwiftData の自動マイグレーション対応。ボード作成時に `NewBoardSheet` でタイプを選択。`BoardType.widgetLargeAspectRatio = 364/382` 定数を参照
 - AppUpdateChecker（Sendable シングルトン）がアプリ起動時に iTunes Lookup API でバージョンチェック。MainTabView の .task で呼び出し、24時間間隔で実行（@AppStorage("lastUpdateCheckDate")）。メジャーアップデートはスキップ不可（毎回表示）、マイナー/パッチは「あとで」でスキップ可能（@AppStorage("skippedVersion")）。ネットワークエラー時はサイレントにスキップし次回起動でリトライ
 - ReviewRequestManager（Sendable シングルトン）がアプリ内レビュー訴求を管理。`@Environment(\.requestReview)` による iOS 標準ダイアログのみ使用（カスタムUIなし・Appleガイドライン準拠）。トリガー条件: シール5/15/30枚目（`StickerCaptureView` sheet の onDismiss で呼び出し）、ボード新規作成時（alert dismiss 後 Task.sleep 600ms）、起動5回目（StickerBoardApp.init() で UserDefaults の "appLaunchCount" をインクリメント）。表示制御は 90日クールダウン＋365日ローリングウィンドウで年3回上限（@AppStorage("reviewRequestDatesJSON") に JSON 配列で最大3件の日時を保存）
 - Firebase Crashlytics: `StickerBoardApp.init()` の先頭で `FirebaseApp.configure()` を呼び出してクラッシュ検知を初期化。`GoogleService-Info.plist` はFirebaseコンソールからダウンロードして `StickerBoard/` 直下に配置する（.gitignore で除外）。Privacy Manifest（`StickerBoard/PrivacyInfo.xcprivacy`）にクラッシュデータ・パフォーマンスデータ・デバイスIDの申告を記載済み。Claude Code から MCP 経由でクラッシュ分析する方法は `docs/MCP_CRASHLYTICS.md` を参照

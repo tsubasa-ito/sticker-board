@@ -129,4 +129,67 @@ extension View {
                 y: isSelected ? 5 : 3
             )
     }
+
+    /// アクセントカラーの主要CTAボタン（設定・ペイウォール等で共通）
+    func primaryButton() -> some View {
+        self
+            .foregroundStyle(.white)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 17)
+            .background(AppTheme.accent, in: RoundedRectangle(cornerRadius: 16))
+            .shadow(color: AppTheme.accent.opacity(0.4), radius: 12, x: 0, y: 6)
+    }
+}
+
+// MARK: - Pro特典データ
+
+/// SettingsView・PaywallView で共用するPro特典定義
+enum ProBenefit: CaseIterable, Identifiable {
+    case stickerStorage
+    case boardCreation
+    case borderVariations
+    case backgroundPatterns
+    case exportWithoutLogo
+
+    var id: Self { self }
+
+    var icon: String {
+        switch self {
+        case .stickerStorage:     return "star.fill"
+        case .boardCreation:      return "rectangle.on.rectangle.fill"
+        case .borderVariations:   return "square.dashed"
+        case .backgroundPatterns: return "paintpalette.fill"
+        case .exportWithoutLogo:  return "square.and.arrow.down.fill"
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .stickerStorage:     return "シール保存"
+        case .boardCreation:      return "ボード作成"
+        case .borderVariations:   return "枠線バリエーション"
+        case .backgroundPatterns: return "背景パターン"
+        case .exportWithoutLogo:  return "画像書き出し"
+        }
+    }
+
+    var value: String {
+        switch self {
+        case .stickerStorage:     return "無制限"
+        case .boardCreation:      return "無制限"
+        case .borderVariations:   return "全開放"
+        case .backgroundPatterns: return "全開放"
+        case .exportWithoutLogo:  return "ロゴなし"
+        }
+    }
+
+    var iconColor: Color {
+        switch self {
+        case .stickerStorage:     return AppTheme.accent
+        case .boardCreation:      return AppTheme.secondary
+        case .borderVariations:   return AppTheme.softOrange
+        case .backgroundPatterns: return AppTheme.baby
+        case .exportWithoutLogo:  return AppTheme.secondary
+        }
+    }
 }

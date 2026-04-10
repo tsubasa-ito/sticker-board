@@ -253,6 +253,76 @@ struct BoardTests {
         #expect(boards[1].title == "新しいボード")
     }
 
+    // MARK: - BoardType
+
+    @Test func BoardTypeのデフォルトはstandardである() throws {
+        let container = try makeContainer()
+        let context = ModelContext(container)
+        let board = Board(title: "テスト")
+        context.insert(board)
+
+        #expect(board.boardType == .standard)
+    }
+
+    @Test func widgetLargeボードを作成できる() throws {
+        let container = try makeContainer()
+        let context = ModelContext(container)
+        let board = Board(title: "ウィジェット大ボード", boardType: .widgetLarge)
+        context.insert(board)
+
+        #expect(board.boardType == .widgetLarge)
+        #expect(board.title == "ウィジェット大ボード")
+    }
+
+    @Test func widgetMediumボードを作成できる() throws {
+        let container = try makeContainer()
+        let context = ModelContext(container)
+        let board = Board(title: "ウィジェット中ボード", boardType: .widgetMedium)
+        context.insert(board)
+
+        #expect(board.boardType == .widgetMedium)
+        #expect(board.title == "ウィジェット中ボード")
+    }
+
+    @Test func boardTypeRawValueが正しく保存される() throws {
+        let container = try makeContainer()
+        let context = ModelContext(container)
+        let standard = Board(title: "標準")
+        let widgetL = Board(title: "ウィジェット大", boardType: .widgetLarge)
+        let widgetM = Board(title: "ウィジェット中", boardType: .widgetMedium)
+        context.insert(standard)
+        context.insert(widgetL)
+        context.insert(widgetM)
+
+        #expect(standard.boardTypeRawValue == "standard")
+        #expect(widgetL.boardTypeRawValue == "widgetLarge")
+        #expect(widgetM.boardTypeRawValue == "widgetMedium")
+    }
+
+    @Test func 無効なrawValueはstandardにフォールバックする() throws {
+        let container = try makeContainer()
+        let context = ModelContext(container)
+        let board = Board(title: "テスト")
+        context.insert(board)
+
+        board.boardTypeRawValue = "invalid"
+
+        #expect(board.boardType == .standard)
+    }
+
+    @Test func boardTypeを変更できる() throws {
+        let container = try makeContainer()
+        let context = ModelContext(container)
+        let board = Board(title: "テスト")
+        context.insert(board)
+
+        #expect(board.boardType == .standard)
+        board.boardType = .widgetLarge
+        #expect(board.boardType == .widgetLarge)
+        board.boardType = .widgetMedium
+        #expect(board.boardType == .widgetMedium)
+    }
+
     // MARK: - placementsData 直接変更時のキャッシュ無効化
 
     @Test func placementsDataを直接変更した場合もキャッシュが無効化される() throws {

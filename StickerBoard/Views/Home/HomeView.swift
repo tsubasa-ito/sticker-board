@@ -11,8 +11,7 @@ struct HomeView: View {
     @Binding var deepLinkBoardId: UUID?
     var onBoardCreated: () -> Void = {}
 
-    @State private var showingNewBoard = false
-    @State private var newBoardTitle = ""
+    @State private var showingBoardTypePicker = false
     @State private var scrolledID: String?
     @State private var animateIn = false
     @State private var selectedBoard: Board?
@@ -93,12 +92,10 @@ struct HomeView: View {
                 .onAppear { hideTabBar = true }
                 .onDisappear { hideTabBar = false }
         }
-        .alert("新しいボード", isPresented: $showingNewBoard) {
-            TextField("ボード名", text: $newBoardTitle)
-            Button("作成") { createBoard() }
-            Button("キャンセル", role: .cancel) { newBoardTitle = "" }
-        } message: {
-            Text("ボードの名前を入力してください")
+        .sheet(isPresented: $showingBoardTypePicker) {
+            NewBoardSheet { title, boardType in
+                createBoard(title: title, boardType: boardType)
+            }
         }
         .alert("ボード名を変更", isPresented: $showingRenameBoard) {
             TextField("新しいボード名", text: $renameBoardTitle)
@@ -175,7 +172,14 @@ struct HomeView: View {
     }
 
     private func boardCard(_ board: Board) -> some View {
-        VStack(spacing: 0) {
+        let cardAspectRatio: CGFloat = {
+            switch board.boardType {
+            case .widgetLarge: return BoardType.widgetLargeAspectRatio
+            case .widgetMedium: return BoardType.widgetMediumAspectRatio
+            case .standard: return boardCardAspectRatio
+            }
+        }()
+        return VStack(spacing: 0) {
             // プレビューエリア
             ZStack {
                 // ボード背景パターン
@@ -187,7 +191,7 @@ struct HomeView: View {
                         .font(.system(size: 40))
                         .foregroundStyle(AppTheme.textTertiary.opacity(0.3))
                 } else {
-                    boardStickerPreview(board.placements)
+                    boardStickerPreview(board.placements, boardType: board.boardType)
                 }
 
                 // ボトムグラデーション + タイトルオーバーレイ
@@ -248,7 +252,7 @@ struct HomeView: View {
                     }
                 }
             }
-            .aspectRatio(boardCardAspectRatio, contentMode: .fit)
+            .aspectRatio(cardAspectRatio, contentMode: .fit)
             .clipShape(RoundedRectangle(cornerRadius: 28))
         }
         .shadow(color: .black.opacity(0.12), radius: 24, x: 0, y: 12)
@@ -259,8 +263,8 @@ struct HomeView: View {
     // MARK: - ボードシールプレビュー
 
     /// ボードエディタと同じレイアウトを縮小して表示する
-    private func boardStickerPreview(_ placements: [StickerPlacement]) -> some View {
-        BoardStickerPreviewView(placements: placements)
+    private func boardStickerPreview(_ placements: [StickerPlacement], boardType: BoardType) -> some View {
+        BoardStickerPreviewView(placements: placements, boardType: boardType)
     }
 
     // MARK: - 新規ボードカード
@@ -270,7 +274,7 @@ struct HomeView: View {
             if !SubscriptionManager.shared.isProUser && boards.count >= 1 {
                 showingPaywall = true
             } else {
-                showingNewBoard = true
+                showingBoardTypePicker = true
             }
         } label: {
             ZStack {
@@ -287,16 +291,14 @@ struct HomeView: View {
                 VStack(spacing: 20) {
                     ZStack {
                         Circle()
-                            .fill(AppTheme.accent)
-                            .frame(width: 64, height: 64)
-                            .shadow(
-                                color: AppTheme.accent.opacity(0.3),
-                                radius: 12, x: 0, y: 6
-                            )
-
+                            .fill(AppTheme.accent.opacity(0.1))
+                            .frame(width: 80, height: 80)
+                        Circle()
+                            .fill(AppTheme.accent.opacity(0.18))
+                            .frame(width: 62, height: 62)
                         Image(systemName: "plus")
                             .font(.system(size: 28, weight: .bold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(AppTheme.accent)
                     }
 
                     VStack(spacing: 6) {
@@ -388,22 +390,21 @@ struct HomeView: View {
                 if !SubscriptionManager.shared.isProUser && boards.count >= 1 {
                     showingPaywall = true
                 } else {
-                    showingNewBoard = true
+                    showingBoardTypePicker = true
                 }
             } label: {
-                ZStack {
-                    Circle()
-                        .fill(AppTheme.accent)
-                        .frame(width: 64, height: 64)
-                        .shadow(
-                            color: AppTheme.accent.opacity(0.3),
-                            radius: 12, x: 0, y: 6
-                        )
-
-                    Image(systemName: "plus")
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundStyle(.white)
+                HStack(spacing: 8) {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.system(size: 16))
+                        .accessibilityHidden(true)
+                    Text("ボードを作る")
+                        .font(.system(size: 16, weight: .bold, design: .rounded))
                 }
+                .foregroundStyle(.white)
+                .padding(.horizontal, 28)
+                .padding(.vertical, 16)
+                .background(AppTheme.accent, in: Capsule())
+                .shadow(color: AppTheme.accent.opacity(0.4), radius: 12, y: 6)
             }
             .accessibilityLabel("新しいボードを作る")
             .accessibilityHint("タップして新しいボードを作成します")
@@ -414,12 +415,9 @@ struct HomeView: View {
 
     // MARK: - アクション
 
-    private func createBoard() {
-        let title = newBoardTitle.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !title.isEmpty else { return }
-        let board = Board(title: title)
+    private func createBoard(title: String, boardType: BoardType) {
+        let board = Board(title: title, boardType: boardType)
         modelContext.insert(board)
-        newBoardTitle = ""
         onBoardCreated()
     }
 
@@ -452,15 +450,29 @@ struct HomeView: View {
 
 private struct BoardStickerPreviewView: View {
     let placements: [StickerPlacement]
+    var boardType: BoardType = .standard
     @State private var images: [UUID: UIImage] = [:]
 
     /// プレビュー用サムネイルサイズ（カルーセル内なので小さくてOK）
     private let previewThumbnailSize: CGFloat = 200
 
+    /// エディタで使われるキャンバス参照サイズ（シール座標の基準）
+    private var referenceCanvasSize: CGSize {
+        let w = AppTheme.screenBounds.width
+        switch boardType {
+        case .standard:
+            return CGSize(width: w, height: AppTheme.screenBounds.height)
+        case .widgetLarge:
+            return CGSize(width: w, height: w / BoardType.widgetLargeAspectRatio)
+        case .widgetMedium:
+            return CGSize(width: w, height: w / BoardType.widgetMediumAspectRatio)
+        }
+    }
+
     var body: some View {
         GeometryReader { geo in
-            let canvasWidth = AppTheme.screenBounds.width
-            let canvasHeight = AppTheme.screenBounds.height
+            let canvasWidth = referenceCanvasSize.width
+            let canvasHeight = referenceCanvasSize.height
             let previewScale = min(
                 geo.size.width / canvasWidth,
                 geo.size.height / canvasHeight
@@ -530,6 +542,152 @@ private struct BoardCardBackground: View {
                     customImage = nil
                 }
             }
+    }
+}
+
+// MARK: - 新規ボード作成シート
+
+private struct NewBoardSheet: View {
+    let onConfirm: (String, BoardType) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var title = ""
+    @State private var selectedType: BoardType = .standard
+
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 28) {
+                // ボード名入力
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("ボード名")
+                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .foregroundStyle(AppTheme.textSecondary)
+
+                    TextField("例: 夏のシール集め", text: $title)
+                        .textFieldStyle(.roundedBorder)
+                        .submitLabel(.done)
+                }
+
+                // ボードタイプ選択
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("ボードの種類")
+                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .foregroundStyle(AppTheme.textSecondary)
+
+                    VStack(spacing: 10) {
+                        boardTypeRow(
+                            type: .standard,
+                            title: "壁紙・画像用",
+                            subtitle: "縦長キャンバス。写真ライブラリへ保存",
+                            icon: "photo.fill",
+                            previewAspectRatio: 0.56
+                        )
+                        boardTypeRow(
+                            type: .widgetLarge,
+                            title: "ウィジェット大用",
+                            subtitle: "ホーム画面の大サイズウィジェットにピッタリ",
+                            icon: "square.fill",
+                            previewAspectRatio: BoardType.widgetLargeAspectRatio
+                        )
+                        boardTypeRow(
+                            type: .widgetMedium,
+                            title: "ウィジェット中用",
+                            subtitle: "ホーム画面の中サイズウィジェットにピッタリ",
+                            icon: "apps.iphone",
+                            previewAspectRatio: BoardType.widgetMediumAspectRatio
+                        )
+                    }
+                }
+
+                Spacer()
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 24)
+            .background(AppTheme.backgroundPrimary.ignoresSafeArea())
+            .navigationTitle("新しいボード")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("キャンセル") { dismiss() }
+                        .foregroundStyle(AppTheme.textSecondary)
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("作成") {
+                        let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
+                        guard !trimmed.isEmpty else { return }
+                        onConfirm(trimmed, selectedType)
+                        dismiss()
+                    }
+                    .fontWeight(.bold)
+                    .foregroundStyle(AppTheme.accent)
+                    .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
+            }
+        }
+    }
+
+    /// ボードタイプ選択行（HStack: プレビュー + テキスト + チェックマーク）
+    private func boardTypeRow(type: BoardType, title: String, subtitle: String, icon: String, previewAspectRatio: CGFloat) -> some View {
+        let isSelected = selectedType == type
+        return Button {
+            selectedType = type
+        } label: {
+            HStack(spacing: 14) {
+                // アスペクト比を固定枠内で可視化（縦長 vs 横長の違いが直感的にわかる）
+                ZStack {
+                    Color.clear
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(isSelected ? AppTheme.accent.opacity(0.15) : AppTheme.backgroundCard)
+                        .aspectRatio(previewAspectRatio, contentMode: .fit)
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(
+                                    isSelected ? AppTheme.accent : AppTheme.textTertiary.opacity(0.3),
+                                    lineWidth: isSelected ? 1.5 : 1
+                                )
+                        }
+                        .overlay {
+                            Image(systemName: icon)
+                                .font(.system(size: 14))
+                                .foregroundStyle(isSelected ? AppTheme.accent : AppTheme.textTertiary)
+                        }
+                }
+                .frame(width: 72, height: 72)
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(title)
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .foregroundStyle(isSelected ? AppTheme.accent : AppTheme.textPrimary)
+                    Text(subtitle)
+                        .font(.system(size: 12, design: .rounded))
+                        .foregroundStyle(AppTheme.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Spacer()
+
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 20))
+                    .foregroundStyle(isSelected ? AppTheme.accent : AppTheme.textTertiary.opacity(0.4))
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(isSelected ? AppTheme.accent.opacity(0.06) : AppTheme.backgroundCard)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 14)
+                            .strokeBorder(
+                                isSelected ? AppTheme.accent.opacity(0.4) : Color.clear,
+                                lineWidth: 1.5
+                            )
+                    }
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(title)
+        .accessibilityHint(subtitle)
+        .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
     }
 }
 

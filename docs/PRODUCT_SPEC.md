@@ -101,6 +101,7 @@
 | 自動更新 | ボード編集・保存時にスナップショットを自動生成しウィジェットに反映 |
 | ディープリンク | ウィジェットタップで `stickerboard://board/{boardId}` → ボード編集画面に直接遷移 |
 | データ共有 | App Group（`group.com.tebasaki.StickerBoard`）でスナップショット画像＋メタデータJSONを共有 |
+| ウィジェット用ボードタイプ | ボード作成時に「ウィジェット用」（BoardType.widgetLarge）を選択すると 364×382pt 比率のキャンバスで編集できる。Large ウィジェットと同じ比率で WYSIWYG 編集が可能 |
 
 ---
 

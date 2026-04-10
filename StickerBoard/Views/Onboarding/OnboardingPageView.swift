@@ -77,23 +77,34 @@ struct OnboardingPageView: View {
 
     private var iconArea: some View {
         ZStack {
-            // 背景の円
+            // 外側リング
+            Circle()
+                .fill(AppTheme.accent.opacity(0.06))
+                .frame(width: 164, height: 164)
+            // 内側リング
+            Circle()
+                .fill(AppTheme.accent.opacity(0.12))
+                .frame(width: 126, height: 126)
+            // メインサークル
             Circle()
                 .fill(AppTheme.backgroundCard)
-                .frame(width: 160, height: 160)
-                .shadow(color: .black.opacity(0.06), radius: 12, x: 0, y: 6)
+                .frame(width: 96, height: 96)
+                .shadow(color: .black.opacity(0.08), radius: 12, x: 0, y: 6)
 
             // メインアイコン
             Image(systemName: page.icon)
-                .font(.system(size: 56))
+                .font(.system(size: 42))
                 .foregroundStyle(AppTheme.accent)
 
-            // セカンダリアイコン（右上に小さく）
+            // セカンダリアイコン（右上バッジ）
             if let secondary = page.secondaryIcon {
                 Image(systemName: secondary)
-                    .font(.system(size: 24))
-                    .foregroundStyle(AppTheme.secondary)
-                    .offset(x: 50, y: -50)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(width: 30, height: 30)
+                    .background(AppTheme.secondary, in: Circle())
+                    .shadow(color: AppTheme.secondary.opacity(0.35), radius: 6, y: 3)
+                    .offset(x: 46, y: -46)
             }
         }
         .accessibilityHidden(true)
