@@ -785,7 +785,8 @@ struct BoardSnapshotView: View {
     /// シール位置・サイズのスケール係数（renderSize に合わせて内容を拡大縮小する）
     private var positionScale: CGFloat {
         guard let rs = renderSize, size.width > 0, size.height > 0 else { return 1.0 }
-        // 幅・高さのうち大きい方のスケールを採用してウィジェット領域を埋める
+        // max() を採用してウィジェット領域を横幅いっぱいに埋める（scaledToFill）。
+        // キャンバスが縦長の場合、縦方向の中央部分だけがウィジェットに収まる（center-crop）。
         return max(rs.width / size.width, rs.height / size.height)
     }
 
