@@ -20,15 +20,6 @@ struct BoardShowcaseMediumView: View {
                         .frame(width: geo.size.width, height: geo.size.height)
                         .clipped()
                 }
-                .overlay(alignment: .bottomLeading) {
-                    Text(entry.boardTitle)
-                        .font(.system(size: 13, weight: .heavy, design: .rounded))
-                        .foregroundStyle(.white)
-                        .lineLimit(1)
-                        .shadow(color: .black.opacity(0.5), radius: 3, y: 1)
-                        .padding(.horizontal, 12)
-                        .padding(.bottom, 10)
-                }
             }
         } else {
             placeholderView
@@ -68,34 +59,6 @@ struct BoardShowcaseLargeView: View {
                         .scaledToFill()
                         .frame(width: geo.size.width, height: geo.size.height)
                         .clipped()
-                }
-                .overlay(alignment: .bottomLeading) {
-                    HStack(alignment: .bottom) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(entry.boardTitle)
-                                .font(.system(size: 16, weight: .heavy, design: .rounded))
-                                .foregroundStyle(.white)
-                                .lineLimit(1)
-                                .shadow(color: .black.opacity(0.5), radius: 3, y: 1)
-
-                            Text("\(entry.stickerCount)枚のシール")
-                                .font(.system(size: 11, weight: .semibold, design: .rounded))
-                                .foregroundStyle(.white.opacity(0.85))
-                                .shadow(color: .black.opacity(0.4), radius: 2, y: 1)
-                        }
-                        Spacer()
-                    }
-                    .padding(.horizontal, 14)
-                    .padding(.bottom, 12)
-                    .background(
-                        LinearGradient(
-                            colors: [.clear, .black.opacity(0.4)],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                        .frame(height: 60)
-                        .offset(y: 12)
-                    )
                 }
             }
         } else {
