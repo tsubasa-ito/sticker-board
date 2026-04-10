@@ -172,8 +172,8 @@ struct HomeView: View {
     }
 
     private func boardCard(_ board: Board) -> some View {
-        let cardAspectRatio = board.boardType == .widgetLarge
-            ? BoardType.widgetLargeAspectRatio
+        let cardAspectRatio = board.boardType == .widgetMedium
+            ? BoardType.widgetMediumAspectRatio
             : boardCardAspectRatio
         return VStack(spacing: 0) {
             // プレビューエリア
@@ -556,18 +556,20 @@ private struct NewBoardSheet: View {
                         .font(.system(size: 13, weight: .semibold, design: .rounded))
                         .foregroundStyle(AppTheme.textSecondary)
 
-                    HStack(spacing: 12) {
-                        boardTypeCard(
+                    VStack(spacing: 10) {
+                        boardTypeRow(
                             type: .standard,
                             title: "通常のボード",
-                            subtitle: "縦長キャンバス",
+                            subtitle: "壁紙保存・ウィジェット大に最適",
+                            icon: "rectangle.portrait.fill",
                             previewAspectRatio: 0.56
                         )
-                        boardTypeCard(
-                            type: .widgetLarge,
-                            title: "ウィジェット用",
-                            subtitle: "ホーム画面に飾る",
-                            previewAspectRatio: BoardType.widgetLargeAspectRatio
+                        boardTypeRow(
+                            type: .widgetMedium,
+                            title: "ウィジェット中用",
+                            subtitle: "横長ウィジェット（Medium）にピッタリ",
+                            icon: "apps.iphone",
+                            previewAspectRatio: BoardType.widgetMediumAspectRatio
                         )
                     }
                 }
@@ -599,39 +601,52 @@ private struct NewBoardSheet: View {
         }
     }
 
-    private func boardTypeCard(type: BoardType, title: String, subtitle: String, previewAspectRatio: CGFloat) -> some View {
+    /// ボードタイプ選択行（HStack: プレビュー + テキスト + チェックマーク）
+    private func boardTypeRow(type: BoardType, title: String, subtitle: String, icon: String, previewAspectRatio: CGFloat) -> some View {
         let isSelected = selectedType == type
         return Button {
             selectedType = type
         } label: {
-            VStack(spacing: 10) {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(isSelected ? AppTheme.accent.opacity(0.12) : AppTheme.backgroundCard)
-                    .aspectRatio(previewAspectRatio, contentMode: .fit)
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 10)
-                            .strokeBorder(
-                                isSelected ? AppTheme.accent : AppTheme.textTertiary.opacity(0.3),
-                                lineWidth: isSelected ? 2 : 1
-                            )
-                    }
-                    .overlay {
-                        Image(systemName: type == .widgetLarge ? "apps.iphone" : "rectangle.portrait.fill")
-                            .font(.system(size: 26))
-                            .foregroundStyle(isSelected ? AppTheme.accent : AppTheme.textTertiary)
-                    }
+            HStack(spacing: 14) {
+                // アスペクト比を固定枠内で可視化（縦長 vs 横長の違いが直感的にわかる）
+                ZStack {
+                    Color.clear
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(isSelected ? AppTheme.accent.opacity(0.15) : AppTheme.backgroundCard)
+                        .aspectRatio(previewAspectRatio, contentMode: .fit)
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(
+                                    isSelected ? AppTheme.accent : AppTheme.textTertiary.opacity(0.3),
+                                    lineWidth: isSelected ? 1.5 : 1
+                                )
+                        }
+                        .overlay {
+                            Image(systemName: icon)
+                                .font(.system(size: 14))
+                                .foregroundStyle(isSelected ? AppTheme.accent : AppTheme.textTertiary)
+                        }
+                }
+                .frame(width: 72, height: 72)
 
-                VStack(spacing: 2) {
+                VStack(alignment: .leading, spacing: 3) {
                     Text(title)
-                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
                         .foregroundStyle(isSelected ? AppTheme.accent : AppTheme.textPrimary)
                     Text(subtitle)
-                        .font(.system(size: 11, design: .rounded))
+                        .font(.system(size: 12, design: .rounded))
                         .foregroundStyle(AppTheme.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
+
+                Spacer()
+
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 20))
+                    .foregroundStyle(isSelected ? AppTheme.accent : AppTheme.textTertiary.opacity(0.4))
             }
-            .frame(maxWidth: .infinity)
-            .padding(12)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
             .background(
                 RoundedRectangle(cornerRadius: 14)
                     .fill(isSelected ? AppTheme.accent.opacity(0.06) : AppTheme.backgroundCard)

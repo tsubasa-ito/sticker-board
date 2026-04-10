@@ -13,9 +13,10 @@ struct BoardShowcaseMediumView: View {
                     // ボードの背景色でウィジェット全体を塗りつぶし
                     Color(hex: 0xFAF0DE)
 
+                    // scaledToFill でウィジェット枠を埋める（ウィジェット中用ボードは比率一致でクロップなし）
                     Image(uiImage: image)
                         .resizable()
-                        .scaledToFit()
+                        .scaledToFill()
                         .frame(width: geo.size.width, height: geo.size.height)
                         .clipped()
                 }
@@ -60,11 +61,12 @@ struct BoardShowcaseLargeView: View {
                     // ボードの背景色でウィジェット全体を塗りつぶし
                     Color(hex: 0xFAF0DE)
 
-                    // ボード全体を表示（切り取らない）
+                    // scaledToFill でウィジェット枠を埋める（通常ボードは中央クロップで表示）
                     Image(uiImage: image)
                         .resizable()
-                        .scaledToFit()
+                        .scaledToFill()
                         .frame(width: geo.size.width, height: geo.size.height)
+                        .clipped()
                 }
                 .overlay(alignment: .bottomLeading) {
                     HStack(alignment: .bottom) {

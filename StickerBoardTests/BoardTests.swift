@@ -264,13 +264,13 @@ struct BoardTests {
         #expect(board.boardType == .standard)
     }
 
-    @Test func widgetLargeボードを作成できる() throws {
+    @Test func widgetMediumボードを作成できる() throws {
         let container = try makeContainer()
         let context = ModelContext(container)
-        let board = Board(title: "ウィジェットボード", boardType: .widgetLarge)
+        let board = Board(title: "ウィジェットボード", boardType: .widgetMedium)
         context.insert(board)
 
-        #expect(board.boardType == .widgetLarge)
+        #expect(board.boardType == .widgetMedium)
         #expect(board.title == "ウィジェットボード")
     }
 
@@ -278,12 +278,12 @@ struct BoardTests {
         let container = try makeContainer()
         let context = ModelContext(container)
         let standard = Board(title: "標準")
-        let widget = Board(title: "ウィジェット", boardType: .widgetLarge)
+        let widget = Board(title: "ウィジェット", boardType: .widgetMedium)
         context.insert(standard)
         context.insert(widget)
 
         #expect(standard.boardTypeRawValue == "standard")
-        #expect(widget.boardTypeRawValue == "widgetLarge")
+        #expect(widget.boardTypeRawValue == "widgetMedium")
     }
 
     @Test func 無効なrawValueはstandardにフォールバックする() throws {
@@ -304,8 +304,8 @@ struct BoardTests {
         context.insert(board)
 
         #expect(board.boardType == .standard)
-        board.boardType = .widgetLarge
-        #expect(board.boardType == .widgetLarge)
+        board.boardType = .widgetMedium
+        #expect(board.boardType == .widgetMedium)
     }
 
     // MARK: - placementsData 直接変更時のキャッシュ無効化

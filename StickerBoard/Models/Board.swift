@@ -3,9 +3,10 @@ import SwiftData
 
 enum BoardType: String, Codable {
     case standard
-    case widgetLarge
+    case widgetMedium
 
-    static let widgetLargeAspectRatio: CGFloat = 364.0 / 382.0
+    /// ウィジェット中（Medium）と同じ比率 364×170pt
+    static let widgetMediumAspectRatio: CGFloat = 364.0 / 170.0
 }
 
 @Model
