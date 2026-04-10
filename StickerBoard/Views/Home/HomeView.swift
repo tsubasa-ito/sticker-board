@@ -287,16 +287,14 @@ struct HomeView: View {
                 VStack(spacing: 20) {
                     ZStack {
                         Circle()
-                            .fill(AppTheme.accent)
-                            .frame(width: 64, height: 64)
-                            .shadow(
-                                color: AppTheme.accent.opacity(0.3),
-                                radius: 12, x: 0, y: 6
-                            )
-
+                            .fill(AppTheme.accent.opacity(0.1))
+                            .frame(width: 80, height: 80)
+                        Circle()
+                            .fill(AppTheme.accent.opacity(0.18))
+                            .frame(width: 62, height: 62)
                         Image(systemName: "plus")
                             .font(.system(size: 28, weight: .bold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(AppTheme.accent)
                     }
 
                     VStack(spacing: 6) {
@@ -391,19 +389,18 @@ struct HomeView: View {
                     showingNewBoard = true
                 }
             } label: {
-                ZStack {
-                    Circle()
-                        .fill(AppTheme.accent)
-                        .frame(width: 64, height: 64)
-                        .shadow(
-                            color: AppTheme.accent.opacity(0.3),
-                            radius: 12, x: 0, y: 6
-                        )
-
-                    Image(systemName: "plus")
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundStyle(.white)
+                HStack(spacing: 8) {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.system(size: 16))
+                        .accessibilityHidden(true)
+                    Text("ボードを作る")
+                        .font(.system(size: 16, weight: .bold, design: .rounded))
                 }
+                .foregroundStyle(.white)
+                .padding(.horizontal, 28)
+                .padding(.vertical, 16)
+                .background(AppTheme.accent, in: Capsule())
+                .shadow(color: AppTheme.accent.opacity(0.4), radius: 12, y: 6)
             }
             .accessibilityLabel("新しいボードを作る")
             .accessibilityHint("タップして新しいボードを作成します")

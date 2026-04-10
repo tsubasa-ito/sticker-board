@@ -79,11 +79,12 @@ struct OnboardingView: View {
                 Text(currentPage < pages.count - 1 ? "次へ" : "はじめる")
                     .font(.system(.headline, design: .rounded, weight: .bold))
                     .foregroundStyle(.white)
-                    .frame(width: 200, height: 52)
-                    .background(AppTheme.accent)
-                    .clipShape(Capsule())
-                    .shadow(color: AppTheme.accent.opacity(0.3), radius: 8, x: 0, y: 4)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 18)
+                    .background(AppTheme.accent, in: Capsule())
+                    .shadow(color: AppTheme.accent.opacity(0.4), radius: 12, x: 0, y: 6)
             }
+            .padding(.horizontal, 32)
             .accessibilityLabel(currentPage < pages.count - 1 ? "次へ" : "はじめる")
             .animation(.spring(duration: 0.3), value: currentPage)
         }

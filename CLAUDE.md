@@ -83,6 +83,7 @@ open StickerBoard.xcodeproj
 - UIデザインルールは `.claude/rules/ui-design.md` を参照
 - サブスクリプション（StoreKit 2）: SubscriptionManager がシングルトンで購入状態を管理。StickerBoardApp.init() で早期初期化。UserDefaults に isProUser をキャッシュしてオフライン対応
 - フリーミアムモデル: 無料（シール30枚/ボード1枚/枠線なし・細/背景3種/ロゴ入り書き出し）、Pro（全制限解除）。「期待値駆動型ペイウォール」でプレミアム機能をプレビュー可能にし、適用・確定時にペイウォール表示
+- Pro特典データ: `AppTheme.swift` の `ProBenefit` enum に一元管理（icon / title / value / iconColor）。SettingsView・PaywallView で `ProBenefit.allCases` を使用。特典を変更・追加する場合はこの enum を編集する
 - Products.storekit は Xcode の StoreKit Configuration Editor で編集すること（手動JSONは非推奨）。project.yml の schemes で StoreKit Configuration を自動設定済み
 - バージョン管理: MARKETING_VERSION / CURRENT_PROJECT_VERSION は project.yml の settings.base で管理。Info.plist では `$(MARKETING_VERSION)` / `$(CURRENT_PROJECT_VERSION)` で参照する（project.yml の info.properties で指定済み）。Info.plist にバージョンを直接ハードコードしない
 - バンドルID: com.tebasaki.StickerBoard（project.yml で設定）

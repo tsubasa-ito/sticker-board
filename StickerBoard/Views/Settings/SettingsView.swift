@@ -188,11 +188,7 @@ struct SettingsView: View {
                         Text("プランを管理")
                             .font(.system(size: 16, weight: .bold, design: .rounded))
                     }
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 17)
-                    .background(AppTheme.accent, in: RoundedRectangle(cornerRadius: 16))
-                    .shadow(color: AppTheme.accent.opacity(0.4), radius: 12, x: 0, y: 6)
+                    .primaryButton()
                 }
             } else {
                 // 無料ユーザー: プラン選択 + 購入
@@ -268,11 +264,7 @@ struct SettingsView: View {
                                 .font(.system(size: 16, weight: .bold, design: .rounded))
                         }
                     }
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 17)
-                    .background(AppTheme.accent, in: RoundedRectangle(cornerRadius: 16))
-                    .shadow(color: AppTheme.accent.opacity(0.4), radius: 12, x: 0, y: 6)
+                    .primaryButton()
                 }
                 .disabled(isPurchasing)
                 .accessibilityLabel(isPurchasing ? "" : "Pro にアップグレード")
@@ -436,11 +428,9 @@ struct SettingsView: View {
             sectionHeader(title: "Pro にアップグレードすると", icon: "crown")
 
             VStack(spacing: 0) {
-                benefitRow(icon: "star.fill", title: "シール保存", value: "無制限", iconColor: AppTheme.accent)
-                benefitRow(icon: "rectangle.on.rectangle.fill", title: "ボード作成", value: "無制限", iconColor: AppTheme.secondary)
-                benefitRow(icon: "square.dashed", title: "枠線バリエーション", value: "全開放", iconColor: AppTheme.softOrange)
-                benefitRow(icon: "paintpalette.fill", title: "背景パターン", value: "全開放", iconColor: AppTheme.baby)
-                benefitRow(icon: "square.and.arrow.down.fill", title: "画像書き出し", value: "ロゴなし", iconColor: AppTheme.secondary)
+                ForEach(ProBenefit.allCases) { benefit in
+                    benefitRow(icon: benefit.icon, title: benefit.title, value: benefit.value, iconColor: benefit.iconColor)
+                }
             }
             .padding(.vertical, 4)
             .stickerCard()
