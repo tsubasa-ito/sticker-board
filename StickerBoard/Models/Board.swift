@@ -70,11 +70,11 @@ final class Board {
         }
     }
 
-    init(title: String, boardType: BoardType = .standard) {
+    init(title: String, boardType: BoardType = .standard, now: Date = .now) {
         self.id = UUID()
         self.title = title
-        self.createdAt = Date()
-        self.updatedAt = Date()
+        self.createdAt = now
+        self.updatedAt = now
         self.placementsData = nil
         self.backgroundPatternData = nil
         self.boardTypeRawValue = boardType.rawValue
