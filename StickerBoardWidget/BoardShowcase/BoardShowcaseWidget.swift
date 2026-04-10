@@ -122,6 +122,7 @@ struct BoardShowcaseWidget: Widget {
         .configurationDisplayName("ボードショーケース")
         .description("お気に入りのシールボードをホーム画面に飾ろう")
         .supportedFamilies([.systemMedium, .systemLarge])
+        .contentMarginsDisabled()
     }
 
     private func widgetURL(for entry: BoardShowcaseEntry) -> URL? {
