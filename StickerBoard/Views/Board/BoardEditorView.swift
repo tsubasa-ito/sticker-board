@@ -646,6 +646,7 @@ struct BoardEditorView: View {
             // キャンセル確認
             guard !Task.isCancelled else { return }
 
+            // 通常スナップショット（medium ウィジェット・フォールバック用）
             let snapshotView = BoardSnapshotView(
                 placements: currentPlacements,
                 size: currentCanvasSize,
@@ -663,12 +664,29 @@ struct BoardEditorView: View {
                 return
             }
 
+            // large ウィジェット専用スナップショット（364×382 pt）
+            let largeWidgetSize = CGSize(width: 364, height: 382)
+            let largeSnapshotView = BoardSnapshotView(
+                placements: currentPlacements,
+                size: currentCanvasSize,
+                renderSize: largeWidgetSize,
+                backgroundConfig: currentBgConfig,
+                customBackgroundImage: currentCustomBgImage,
+                showWatermark: false
+            )
+            let largeRenderer = await ImageRenderer(content: largeSnapshotView)
+            await MainActor.run { largeRenderer.scale = 2.0 }
+            let largeImage = await largeRenderer.uiImage
+
+            guard !Task.isCancelled else { return }
+
             WidgetDataSyncService.syncBoard(
                 boardId: boardId,
                 title: boardTitle,
                 stickerCount: stickerCount,
                 updatedAt: boardUpdatedAt,
                 snapshotImage: image,
+                largeSnapshotImage: largeImage,
                 allBoardsMetadata: allMetadata
             )
         }
@@ -753,10 +771,23 @@ private struct QuickPickThumbnail: View {
 
 struct BoardSnapshotView: View {
     let placements: [StickerPlacement]
+    /// エディタのキャンバスサイズ（シール位置の基準）
     let size: CGSize
+    /// ウィジェット用の出力サイズ（nil = size をそのまま使用）
+    var renderSize: CGSize?
     var backgroundConfig: BackgroundPatternConfig = .default
     var customBackgroundImage: UIImage?
     var showWatermark: Bool = false
+
+    /// 実際の描画サイズ
+    private var effectiveSize: CGSize { renderSize ?? size }
+
+    /// シール位置・サイズのスケール係数（renderSize に合わせて内容を拡大縮小する）
+    private var positionScale: CGFloat {
+        guard let rs = renderSize, size.width > 0, size.height > 0 else { return 1.0 }
+        // 幅・高さのうち大きい方のスケールを採用してウィジェット領域を埋める
+        return max(rs.width / size.width, rs.height / size.height)
+    }
 
     var body: some View {
         ZStack {
@@ -767,11 +798,11 @@ struct BoardSnapshotView: View {
                     Image(uiImage: displayImage)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 120, height: 120)
+                        .frame(width: 120 * positionScale, height: 120 * positionScale)
                         .shadow(color: .black.opacity(0.15), radius: 6, y: 3)
                         .scaleEffect(placement.scale)
                         .rotationEffect(.radians(placement.rotation))
-                        .offset(x: placement.positionX, y: placement.positionY)
+                        .offset(x: placement.positionX * positionScale, y: placement.positionY * positionScale)
                 }
             }
 
@@ -798,7 +829,7 @@ struct BoardSnapshotView: View {
                 }
             }
         }
-        .frame(width: size.width, height: size.height)
+        .frame(width: effectiveSize.width, height: effectiveSize.height)
         .clipped()
     }
 }

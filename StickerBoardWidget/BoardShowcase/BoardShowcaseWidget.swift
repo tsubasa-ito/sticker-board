@@ -9,6 +9,8 @@ struct BoardShowcaseEntry: TimelineEntry {
     let boardTitle: String
     let stickerCount: Int
     let snapshotImage: UIImage?
+    /// largeウィジェット専用スナップショット（nil の場合は snapshotImage にフォールバック）
+    let largeSnapshotImage: UIImage?
 }
 
 // MARK: - Timeline Provider
@@ -23,7 +25,8 @@ struct BoardShowcaseProvider: AppIntentTimelineProvider {
             boardId: nil,
             boardTitle: "シールボード",
             stickerCount: 0,
-            snapshotImage: nil
+            snapshotImage: nil,
+            largeSnapshotImage: nil
         )
     }
 
@@ -43,12 +46,14 @@ struct BoardShowcaseProvider: AppIntentTimelineProvider {
             // ボード未選択時: 最初のボードをデフォルト表示
             if let first = WidgetDataManager.loadAllMetadata().first {
                 let image = WidgetDataManager.loadSnapshot(fileName: first.snapshotFileName)
+                let largeImage = first.largeSnapshotFileName.flatMap { WidgetDataManager.loadSnapshot(fileName: $0) }
                 return BoardShowcaseEntry(
                     date: Date(),
                     boardId: first.id,
                     boardTitle: first.title,
                     stickerCount: first.stickerCount,
-                    snapshotImage: image
+                    snapshotImage: image,
+                    largeSnapshotImage: largeImage
                 )
             }
             return BoardShowcaseEntry(
@@ -56,19 +61,22 @@ struct BoardShowcaseProvider: AppIntentTimelineProvider {
                 boardId: nil,
                 boardTitle: "シールボード",
                 stickerCount: 0,
-                snapshotImage: nil
+                snapshotImage: nil,
+                largeSnapshotImage: nil
             )
         }
 
         let metadata = WidgetDataManager.metadata(for: board.id)
         let image = metadata.flatMap { WidgetDataManager.loadSnapshot(fileName: $0.snapshotFileName) }
+        let largeImage = metadata?.largeSnapshotFileName.flatMap { WidgetDataManager.loadSnapshot(fileName: $0) }
 
         return BoardShowcaseEntry(
             date: Date(),
             boardId: board.id,
             boardTitle: metadata?.title ?? board.title,
             stickerCount: metadata?.stickerCount ?? board.stickerCount,
-            snapshotImage: image
+            snapshotImage: image,
+            largeSnapshotImage: largeImage
         )
     }
 }

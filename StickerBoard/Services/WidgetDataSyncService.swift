@@ -66,7 +66,8 @@ enum WidgetDataSyncService {
             title: title,
             stickerCount: stickerCount,
             updatedAt: updatedAt,
-            snapshotFileName: "\(boardId.uuidString).jpg"
+            snapshotFileName: "\(boardId.uuidString).jpg",
+            largeSnapshotFileName: "\(boardId.uuidString)_large.jpg"
         )
     }
 
@@ -119,6 +120,7 @@ enum WidgetDataSyncService {
         stickerCount: Int,
         updatedAt: Date,
         snapshotImage: UIImage,
+        largeSnapshotImage: UIImage? = nil,
         allBoardsMetadata: [SharedBoardMetadata]
     ) {
         guard let snapshotsDir = snapshotsURL,
@@ -128,9 +130,13 @@ enum WidgetDataSyncService {
         }
 
         let snapshotURL = snapshotsDir.appendingPathComponent("\(boardId.uuidString).jpg")
+        let largeSnapshotURL = snapshotsDir.appendingPathComponent("\(boardId.uuidString)_large.jpg")
 
         do {
             try saveSnapshot(snapshotImage, to: snapshotURL)
+            if let largeImage = largeSnapshotImage {
+                try saveSnapshot(largeImage, to: largeSnapshotURL)
+            }
             try writeMetadataJSON(allBoardsMetadata, to: metaURL)
             WidgetCenter.shared.reloadTimelines(ofKind: SharedWidgetConstants.widgetKind)
         } catch {
@@ -161,7 +167,9 @@ enum WidgetDataSyncService {
         }
 
         let snapshotURL = snapshotsDir.appendingPathComponent("\(boardId.uuidString).jpg")
+        let largeSnapshotURL = snapshotsDir.appendingPathComponent("\(boardId.uuidString)_large.jpg")
         deleteSnapshot(at: snapshotURL)
+        deleteSnapshot(at: largeSnapshotURL)
 
         do {
             try writeMetadataJSON(remainingMetadata, to: metaURL)
