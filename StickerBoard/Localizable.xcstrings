@@ -1281,7 +1281,14 @@
 
     "%d枚のシールの保存に失敗しました: %@" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Failed to save %d sticker(s): %@" } }
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : { "stringUnit" : { "state" : "translated", "value" : "Failed to save %d sticker: %@" } },
+              "other" : { "stringUnit" : { "state" : "translated", "value" : "Failed to save %d stickers: %@" } }
+            }
+          }
+        }
       }
     },
 
