@@ -269,7 +269,14 @@
 
     "%@、シール%lld枚" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "%@, %lld stickers" } }
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : { "stringUnit" : { "state" : "translated", "value" : "%@, %lld sticker" } },
+              "other" : { "stringUnit" : { "state" : "translated", "value" : "%@, %lld stickers" } }
+            }
+          }
+        }
       }
     },
 
