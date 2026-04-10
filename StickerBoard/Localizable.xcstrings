@@ -1,0 +1,1548 @@
+{
+  "sourceLanguage" : "ja",
+  "strings" : {
+
+    "OK" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "OK" } }
+      }
+    },
+
+    "キャンセル" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Cancel" } }
+      }
+    },
+
+    "削除" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Delete" } }
+      }
+    },
+
+    "閉じる" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Close" } }
+      }
+    },
+
+    "完了" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Done" } }
+      }
+    },
+
+    "作成" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Create" } }
+      }
+    },
+
+    "変更" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rename" } }
+      }
+    },
+
+    "適用" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Apply" } }
+      }
+    },
+
+    "再試行" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Retry" } }
+      }
+    },
+
+    "設定" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Settings" } }
+      }
+    },
+
+    "ボード" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Boards" } }
+      }
+    },
+
+    "ライブラリ" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Library" } }
+      }
+    },
+
+    "ホーム" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Home" } }
+      }
+    },
+
+    "ヘルプ" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Help" } }
+      }
+    },
+
+    "シールを追加" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add Sticker" } }
+      }
+    },
+
+    "シール追加" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add Sticker" } }
+      }
+    },
+
+    "シールボード" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "StickerBoard" } }
+      }
+    },
+
+    "設定画面を開きます" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Opens Settings" } }
+      }
+    },
+
+    "使い方ガイドを表示します" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Shows the usage guide" } }
+      }
+    },
+
+    "スキップ" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Skip" } }
+      }
+    },
+
+    "オンボーディングをスキップします" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Skips onboarding" } }
+      }
+    },
+
+    "次へ" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Next" } }
+      }
+    },
+
+    "はじめる" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Get Started" } }
+      }
+    },
+
+    "シールボードへようこそ！" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Welcome to StickerBoard!" } }
+      }
+    },
+
+    "お気に入りのシールを撮影して、\n自分だけのコレクションを作ろう" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Photograph your favorite stickers\nand create your own collection" } }
+      }
+    },
+
+    "シールを撮影するだけ" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Just Take a Photo" } }
+      }
+    },
+
+    "AIが自動で背景を除去。\nキレイに切り抜かれたシールがコレクションに" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "AI automatically removes the background.\nCleanly cut stickers added to your collection" } }
+      }
+    },
+
+    "自分だけのボードを作ろう" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Create Your Own Board" } }
+      }
+    },
+
+    "シールを自由に配置して、\nフィルターや枠線でデコレーション" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Freely arrange stickers\nand decorate with filters and borders" } }
+      }
+    },
+
+    "ボード名を変更" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rename Board" } }
+      }
+    },
+
+    "新しいボード名" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "New board name" } }
+      }
+    },
+
+    "新しいボードの名前を入力してください" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Enter a new name for the board" } }
+      }
+    },
+
+    "削除の確認" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Confirm Deletion" } }
+      }
+    },
+
+    "「%@」を削除しますか？\nこの操作は取り消せません。" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Delete \"%@\"?\nThis action cannot be undone." } }
+      }
+    },
+
+    "名前を変更" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rename" } }
+      }
+    },
+
+    "新しいボードを作る" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Create New Board" } }
+      }
+    },
+
+    "シールを撮影して\n自分だけのボードを作ろう" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Take photos of stickers\nand create your own board" } }
+      }
+    },
+
+    "ボードを作る" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Create Board" } }
+      }
+    },
+
+    "タップしてボードを編集します" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Tap to edit the board" } }
+      }
+    },
+
+    "タップして新しいボードを作成します" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Tap to create a new board" } }
+      }
+    },
+
+    "ボードの名前変更や削除ができます" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "You can rename or delete the board" } }
+      }
+    },
+
+    "メニュー" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Menu" } }
+      }
+    },
+
+    "%lld枚" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : { "stringUnit" : { "state" : "translated", "value" : "%lld sticker" } },
+              "other" : { "stringUnit" : { "state" : "translated", "value" : "%lld stickers" } }
+            }
+          }
+        }
+      }
+    },
+
+    "%@、シール%lld枚" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%@, %lld stickers" } }
+      }
+    },
+
+    "ページ %lld / %lld" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Page %lld of %lld" } }
+      }
+    },
+
+    "ボード名" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Board Name" } }
+      }
+    },
+
+    "例: 夏のシール集め" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "e.g. Summer Sticker Collection" } }
+      }
+    },
+
+    "ボードの種類" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Board Type" } }
+      }
+    },
+
+    "壁紙・画像用" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "For Wallpaper / Image" } }
+      }
+    },
+
+    "縦長キャンバス。写真ライブラリへ保存" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Portrait canvas. Save to photo library" } }
+      }
+    },
+
+    "ウィジェット大用" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "For Large Widget" } }
+      }
+    },
+
+    "ホーム画面の大サイズウィジェットにピッタリ" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Perfect for large home screen widgets" } }
+      }
+    },
+
+    "ウィジェット中用" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "For Medium Widget" } }
+      }
+    },
+
+    "ホーム画面の中サイズウィジェットにピッタリ" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Perfect for medium home screen widgets" } }
+      }
+    },
+
+    "新しいボード" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "New Board" } }
+      }
+    },
+
+    "サブスクリプション" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Subscription" } }
+      }
+    },
+
+    "現在のプラン" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Current Plan" } }
+      }
+    },
+
+    "有効期限" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Expiration Date" } }
+      }
+    },
+
+    "ステータス" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Status" } }
+      }
+    },
+
+    "有効" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Active" } }
+      }
+    },
+
+    "未加入" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Not Subscribed" } }
+      }
+    },
+
+    "プランを管理" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Manage Plan" } }
+      }
+    },
+
+    "プランの読み込みに失敗しました" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Failed to load plans" } }
+      }
+    },
+
+    "Pro にアップグレード" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Upgrade to Pro" } }
+      }
+    },
+
+    "購入処理中" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Processing" } }
+      }
+    },
+
+    "おトク" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Best Value" } }
+      }
+    },
+
+    "savings_percent_badge" : {
+      "comment" : "Savings badge showing percentage. %d is replaced with a number.",
+      "localizations" : {
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "%d%%おトク" } },
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Save %d%%" } }
+      }
+    },
+
+    "月あたり%@" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%@/month" } }
+      }
+    },
+
+    "復元処理中" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Restoring" } }
+      }
+    },
+
+    "購入を復元" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Restore Purchases" } }
+      }
+    },
+
+    "購入の復元" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Restore Purchases" } }
+      }
+    },
+
+    "Pro にアップグレードすると" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Upgrade to Pro" } }
+      }
+    },
+
+    "よくある質問" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "FAQ" } }
+      }
+    },
+
+    "無料プランでもシールは作れますか？" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Can I create stickers on the free plan?" } }
+      }
+    },
+
+    "はい。無料プランではシール30枚・ボード1枚まで作成できます。" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Yes. The free plan allows up to 30 stickers and 1 board." } }
+      }
+    },
+
+    "Proプランはいつでも解約できますか？" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Can I cancel the Pro plan at any time?" } }
+      }
+    },
+
+    "はい。いつでも解約可能です。解約後も有効期限まではPro機能をご利用いただけます。" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Yes. You can cancel at any time. Pro features remain available until the expiration date." } }
+      }
+    },
+
+    "機種変更してもProは引き継げますか？" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Will Pro carry over to a new device?" } }
+      }
+    },
+
+    "はい。同じApple IDでサインインし「購入を復元」を行うと引き継げます。" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Yes. Sign in with the same Apple ID and tap Restore Purchases." } }
+      }
+    },
+
+    "月額と年額はどちらがお得ですか？" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Which is better value, monthly or yearly?" } }
+      }
+    },
+
+    "年額プランのほうがおトクです。詳しい割引率は上のプランカードをご確認ください。" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The yearly plan offers better value. See the plan cards above for discount details." } }
+      }
+    },
+
+    "β機能" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Beta Features" } }
+      }
+    },
+
+    "シール交換" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sticker Exchange" } }
+      }
+    },
+
+    "近くのデバイスとシールを交換できます" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Exchange stickers with nearby devices" } }
+      }
+    },
+
+    "シール交換 β版 — 近くのデバイスとシールを交換できます" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sticker Exchange Beta — Exchange stickers with nearby devices" } }
+      }
+    },
+
+    "注意事項" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Important Notes" } }
+      }
+    },
+
+    "有効期限終了の24時間前までに解約されない限り、自動的に継続購入となります。" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period." } }
+      }
+    },
+
+    "ご利用料金はApp Storeアカウントに対して請求されます。" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Payment will be charged to your App Store account." } }
+      }
+    },
+
+    "アプリを削除するだけでは継続購入は解除されません。ご注意ください。" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Deleting the app does not cancel your subscription. Please note." } }
+      }
+    },
+
+    "異なるアカウントで重複課金した場合の返金対応はできかねますのでご了承ください。" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Please note that refunds for duplicate charges from different accounts cannot be processed." } }
+      }
+    },
+
+    "関連リンク" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Links" } }
+      }
+    },
+
+    "利用規約" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Terms of Use" } }
+      }
+    },
+
+    "プライバシーポリシー" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Privacy Policy" } }
+      }
+    },
+
+    "お問い合わせ" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Contact" } }
+      }
+    },
+
+    "外部ブラウザで開きます" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Opens in an external browser" } }
+      }
+    },
+
+    "あとで" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Later" } }
+      }
+    },
+
+    "すべての機能をアンロック" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unlock All Features" } }
+      }
+    },
+
+    "エラー" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Error" } }
+      }
+    },
+
+    "Proではじめる（年額）" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Start with Pro (Yearly)" } }
+      }
+    },
+
+    "/年" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "/year" } }
+      }
+    },
+
+    "月額プランで始める %@/月" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Start Monthly %@/month" } }
+      }
+    },
+
+    "Pro限定" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pro Only" } }
+      }
+    },
+
+    "シール保存" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sticker Storage" } }
+      }
+    },
+
+    "ボード作成" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Board Creation" } }
+      }
+    },
+
+    "枠線バリエーション" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Border Variations" } }
+      }
+    },
+
+    "背景パターン" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Background Patterns" } }
+      }
+    },
+
+    "画像書き出し" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Image Export" } }
+      }
+    },
+
+    "無制限" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unlimited" } }
+      }
+    },
+
+    "全開放" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "All Unlocked" } }
+      }
+    },
+
+    "ロゴなし" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Without Logo" } }
+      }
+    },
+
+    "オリジナル" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Original" } }
+      }
+    },
+
+    "キラキラ" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sparkle" } }
+      }
+    },
+
+    "レトロ" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Retro" } }
+      }
+    },
+
+    "パステル" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pastel" } }
+      }
+    },
+
+    "ネオン" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Neon" } }
+      }
+    },
+
+    "ぷっくり" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Puffy" } }
+      }
+    },
+
+    "ワッペン" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Wappen" } }
+      }
+    },
+
+    "無地" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Solid" } }
+      }
+    },
+
+    "ドット" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Dots" } }
+      }
+    },
+
+    "グリッド" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Grid" } }
+      }
+    },
+
+    "ストライプ" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Stripes" } }
+      }
+    },
+
+    "グラデーション" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Gradient" } }
+      }
+    },
+
+    "写真" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Photo" } }
+      }
+    },
+
+    "なし" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "None" } }
+      }
+    },
+
+    "細" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Thin" } }
+      }
+    },
+
+    "中" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Medium" } }
+      }
+    },
+
+    "太" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Thick" } }
+      }
+    },
+
+    "ホワイト" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "White" } }
+      }
+    },
+
+    "ブラック" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Black" } }
+      }
+    },
+
+    "ピンク" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pink" } }
+      }
+    },
+
+    "ラベンダー" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Lavender" } }
+      }
+    },
+
+    "ミント" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Mint" } }
+      }
+    },
+
+    "クリーム" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Cream" } }
+      }
+    },
+
+    "ベビーブルー" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Baby Blue" } }
+      }
+    },
+
+    "レッド" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Red" } }
+      }
+    },
+
+    "ゴールド" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Gold" } }
+      }
+    },
+
+    "月額プラン" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Monthly Plan" } }
+      }
+    },
+
+    "年額プラン" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Yearly Plan" } }
+      }
+    },
+
+    "プランの情報を取得できませんでした。ネットワーク接続を確認して再度お試しください。" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Failed to retrieve plan info. Please check your network and try again." } }
+      }
+    },
+
+    "購入処理が保留中です。しばらくお待ちください。" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your purchase is pending. Please wait a moment." } }
+      }
+    },
+
+    "購入に失敗しました: %@" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Purchase failed: %@" } }
+      }
+    },
+
+    "Proプランが復元されました" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pro plan has been restored" } }
+      }
+    },
+
+    "復元可能な購入が見つかりませんでした" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No restorable purchases found" } }
+      }
+    },
+
+    "購入の復元に失敗しました。ネットワーク接続を確認して再度お試しください。" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Failed to restore purchases. Please check your network and try again." } }
+      }
+    },
+
+    "シールにしたい写真を選ぼう" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Choose a Photo for Your Sticker" } }
+      }
+    },
+
+    "カメラで撮影するか、ライブラリから選択できます" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Take a photo or choose from your library" } }
+      }
+    },
+
+    "カメラで撮る" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Camera" } }
+      }
+    },
+
+    "写真から選ぶ" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Choose Photo" } }
+      }
+    },
+
+    "シールにしたい被写体を長押しで選択" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Long-press the subject to select" } }
+      }
+    },
+
+    "すべて自動で切り抜く" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Auto Cut All" } }
+      }
+    },
+
+    "背景を除去しています..." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Removing background..." } }
+      }
+    },
+
+    "AIが被写体を検出しています" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "AI is detecting subjects" } }
+      }
+    },
+
+    "左に回転" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rotate Left" } }
+      }
+    },
+
+    "左に90度回転" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rotate 90° Left" } }
+      }
+    },
+
+    "右に回転" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rotate Right" } }
+      }
+    },
+
+    "右に90度回転" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rotate 90° Right" } }
+      }
+    },
+
+    "手動で調整する" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Adjust Manually" } }
+      }
+    },
+
+    "コレクションに追加" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add to Collection" } }
+      }
+    },
+
+    "別の写真を選ぶ" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Choose Another Photo" } }
+      }
+    },
+
+    "保存完了!" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Saved!" } }
+      }
+    },
+
+    "続けて追加" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add More" } }
+      }
+    },
+
+    "シールをコレクションに追加しました" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sticker added to your collection" } }
+      }
+    },
+
+    "%lld枚のシールをコレクションに追加しました" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : { "stringUnit" : { "state" : "translated", "value" : "Added %lld sticker to your collection" } },
+              "other" : { "stringUnit" : { "state" : "translated", "value" : "Added %lld stickers to your collection" } }
+            }
+          }
+        }
+      }
+    },
+
+    "シミュレータでは背景除去がスキップされます" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Background removal is skipped on Simulator" } }
+      }
+    },
+
+    "選択した写真のプレビュー" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Preview of selected photo" } }
+      }
+    },
+
+    "切り抜き完了" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Cutout Complete" } }
+      }
+    },
+
+    "マスク調整" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Mask Adjustment" } }
+      }
+    },
+
+    "合成しています..." : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Processing..." } }
+      }
+    },
+
+    "ツールバーを折りたたむ" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Collapse toolbar" } }
+      }
+    },
+
+    "ツールバーを展開" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Expand toolbar" } }
+      }
+    },
+
+    "写真に保存" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Save to Photos" } }
+      }
+    },
+
+    "写真を保存" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Save to Photos" } }
+      }
+    },
+
+    "保存" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Save" } }
+      }
+    },
+
+    "ボードを写真に保存しますか？" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Save board to Photos?" } }
+      }
+    },
+
+    "シールを追加しよう" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add Stickers" } }
+      }
+    },
+
+    "下の ＋ ボタンからシールを選択" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Tap the + button below to add stickers" } }
+      }
+    },
+
+    "キャンバスが空です。下の追加ボタンからシールを追加してください" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Canvas is empty. Tap the add button below to add stickers" } }
+      }
+    },
+
+    "ドラッグで移動。ピンチでサイズ変更" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Drag to move. Pinch to resize" } }
+      }
+    },
+
+    "ヒント: ドラッグで移動、ピンチでサイズ変更" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Tip: Drag to move, pinch to resize" } }
+      }
+    },
+
+    "全て" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "All" } }
+      }
+    },
+
+    "すべてのシールを表示" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Show all stickers" } }
+      }
+    },
+
+    "フィルター変更" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Change Filter" } }
+      }
+    },
+
+    "枠線設定" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Border Settings" } }
+      }
+    },
+
+    "シールを選択" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Select Sticker" } }
+      }
+    },
+
+    "シールがありません" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No Stickers" } }
+      }
+    },
+
+    "先にホームからシールを追加してください" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add stickers from the home screen first" } }
+      }
+    },
+
+    "シールを選ぶ" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Choose Sticker" } }
+      }
+    },
+
+    "新しいボードを作成" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Create New Board" } }
+      }
+    },
+
+    "ボードがありません" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No Boards" } }
+      }
+    },
+
+    "右上の＋ボタンから\n新しいボードを作りましょう" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Tap the + button in the top right\nto create a new board" } }
+      }
+    },
+
+    "ボードの名前を入力してください" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Enter a name for the board" } }
+      }
+    },
+
+    "ボード名" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Board Name" } }
+      }
+    },
+
+    "背景パターン" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Background Pattern" } }
+      }
+    },
+
+    "プレビュー" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Preview" } }
+      }
+    },
+
+    "ドラッグで位置調整" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Drag to adjust position" } }
+      }
+    },
+
+    "パターン" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pattern" } }
+      }
+    },
+
+    "カラー" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Color" } }
+      }
+    },
+
+    "太さ" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Width" } }
+      }
+    },
+
+    "枠線プレビュー" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Border Preview" } }
+      }
+    },
+
+    "プレビューを生成中" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Generating preview" } }
+      }
+    },
+
+    "回転に失敗しました" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rotation Failed" } }
+      }
+    },
+
+    "シールの回転中にエラーが発生しました。もう一度お試しください。" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "An error occurred while rotating the sticker. Please try again." } }
+      }
+    },
+
+    "保存に失敗しました" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Save Failed" } }
+      }
+    },
+
+    "シールの保存中にエラーが発生しました。もう一度お試しください。" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "An error occurred while saving the sticker. Please try again." } }
+      }
+    },
+
+    "削除に失敗しました" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Deletion Failed" } }
+      }
+    },
+
+    "シール画像の削除中にエラーが発生しました。もう一度お試しください。" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "An error occurred while deleting the sticker. Please try again." } }
+      }
+    },
+
+    "読み込みに失敗しました" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Load Failed" } }
+      }
+    },
+
+    "シール画像の読み込みに失敗しました。画像が破損している可能性があります。" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Failed to load the sticker image. The image may be corrupted." } }
+      }
+    },
+
+    "シール画像の読み込みに失敗しました" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Failed to load the sticker image" } }
+      }
+    },
+
+    "%d枚のシールの保存に失敗しました: %@" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Failed to save %d sticker(s): %@" } }
+      }
+    },
+
+    "マスク描画キャンバス" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Mask Drawing Canvas" } }
+      }
+    },
+
+    "指でなぞってマスクを編集します。2本指でズームやスクロールができます" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Draw with your finger to edit the mask. Use two fingers to zoom or scroll." } }
+      }
+    },
+
+    "%@、%@" : {
+      "comment" : "Accessibility label format: planName + price (Japanese comma separator)",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%@, %@" } }
+      }
+    },
+
+    "、月あたり%@" : {
+      "comment" : "Accessibility label suffix: monthly price",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : ", %@ per month" } }
+      }
+    },
+
+    "年額%@" : {
+      "comment" : "Accessibility label: yearly price",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%@ per year" } }
+      }
+    },
+
+    "、%d%%おトク" : {
+      "comment" : "Accessibility label suffix: savings percentage",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : ", %d%% savings" } }
+      }
+    },
+
+    "新着順" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Newest" } }
+      }
+    },
+
+    "古い順" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Oldest" } }
+      }
+    },
+
+    "並び替え" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sort" } }
+      }
+    },
+
+    "シールを削除" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Delete Sticker" } }
+      }
+    },
+
+    "このシールをコレクションから削除しますか？" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Remove this sticker from your collection?" } }
+      }
+    },
+
+    "このシールは%lld個のボードで使用されています。削除するとボードからも取り除かれます。" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : { "stringUnit" : { "state" : "translated", "value" : "This sticker is used in %lld board. Deleting it will also remove it from that board." } },
+              "other" : { "stringUnit" : { "state" : "translated", "value" : "This sticker is used in %lld boards. Deleting it will also remove it from those boards." } }
+            }
+          }
+        }
+      }
+    },
+
+    "まだシールがありません" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No Stickers Yet" } }
+      }
+    },
+
+    "写真を切り抜いて\nオリジナルシールを作ろう" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Cut out photos\nto create original stickers" } }
+      }
+    },
+
+    "シールを追加する" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add Sticker" } }
+      }
+    },
+
+    "全%lld枚のシール" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : { "stringUnit" : { "state" : "translated", "value" : "All %lld sticker" } },
+              "other" : { "stringUnit" : { "state" : "translated", "value" : "All %lld stickers" } }
+            }
+          }
+        }
+      }
+    },
+
+    "不要部分を除去" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Remove Unwanted Parts" } }
+      }
+    },
+
+    "シール交換（交換画面）" : {
+      "comment" : "StickerExchangeView navigation title (duplicate key guard)",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sticker Exchange" } }
+      }
+    },
+
+    "交換申請" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Exchange Request" } }
+      }
+    },
+
+    "承諾" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Accept" } }
+      }
+    },
+
+    "拒否" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Decline" } }
+      }
+    },
+
+    "%@ からシール交換の申請が届きました" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Exchange request received from %@" } }
+      }
+    },
+
+    "β版機能" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Beta Feature" } }
+      }
+    },
+
+    "試験的" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Experimental" } }
+      }
+    },
+
+    "仕様が変更される場合があります" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Specifications may change" } }
+      }
+    },
+
+    "近くのデバイスを探しています…" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Searching for nearby devices…" } }
+      }
+    },
+
+    "相手も同じ画面を開いてください" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Ask the other person to open this screen" } }
+      }
+    },
+
+    "シールを送る" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Send Sticker" } }
+      }
+    },
+
+    "シールを選んで接続中のデバイスに送る" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Select a sticker to send to the connected device" } }
+      }
+    },
+
+    "接続" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Connect" } }
+      }
+    },
+
+    "送るシールを選ぶ" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Choose Sticker to Send" } }
+      }
+    },
+
+    "送信エラー" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Send Error" } }
+      }
+    },
+
+    "受け取ったシール" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Received Stickers" } }
+      }
+    },
+
+    "保存エラー" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Save Error" } }
+      }
+    },
+
+    "受け取らない" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Decline" } }
+      }
+    },
+
+    "ライブラリに保存" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Save to Library" } }
+      }
+    },
+
+    "%@ から" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "From %@" } }
+      }
+    },
+
+    "アップデートのお知らせ" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Update Available" } }
+      }
+    },
+
+    "アップデート" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Update" } }
+      }
+    },
+
+    "重要なアップデート(%@)が利用可能です。\n最新機能と改善をお楽しみください。" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Important update (%@) is available.\nEnjoy the latest features and improvements." } }
+      }
+    },
+
+    "新しいバージョン(%@)が利用可能です。\n最新機能をお楽しみください。" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "New version (%@) is available.\nEnjoy the latest features." } }
+      }
+    }
+
+  },
+  "version" : "1.0"
+}

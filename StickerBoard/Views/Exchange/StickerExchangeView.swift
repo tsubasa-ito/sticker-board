@@ -528,7 +528,7 @@ private struct ExchangeStickerPickerView: View {
     private func sendSticker(_ sticker: Sticker) async {
         guard let image = ImageStorage.load(fileName: sticker.imageFileName),
               let imageData = image.pngData() else {
-            sendError = "シール画像の読み込みに失敗しました"
+            sendError = String(localized: "シール画像の読み込みに失敗しました")
             return
         }
         isSending = true

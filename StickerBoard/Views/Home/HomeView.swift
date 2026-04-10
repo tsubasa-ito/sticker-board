@@ -627,7 +627,7 @@ private struct NewBoardSheet: View {
     }
 
     /// ボードタイプ選択行（HStack: プレビュー + テキスト + チェックマーク）
-    private func boardTypeRow(type: BoardType, title: String, subtitle: String, icon: String, previewAspectRatio: CGFloat) -> some View {
+    private func boardTypeRow(type: BoardType, title: LocalizedStringKey, subtitle: LocalizedStringKey, icon: String, previewAspectRatio: CGFloat) -> some View {
         let isSelected = selectedType == type
         return Button {
             selectedType = type

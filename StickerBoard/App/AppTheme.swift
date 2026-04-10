@@ -165,21 +165,21 @@ enum ProBenefit: CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .stickerStorage:     return "シール保存"
-        case .boardCreation:      return "ボード作成"
-        case .borderVariations:   return "枠線バリエーション"
-        case .backgroundPatterns: return "背景パターン"
-        case .exportWithoutLogo:  return "画像書き出し"
+        case .stickerStorage:     return String(localized: "シール保存")
+        case .boardCreation:      return String(localized: "ボード作成")
+        case .borderVariations:   return String(localized: "枠線バリエーション")
+        case .backgroundPatterns: return String(localized: "背景パターン")
+        case .exportWithoutLogo:  return String(localized: "画像書き出し")
         }
     }
 
     var value: String {
         switch self {
-        case .stickerStorage:     return "無制限"
-        case .boardCreation:      return "無制限"
-        case .borderVariations:   return "全開放"
-        case .backgroundPatterns: return "全開放"
-        case .exportWithoutLogo:  return "ロゴなし"
+        case .stickerStorage:     return String(localized: "無制限")
+        case .boardCreation:      return String(localized: "無制限")
+        case .borderVariations:   return String(localized: "全開放")
+        case .backgroundPatterns: return String(localized: "全開放")
+        case .exportWithoutLogo:  return String(localized: "ロゴなし")
         }
     }
 

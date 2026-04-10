@@ -1,0 +1,92 @@
+{
+  "sourceLanguage" : "ja",
+  "strings" : {
+
+    "NSCameraUsageDescription" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "シールにする写真を撮影するためにカメラへのアクセスが必要です"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Camera access is required to take photos of your stickers"
+          }
+        }
+      }
+    },
+
+    "NSPhotoLibraryUsageDescription" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "シールにする写真を選択するためにフォトライブラリへのアクセスが必要です"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photo library access is required to select photos for stickers"
+          }
+        }
+      }
+    },
+
+    "NSPhotoLibraryAddUsageDescription" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ボードを画像として写真に保存するためにフォトライブラリへのアクセスが必要です"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photo library access is required to save your board as an image"
+          }
+        }
+      }
+    },
+
+    "NSLocalNetworkUsageDescription" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "近くのデバイスとシールを交換するためにローカルネットワークへのアクセスが必要です"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Local network access is required to exchange stickers with nearby devices"
+          }
+        }
+      }
+    },
+
+    "CFBundleDisplayName" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "シールボード -デジタルシール帳-"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "StickerBoard - Digital Sticker Book"
+          }
+        }
+      }
+    }
+
+  },
+  "version" : "1.0"
+}

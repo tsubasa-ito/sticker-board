@@ -124,7 +124,7 @@ struct SettingsView: View {
             Spacer()
 
             if let date = subscriptionManager.currentSubscriptionExpirationDate {
-                Text(date.formatted(.dateTime.locale(Locale(identifier: "ja_JP")).year().month().day()))
+                Text(date.formatted(.dateTime.year().month().day()))
                     .font(.system(size: 15, weight: .semibold, design: .rounded))
                     .foregroundStyle(AppTheme.textSecondary)
             } else {
@@ -343,13 +343,14 @@ struct SettingsView: View {
 
     private var savingsBadgeText: String {
         let savings = subscriptionManager.savingsPercentage
-        return savings > 0 ? "\(savings)%おトク" : "おトク"
+        guard savings > 0 else { return String(localized: "おトク") }
+        return String(format: String(localized: "savings_percent_badge", defaultValue: "%d%%おトク"), savings)
     }
 
     private func planCardAccessibilityLabel(product: Product, subscriptionProduct: SubscriptionProduct, badge: String?) -> String {
-        var label = "\(subscriptionProduct.displayName)、\(product.displayPrice)"
+        var label = String(format: String(localized: "%@、%@"), subscriptionProduct.displayName, product.displayPrice)
         if subscriptionProduct == .yearlyPro, let monthlyPrice = subscriptionManager.yearlyMonthlyPrice {
-            label += "、月あたり\(monthlyPrice)"
+            label += String(format: String(localized: "、月あたり%@"), monthlyPrice)
         }
         if let badge {
             label += "、\(badge)"
@@ -361,7 +362,7 @@ struct SettingsView: View {
         let product = subscriptionManager.products.first { $0.id == selectedPlan.rawValue }
 
         guard let product else {
-            errorMessage = "プランの情報を取得できませんでした。ネットワーク接続を確認して再度お試しください。"
+            errorMessage = String(localized: "プランの情報を取得できませんでした。ネットワーク接続を確認して再度お試しください。")
             return
         }
 
@@ -376,9 +377,9 @@ struct SettingsView: View {
         case .cancelled:
             break
         case .pending:
-            errorMessage = "購入処理が保留中です。しばらくお待ちください。"
+            errorMessage = String(localized: "購入処理が保留中です。しばらくお待ちください。")
         case .failed(let error):
-            errorMessage = "購入に失敗しました: \(error.localizedDescription)"
+            errorMessage = String(localized: "購入に失敗しました: \(error.localizedDescription)")
         }
     }
 
@@ -389,12 +390,12 @@ struct SettingsView: View {
                 do {
                     try await subscriptionManager.restorePurchases()
                     if subscriptionManager.isProUser {
-                        restoreAlertMessage = "Proプランが復元されました"
+                        restoreAlertMessage = String(localized: "Proプランが復元されました")
                     } else {
-                        restoreAlertMessage = "復元可能な購入が見つかりませんでした"
+                        restoreAlertMessage = String(localized: "復元可能な購入が見つかりませんでした")
                     }
                 } catch {
-                    restoreAlertMessage = "購入の復元に失敗しました。ネットワーク接続を確認して再度お試しください。"
+                    restoreAlertMessage = String(localized: "購入の復元に失敗しました。ネットワーク接続を確認して再度お試しください。")
                 }
                 isRestoringPurchases = false
                 showRestoreAlert = true
@@ -501,9 +502,9 @@ struct SettingsView: View {
         }
     }
 
-    private func faqItem(question: String, answer: String) -> some View {
+    private func faqItem(question: LocalizedStringKey, answer: LocalizedStringKey) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Q. \(question)")
+            (Text("Q. ") + Text(question))
                 .font(.system(size: 14, weight: .bold, design: .rounded))
                 .foregroundStyle(AppTheme.textPrimary)
 
@@ -583,7 +584,7 @@ struct SettingsView: View {
         }
     }
 
-    private func noticeItem(_ text: String) -> some View {
+    private func noticeItem(_ text: LocalizedStringKey) -> some View {
         HStack(alignment: .top, spacing: 8) {
             Text("・")
                 .font(.system(size: 13, design: .rounded))
@@ -617,7 +618,7 @@ struct SettingsView: View {
         }
     }
 
-    private func linkRow(title: String, url: URL) -> some View {
+    private func linkRow(title: LocalizedStringKey, url: URL) -> some View {
         Link(destination: url) {
             HStack {
                 Text(title)
@@ -639,7 +640,7 @@ struct SettingsView: View {
 
     // MARK: - ヘルパー
 
-    private func sectionHeader(title: String, icon: String) -> some View {
+    private func sectionHeader(title: LocalizedStringKey, icon: String) -> some View {
         HStack(spacing: 6) {
             Image(systemName: icon)
                 .font(.system(size: 14, weight: .semibold))

@@ -11,8 +11,8 @@ enum SubscriptionProduct: String, CaseIterable {
 
     var displayName: String {
         switch self {
-        case .monthlyPro: "月額プラン"
-        case .yearlyPro: "年額プラン"
+        case .monthlyPro: String(localized: "月額プラン")
+        case .yearlyPro:  String(localized: "年額プラン")
         }
     }
 }

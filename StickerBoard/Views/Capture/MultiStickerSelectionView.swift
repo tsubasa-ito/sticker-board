@@ -215,7 +215,7 @@ struct MultiStickerSelectionView: View {
         }
 
         if let error = firstError {
-            errorMessage = "\(selectedIndices.count - savedCount)枚のシールの保存に失敗しました: \(error.localizedDescription)"
+            errorMessage = String(format: String(localized: "%d枚のシールの保存に失敗しました: %@"), selectedIndices.count - savedCount, error.localizedDescription)
         }
 
         if savedCount > 0 {

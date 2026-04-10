@@ -13,10 +13,10 @@ enum StickerBorderWidth: String, Codable, CaseIterable, Identifiable {
 
     var displayName: String {
         switch self {
-        case .none: "なし"
-        case .thin: "細"
-        case .medium: "中"
-        case .thick: "太"
+        case .none:   String(localized: "なし")
+        case .thin:   String(localized: "細")
+        case .medium: String(localized: "中")
+        case .thick:  String(localized: "太")
         }
     }
 
@@ -58,15 +58,15 @@ struct StickerBorderColor: Identifiable, Equatable {
     }
 
     static let presets: [StickerBorderColor] = [
-        StickerBorderColor(id: "white", displayName: "ホワイト", hex: "FFFFFF"),
-        StickerBorderColor(id: "black", displayName: "ブラック", hex: "000000"),
-        StickerBorderColor(id: "pink", displayName: "ピンク", hex: "F2A7B0"),
-        StickerBorderColor(id: "lavender", displayName: "ラベンダー", hex: "C5B4E3"),
-        StickerBorderColor(id: "mint", displayName: "ミント", hex: "A8E6CF"),
-        StickerBorderColor(id: "cream", displayName: "クリーム", hex: "FFF5C3"),
-        StickerBorderColor(id: "blue", displayName: "ベビーブルー", hex: "B5D8F7"),
-        StickerBorderColor(id: "red", displayName: "レッド", hex: "E74C3C"),
-        StickerBorderColor(id: "gold", displayName: "ゴールド", hex: "F1C40F"),
+        StickerBorderColor(id: "white",    displayName: String(localized: "ホワイト"),   hex: "FFFFFF"),
+        StickerBorderColor(id: "black",    displayName: String(localized: "ブラック"),   hex: "000000"),
+        StickerBorderColor(id: "pink",     displayName: String(localized: "ピンク"),     hex: "F2A7B0"),
+        StickerBorderColor(id: "lavender", displayName: String(localized: "ラベンダー"), hex: "C5B4E3"),
+        StickerBorderColor(id: "mint",     displayName: String(localized: "ミント"),     hex: "A8E6CF"),
+        StickerBorderColor(id: "cream",    displayName: String(localized: "クリーム"),   hex: "FFF5C3"),
+        StickerBorderColor(id: "blue",     displayName: String(localized: "ベビーブルー"), hex: "B5D8F7"),
+        StickerBorderColor(id: "red",      displayName: String(localized: "レッド"),     hex: "E74C3C"),
+        StickerBorderColor(id: "gold",     displayName: String(localized: "ゴールド"),   hex: "F1C40F"),
     ]
 
     static let defaultColor = presets[0]

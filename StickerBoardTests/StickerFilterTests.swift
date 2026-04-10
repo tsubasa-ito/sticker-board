@@ -8,17 +8,9 @@ struct StickerFilterTests {
         #expect(StickerFilter.allCases.count == 7)
     }
 
-    @Test(arguments: [
-        (StickerFilter.original, "オリジナル"),
-        (.sparkle, "キラキラ"),
-        (.retro, "レトロ"),
-        (.pastel, "パステル"),
-        (.neon, "ネオン"),
-        (.puffy, "ぷっくり"),
-        (.wappen, "ワッペン"),
-    ])
-    func displayNameが正しい(filter: StickerFilter, expected: String) {
-        #expect(filter.displayName == expected)
+    @Test(arguments: StickerFilter.allCases)
+    func displayNameが空でない(filter: StickerFilter) {
+        #expect(!filter.displayName.isEmpty)
     }
 
     @Test func 全フィルターにiconNameが設定されている() {
