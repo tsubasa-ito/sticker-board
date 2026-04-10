@@ -191,7 +191,7 @@ struct HomeView: View {
                         .font(.system(size: 40))
                         .foregroundStyle(AppTheme.textTertiary.opacity(0.3))
                 } else {
-                    boardStickerPreview(board.placements)
+                    boardStickerPreview(board.placements, boardType: board.boardType)
                 }
 
                 // ボトムグラデーション + タイトルオーバーレイ
@@ -263,8 +263,8 @@ struct HomeView: View {
     // MARK: - ボードシールプレビュー
 
     /// ボードエディタと同じレイアウトを縮小して表示する
-    private func boardStickerPreview(_ placements: [StickerPlacement]) -> some View {
-        BoardStickerPreviewView(placements: placements)
+    private func boardStickerPreview(_ placements: [StickerPlacement], boardType: BoardType) -> some View {
+        BoardStickerPreviewView(placements: placements, boardType: boardType)
     }
 
     // MARK: - 新規ボードカード
@@ -450,15 +450,29 @@ struct HomeView: View {
 
 private struct BoardStickerPreviewView: View {
     let placements: [StickerPlacement]
+    var boardType: BoardType = .standard
     @State private var images: [UUID: UIImage] = [:]
 
     /// プレビュー用サムネイルサイズ（カルーセル内なので小さくてOK）
     private let previewThumbnailSize: CGFloat = 200
 
+    /// エディタで使われるキャンバス参照サイズ（シール座標の基準）
+    private var referenceCanvasSize: CGSize {
+        let w = AppTheme.screenBounds.width
+        switch boardType {
+        case .standard:
+            return CGSize(width: w, height: AppTheme.screenBounds.height)
+        case .widgetLarge:
+            return CGSize(width: w, height: w / BoardType.widgetLargeAspectRatio)
+        case .widgetMedium:
+            return CGSize(width: w, height: w / BoardType.widgetMediumAspectRatio)
+        }
+    }
+
     var body: some View {
         GeometryReader { geo in
-            let canvasWidth = AppTheme.screenBounds.width
-            let canvasHeight = AppTheme.screenBounds.height
+            let canvasWidth = referenceCanvasSize.width
+            let canvasHeight = referenceCanvasSize.height
             let previewScale = min(
                 geo.size.width / canvasWidth,
                 geo.size.height / canvasHeight
