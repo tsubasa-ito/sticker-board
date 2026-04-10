@@ -172,9 +172,13 @@ struct HomeView: View {
     }
 
     private func boardCard(_ board: Board) -> some View {
-        let cardAspectRatio = board.boardType == .widgetMedium
-            ? BoardType.widgetMediumAspectRatio
-            : boardCardAspectRatio
+        let cardAspectRatio: CGFloat = {
+            switch board.boardType {
+            case .widgetLarge: return BoardType.widgetLargeAspectRatio
+            case .widgetMedium: return BoardType.widgetMediumAspectRatio
+            case .standard: return boardCardAspectRatio
+            }
+        }()
         return VStack(spacing: 0) {
             // プレビューエリア
             ZStack {
@@ -559,15 +563,22 @@ private struct NewBoardSheet: View {
                     VStack(spacing: 10) {
                         boardTypeRow(
                             type: .standard,
-                            title: "通常のボード",
-                            subtitle: "壁紙保存・ウィジェット大に最適",
-                            icon: "rectangle.portrait.fill",
+                            title: "壁紙・画像用",
+                            subtitle: "縦長キャンバス。写真ライブラリへ保存",
+                            icon: "photo.fill",
                             previewAspectRatio: 0.56
+                        )
+                        boardTypeRow(
+                            type: .widgetLarge,
+                            title: "ウィジェット大用",
+                            subtitle: "ホーム画面の大サイズウィジェットにピッタリ",
+                            icon: "square.fill",
+                            previewAspectRatio: BoardType.widgetLargeAspectRatio
                         )
                         boardTypeRow(
                             type: .widgetMedium,
                             title: "ウィジェット中用",
-                            subtitle: "横長ウィジェット（Medium）にピッタリ",
+                            subtitle: "ホーム画面の中サイズウィジェットにピッタリ",
                             icon: "apps.iphone",
                             previewAspectRatio: BoardType.widgetMediumAspectRatio
                         )

@@ -61,12 +61,11 @@ struct BoardShowcaseLargeView: View {
                     // ボードの背景色でウィジェット全体を塗りつぶし
                     Color(hex: 0xFAF0DE)
 
-                    // scaledToFill でウィジェット枠を埋める（通常ボードは中央クロップで表示）
+                    // scaledToFit で全体を表示（ウィジェット大用ボードは比率一致でレターボックスなし）
                     Image(uiImage: image)
                         .resizable()
-                        .scaledToFill()
+                        .scaledToFit()
                         .frame(width: geo.size.width, height: geo.size.height)
-                        .clipped()
                 }
                 .overlay(alignment: .bottomLeading) {
                     HStack(alignment: .bottom) {

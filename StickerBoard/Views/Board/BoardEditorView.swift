@@ -242,7 +242,10 @@ struct BoardEditorView: View {
 
     @ViewBuilder
     private var canvasArea: some View {
-        if board.boardType == .widgetMedium {
+        if board.boardType == .widgetLarge {
+            boardCanvasZStack
+                .aspectRatio(BoardType.widgetLargeAspectRatio, contentMode: .fit)
+        } else if board.boardType == .widgetMedium {
             boardCanvasZStack
                 .aspectRatio(BoardType.widgetMediumAspectRatio, contentMode: .fit)
         } else {
@@ -296,14 +299,17 @@ struct BoardEditorView: View {
             canvasSize = newSize
         }
         .overlay(alignment: .topTrailing) {
-            if board.boardType == .widgetMedium {
+            if board.boardType != .standard {
                 widgetBadge
             }
         }
     }
 
     private var widgetBadge: some View {
-        Label("ウィジェット中", systemImage: "apps.iphone")
+        Label(
+            board.boardType == .widgetLarge ? "ウィジェット大" : "ウィジェット中",
+            systemImage: "apps.iphone"
+        )
             .font(.system(size: 11, weight: .semibold, design: .rounded))
             .foregroundStyle(.white)
             .padding(.horizontal, 8)

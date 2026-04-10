@@ -264,26 +264,39 @@ struct BoardTests {
         #expect(board.boardType == .standard)
     }
 
+    @Test func widgetLargeボードを作成できる() throws {
+        let container = try makeContainer()
+        let context = ModelContext(container)
+        let board = Board(title: "ウィジェット大ボード", boardType: .widgetLarge)
+        context.insert(board)
+
+        #expect(board.boardType == .widgetLarge)
+        #expect(board.title == "ウィジェット大ボード")
+    }
+
     @Test func widgetMediumボードを作成できる() throws {
         let container = try makeContainer()
         let context = ModelContext(container)
-        let board = Board(title: "ウィジェットボード", boardType: .widgetMedium)
+        let board = Board(title: "ウィジェット中ボード", boardType: .widgetMedium)
         context.insert(board)
 
         #expect(board.boardType == .widgetMedium)
-        #expect(board.title == "ウィジェットボード")
+        #expect(board.title == "ウィジェット中ボード")
     }
 
     @Test func boardTypeRawValueが正しく保存される() throws {
         let container = try makeContainer()
         let context = ModelContext(container)
         let standard = Board(title: "標準")
-        let widget = Board(title: "ウィジェット", boardType: .widgetMedium)
+        let widgetL = Board(title: "ウィジェット大", boardType: .widgetLarge)
+        let widgetM = Board(title: "ウィジェット中", boardType: .widgetMedium)
         context.insert(standard)
-        context.insert(widget)
+        context.insert(widgetL)
+        context.insert(widgetM)
 
         #expect(standard.boardTypeRawValue == "standard")
-        #expect(widget.boardTypeRawValue == "widgetMedium")
+        #expect(widgetL.boardTypeRawValue == "widgetLarge")
+        #expect(widgetM.boardTypeRawValue == "widgetMedium")
     }
 
     @Test func 無効なrawValueはstandardにフォールバックする() throws {
@@ -304,6 +317,8 @@ struct BoardTests {
         context.insert(board)
 
         #expect(board.boardType == .standard)
+        board.boardType = .widgetLarge
+        #expect(board.boardType == .widgetLarge)
         board.boardType = .widgetMedium
         #expect(board.boardType == .widgetMedium)
     }

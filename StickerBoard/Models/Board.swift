@@ -2,10 +2,14 @@ import Foundation
 import SwiftData
 
 enum BoardType: String, Codable {
+    /// 壁紙・画像用（縦長キャンバス）
     case standard
+    /// ウィジェット大用（364×382pt 比率）
+    case widgetLarge
+    /// ウィジェット中用（364×170pt 比率）
     case widgetMedium
 
-    /// ウィジェット中（Medium）と同じ比率 364×170pt
+    static let widgetLargeAspectRatio: CGFloat = 364.0 / 382.0
     static let widgetMediumAspectRatio: CGFloat = 364.0 / 170.0
 }
 
