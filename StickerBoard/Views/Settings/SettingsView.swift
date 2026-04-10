@@ -353,7 +353,7 @@ struct SettingsView: View {
             label += String(format: String(localized: "、月あたり%@"), monthlyPrice)
         }
         if let badge {
-            label += "、\(badge)"
+            label += String(format: String(localized: "、%@"), badge)
         }
         return label
     }
