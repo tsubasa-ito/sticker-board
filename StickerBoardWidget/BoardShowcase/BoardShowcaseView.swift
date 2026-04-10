@@ -55,17 +55,19 @@ struct BoardShowcaseLargeView: View {
     let entry: BoardShowcaseEntry
 
     var body: some View {
-        if let image = entry.snapshotImage {
+        // largeSnapshotImage が存在する場合はそちらを優先（364×382 で生成済み）
+        if let image = entry.largeSnapshotImage ?? entry.snapshotImage {
             GeometryReader { geo in
                 ZStack {
                     // ボードの背景色でウィジェット全体を塗りつぶし
                     Color(hex: 0xFAF0DE)
 
-                    // scaledToFit で全体を表示（ウィジェット大用ボードは比率一致でレターボックスなし）
+                    // largeSnapshotImage は 364×382 でプリレンダリング済み。scaledToFill でウィジェット全体を埋める
                     Image(uiImage: image)
                         .resizable()
-                        .scaledToFit()
+                        .scaledToFill()
                         .frame(width: geo.size.width, height: geo.size.height)
+                        .clipped()
                 }
                 .overlay(alignment: .bottomLeading) {
                     HStack(alignment: .bottom) {
