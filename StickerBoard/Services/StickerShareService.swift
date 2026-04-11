@@ -76,9 +76,6 @@ enum StickerShareService {
     }
 
     private static func loadImage(for sticker: Sticker) async -> UIImage? {
-        let fileName = sticker.imageFileName
-        return await Task.detached {
-            ImageStorage.load(fileName: fileName)
-        }.value
+        return await ImageStorage.loadAsync(fileName: sticker.imageFileName)
     }
 }
