@@ -325,7 +325,6 @@
       }
     },
     "AIが自動で背景を除去。\nキレイに切り抜かれたシールがコレクションに" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -635,7 +634,6 @@
       }
     },
     "お気に入りのシールを撮影して、\n自分だけのコレクションを作ろう" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -887,62 +885,132 @@
         }
       }
     },
+    "「接続」を\nタップ" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap\n\"Connect\""
+          }
+        }
+      }
+    },
+    "アクティブ" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active"
+          }
+        }
+      }
+    },
+    "デバイス検索" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scanning"
+          }
+        }
+      }
+    },
+    "停止中" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inactive"
+          }
+        }
+      }
+    },
+    "使い方" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How to Use"
+          }
+        }
+      }
+    },
+    "受け取って\nライブラリに保存" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Receive and save\nto library"
+          }
+        }
+      }
+    },
+    "発見待機" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discoverable"
+          }
+        }
+      }
+    },
+    "相手も\nこの画面を開く" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Both open\nthis screen"
+          }
+        }
+      }
+    },
+    "未接続" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not connected"
+          }
+        }
+      }
+    },
+    "近くのデバイス" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nearby Devices"
+          }
+        }
+      }
+    },
+    "シールを\n選んで送る" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select a sticker\nand send"
+          }
+        }
+      }
+    },
+    "接続中のデバイス" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connected Devices"
+          }
+        }
+      }
+    },
     "シール %lld" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sticker %lld"
-          }
-        }
-      }
-    },
-    "シールをできるだけ大きく写す" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fill the frame with your sticker"
-          }
-        }
-      }
-    },
-    "シールに影がかからないように" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avoid shadows on the sticker"
-          }
-        }
-      }
-    },
-    "シールを写真の中央に" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Center the sticker in the photo"
-          }
-        }
-      }
-    },
-    "背景はなるべく無地・シンプルに" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Use a plain, simple background"
-          }
-        }
-      }
-    },
-    "明るい場所で撮影する" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Shoot in a well-lit place"
           }
         }
       }
@@ -973,6 +1041,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Long-press the subject to select"
+          }
+        }
+      }
+    },
+    "シールに影がかからないように" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avoid shadows on the sticker"
           }
         }
       }
@@ -1018,7 +1096,6 @@
       }
     },
     "シールボードへようこそ！" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1044,6 +1121,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Add More Stickers"
+          }
+        }
+      }
+    },
+    "シールをできるだけ大きく写す" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fill the frame with your sticker"
+          }
+        }
+      }
+    },
+    "シールを写真の中央に" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Center the sticker in the photo"
           }
         }
       }
@@ -1079,7 +1176,6 @@
       }
     },
     "シールを撮影するだけ" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1100,7 +1196,6 @@
       }
     },
     "シールを自由に配置して、\nフィルターや枠線でデコレーション" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3034,6 +3129,16 @@
         }
       }
     },
+    "明るい場所で撮影する" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shoot in a well-lit place"
+          }
+        }
+      }
+    },
     "時計回りに回転" : {
       "localizations" : {
         "en" : {
@@ -3406,6 +3511,16 @@
         }
       }
     },
+    "背景はなるべく無地・シンプルに" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use a plain, simple background"
+          }
+        }
+      }
+    },
     "背景プレビュー、%@" : {
       "localizations" : {
         "en" : {
@@ -3447,7 +3562,6 @@
       }
     },
     "自分だけのボードを作ろう" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
