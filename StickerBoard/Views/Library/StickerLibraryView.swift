@@ -24,6 +24,8 @@ struct StickerLibraryView: View {
     @State private var thumbnailRefreshID = UUID()
     @State private var showRotateError = false
     @State private var sortNewest = true
+    @State private var showSaveToPhotosResult = false
+    @State private var saveToPhotosSuccess = false
     @Namespace private var previewNamespace
     let refreshTrigger: UUID
     var onAddSticker: () -> Void = {}
@@ -74,6 +76,16 @@ struct StickerLibraryView: View {
             } message: {
                 Text("シール画像の読み込みに失敗しました。画像が破損している可能性があります。")
             }
+            .alert(
+                saveToPhotosSuccess ? "写真を保存しました" : "保存に失敗しました",
+                isPresented: $showSaveToPhotosResult
+            ) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                if !saveToPhotosSuccess {
+                    Text("フォトライブラリへの保存中にエラーが発生しました。アクセス許可を確認してください。")
+                }
+            }
     }
 
     private var libraryContent: some View {
@@ -95,7 +107,9 @@ struct StickerLibraryView: View {
                             withAnimation(.spring(duration: 0.35, bounce: 0.2)) { previewSticker = nil }
                             startMaskEdit(sticker)
                         },
-                        onRotate: { clockwise in rotateSticker(sticker, clockwise: clockwise) }
+                        onRotate: { clockwise in rotateSticker(sticker, clockwise: clockwise) },
+                        onShare: { StickerShareService.share(sticker) },
+                        onSaveToPhotos: { saveSticker(sticker) }
                     )
                 }
             }
@@ -248,6 +262,17 @@ struct StickerLibraryView: View {
                             .accessibilityHint("タップしてプレビューを表示")
                             .contextMenu {
                                 Button {
+                                    StickerShareService.share(sticker)
+                                } label: {
+                                    Label("共有", systemImage: "square.and.arrow.up")
+                                }
+                                Button {
+                                    saveSticker(sticker)
+                                } label: {
+                                    Label("写真に保存", systemImage: "square.and.arrow.down")
+                                }
+                                Divider()
+                                Button {
                                     rotateSticker(sticker, clockwise: false)
                                 } label: {
                                     Label("左に回転", systemImage: "rotate.left")
@@ -331,6 +356,14 @@ struct StickerLibraryView: View {
             maskEditSaved = true
         } catch {
             showOverwriteError = true
+        }
+    }
+
+    private func saveSticker(_ sticker: Sticker) {
+        Task {
+            let success = await StickerShareService.saveToPhotos(sticker)
+            saveToPhotosSuccess = success
+            showSaveToPhotosResult = true
         }
     }
 
@@ -438,6 +471,8 @@ struct StickerPreviewOverlay: View {
     var onDelete: () -> Void = {}
     var onMaskEdit: () -> Void = {}
     var onRotate: (Bool) -> Void = { _ in }
+    var onShare: () -> Void = {}
+    var onSaveToPhotos: () -> Void = {}
 
     @State private var previewImage: UIImage?
 
@@ -509,6 +544,35 @@ struct StickerPreviewOverlay: View {
                     }
                     .accessibilityLabel("右に90度回転")
                     .accessibilityHint("シールを時計回りに90度回転します")
+                }
+
+                // 共有・保存ボタン
+                HStack(spacing: 12) {
+                    Button {
+                        onShare()
+                    } label: {
+                        Image(systemName: "square.and.arrow.up")
+                            .font(.system(size: 20))
+                            .foregroundStyle(.white)
+                            .frame(width: 44, height: 44)
+                            .background(.white.opacity(0.15))
+                            .clipShape(Circle())
+                    }
+                    .accessibilityLabel("シールを共有")
+                    .accessibilityHint("シール画像をAirDrop・SNS等で共有します")
+
+                    Button {
+                        onSaveToPhotos()
+                    } label: {
+                        Image(systemName: "square.and.arrow.down")
+                            .font(.system(size: 20))
+                            .foregroundStyle(.white)
+                            .frame(width: 44, height: 44)
+                            .background(.white.opacity(0.15))
+                            .clipShape(Circle())
+                    }
+                    .accessibilityLabel("写真に保存")
+                    .accessibilityHint("シール画像をフォトライブラリに保存します")
                 }
 
                 // アクションボタン
