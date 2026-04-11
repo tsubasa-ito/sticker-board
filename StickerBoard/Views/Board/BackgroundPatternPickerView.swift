@@ -266,9 +266,15 @@ struct BackgroundPatternPickerView: View {
         let isSelected = config.patternType == type
         return Button {
             withAnimation(.easeInOut(duration: 0.2)) {
-                if let preset = BackgroundPatternConfig.presets.first(where: { $0.patternType == type }) {
-                    config = preset
+                if config.patternType == .custom {
+                    // 写真背景からの切り替えはデフォルトカラーを使用
+                    config = BackgroundPatternConfig(
+                        patternType: type,
+                        primaryColorHex: BackgroundPatternConfig.default.primaryColorHex,
+                        secondaryColorHex: BackgroundPatternConfig.default.secondaryColorHex
+                    )
                 } else {
+                    // 既存の色を引き継いでパターン種別のみ変更
                     config.patternType = type
                 }
             }

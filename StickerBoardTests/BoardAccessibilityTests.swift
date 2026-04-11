@@ -138,6 +138,16 @@ struct BoardAccessibilityTests {
         #expect(!content.contains("Image(systemName: \"xmark\")"))
     }
 
+    // MARK: - BackgroundPatternPickerView パターン切り替え時の色引き継ぎ
+
+    @Test func BackgroundPatternPickerView_パターン切り替えでプリセットカラーを上書きしない() throws {
+        let content = try readFile("StickerBoard/Views/Board/BackgroundPatternPickerView.swift")
+        // パターン切り替え時に config = preset でプリセット全体を上書きしていないこと
+        // 既存の色を引き継いでパターン種別のみ変更する設計になっていること
+        #expect(!content.contains("config = preset"),
+                "パターン選択時にプリセットカラーで全上書きしています。patternTypeのみ変更してください")
+    }
+
     // MARK: - BackgroundPatternPickerView シート高さ (Issue #206)
 
     @Test func BoardEditorView_背景選択シートがmediumDetentを使用しない() throws {
