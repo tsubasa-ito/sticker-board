@@ -897,6 +897,56 @@
         }
       }
     },
+    "シールをできるだけ大きく写す" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fill the frame with your sticker"
+          }
+        }
+      }
+    },
+    "シールに影がかからないように" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avoid shadows on the sticker"
+          }
+        }
+      }
+    },
+    "シールを写真の中央に" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Center the sticker in the photo"
+          }
+        }
+      }
+    },
+    "背景はなるべく無地・シンプルに" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use a plain, simple background"
+          }
+        }
+      }
+    },
+    "明るい場所で撮影する" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shoot in a well-lit place"
+          }
+        }
+      }
+    },
     "シールがありません" : {
       "localizations" : {
         "en" : {

@@ -278,7 +278,7 @@ struct StickerCaptureView: View {
         }
     }
 
-    private func sourceButton(icon: String, title: String, color: Color) -> some View {
+    private func sourceButton(icon: String, title: LocalizedStringKey, color: Color) -> some View {
         VStack(spacing: 14) {
             ZStack {
                 Circle()
