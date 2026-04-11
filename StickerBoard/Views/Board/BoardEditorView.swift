@@ -118,7 +118,17 @@ struct BoardEditorView: View {
         .toolbarBackground(AppTheme.editorBackground, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .toolbar {
-            ToolbarItem(placement: .primaryAction) {
+            ToolbarItemGroup(placement: .primaryAction) {
+                Button {
+                    shareBoardAsImage()
+                } label: {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(placements.isEmpty ? AppTheme.textTertiary : AppTheme.accent)
+                }
+                .accessibilityLabel(String(localized: "共有"))
+                .disabled(placements.isEmpty)
+
                 Button {
                     showingSaveConfirmation = true
                 } label: {
@@ -126,7 +136,7 @@ struct BoardEditorView: View {
                         .font(.system(size: 15, weight: .medium))
                         .foregroundStyle(placements.isEmpty ? AppTheme.textTertiary : AppTheme.accent)
                 }
-                .accessibilityLabel("写真に保存")
+                .accessibilityLabel(String(localized: "写真に保存"))
                 .disabled(placements.isEmpty)
             }
         }
@@ -747,6 +757,18 @@ struct BoardEditorView: View {
         } else {
             customBackgroundImage = nil
         }
+    }
+
+    // MARK: - SNSシェア
+
+    private func shareBoardAsImage() {
+        BoardShareService.share(
+            placements: sortedPlacements,
+            canvasSize: canvasSize,
+            backgroundConfig: backgroundConfig,
+            customBackgroundImage: customBackgroundImage,
+            displayScale: displayScale
+        )
     }
 
     // MARK: - 画像として保存
