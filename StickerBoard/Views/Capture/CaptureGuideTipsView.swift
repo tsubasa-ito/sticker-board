@@ -48,7 +48,7 @@ struct CaptureGuideTipsView: View {
             // ヒント一覧
             if !isCollapsed {
                 VStack(spacing: 10) {
-                    ForEach(tips, id: \.text) { tip in
+                    ForEach(tips, id: \.icon) { tip in
                         HStack(spacing: 10) {
                             Image(systemName: tip.icon)
                                 .font(.system(size: 12, weight: .medium))
