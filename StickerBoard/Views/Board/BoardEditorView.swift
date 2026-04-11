@@ -762,28 +762,13 @@ struct BoardEditorView: View {
     // MARK: - SNSシェア
 
     private func shareBoardAsImage() {
-        let content = BoardSnapshotView(placements: sortedPlacements, size: canvasSize, backgroundConfig: backgroundConfig, customBackgroundImage: customBackgroundImage, showWatermark: !SubscriptionManager.shared.isProUser)
-
-        let renderer = ImageRenderer(content: content)
-        renderer.scale = displayScale
-
-        guard let image = renderer.uiImage else { return }
-
-        let activityVC = UIActivityViewController(activityItems: [image], applicationActivities: nil)
-
-        guard let windowScene = UIApplication.shared.connectedScenes
-            .compactMap({ $0 as? UIWindowScene })
-            .first(where: { $0.activationState == .foregroundActive }),
-              let rootVC = windowScene.keyWindow?.rootViewController else { return }
-
-        if let popover = activityVC.popoverPresentationController {
-            let bounds = windowScene.screen.bounds
-            popover.sourceView = rootVC.view
-            popover.sourceRect = CGRect(x: bounds.midX, y: bounds.midY, width: 0, height: 0)
-            popover.permittedArrowDirections = []
-        }
-
-        rootVC.present(activityVC, animated: true)
+        BoardShareService.share(
+            placements: sortedPlacements,
+            canvasSize: canvasSize,
+            backgroundConfig: backgroundConfig,
+            customBackgroundImage: customBackgroundImage,
+            displayScale: displayScale
+        )
     }
 
     // MARK: - 画像として保存
