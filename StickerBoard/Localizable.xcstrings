@@ -8,7 +8,14 @@
 
     },
     "・" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "·"
+          }
+        }
+      }
     },
     "、%@" : {
       "comment" : "Accessibility label suffix: generic item (e.g. badge text)",
@@ -84,10 +91,24 @@
       }
     },
     "%@ から受け取ったシール" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sticker received from %@"
+          }
+        }
+      }
     },
     "%@ に接続申請を送る" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send request to %@"
+          }
+        }
+      }
     },
     "%@, %@" : {
       "localizations" : {
@@ -134,6 +155,24 @@
     },
     "%@、シール%lld枚、%@" : {
       "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$@, %2$lld sticker, %3$@"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$@, %2$lld stickers, %3$@"
+                }
+              }
+            }
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "new",
@@ -153,10 +192,25 @@
       }
     },
     "%@フィルター" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ Filter"
+          }
+        }
+      }
     },
-    "%@を選択" : {
-
+    "%dポイント" : {
+      "comment" : "Brush size accessibility value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d pt"
+          }
+        }
+      }
     },
     "%d枚のシールの保存に失敗しました: %@" : {
       "localizations" : {
@@ -182,6 +236,12 @@
     },
     "%lld/%lld枚選択中" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld/%2$lld selected"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "new",
@@ -191,13 +251,24 @@
       }
     },
     "%lld%% おトク" : {
-
-    },
-    "%lldポイント" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld%% off"
+          }
+        }
+      }
     },
     "%lld個のシールを検出しました" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detected %lld stickers"
+          }
+        }
+      }
     },
     "%lld枚" : {
       "localizations" : {
@@ -244,7 +315,14 @@
       }
     },
     "%lld枚をコレクションに追加" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adding %lld to collection"
+          }
+        }
+      }
     },
     "AIが自動で背景を除去。\nキレイに切り抜かれたシールがコレクションに" : {
       "extractionState" : "stale",
@@ -267,162 +345,6 @@
         }
       }
     },
-    "無料プラン" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Free Plan" } }
-      }
-    },
-
-    "Pro（月額）" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pro (Monthly)" } }
-      }
-    },
-
-    "Pro（年額）" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pro (Yearly)" } }
-      }
-    },
-
-    "消す" : {
-      "comment" : "BrushToolbar eraser mode button label",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Erase" } }
-      }
-    },
-
-    "戻す" : {
-      "comment" : "BrushToolbar restore mode button label",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Restore" } }
-      }
-    },
-
-    "消しゴムモード" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Eraser Mode" } }
-      }
-    },
-
-    "復元モード" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Restore Mode" } }
-      }
-    },
-
-    "不要な部分を消します" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Erase unwanted parts" } }
-      }
-    },
-
-    "消しすぎた部分を復元します" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Restore over-erased parts" } }
-      }
-    },
-
-    "直前の操作を取り消します" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Undo the last action" } }
-      }
-    },
-
-    "取り消せる操作がありません" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Nothing to undo" } }
-      }
-    },
-
-    "指でなぞって不要な部分を消します" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Trace with your finger to erase unwanted parts" } }
-      }
-    },
-
-    "指でなぞって消しすぎた部分を復元します" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Trace with your finger to restore over-erased parts" } }
-      }
-    },
-
-    "操作ヒント: 指でなぞって不要な部分を消します" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Tip: Trace with your finger to erase" } }
-      }
-    },
-
-    "操作ヒント: 指でなぞって消しすぎた部分を復元します" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Tip: Trace with your finger to restore" } }
-      }
-    },
-
-    "%dポイント" : {
-      "comment" : "Brush size accessibility value",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "%d pt" } }
-      }
-    },
-
-    "追加" : {
-      "comment" : "BoardEditorView toolbar: add sticker",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add" } }
-      }
-    },
-
-    "効果" : {
-      "comment" : "BoardEditorView toolbar: filter effects",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Effects" } }
-      }
-    },
-
-    "前面" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Front" } }
-      }
-    },
-
-    "背面" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Back" } }
-      }
-    },
-
-    "背景" : {
-      "comment" : "BoardEditorView toolbar: background settings",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Background" } }
-      }
-    },
-
-    "背景色" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Background Color" } }
-      }
-    },
-
-    "開始色" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Start Color" } }
-      }
-    },
-
-    "終了色" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "End Color" } }
-      }
-    },
-
-    "パターン色" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pattern Color" } }
-      }
-    },
-
     "OK" : {
       "localizations" : {
         "en" : {
@@ -456,8 +378,35 @@
         }
       }
     },
+    "Pro（年額）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pro (Yearly)"
+          }
+        }
+      }
+    },
+    "Pro（月額）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pro (Monthly)"
+          }
+        }
+      }
+    },
     "Proではじめる、年額%@" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start with Pro, %@ per year"
+          }
+        }
+      }
     },
     "Proではじめる（年額）" : {
       "localizations" : {
@@ -546,7 +495,14 @@
       }
     },
     "β版機能: 試験的提供のため仕様が変更される場合があります" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beta feature: Specifications may change as it is experimental"
+          }
+        }
+      }
     },
     "アップデート" : {
       "localizations" : {
@@ -589,7 +545,14 @@
       }
     },
     "ウィジェット中" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widget Medium"
+          }
+        }
+      }
     },
     "ウィジェット中用" : {
       "localizations" : {
@@ -602,7 +565,14 @@
       }
     },
     "ウィジェット大" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widget Large"
+          }
+        }
+      }
     },
     "ウィジェット大用" : {
       "localizations" : {
@@ -676,7 +646,14 @@
       }
     },
     "カスタム背景画像" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Custom Background Image"
+          }
+        }
+      }
     },
     "カメラで撮る" : {
       "localizations" : {
@@ -699,10 +676,24 @@
       }
     },
     "カメラを起動してシールにする写真を撮影します" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens camera to take a photo for a sticker"
+          }
+        }
+      }
     },
     "カメラを開いてシールを撮影します" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens camera to capture a sticker"
+          }
+        }
+      }
     },
     "カラー" : {
       "localizations" : {
@@ -745,7 +736,14 @@
       }
     },
     "きれいに切り抜くコツ" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tips for Clean Cutout"
+          }
+        }
+      }
     },
     "グラデーション" : {
       "localizations" : {
@@ -820,7 +818,14 @@
       }
     },
     "このシールを送る" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send This Sticker"
+          }
+        }
+      }
     },
     "コレクションに追加" : {
       "localizations" : {
@@ -853,16 +858,44 @@
       }
     },
     "さらに読み込み中" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading More"
+          }
+        }
+      }
     },
     "さらに追加" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add More"
+          }
+        }
+      }
     },
     "シール" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sticker"
+          }
+        }
+      }
     },
     "シール %lld" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sticker %lld"
+          }
+        }
+      }
     },
     "シールがありません" : {
       "localizations" : {
@@ -895,7 +928,14 @@
       }
     },
     "シールのプレビュー" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sticker Preview"
+          }
+        }
+      }
     },
     "シールの保存中にエラーが発生しました。もう一度お試しください。" : {
       "localizations" : {
@@ -949,7 +989,14 @@
       }
     },
     "シールをさらに追加" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add More Stickers"
+          }
+        }
+      }
     },
     "シールを削除" : {
       "localizations" : {
@@ -962,7 +1009,14 @@
       }
     },
     "シールを反時計回りに90度回転します" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rotate sticker 90° counterclockwise"
+          }
+        }
+      }
     },
     "シールを撮影して\n自分だけのボードを作ろう" : {
       "localizations" : {
@@ -986,7 +1040,14 @@
       }
     },
     "シールを時計回りに90度回転します" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rotate sticker 90° clockwise"
+          }
+        }
+      }
     },
     "シールを自由に配置して、\nフィルターや枠線でデコレーション" : {
       "extractionState" : "stale",
@@ -1071,10 +1132,24 @@
       }
     },
     "シールを選択してください" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please select a sticker"
+          }
+        }
+      }
     },
     "シール一覧を表示します" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show sticker list"
+          }
+        }
+      }
     },
     "シール交換" : {
       "localizations" : {
@@ -1229,16 +1304,44 @@
       }
     },
     "すべて解除" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deselect All"
+          }
+        }
+      }
     },
     "すべて選択" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select All"
+          }
+        }
+      }
     },
     "スワイプで背景画像の表示位置を調整できます" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swipe to adjust background image position"
+          }
+        }
+      }
     },
     "タップしてプレビューを表示" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap to show preview"
+          }
+        }
+      }
     },
     "タップしてボードを編集します" : {
       "localizations" : {
@@ -1281,10 +1384,24 @@
       }
     },
     "ツールバーを表示します" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show toolbar"
+          }
+        }
+      }
     },
     "ツールバーを非表示にします" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hide toolbar"
+          }
+        }
+      }
     },
     "ドット" : {
       "localizations" : {
@@ -1396,6 +1513,16 @@
         }
       }
     },
+    "パターン色" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pattern Color"
+          }
+        }
+      }
+    },
     "ピンク" : {
       "localizations" : {
         "en" : {
@@ -1417,7 +1544,14 @@
       }
     },
     "フィルタープレビューを生成中" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generating filter preview"
+          }
+        }
+      }
     },
     "フィルター変更" : {
       "localizations" : {
@@ -1430,7 +1564,14 @@
       }
     },
     "フォトライブラリからシールにする写真を選択します" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select a photo from library for a sticker"
+          }
+        }
+      }
     },
     "ぷっくり" : {
       "localizations" : {
@@ -1453,7 +1594,14 @@
       }
     },
     "ブラシサイズ" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brush Size"
+          }
+        }
+      }
     },
     "ブラック" : {
       "localizations" : {
@@ -1516,7 +1664,14 @@
       }
     },
     "プレビューを閉じる" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close Preview"
+          }
+        }
+      }
     },
     "ページ %lld / %lld" : {
       "localizations" : {
@@ -1529,7 +1684,14 @@
       }
     },
     "ページインジケーター" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Page Indicator"
+          }
+        }
+      }
     },
     "ベビーブルー" : {
       "localizations" : {
@@ -1612,7 +1774,14 @@
       }
     },
     "ボードを写真に保存しました" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Board saved to photos"
+          }
+        }
+      }
     },
     "ボードを写真に保存しますか？" : {
       "localizations" : {
@@ -1625,7 +1794,14 @@
       }
     },
     "ボード一覧を表示します" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show board list"
+          }
+        }
+      }
     },
     "ボード作成" : {
       "localizations" : {
@@ -1648,7 +1824,14 @@
       }
     },
     "ボード名を入力して新しいボードを追加します" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter a name to add a new board"
+          }
+        }
+      }
     },
     "ボード名を変更" : {
       "localizations" : {
@@ -1701,10 +1884,24 @@
       }
     },
     "マスクエディタを開いて切り抜き範囲を手動で調整します" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open mask editor to manually adjust the cutout area"
+          }
+        }
+      }
     },
     "マスクを再編集" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Re-edit Mask"
+          }
+        }
+      }
     },
     "マスク描画キャンバス" : {
       "localizations" : {
@@ -1837,10 +2034,24 @@
       }
     },
     "上に移動" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move Up"
+          }
+        }
+      }
     },
     "下に移動" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move Down"
+          }
+        }
+      }
     },
     "下の ＋ ボタンからシールを選択" : {
       "localizations" : {
@@ -1853,7 +2064,14 @@
       }
     },
     "不要な部分を消します" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erase unwanted parts"
+          }
+        }
+      }
     },
     "不要部分を除去" : {
       "localizations" : {
@@ -1966,10 +2184,24 @@
       }
     },
     "保存中" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saving"
+          }
+        }
+      }
     },
     "保存完了" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saved"
+          }
+        }
+      }
     },
     "保存完了!" : {
       "localizations" : {
@@ -2034,7 +2266,14 @@
       }
     },
     "再編集" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Re-edit"
+          }
+        }
+      }
     },
     "再試行" : {
       "localizations" : {
@@ -2057,10 +2296,24 @@
       }
     },
     "写真から背景を選択" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select background from photos"
+          }
+        }
+      }
     },
     "写真から背景を選択、Pro限定" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select background from photos, Pro only"
+          }
+        }
+      }
     },
     "写真から選ぶ" : {
       "localizations" : {
@@ -2083,7 +2336,14 @@
       }
     },
     "写真の保存に失敗しました。設定から写真へのアクセスを許可してください。" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to save photo. Please allow photo access in Settings."
+          }
+        }
+      }
     },
     "写真を保存" : {
       "localizations" : {
@@ -2106,10 +2366,24 @@
       }
     },
     "写真内のすべての被写体を自動的に検出して切り抜きます" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatically detect and cut out all subjects in the photo"
+          }
+        }
+      }
     },
     "切り抜いたシールをコレクションに保存します" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save the cut-out sticker to your collection"
+          }
+        }
+      }
     },
     "切り抜き完了" : {
       "localizations" : {
@@ -2122,7 +2396,14 @@
       }
     },
     "切り抜き完了したシール" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finished sticker cutout"
+          }
+        }
+      }
     },
     "別の写真を選ぶ" : {
       "localizations" : {
@@ -2174,14 +2455,56 @@
         }
       }
     },
+    "前面" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Front"
+          }
+        }
+      }
+    },
+    "効果" : {
+      "comment" : "BoardEditorView toolbar: filter effects",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Effects"
+          }
+        }
+      }
+    },
     "反時計回りに回転" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rotate Counterclockwise"
+          }
+        }
+      }
     },
     "取り消し" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Undo"
+          }
+        }
+      }
     },
     "取り消せる操作がありません" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing to undo"
+          }
+        }
+      }
     },
     "受け取ったシール" : {
       "localizations" : {
@@ -2234,7 +2557,14 @@
       }
     },
     "右に移動" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move Right"
+          }
+        }
+      }
     },
     "右上の＋ボタンから\n新しいボードを作りましょう" : {
       "localizations" : {
@@ -2247,7 +2577,14 @@
       }
     },
     "右上のプラスボタンをタップしてボードを作成できます" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap the + button at the top right to create a board"
+          }
+        }
+      }
     },
     "合成しています..." : {
       "localizations" : {
@@ -2360,7 +2697,14 @@
       }
     },
     "左に移動" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move Left"
+          }
+        }
+      }
     },
     "年額%@" : {
       "comment" : "Accessibility label: yearly price",
@@ -2394,7 +2738,14 @@
       }
     },
     "復元モード" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore Mode"
+          }
+        }
+      }
     },
     "復元処理中" : {
       "localizations" : {
@@ -2416,6 +2767,17 @@
         }
       }
     },
+    "戻す" : {
+      "comment" : "BrushToolbar restore mode button label",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore"
+          }
+        }
+      }
+    },
     "手動で調整する" : {
       "localizations" : {
         "en" : {
@@ -2428,6 +2790,12 @@
     },
     "手順%@: %@" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Step %1$@: %2$@"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "new",
@@ -2457,7 +2825,14 @@
       }
     },
     "拡大" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoom In"
+          }
+        }
+      }
     },
     "指でなぞってマスクを編集します。2本指でズームやスクロールができます" : {
       "localizations" : {
@@ -2470,10 +2845,24 @@
       }
     },
     "指でなぞって不要な部分を消します" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trace with your finger to erase unwanted parts"
+          }
+        }
+      }
     },
     "指でなぞって消しすぎた部分を復元します" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trace with your finger to restore over-erased parts"
+          }
+        }
+      }
     },
     "接続" : {
       "localizations" : {
@@ -2486,16 +2875,44 @@
       }
     },
     "接続待機中" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for Connection"
+          }
+        }
+      }
     },
     "接続済み" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connected"
+          }
+        }
+      }
     },
     "操作ヒント: 指でなぞって不要な部分を消します" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tip: Trace with your finger to erase"
+          }
+        }
+      }
     },
     "操作ヒント: 指でなぞって消しすぎた部分を復元します" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tip: Trace with your finger to restore"
+          }
+        }
+      }
     },
     "新しいバージョン(%@)が利用可能です。\n最新機能をお楽しみください。" : {
       "localizations" : {
@@ -2568,7 +2985,14 @@
       }
     },
     "時計回りに回転" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rotate Clockwise"
+          }
+        }
+      }
     },
     "月あたり%@" : {
       "localizations" : {
@@ -2611,7 +3035,14 @@
       }
     },
     "月額プランで始める、%@毎月" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start Monthly Plan, %@/month"
+          }
+        }
+      }
     },
     "有効" : {
       "localizations" : {
@@ -2653,8 +3084,25 @@
         }
       }
     },
+    "枠線" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Border"
+          }
+        }
+      }
+    },
     "枠線の太さ: %@" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Border width: %@"
+          }
+        }
+      }
     },
     "枠線バリエーション" : {
       "localizations" : {
@@ -2717,10 +3165,35 @@
       }
     },
     "消しゴムモード" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eraser Mode"
+          }
+        }
+      }
     },
     "消しすぎた部分を復元します" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore over-erased parts"
+          }
+        }
+      }
+    },
+    "消す" : {
+      "comment" : "BrushToolbar eraser mode button label",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erase"
+          }
+        }
+      }
     },
     "無制限" : {
       "localizations" : {
@@ -2738,6 +3211,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Solid"
+          }
+        }
+      }
+    },
+    "無料プラン" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Free Plan"
           }
         }
       }
@@ -2783,7 +3266,14 @@
       }
     },
     "直前の操作を取り消します" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Undo the last action"
+          }
+        }
+      }
     },
     "相手も同じ画面を開いてください" : {
       "localizations" : {
@@ -2801,6 +3291,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Thin"
+          }
+        }
+      }
+    },
+    "終了色" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End Color"
           }
         }
       }
@@ -2826,7 +3326,25 @@
       }
     },
     "縮小" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoom Out"
+          }
+        }
+      }
+    },
+    "背景" : {
+      "comment" : "BoardEditorView toolbar: background settings",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Background"
+          }
+        }
+      }
     },
     "背景パターン" : {
       "localizations" : {
@@ -2839,7 +3357,14 @@
       }
     },
     "背景プレビュー、%@" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Background preview, %@"
+          }
+        }
+      }
     },
     "背景を除去しています..." : {
       "localizations" : {
@@ -2847,6 +3372,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Removing background..."
+          }
+        }
+      }
+    },
+    "背景色" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Background Color"
+          }
+        }
+      }
+    },
+    "背面" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
           }
         }
       }
@@ -2863,7 +3408,14 @@
       }
     },
     "被写体を長押しして選択できます" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long press to select a subject"
+          }
+        }
+      }
     },
     "設定" : {
       "localizations" : {
@@ -2906,7 +3458,14 @@
       }
     },
     "読込失敗" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Load Failed"
+          }
+        }
+      }
     },
     "購入に失敗しました: %@" : {
       "localizations" : {
@@ -2988,8 +3547,26 @@
         }
       }
     },
+    "追加" : {
+      "comment" : "BoardEditorView toolbar: add sticker",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add"
+          }
+        }
+      }
+    },
     "追加したいシールを選択してください" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select stickers to add"
+          }
+        }
+      }
     },
     "送るシールを選ぶ" : {
       "localizations" : {
@@ -3012,7 +3589,14 @@
       }
     },
     "送信中…" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sending..."
+          }
+        }
+      }
     },
     "適用" : {
       "localizations" : {
@@ -3025,10 +3609,24 @@
       }
     },
     "選択" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select"
+          }
+        }
+      }
     },
     "選択したシールをコレクションに保存します" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save selected stickers to collection"
+          }
+        }
+      }
     },
     "選択した写真のプレビュー" : {
       "localizations" : {
@@ -3041,7 +3639,14 @@
       }
     },
     "選択中" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selected"
+          }
+        }
+      }
     },
     "重要なアップデート(%@)が利用可能です。\n最新機能と改善をお楽しみください。" : {
       "localizations" : {
@@ -3054,7 +3659,14 @@
       }
     },
     "閉じている" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Closed"
+          }
+        }
+      }
     },
     "閉じる" : {
       "localizations" : {
@@ -3067,7 +3679,24 @@
       }
     },
     "開いている" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open"
+          }
+        }
+      }
+    },
+    "開始色" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start Color"
+          }
+        }
+      }
     },
     "関連リンク" : {
       "localizations" : {

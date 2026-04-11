@@ -161,11 +161,11 @@ struct MultiStickerSelectionView: View {
                     }
                 }
             } label: {
-                Text(selectedIndices.count == images.count ? "すべて解除" : "すべて選択")
+                (selectedIndices.count == images.count ? Text("すべて解除") : Text("すべて選択"))
                     .font(.system(size: 14, weight: .medium, design: .rounded))
                     .foregroundStyle(AppTheme.accent)
             }
-            .accessibilityValue("\(selectedIndices.count)/\(images.count)枚選択中")
+            .accessibilityValue(String(format: String(localized: "%lld/%lld枚選択中"), selectedIndices.count, images.count))
 
             // 保存ボタン
             Button {
@@ -173,7 +173,7 @@ struct MultiStickerSelectionView: View {
             } label: {
                 HStack(spacing: 8) {
                     Image(systemName: "checkmark.circle.fill")
-                    Text("\(selectedIndices.count)枚をコレクションに追加")
+                    Text(String(format: String(localized: "%lld枚をコレクションに追加"), Int64(selectedIndices.count)))
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
                 }
                 .frame(maxWidth: .infinity)
@@ -183,8 +183,8 @@ struct MultiStickerSelectionView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 14))
             }
             .disabled(selectedIndices.isEmpty)
-            .accessibilityLabel("\(selectedIndices.count)枚をコレクションに追加")
-            .accessibilityHint(selectedIndices.isEmpty ? "シールを選択してください" : "選択したシールをコレクションに保存します")
+            .accessibilityLabel(String(format: String(localized: "%lld枚をコレクションに追加"), Int64(selectedIndices.count)))
+            .accessibilityHint(selectedIndices.isEmpty ? String(localized: "シールを選択してください") : String(localized: "選択したシールをコレクションに保存します"))
         }
     }
 
