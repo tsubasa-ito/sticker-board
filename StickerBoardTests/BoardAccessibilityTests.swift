@@ -165,7 +165,9 @@ struct BoardAccessibilityTests {
         // Issue #206: 背景選択シートが中途半端な高さで開く問題
         // showingBackgroundPicker のシートに .medium detent が含まれていないこと
         // .large のみで開くことで、コンテンツが全画面表示される
-        let backgroundPickerRange = try #require(content.range(of: "showingBackgroundPicker, onDismiss"))
+        // 注意: このテストはソースコード文字列に依存する脆弱なテストです。
+        // 失敗した場合は BoardEditorView.swift の背景選択シートの presentationDetents を確認してください。
+        let backgroundPickerRange = try #require(content.range(of: "isPresented: $showingBackgroundPicker"))
         let afterPicker = content[backgroundPickerRange.lowerBound...]
         let detentsRange = try #require(afterPicker.range(of: "presentationDetents"))
         let detentsEnd = try #require(afterPicker[detentsRange.lowerBound...].range(of: ")"))
