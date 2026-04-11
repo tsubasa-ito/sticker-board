@@ -77,7 +77,7 @@ struct StickerLibraryView: View {
                 Text("シール画像の読み込みに失敗しました。画像が破損している可能性があります。")
             }
             .alert(
-                saveToPhotosSuccess ? "写真を保存しました" : "保存に失敗しました",
+                saveToPhotosSuccess ? LocalizedStringKey("写真を保存しました") : LocalizedStringKey("保存に失敗しました"),
                 isPresented: $showSaveToPhotosResult
             ) {
                 Button("OK", role: .cancel) {}
