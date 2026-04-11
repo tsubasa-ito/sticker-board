@@ -517,99 +517,119 @@ struct StickerPreviewOverlay: View {
                     .font(.system(size: 13, design: .rounded))
                     .foregroundStyle(.white.opacity(0.6))
 
-                // 回転ボタン
-                HStack(spacing: 12) {
-                    Button {
-                        onRotate(false)
-                    } label: {
-                        Image(systemName: "rotate.left")
-                            .font(.system(size: 20))
-                            .foregroundStyle(.white)
-                            .frame(width: 44, height: 44)
-                            .background(.white.opacity(0.15))
-                            .clipShape(Circle())
-                    }
-                    .accessibilityLabel("左に90度回転")
-                    .accessibilityHint("シールを反時計回りに90度回転します")
-
-                    Button {
-                        onRotate(true)
-                    } label: {
-                        Image(systemName: "rotate.right")
-                            .font(.system(size: 20))
-                            .foregroundStyle(.white)
-                            .frame(width: 44, height: 44)
-                            .background(.white.opacity(0.15))
-                            .clipShape(Circle())
-                    }
-                    .accessibilityLabel("右に90度回転")
-                    .accessibilityHint("シールを時計回りに90度回転します")
-                }
-
-                // 共有・保存ボタン
-                HStack(spacing: 12) {
-                    Button {
-                        onShare()
-                    } label: {
-                        Image(systemName: "square.and.arrow.up")
-                            .font(.system(size: 20))
-                            .foregroundStyle(.white)
-                            .frame(width: 44, height: 44)
-                            .background(.white.opacity(0.15))
-                            .clipShape(Circle())
-                    }
-                    .accessibilityLabel("シールを共有")
-                    .accessibilityHint("シール画像をAirDrop・SNS等で共有します")
-
-                    Button {
-                        onSaveToPhotos()
-                    } label: {
-                        Image(systemName: "square.and.arrow.down")
-                            .font(.system(size: 20))
-                            .foregroundStyle(.white)
-                            .frame(width: 44, height: 44)
-                            .background(.white.opacity(0.15))
-                            .clipShape(Circle())
-                    }
-                    .accessibilityLabel("写真に保存")
-                    .accessibilityHint("シール画像をフォトライブラリに保存します")
-                }
-
-                // アクションボタン
-                HStack(spacing: 16) {
-                    Button {
-                        onDelete()
-                    } label: {
-                        Label("削除", systemImage: "trash")
-                            .font(.system(size: 14, weight: .medium, design: .rounded))
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 12)
-                            .background(.white.opacity(0.15))
-                            .clipShape(Capsule())
-                    }
-                    .accessibilityLabel("シールを削除")
-
-                    Button {
-                        onMaskEdit()
-                    } label: {
-                        Label("再編集", systemImage: "eraser.line.dashed")
-                            .font(.system(size: 14, weight: .medium, design: .rounded))
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 12)
-                            .background(.white.opacity(0.15))
-                            .clipShape(Capsule())
-                    }
-                    .accessibilityLabel("マスクを再編集")
-                }
-                .padding(.top, 4)
-
                 Spacer(minLength: 0)
+
+                // 統合アクションバー
+                stickerActionBar
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 40)
             }
-            .padding(.vertical, 60)
+            .padding(.top, 60)
         }
         .transition(.opacity)
+    }
+
+    // MARK: - 統合アクションバー
+
+    private var stickerActionBar: some View {
+        HStack(spacing: 0) {
+            // グループ1: 回転
+            HStack(spacing: 0) {
+                overlayActionButton(
+                    icon: "rotate.left",
+                    label: String(localized: "左回転"),
+                    accessLabel: "左に90度回転",
+                    accessHint: "シールを反時計回りに90度回転します"
+                ) { onRotate(false) }
+
+                overlayActionButton(
+                    icon: "rotate.right",
+                    label: String(localized: "右回転"),
+                    accessLabel: "右に90度回転",
+                    accessHint: "シールを時計回りに90度回転します"
+                ) { onRotate(true) }
+            }
+            .frame(maxWidth: .infinity)
+
+            actionBarDivider
+
+            // グループ2: 出力
+            HStack(spacing: 0) {
+                overlayActionButton(
+                    icon: "square.and.arrow.up",
+                    label: String(localized: "共有"),
+                    accessLabel: "シールを共有",
+                    accessHint: "シール画像をAirDrop・SNS等で共有します"
+                ) { onShare() }
+
+                overlayActionButton(
+                    icon: "square.and.arrow.down",
+                    label: String(localized: "写真に保存"),
+                    accessLabel: "写真に保存",
+                    accessHint: "シール画像をフォトライブラリに保存します"
+                ) { onSaveToPhotos() }
+            }
+            .frame(maxWidth: .infinity)
+
+            actionBarDivider
+
+            // グループ3: 編集・削除
+            HStack(spacing: 0) {
+                overlayActionButton(
+                    icon: "eraser.line.dashed",
+                    label: String(localized: "再編集"),
+                    accessLabel: "マスクを再編集"
+                ) { onMaskEdit() }
+
+                overlayActionButton(
+                    icon: "trash",
+                    label: String(localized: "削除"),
+                    accessLabel: "シールを削除",
+                    tint: Color(red: 1.0, green: 0.35, blue: 0.35)
+                ) { onDelete() }
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .padding(.vertical, 12)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .strokeBorder(.white.opacity(0.12), lineWidth: 1)
+        }
+    }
+
+    private var actionBarDivider: some View {
+        Rectangle()
+            .fill(.white.opacity(0.18))
+            .frame(width: 1, height: 36)
+    }
+
+    @ViewBuilder
+    private func overlayActionButton(
+        icon: String,
+        label: String,
+        accessLabel: String,
+        accessHint: String = "",
+        tint: Color = .white,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            VStack(spacing: 5) {
+                Image(systemName: icon)
+                    .font(.system(size: 17, weight: .regular))
+                    .foregroundStyle(tint)
+                Text(label)
+                    .font(.system(size: 10, weight: .medium, design: .rounded))
+                    .foregroundStyle(tint.opacity(0.75))
+                    .lineLimit(1)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 6)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(accessLabel)
+        .accessibilityHint(accessHint)
     }
 }
 
