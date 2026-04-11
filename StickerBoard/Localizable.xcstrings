@@ -2436,6 +2436,46 @@
         }
       }
     },
+    "写真を保存しました" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saved to Photos"
+          }
+        }
+      }
+    },
+    "フォトライブラリへの保存中にエラーが発生しました。アクセス許可を確認してください。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An error occurred while saving to the photo library. Please check access permissions."
+          }
+        }
+      }
+    },
+    "シール画像をAirDrop・SNS等で共有します" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share the sticker image via AirDrop, social media, etc."
+          }
+        }
+      }
+    },
+    "シール画像をフォトライブラリに保存します" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save the sticker image to your photo library."
+          }
+        }
+      }
+    },
     "写真を切り抜いて\nオリジナルシールを作ろう" : {
       "localizations" : {
         "en" : {

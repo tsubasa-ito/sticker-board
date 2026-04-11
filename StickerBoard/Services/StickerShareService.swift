@@ -23,7 +23,7 @@ enum StickerShareService {
         }
 
         let status = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
-        guard status == .authorized else {
+        guard status == .authorized || status == .limited else {
             logger.warning("saveToPhotos: Photo library authorization denied (status=\(status.rawValue))")
             return false
         }
@@ -63,9 +63,12 @@ enum StickerShareService {
         }
 
         if let popover = activityVC.popoverPresentationController {
-            let bounds = windowScene.screen.bounds
             popover.sourceView = topVC.view
-            popover.sourceRect = CGRect(x: bounds.midX, y: bounds.midY, width: 0, height: 0)
+            popover.sourceRect = CGRect(
+                x: topVC.view.bounds.midX,
+                y: topVC.view.bounds.midY,
+                width: 0, height: 0
+            )
             popover.permittedArrowDirections = []
         }
 
