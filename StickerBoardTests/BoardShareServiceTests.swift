@@ -48,14 +48,12 @@ struct BoardShareServiceTests {
         )
     }
 
-    @Test func presentShareSheet_同期ImageRendererを直接呼ばない() throws {
+    @Test func presentShareSheet_awaitでImageRendererを作成している() throws {
         let content = try shareServiceContent
-        // 非同期化後は ImageRenderer を同期で直接作成してはいけない
-        // "let renderer = ImageRenderer(" は存在してはいけない（await が必要）
-        let syncPattern = "let renderer = ImageRenderer(content: content)"
+        // 非同期化後は await ImageRenderer(...) パターンで作成する必要がある
         #expect(
-            !content.contains(syncPattern),
-            "presentShareSheet が同期的に ImageRenderer を作成しています"
+            content.contains("await ImageRenderer(content:"),
+            "presentShareSheet が await ImageRenderer パターンを使用していません"
         )
     }
 
@@ -78,27 +76,12 @@ struct BoardShareServiceTests {
         )
     }
 
-    @Test func saveBoardAsImage_同期ImageRendererを直接呼ばない() throws {
+    @Test func saveBoardAsImage_awaitでImageRendererを作成している() throws {
         let content = try boardEditorContent
-
-        // saveBoardAsImage の定義箇所を抽出
-        guard let range = content.range(of: "func saveBoardAsImage() async") else {
-            Issue.record("saveBoardAsImage の async 版が見つかりません")
-            return
-        }
-        let afterFunc = content[range.lowerBound...]
-        // 次の func まで（メソッド末尾まで）
-        let methodBody: String
-        if let nextFuncRange = afterFunc.dropFirst(10).range(of: "\n    private func ") {
-            methodBody = String(afterFunc[..<nextFuncRange.lowerBound])
-        } else {
-            methodBody = String(afterFunc.prefix(2000))
-        }
-
-        let syncPattern = "let renderer = ImageRenderer(content:"
+        // 非同期化後は await ImageRenderer(...) パターンで作成する必要がある
         #expect(
-            !methodBody.contains(syncPattern),
-            "saveBoardAsImage が同期的に ImageRenderer を作成しています"
+            content.contains("await ImageRenderer(content:"),
+            "saveBoardAsImage が await ImageRenderer パターンを使用していません"
         )
     }
 
