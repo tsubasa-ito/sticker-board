@@ -3,6 +3,7 @@ import SwiftData
 
 struct BoardListView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.displayScale) private var displayScale
     @Query(sort: \Board.createdAt, order: .forward) private var boards: [Board]
 
     @State private var showingNewBoard = false
@@ -110,6 +111,11 @@ struct BoardListView: View {
                     }
                     .buttonStyle(.plain)
                     .contextMenu {
+                        Button {
+                            shareBoardAsImage(board)
+                        } label: {
+                            Label("共有", systemImage: "square.and.arrow.up")
+                        }
                         Button(role: .destructive) {
                             boardToDelete = board
                             showingDeleteConfirmation = true
@@ -120,6 +126,62 @@ struct BoardListView: View {
                 }
             }
             .padding(20)
+        }
+    }
+
+    // MARK: - SNSシェア
+
+    /// ボードを画像にレンダリングしてiOSシェアシートを表示する
+    private func shareBoardAsImage(_ board: Board) {
+        let canvasSize = estimatedCanvasSize(for: board)
+        let customBackgroundImage: UIImage? = {
+            guard board.backgroundPattern.patternType == .custom,
+                  let fileName = board.backgroundPattern.customImageFileName else { return nil }
+            return BackgroundImageStorage.load(fileName: fileName)
+        }()
+
+        let content = BoardSnapshotView(
+            placements: board.placements,
+            size: canvasSize,
+            backgroundConfig: board.backgroundPattern,
+            customBackgroundImage: customBackgroundImage,
+            showWatermark: !SubscriptionManager.shared.isProUser
+        )
+
+        let renderer = ImageRenderer(content: content)
+        renderer.scale = displayScale
+
+        guard let image = renderer.uiImage else { return }
+
+        let activityVC = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+
+        guard let windowScene = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first(where: { $0.activationState == .foregroundActive }),
+              let rootVC = windowScene.keyWindow?.rootViewController else { return }
+
+        if let popover = activityVC.popoverPresentationController {
+            let bounds = windowScene.screen.bounds
+            popover.sourceView = rootVC.view
+            popover.sourceRect = CGRect(x: bounds.midX, y: bounds.midY, width: 0, height: 0)
+            popover.permittedArrowDirections = []
+        }
+
+        rootVC.present(activityVC, animated: true)
+    }
+
+    /// BoardEditorViewのキャンバスサイズを近似する（padding 24pt×2、ボードタイプ別アスペクト比）
+    @MainActor
+    private func estimatedCanvasSize(for board: Board) -> CGSize {
+        let bounds = AppTheme.screenBounds
+        let width = bounds.width - 48
+        switch board.boardType {
+        case .widgetLarge:
+            return CGSize(width: width, height: width / BoardType.widgetLargeAspectRatio)
+        case .widgetMedium:
+            return CGSize(width: width, height: width / BoardType.widgetMediumAspectRatio)
+        case .standard:
+            return CGSize(width: width, height: bounds.height - 200)
         }
     }
 

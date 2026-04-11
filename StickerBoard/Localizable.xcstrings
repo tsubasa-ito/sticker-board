@@ -2396,6 +2396,16 @@
         }
       }
     },
+    "共有" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share"
+          }
+        }
+      }
+    },
     "写真に保存" : {
       "localizations" : {
         "en" : {

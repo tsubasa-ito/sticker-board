@@ -118,7 +118,17 @@ struct BoardEditorView: View {
         .toolbarBackground(AppTheme.editorBackground, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .toolbar {
-            ToolbarItem(placement: .primaryAction) {
+            ToolbarItemGroup(placement: .primaryAction) {
+                Button {
+                    shareBoardAsImage()
+                } label: {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(placements.isEmpty ? AppTheme.textTertiary : AppTheme.accent)
+                }
+                .accessibilityLabel(String(localized: "共有"))
+                .disabled(placements.isEmpty)
+
                 Button {
                     showingSaveConfirmation = true
                 } label: {
@@ -126,7 +136,7 @@ struct BoardEditorView: View {
                         .font(.system(size: 15, weight: .medium))
                         .foregroundStyle(placements.isEmpty ? AppTheme.textTertiary : AppTheme.accent)
                 }
-                .accessibilityLabel("写真に保存")
+                .accessibilityLabel(String(localized: "写真に保存"))
                 .disabled(placements.isEmpty)
             }
         }
@@ -747,6 +757,33 @@ struct BoardEditorView: View {
         } else {
             customBackgroundImage = nil
         }
+    }
+
+    // MARK: - SNSシェア
+
+    private func shareBoardAsImage() {
+        let content = BoardSnapshotView(placements: sortedPlacements, size: canvasSize, backgroundConfig: backgroundConfig, customBackgroundImage: customBackgroundImage, showWatermark: !SubscriptionManager.shared.isProUser)
+
+        let renderer = ImageRenderer(content: content)
+        renderer.scale = displayScale
+
+        guard let image = renderer.uiImage else { return }
+
+        let activityVC = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+
+        guard let windowScene = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first(where: { $0.activationState == .foregroundActive }),
+              let rootVC = windowScene.keyWindow?.rootViewController else { return }
+
+        if let popover = activityVC.popoverPresentationController {
+            let bounds = windowScene.screen.bounds
+            popover.sourceView = rootVC.view
+            popover.sourceRect = CGRect(x: bounds.midX, y: bounds.midY, width: 0, height: 0)
+            popover.permittedArrowDirections = []
+        }
+
+        rootVC.present(activityVC, animated: true)
     }
 
     // MARK: - 画像として保存
