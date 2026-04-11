@@ -137,4 +137,20 @@ struct BoardAccessibilityTests {
         // 失敗時はその変更が正当かどうかを確認すること。
         #expect(!content.contains("Image(systemName: \"xmark\")"))
     }
+
+    // MARK: - BackgroundPatternPickerView シート高さ (Issue #206)
+
+    @Test func BoardEditorView_背景選択シートがmediumDetentを使用しない() throws {
+        let content = try readFile("StickerBoard/Views/Board/BoardEditorView.swift")
+        // Issue #206: 背景選択シートが中途半端な高さで開く問題
+        // showingBackgroundPicker のシートに .medium detent が含まれていないこと
+        // .large のみで開くことで、コンテンツが全画面表示される
+        let backgroundPickerRange = try #require(content.range(of: "showingBackgroundPicker"))
+        let afterPicker = content[backgroundPickerRange.lowerBound...]
+        let detentsRange = try #require(afterPicker.range(of: "presentationDetents"))
+        let detentsEnd = try #require(afterPicker[detentsRange.lowerBound...].range(of: ")"))
+        let detentsSection = String(afterPicker[detentsRange.lowerBound..<detentsEnd.upperBound])
+        #expect(!detentsSection.contains(".medium"),
+                "背景選択シートに .medium detent が含まれています。.large のみにしてください")
+    }
 }

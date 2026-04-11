@@ -141,7 +141,7 @@ struct BoardEditorView: View {
             saveBoard()
         }) {
             BackgroundPatternPickerView(config: $backgroundConfig)
-                .presentationDetents([.medium, .large])
+                .presentationDetents([.large])
         }
         .sheet(isPresented: $showingFilterPicker) {
             if let id = selectedPlacementId,
