@@ -143,6 +143,7 @@
 | β版P2P通信 | MultipeerConnectivity（近距離シール交換） |
 | プロジェクト管理 | XcodeGen |
 | 対応OS | iOS 18+ |
+| 対応言語 | 日本語・英語（Localizable.xcstrings） |
 
 ---
 

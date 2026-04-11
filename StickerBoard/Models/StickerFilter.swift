@@ -15,13 +15,13 @@ enum StickerFilter: String, Codable, CaseIterable, Identifiable {
 
     var displayName: String {
         switch self {
-        case .original: "オリジナル"
-        case .sparkle: "キラキラ"
-        case .retro: "レトロ"
-        case .pastel: "パステル"
-        case .neon: "ネオン"
-        case .puffy: "ぷっくり"
-        case .wappen: "ワッペン"
+        case .original: String(localized: "オリジナル")
+        case .sparkle:  String(localized: "キラキラ")
+        case .retro:    String(localized: "レトロ")
+        case .pastel:   String(localized: "パステル")
+        case .neon:     String(localized: "ネオン")
+        case .puffy:    String(localized: "ぷっくり")
+        case .wappen:   String(localized: "ワッペン")
         }
     }
 

@@ -90,14 +90,14 @@ struct MaskEditorView: View {
     private var bottomToolbar: some View {
         VStack(spacing: 8) {
             // ヒントテキスト
-            Text(brushMode == .eraser
-                 ? "指でなぞって不要な部分を消します"
-                 : "指でなぞって消しすぎた部分を復元します")
+            (brushMode == .eraser
+                ? Text("指でなぞって不要な部分を消します")
+                : Text("指でなぞって消しすぎた部分を復元します"))
                 .font(.system(size: 12, weight: .medium, design: .rounded))
                 .foregroundStyle(.white.opacity(0.7))
                 .accessibilityLabel(brushMode == .eraser
-                    ? "操作ヒント: 指でなぞって不要な部分を消します"
-                    : "操作ヒント: 指でなぞって消しすぎた部分を復元します")
+                    ? Text("操作ヒント: 指でなぞって不要な部分を消します")
+                    : Text("操作ヒント: 指でなぞって消しすぎた部分を復元します"))
 
             BrushToolbar(
                 brushMode: $brushMode,

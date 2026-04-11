@@ -243,9 +243,9 @@ class MaskCanvasUIView: UIView {
         isMultipleTouchEnabled = false
 
         isAccessibilityElement = true
-        accessibilityLabel = "マスク描画キャンバス"
+        accessibilityLabel = String(localized: "マスク描画キャンバス")
         accessibilityTraits = .allowsDirectInteraction
-        accessibilityHint = "指でなぞってマスクを編集します。2本指でズームやスクロールができます"
+        accessibilityHint = String(localized: "指でなぞってマスクを編集します。2本指でズームやスクロールができます")
 
         setupMaskContext(with: initialMask)
         setupDisplayLink()

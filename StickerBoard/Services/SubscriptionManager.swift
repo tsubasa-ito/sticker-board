@@ -22,9 +22,9 @@ final class SubscriptionManager: ObservableObject {
 
         var displayName: String {
             switch self {
-            case .free: "無料プラン"
-            case .monthlyPro: "Pro（月額）"
-            case .yearlyPro: "Pro（年額）"
+            case .free:       String(localized: "無料プラン")
+            case .monthlyPro: String(localized: "Pro（月額）")
+            case .yearlyPro:  String(localized: "Pro（年額）")
             }
         }
     }

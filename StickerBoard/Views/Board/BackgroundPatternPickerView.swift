@@ -340,7 +340,7 @@ struct BackgroundPatternPickerView: View {
         }
     }
 
-    private func colorRow(label: String, colorHex: Binding<String>) -> some View {
+    private func colorRow(label: LocalizedStringKey, colorHex: Binding<String>) -> some View {
         HStack {
             Text(label)
                 .font(.system(size: 14, weight: .medium, design: .rounded))
@@ -354,7 +354,7 @@ struct BackgroundPatternPickerView: View {
                 supportsOpacity: false
             )
             .labelsHidden()
-            .accessibilityLabel("\(label)を選択")
+            .accessibilityLabel(label)
         }
     }
 

@@ -14,12 +14,12 @@ enum BackgroundPatternType: String, Codable, CaseIterable, Identifiable {
 
     var displayName: String {
         switch self {
-        case .solid: "無地"
-        case .dot: "ドット"
-        case .grid: "グリッド"
-        case .stripe: "ストライプ"
-        case .gradient: "グラデーション"
-        case .custom: "写真"
+        case .solid:    String(localized: "無地")
+        case .dot:      String(localized: "ドット")
+        case .grid:     String(localized: "グリッド")
+        case .stripe:   String(localized: "ストライプ")
+        case .gradient: String(localized: "グラデーション")
+        case .custom:   String(localized: "写真")
         }
     }
 

@@ -6,8 +6,8 @@ struct OnboardingPage: Identifiable {
     let id: Int
     let icon: String
     let secondaryIcon: String?
-    let title: String
-    let description: String
+    let title: LocalizedStringKey
+    let description: LocalizedStringKey
 
     static let pages: [OnboardingPage] = [
         OnboardingPage(

@@ -72,14 +72,17 @@
 		B4AA40A530C03F83FF775E31 /* BackgroundPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC1436F39A4162AD412D53A /* BackgroundPattern.swift */; };
 		B64557CBC40B089B6FDFB338 /* BoardEditorToolbarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB6A08C090537657BB85CAD /* BoardEditorToolbarTests.swift */; };
 		B96495C34AE5425881B553FB /* BoardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259987BEAF660FD74A7333A2 /* BoardTests.swift */; };
+		BB3A553CDC3D465634997BD1 /* LocalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4939209FC57BA497E419A77C /* LocalizationTests.swift */; };
 		BD758AE1F44F9E566222251D /* AppUpdateCheckerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BAF06066174FD79C8F5DAD8 /* AppUpdateCheckerTests.swift */; };
 		BDC24ACEB8628C05167A1914 /* PaywallAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2647DE31B6EC1A661584CC /* PaywallAccessibilityTests.swift */; };
 		BDD4B606C0138C4D7142458D /* StickerItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF271962CA9EF750652A353 /* StickerItemView.swift */; };
 		BED979FE590B8C4D2ECA17E5 /* BoardShowcaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D580E04D977AE3825B222BDA /* BoardShowcaseView.swift */; };
 		BFF87E82B1ACC34DD2F9E78E /* ReviewRequestManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C592ED5BC9F9E05F81F080EB /* ReviewRequestManagerTests.swift */; };
 		C15AD91380FD7AF94B202969 /* MultipeerConnectivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0081C534E8685E18985449F /* MultipeerConnectivityManager.swift */; };
+		C296B3B1CDC3575D2AB9631D /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = B24A758064D0878810AE99A9 /* InfoPlist.xcstrings */; };
 		C2AF5B0E2BFAC184CC8279FA /* StickerBorderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276A77B1063731059420BB58 /* StickerBorderTests.swift */; };
 		C4460E2AC4B0A01446BD3666 /* StickerLibraryAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6E414C38C81FDD95EBC2EE /* StickerLibraryAccessibilityTests.swift */; };
+		C872359F958D4BC34AB71FDB /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = D88D0DB2BBA3A6003D7B42C5 /* Localizable.xcstrings */; };
 		C98D76F680578FBA369FBE52 /* AccessibilityRuleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDF2A8C549FCAF35D5DD828 /* AccessibilityRuleTests.swift */; };
 		CB5CDB350C326919C148B630 /* SubscriptionProduct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285EEB7B80609E9E695A678B /* SubscriptionProduct.swift */; };
 		CD7F900D42AEFF5E5C1C652F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F297348DD96E3A76B8648C82 /* SettingsView.swift */; };
@@ -171,6 +174,7 @@
 		3E3E385C3511299350E1EDC0 /* HolographicAccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HolographicAccessibilityTests.swift; sourceTree = "<group>"; };
 		453EB379EB98A3F0EDA2660F /* BoardAccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardAccessibilityTests.swift; sourceTree = "<group>"; };
 		481D3899B8F8B2A414930953 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		4939209FC57BA497E419A77C /* LocalizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationTests.swift; sourceTree = "<group>"; };
 		4C642A18BD372D652AF5FF3B /* BoardDeleteConfirmationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardDeleteConfirmationTests.swift; sourceTree = "<group>"; };
 		4E07374D0724CABB84AC640D /* StickerFilterPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerFilterPickerView.swift; sourceTree = "<group>"; };
 		504A7665F90173671AD3B76A /* StickerBorderServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerBorderServiceTests.swift; sourceTree = "<group>"; };
@@ -208,6 +212,7 @@
 		AFDF2A8C549FCAF35D5DD828 /* AccessibilityRuleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityRuleTests.swift; sourceTree = "<group>"; };
 		B03A91B141329E13EDBEAE9A /* StickerPlacementTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerPlacementTests.swift; sourceTree = "<group>"; };
 		B201CDCE2F666FBBD15D4F72 /* CaptureGuideTipsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureGuideTipsView.swift; sourceTree = "<group>"; };
+		B24A758064D0878810AE99A9 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		B705C9966BB0F482903B62FE /* WidgetDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataManager.swift; sourceTree = "<group>"; };
 		B8B41B23D775F8487A3B361B /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		BC7D45D8C72A452AD58666E2 /* StickerExchangeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerExchangeView.swift; sourceTree = "<group>"; };
@@ -226,6 +231,7 @@
 		D44F094F53D9CC5028477F0F /* StickerFilterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerFilterService.swift; sourceTree = "<group>"; };
 		D580E04D977AE3825B222BDA /* BoardShowcaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardShowcaseView.swift; sourceTree = "<group>"; };
 		D6B0FF96EE3690AFD3B800B6 /* StickerFilterServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerFilterServiceTests.swift; sourceTree = "<group>"; };
+		D88D0DB2BBA3A6003D7B42C5 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		D8F0053CD2C5B7ABC5FC4A01 /* StickerPlacement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerPlacement.swift; sourceTree = "<group>"; };
 		DF89F309D9AC84739E116281 /* StickerLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerLibraryView.swift; sourceTree = "<group>"; };
 		DFE93838BF2C08278A3401AE /* ImageStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStorage.swift; sourceTree = "<group>"; };
@@ -432,6 +438,8 @@
 			children = (
 				F870EE68E060BE5480814A21 /* Assets.xcassets */,
 				7CD06747BFE70CBCA6E9F737 /* Info.plist */,
+				B24A758064D0878810AE99A9 /* InfoPlist.xcstrings */,
+				D88D0DB2BBA3A6003D7B42C5 /* Localizable.xcstrings */,
 				481D3899B8F8B2A414930953 /* PrivacyInfo.xcprivacy */,
 				7F33B54B676954CD018A4AA4 /* StickerBoard.entitlements */,
 				22130D75CEBE5A13BF65E1B7 /* App */,
@@ -497,6 +505,7 @@
 				0CBA6E251F33AFE7D815B51E /* ImageCacheManagerTests.swift */,
 				604CC75026AD20187DC30B3F /* ImageStorageTests.swift */,
 				D2E37E2FABECAE9B23C7CF61 /* KeychainHelperTests.swift */,
+				4939209FC57BA497E419A77C /* LocalizationTests.swift */,
 				82762278F79270BA92FD3D38 /* MaskCompositorTests.swift */,
 				E0CBD991C7FF69642BB7A6AE /* MultipeerConnectivityTests.swift */,
 				EF8707E62DE974CFCF4EBA7F /* MultiStickerSelectionAccessibilityTests.swift */,
@@ -601,6 +610,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				Base,
+				en,
 				ja,
 			);
 			mainGroup = AEE31375B1000485F271BCDA;
@@ -626,6 +636,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				567094296030D6D397CCFDA2 /* Assets.xcassets in Resources */,
+				C296B3B1CDC3575D2AB9631D /* InfoPlist.xcstrings in Resources */,
+				C872359F958D4BC34AB71FDB /* Localizable.xcstrings in Resources */,
 				9A0AB01CE180AFFE5DD3A5C9 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -738,6 +750,7 @@
 				E2C654B1A92506E96A3EA2E3 /* ImageCacheManagerTests.swift in Sources */,
 				E1E29CF14D41BF97D2C1B6E2 /* ImageStorageTests.swift in Sources */,
 				6E80A247DC5FCB47A37C937C /* KeychainHelperTests.swift in Sources */,
+				BB3A553CDC3D465634997BD1 /* LocalizationTests.swift in Sources */,
 				2B1517B2E5E84806CB242F6C /* MaskCompositorTests.swift in Sources */,
 				A282C9579FE88F9AAA4AAB8E /* MultiStickerSelectionAccessibilityTests.swift in Sources */,
 				F890DFFA9DE2648E4FAB3C3D /* MultipeerConnectivityTests.swift in Sources */,

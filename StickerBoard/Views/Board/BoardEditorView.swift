@@ -503,7 +503,7 @@ struct BoardEditorView: View {
         )
     }
 
-    private func toolbarButton(icon: String, label: String, color: Color, action: @escaping () -> Void) -> some View {
+    private func toolbarButton(icon: String, label: LocalizedStringKey, color: Color, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             VStack(spacing: 4) {
                 Image(systemName: icon)
