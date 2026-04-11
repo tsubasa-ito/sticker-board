@@ -56,6 +56,16 @@ open StickerBoard.xcodeproj
 
 > **注意（Xcode 26 beta）:** Swift Testing の `@Test func` の関数名を数字（`0`〜`9`）で始めると `build-for-testing` がクラッシュする。関数名は必ず文字またはアンダースコアで始めること（例: `180度...` → `百八十度...` or `回転後...`）
 
+### ローカライズの動作確認（英語）
+
+スキームの Application Language を変更するとシミュレータ本体の言語を変えずにアプリだけ英語で起動できる：
+
+1. Xcode 左上のターゲット名をクリック → **Edit Scheme...**
+2. **Run** → **Options** タブを開く
+3. **Application Language** を **English** に変更 → **Close**
+4. 通常通りビルド・実行するとアプリが英語で起動する
+5. 確認後は **Application Language** を **System Language** に戻す
+
 ## 注意事項
 - Vision Frameworkの背景除去はシミュレータでは動作しない（実機のみ）
 - シミュレータではフォールバックとして元画像をそのまま返す
