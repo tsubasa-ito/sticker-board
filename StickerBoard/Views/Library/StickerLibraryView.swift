@@ -518,18 +518,23 @@ struct StickerPreviewOverlay: View {
                     .foregroundStyle(.white.opacity(0.6))
 
                 Spacer(minLength: 0)
+
+                // 統合アクションバー（タブバーとホームインジケーター分の余白を確保）
+                stickerActionBar
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, actionBarBottomPadding)
             }
             .padding(.top, 60)
-            .padding(.bottom, 16)
-        }
-        // タブバーの上にアクションバーを配置（safeAreaInsetでセーフエリアを考慮）
-        .safeAreaInset(edge: .bottom, spacing: 0) {
-            stickerActionBar
-                .padding(.horizontal, 20)
-                .padding(.top, 12)
-                .padding(.bottom, 12)
         }
         .transition(.opacity)
+    }
+
+    /// タブバー（49pt）＋ホームインジケーター領域を考慮したアクションバーの底部余白
+    private var actionBarBottomPadding: CGFloat {
+        let homeIndicatorBottom = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first?.keyWindow?.safeAreaInsets.bottom ?? 34
+        return homeIndicatorBottom + 49 + 16  // ホームインジケーター + タブバー + 余白
     }
 
     // MARK: - 統合アクションバー
