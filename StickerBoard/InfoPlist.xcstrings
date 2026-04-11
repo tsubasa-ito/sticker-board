@@ -1,92 +1,103 @@
 {
   "sourceLanguage" : "ja",
   "strings" : {
-
-    "NSCameraUsageDescription" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "シールにする写真を撮影するためにカメラへのアクセスが必要です"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Camera access is required to take photos of your stickers"
-          }
-        }
-      }
-    },
-
-    "NSPhotoLibraryUsageDescription" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "シールにする写真を選択するためにフォトライブラリへのアクセスが必要です"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Photo library access is required to select photos for stickers"
-          }
-        }
-      }
-    },
-
-    "NSPhotoLibraryAddUsageDescription" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ボードを画像として写真に保存するためにフォトライブラリへのアクセスが必要です"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Photo library access is required to save your board as an image"
-          }
-        }
-      }
-    },
-
-    "NSLocalNetworkUsageDescription" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "近くのデバイスとシールを交換するためにローカルネットワークへのアクセスが必要です"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Local network access is required to exchange stickers with nearby devices"
-          }
-        }
-      }
-    },
-
     "CFBundleDisplayName" : {
+      "comment" : "Bundle display name",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "シールボード -デジタルシール帳-"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "StickerBoard - Digital Sticker Book"
           }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "シールボード -デジタルシール帳-"
+          }
+        }
+      }
+    },
+    "CFBundleName" : {
+      "comment" : "Bundle name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "StickerBoard"
+          }
+        }
+      }
+    },
+    "NSCameraUsageDescription" : {
+      "comment" : "Privacy - Camera Usage Description",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Camera access is required to take photos of your stickers"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "シールにする写真を撮影するためにカメラへのアクセスが必要です"
+          }
+        }
+      }
+    },
+    "NSLocalNetworkUsageDescription" : {
+      "comment" : "Privacy - Local Network Usage Description",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Local network access is required to exchange stickers with nearby devices"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "近くのデバイスとシールを交換するためにローカルネットワークへのアクセスが必要です"
+          }
+        }
+      }
+    },
+    "NSPhotoLibraryAddUsageDescription" : {
+      "comment" : "Privacy - Photo Library Additions Usage Description",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photo library access is required to save your board as an image"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ボードを画像として写真に保存するためにフォトライブラリへのアクセスが必要です"
+          }
+        }
+      }
+    },
+    "NSPhotoLibraryUsageDescription" : {
+      "comment" : "Privacy - Photo Library Usage Description",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photo library access is required to select photos for stickers"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "シールにする写真を選択するためにフォトライブラリへのアクセスが必要です"
+          }
         }
       }
     }
-
   },
   "version" : "1.0"
 }

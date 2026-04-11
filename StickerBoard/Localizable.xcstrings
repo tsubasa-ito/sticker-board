@@ -17,6 +17,9 @@
         }
       }
     },
+    ", " : {
+
+    },
     "、%@" : {
       "comment" : "Accessibility label suffix: generic item (e.g. badge text)",
       "localizations" : {
@@ -50,12 +53,25 @@
         }
       }
     },
+    ": " : {
+
+    },
     "「%@」を削除しますか？\nこの操作は取り消せません。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Delete \"%@\"?\nThis action cannot be undone."
+          }
+        }
+      }
+    },
+    "「接続」を\nタップ" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap\n\"Connect\""
           }
         }
       }
@@ -106,16 +122,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Send request to %@"
-          }
-        }
-      }
-    },
-    "%@, %@" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@, %2$@"
           }
         }
       }
@@ -177,16 +183,6 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$@、シール%2$lld枚、%3$@"
-          }
-        }
-      }
-    },
-    "%@: %@" : {
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@: %2$@"
           }
         }
       }
@@ -499,6 +495,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Beta feature: Specifications may change as it is experimental"
+          }
+        }
+      }
+    },
+    "アクティブ" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active"
           }
         }
       }
@@ -885,126 +891,6 @@
         }
       }
     },
-    "「接続」を\nタップ" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tap\n\"Connect\""
-          }
-        }
-      }
-    },
-    "アクティブ" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Active"
-          }
-        }
-      }
-    },
-    "デバイス検索" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scanning"
-          }
-        }
-      }
-    },
-    "停止中" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inactive"
-          }
-        }
-      }
-    },
-    "使い方" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "How to Use"
-          }
-        }
-      }
-    },
-    "受け取って\nライブラリに保存" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Receive and save\nto library"
-          }
-        }
-      }
-    },
-    "発見待機" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Discoverable"
-          }
-        }
-      }
-    },
-    "相手も\nこの画面を開く" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Both open\nthis screen"
-          }
-        }
-      }
-    },
-    "未接続" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Not connected"
-          }
-        }
-      }
-    },
-    "近くのデバイス" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nearby Devices"
-          }
-        }
-      }
-    },
-    "シールを\n選んで送る" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Select a sticker\nand send"
-          }
-        }
-      }
-    },
-    "接続中のデバイス" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Connected Devices"
-          }
-        }
-      }
-    },
     "シール %lld" : {
       "localizations" : {
         "en" : {
@@ -1101,6 +987,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Welcome to StickerBoard!"
+          }
+        }
+      }
+    },
+    "シールを\n選んで送る" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select a sticker\nand send"
           }
         }
       }
@@ -1544,6 +1440,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hide toolbar"
+          }
+        }
+      }
+    },
+    "デバイス検索" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scanning"
           }
         }
       }
@@ -2278,6 +2184,16 @@
         }
       }
     },
+    "使い方" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How to Use"
+          }
+        }
+      }
+    },
     "使い方ガイドを表示します" : {
       "localizations" : {
         "en" : {
@@ -2354,6 +2270,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Saved!"
+          }
+        }
+      }
+    },
+    "停止中" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inactive"
           }
         }
       }
@@ -2661,6 +2587,16 @@
         }
       }
     },
+    "受け取って\nライブラリに保存" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Receive and save\nto library"
+          }
+        }
+      }
+    },
     "受け取らない" : {
       "localizations" : {
         "en" : {
@@ -2934,6 +2870,7 @@
       }
     },
     "手順%@: %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3015,6 +2952,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Connect"
+          }
+        }
+      }
+    },
+    "接続中のデバイス" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connected Devices"
           }
         }
       }
@@ -3239,6 +3186,16 @@
         }
       }
     },
+    "未接続" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not connected"
+          }
+        }
+      }
+    },
     "枠線" : {
       "localizations" : {
         "en" : {
@@ -3420,12 +3377,32 @@
         }
       }
     },
+    "発見待機" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discoverable"
+          }
+        }
+      }
+    },
     "直前の操作を取り消します" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Undo the last action"
+          }
+        }
+      }
+    },
+    "相手も\nこの画面を開く" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Both open\nthis screen"
           }
         }
       }
@@ -3687,6 +3664,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Processing"
+          }
+        }
+      }
+    },
+    "近くのデバイス" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nearby Devices"
           }
         }
       }
