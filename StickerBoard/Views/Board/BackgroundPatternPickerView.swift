@@ -266,15 +266,26 @@ struct BackgroundPatternPickerView: View {
         let isSelected = config.patternType == type
         return Button {
             withAnimation(.easeInOut(duration: 0.2)) {
-                if let preset = BackgroundPatternConfig.presets.first(where: { $0.patternType == type }) {
-                    config = preset
+                if config.patternType == .custom {
+                    // 写真背景からの切り替えはデフォルトカラーを使用
+                    config = BackgroundPatternConfig(
+                        patternType: type,
+                        primaryColorHex: BackgroundPatternConfig.default.primaryColorHex,
+                        secondaryColorHex: BackgroundPatternConfig.default.secondaryColorHex
+                    )
                 } else {
+                    // 既存の色を引き継いでパターン種別のみ変更
                     config.patternType = type
                 }
             }
         } label: {
             VStack(spacing: 8) {
-                let previewConfig = BackgroundPatternConfig.presets.first(where: { $0.patternType == type }) ?? config
+                let baseColors = config.patternType == .custom ? BackgroundPatternConfig.default : config
+                let previewConfig = BackgroundPatternConfig(
+                    patternType: type,
+                    primaryColorHex: baseColors.primaryColorHex,
+                    secondaryColorHex: baseColors.secondaryColorHex
+                )
                 BoardBackgroundView(config: previewConfig)
                     .frame(width: 56, height: 56)
                     .clipShape(RoundedRectangle(cornerRadius: 12))

@@ -137,4 +137,42 @@ struct BoardAccessibilityTests {
         // 失敗時はその変更が正当かどうかを確認すること。
         #expect(!content.contains("Image(systemName: \"xmark\")"))
     }
+
+    // MARK: - BackgroundPatternPickerView パターン切り替え時の色引き継ぎ
+
+    @Test func BackgroundPatternPickerView_パターン切り替えでプリセットカラーを上書きしない() throws {
+        let content = try readFile("StickerBoard/Views/Board/BackgroundPatternPickerView.swift")
+        // パターン切り替え時に config = preset でプリセット全体を上書きしていないこと
+        // 既存の色を引き継いでパターン種別のみ変更する設計になっていること
+        #expect(!content.contains("config = preset"),
+                "パターン選択時にプリセットカラーで全上書きしています。patternTypeのみ変更してください")
+    }
+
+    @Test func BackgroundPatternPickerView_サムネイルが現在のカラーをベースにしている() throws {
+        let content = try readFile("StickerBoard/Views/Board/BackgroundPatternPickerView.swift")
+        // サムネイルプレビューがプリセットの固定色ではなく現在の config の色を使っていること
+        // "presets.first" によるプリセット色参照がサムネイル生成に使われていないこと
+        let labelRange = try #require(content.range(of: "} label: {"))
+        let afterLabel = String(content[labelRange.upperBound...])
+        #expect(!afterLabel.contains("presets.first"),
+                "サムネイルにプリセット固定色が使われています。現在の config の色を使ってください")
+    }
+
+    // MARK: - BackgroundPatternPickerView シート高さ (Issue #206)
+
+    @Test func BoardEditorView_背景選択シートがmediumDetentを使用しない() throws {
+        let content = try readFile("StickerBoard/Views/Board/BoardEditorView.swift")
+        // Issue #206: 背景選択シートが中途半端な高さで開く問題
+        // showingBackgroundPicker のシートに .medium detent が含まれていないこと
+        // .large のみで開くことで、コンテンツが全画面表示される
+        // 注意: このテストはソースコード文字列に依存する脆弱なテストです。
+        // 失敗した場合は BoardEditorView.swift の背景選択シートの presentationDetents を確認してください。
+        let backgroundPickerRange = try #require(content.range(of: "isPresented: $showingBackgroundPicker"))
+        let afterPicker = content[backgroundPickerRange.lowerBound...]
+        let detentsRange = try #require(afterPicker.range(of: "presentationDetents"))
+        let detentsEnd = try #require(afterPicker[detentsRange.lowerBound...].range(of: ")"))
+        let detentsSection = String(afterPicker[detentsRange.lowerBound..<detentsEnd.upperBound])
+        #expect(!detentsSection.contains(".medium"),
+                "背景選択シートに .medium detent が含まれています。.large のみにしてください")
+    }
 }
