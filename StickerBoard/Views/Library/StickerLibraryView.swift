@@ -518,13 +518,16 @@ struct StickerPreviewOverlay: View {
                     .foregroundStyle(.white.opacity(0.6))
 
                 Spacer(minLength: 0)
-
-                // 統合アクションバー
-                stickerActionBar
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 40)
             }
             .padding(.top, 60)
+            .padding(.bottom, 16)
+        }
+        // タブバーの上にアクションバーを配置（safeAreaInsetでセーフエリアを考慮）
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            stickerActionBar
+                .padding(.horizontal, 20)
+                .padding(.top, 12)
+                .padding(.bottom, 12)
         }
         .transition(.opacity)
     }
