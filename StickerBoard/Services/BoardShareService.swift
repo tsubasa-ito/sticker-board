@@ -9,41 +9,50 @@ enum BoardShareService {
     /// Board モデルから直接シェアシートを表示する（ホーム・ボード一覧から利用）
     static func share(_ board: Board, displayScale: CGFloat) {
         let customBackgroundImage = loadCustomBackgroundImage(for: board)
-        presentShareSheet(
-            placements: board.placements,
-            canvasSize: estimatedCanvasSize(for: board),
-            backgroundConfig: board.backgroundPattern,
-            customBackgroundImage: customBackgroundImage,
-            displayScale: displayScale
-        )
+        Task {
+            await presentShareSheet(
+                placements: board.placements,
+                canvasSize: estimatedCanvasSize(for: board),
+                backgroundConfig: board.backgroundPattern,
+                customBackgroundImage: customBackgroundImage,
+                displayScale: displayScale
+            )
+        }
     }
 
     /// エディタのキャンバスサイズを使ってシェアシートを表示する（ボードエディタから利用）
     static func share(placements: [StickerPlacement], canvasSize: CGSize, backgroundConfig: BackgroundPatternConfig, customBackgroundImage: UIImage?, displayScale: CGFloat) {
-        presentShareSheet(
-            placements: placements,
-            canvasSize: canvasSize,
-            backgroundConfig: backgroundConfig,
-            customBackgroundImage: customBackgroundImage,
-            displayScale: displayScale
-        )
+        Task {
+            await presentShareSheet(
+                placements: placements,
+                canvasSize: canvasSize,
+                backgroundConfig: backgroundConfig,
+                customBackgroundImage: customBackgroundImage,
+                displayScale: displayScale
+            )
+        }
     }
 
     // MARK: - Private
 
-    private static func presentShareSheet(placements: [StickerPlacement], canvasSize: CGSize, backgroundConfig: BackgroundPatternConfig, customBackgroundImage: UIImage?, displayScale: CGFloat) {
-        let content = BoardSnapshotView(
-            placements: placements,
-            size: canvasSize,
-            backgroundConfig: backgroundConfig,
-            customBackgroundImage: customBackgroundImage,
-            showWatermark: !SubscriptionManager.shared.isProUser
-        )
+    private static func presentShareSheet(placements: [StickerPlacement], canvasSize: CGSize, backgroundConfig: BackgroundPatternConfig, customBackgroundImage: UIImage?, displayScale: CGFloat) async {
+        let isProUser = SubscriptionManager.shared.isProUser
+        let scale = displayScale
 
-        let renderer = ImageRenderer(content: content)
-        renderer.scale = displayScale
+        let image = await Task.detached { @Sendable in
+            let content = BoardSnapshotView(
+                placements: placements,
+                size: canvasSize,
+                backgroundConfig: backgroundConfig,
+                customBackgroundImage: customBackgroundImage,
+                showWatermark: !isProUser
+            )
+            let renderer = await ImageRenderer(content: content)
+            await MainActor.run { renderer.scale = scale }
+            return await renderer.uiImage
+        }.value
 
-        guard let image = renderer.uiImage else {
+        guard let image else {
             logger.error("presentShareSheet: ImageRenderer returned nil (canvasSize=\(String(describing: canvasSize)))")
             return
         }

@@ -179,7 +179,7 @@ struct BoardEditorView: View {
         }
         .alert("写真を保存", isPresented: $showingSaveConfirmation) {
             Button("保存") {
-                saveBoardAsImage()
+                Task { await saveBoardAsImage() }
             }
             Button("キャンセル", role: .cancel) {}
         } message: {
@@ -773,35 +773,48 @@ struct BoardEditorView: View {
 
     // MARK: - 画像として保存
 
-    private func saveBoardAsImage() {
-        let content = BoardSnapshotView(placements: sortedPlacements, size: canvasSize, backgroundConfig: backgroundConfig, customBackgroundImage: customBackgroundImage, showWatermark: !SubscriptionManager.shared.isProUser)
+    private func saveBoardAsImage() async {
+        let isProUser = SubscriptionManager.shared.isProUser
+        let scale = displayScale
+        let placements = sortedPlacements
+        let size = canvasSize
+        let bgConfig = backgroundConfig
+        let bgImage = customBackgroundImage
 
-        let renderer = ImageRenderer(content: content)
-        renderer.scale = displayScale
+        let image = await Task.detached { @Sendable in
+            let content = BoardSnapshotView(
+                placements: placements,
+                size: size,
+                backgroundConfig: bgConfig,
+                customBackgroundImage: bgImage,
+                showWatermark: !isProUser
+            )
+            let renderer = await ImageRenderer(content: content)
+            await MainActor.run { renderer.scale = scale }
+            return await renderer.uiImage
+        }.value
 
-        guard let image = renderer.uiImage else {
+        guard let image else {
             saveResultSuccess = false
             showingSaveResult = true
             return
         }
 
-        Task {
-            let status = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
-            guard status == .authorized else {
-                saveResultSuccess = false
-                showingSaveResult = true
-                return
-            }
-            do {
-                try await PHPhotoLibrary.shared().performChanges {
-                    PHAssetChangeRequest.creationRequestForAsset(from: image)
-                }
-                saveResultSuccess = true
-            } catch {
-                saveResultSuccess = false
-            }
+        let status = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
+        guard status == .authorized else {
+            saveResultSuccess = false
             showingSaveResult = true
+            return
         }
+        do {
+            try await PHPhotoLibrary.shared().performChanges {
+                PHAssetChangeRequest.creationRequestForAsset(from: image)
+            }
+            saveResultSuccess = true
+        } catch {
+            saveResultSuccess = false
+        }
+        showingSaveResult = true
     }
 }
 
