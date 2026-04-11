@@ -48,12 +48,12 @@ struct BoardShareServiceTests {
         )
     }
 
-    @Test func presentShareSheet_awaitでImageRendererを作成している() throws {
+    @Test func presentShareSheet_MainActorRunでImageRendererを作成している() throws {
         let content = try shareServiceContent
-        // 非同期化後は await ImageRenderer(...) パターンで作成する必要がある
+        // MainActor.run でコンテキストスイッチを1回にまとめている
         #expect(
-            content.contains("await ImageRenderer(content:"),
-            "presentShareSheet が await ImageRenderer パターンを使用していません"
+            content.contains("await MainActor.run"),
+            "presentShareSheet が await MainActor.run パターンを使用していません"
         )
     }
 
@@ -76,12 +76,12 @@ struct BoardShareServiceTests {
         )
     }
 
-    @Test func saveBoardAsImage_awaitでImageRendererを作成している() throws {
+    @Test func saveBoardAsImage_MainActorRunでImageRendererを作成している() throws {
         let content = try boardEditorContent
-        // 非同期化後は await ImageRenderer(...) パターンで作成する必要がある
+        // MainActor.run でコンテキストスイッチを1回にまとめている
         #expect(
-            content.contains("await ImageRenderer(content:"),
-            "saveBoardAsImage が await ImageRenderer パターンを使用していません"
+            content.contains("await MainActor.run"),
+            "saveBoardAsImage が await MainActor.run パターンを使用していません"
         )
     }
 

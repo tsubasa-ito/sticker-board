@@ -47,9 +47,11 @@ enum BoardShareService {
                 customBackgroundImage: customBackgroundImage,
                 showWatermark: !isProUser
             )
-            let renderer = await ImageRenderer(content: content)
-            await MainActor.run { renderer.scale = scale }
-            return await renderer.uiImage
+            return await MainActor.run {
+                let renderer = ImageRenderer(content: content)
+                renderer.scale = scale
+                return renderer.uiImage
+            }
         }.value
 
         guard let image else {
