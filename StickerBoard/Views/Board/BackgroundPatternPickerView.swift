@@ -280,7 +280,12 @@ struct BackgroundPatternPickerView: View {
             }
         } label: {
             VStack(spacing: 8) {
-                let previewConfig = BackgroundPatternConfig.presets.first(where: { $0.patternType == type }) ?? config
+                let baseColors = config.patternType == .custom ? BackgroundPatternConfig.default : config
+                let previewConfig = BackgroundPatternConfig(
+                    patternType: type,
+                    primaryColorHex: baseColors.primaryColorHex,
+                    secondaryColorHex: baseColors.secondaryColorHex
+                )
                 BoardBackgroundView(config: previewConfig)
                     .frame(width: 56, height: 56)
                     .clipShape(RoundedRectangle(cornerRadius: 12))

@@ -148,6 +148,16 @@ struct BoardAccessibilityTests {
                 "パターン選択時にプリセットカラーで全上書きしています。patternTypeのみ変更してください")
     }
 
+    @Test func BackgroundPatternPickerView_サムネイルが現在のカラーをベースにしている() throws {
+        let content = try readFile("StickerBoard/Views/Board/BackgroundPatternPickerView.swift")
+        // サムネイルプレビューがプリセットの固定色ではなく現在の config の色を使っていること
+        // "presets.first" によるプリセット色参照がサムネイル生成に使われていないこと
+        let labelRange = try #require(content.range(of: "} label: {"))
+        let afterLabel = String(content[labelRange.upperBound...])
+        #expect(!afterLabel.contains("presets.first"),
+                "サムネイルにプリセット固定色が使われています。現在の config の色を使ってください")
+    }
+
     // MARK: - BackgroundPatternPickerView シート高さ (Issue #206)
 
     @Test func BoardEditorView_背景選択シートがmediumDetentを使用しない() throws {
