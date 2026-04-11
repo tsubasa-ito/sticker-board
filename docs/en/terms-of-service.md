@@ -1,6 +1,6 @@
 # StickerBoard Terms of Service
 
-Last updated: March 27, 2026
+Last updated: April 11, 2026
 
 ## Article 1 (Applicability)
 
@@ -19,7 +19,7 @@ The following terms are used in these Terms as defined below:
 
 1. The App is a service that allows users to photograph real stickers with their camera, automatically remove the background, and manage them as a digital collection.
 2. Users can freely arrange and edit photographed stickers on boards.
-3. All data is stored only on the user's device and is not transmitted to external servers.
+3. All data is stored only on the user's device. However, when you use the board or sticker sharing feature to share content to an external service such as an SNS, the content is handed off externally by the user's action.
 
 ## Article 4 (Fees and Subscriptions)
 
@@ -47,6 +47,7 @@ Upgrading to the Pro Plan removes all limitations.
 1. All intellectual property rights in the App belong to the developer.
 2. Rights to content created by users through the App belong to the users.
 3. Users should take care not to infringe on copyrights, trademarks, or other rights related to the stickers they photograph.
+4. When using the board or sticker sharing feature to publish or share content externally, users are responsible for ensuring that the shared content does not infringe on the copyrights, trademarks, or other rights of third parties. Users must also comply with the terms of service of the destination service (e.g., SNS).
 
 ## Article 7 (Prohibited Activities)
 

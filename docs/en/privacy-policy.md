@@ -1,6 +1,6 @@
 # StickerBoard Privacy Policy
 
-Last updated: April 10, 2026
+Last updated: April 11, 2026
 
 ## Introduction
 
@@ -51,11 +51,20 @@ The App requests access to the camera for photographing stickers.
 
 ## Photo Library Usage
 
-The App may request access to the photo library for photographing stickers or exporting boards.
+The App may request access to the photo library for photographing stickers or saving board and sticker images.
 
 - Images selected from the photo library are used solely for sticker extraction processing
-- Exported board images are saved to the photo library upon user request
+- Exported board images or individual sticker images are saved to the photo library upon user request
 - Photo library images are never transmitted externally
+
+## Board and Sticker Sharing
+
+When you use the board sharing or sticker sharing feature, content can be shared with external apps via the OS standard share sheet.
+
+- **Data shared**: Board or sticker image data only
+- **External transmission**: When you choose to share to an SNS, messaging app, or other service, the content is handed off to that app
+- **Privacy policy of destination**: How data is handled after being handed off is governed by the privacy policy of the app the user selects
+- **No personal information**: Shared images do not contain personal information such as names or location data
 
 ## Local Network Usage (Sticker Exchange Beta)
 
