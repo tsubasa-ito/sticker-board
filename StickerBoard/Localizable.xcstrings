@@ -1264,6 +1264,28 @@
         }
       }
     },
+    "シール画像をAirDrop・SNS等で共有します" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share the sticker image via AirDrop, social media, etc."
+          }
+        }
+      }
+    },
+    "シール画像をフォトライブラリに保存します" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save the sticker image to your photo library."
+          }
+        }
+      }
+    },
     "シール追加" : {
       "localizations" : {
         "en" : {
@@ -1624,6 +1646,16 @@
         }
       }
     },
+    "フォトライブラリへの保存中にエラーが発生しました。アクセス許可を確認してください。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An error occurred while saving to the photo library. Please check access permissions."
+          }
+        }
+      }
+    },
     "ぷっくり" : {
       "localizations" : {
         "en" : {
@@ -1945,6 +1977,7 @@
       }
     },
     "マスクを再編集" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2336,6 +2369,16 @@
         }
       }
     },
+    "共有" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share"
+          }
+        }
+      }
+    },
     "再編集" : {
       "localizations" : {
         "en" : {
@@ -2396,16 +2439,6 @@
         }
       }
     },
-    "共有" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Share"
-          }
-        }
-      }
-    },
     "写真に保存" : {
       "localizations" : {
         "en" : {
@@ -2432,6 +2465,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Save to Photos"
+          }
+        }
+      }
+    },
+    "写真を保存しました" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saved to Photos"
           }
         }
       }
@@ -2677,6 +2720,16 @@
         }
       }
     },
+    "右回転" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rotate Right"
+          }
+        }
+      }
+    },
     "合成しています..." : {
       "localizations" : {
         "en" : {
@@ -2793,6 +2846,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Move Left"
+          }
+        }
+      }
+    },
+    "左回転" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rotate Left"
           }
         }
       }
