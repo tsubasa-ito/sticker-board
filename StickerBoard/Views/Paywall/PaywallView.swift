@@ -254,7 +254,7 @@ struct PaywallView: View {
                             dismiss()
                         }
                     } catch {
-                        errorMessage = "購入の復元に失敗しました。ネットワーク接続を確認して再度お試しください。"
+                        errorMessage = String(localized: "購入の復元に失敗しました。ネットワーク接続を確認して再度お試しください。")
                     }
                     isPurchasing = false
                 }
@@ -280,13 +280,13 @@ struct PaywallView: View {
     }
 
     private func yearlyPriceAccessibilityLabel(yearly: Product) -> String {
-        var label = "年額\(yearly.displayPrice)"
+        var label = String(format: String(localized: "年額%@"), yearly.displayPrice)
         if let monthlyPrice = subscriptionManager.yearlyMonthlyPrice {
-            label += "、月あたり\(monthlyPrice)"
+            label += String(format: String(localized: "、月あたり%@"), monthlyPrice)
         }
         let savings = subscriptionManager.savingsPercentage
         if savings > 0 {
-            label += "、\(savings)%おトク"
+            label += String(format: String(localized: "、%d%%おトク"), savings)
         }
         return label
     }
@@ -304,9 +304,9 @@ struct PaywallView: View {
         case .cancelled:
             break
         case .pending:
-            errorMessage = "購入処理が保留中です。しばらくお待ちください。"
+            errorMessage = String(localized: "購入処理が保留中です。しばらくお待ちください。")
         case .failed(let error):
-            errorMessage = "購入に失敗しました: \(error.localizedDescription)"
+            errorMessage = String(localized: "購入に失敗しました: \(error.localizedDescription)")
         }
     }
 }

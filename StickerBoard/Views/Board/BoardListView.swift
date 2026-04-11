@@ -3,6 +3,7 @@ import SwiftData
 
 struct BoardListView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.displayScale) private var displayScale
     @Query(sort: \Board.createdAt, order: .forward) private var boards: [Board]
 
     @State private var showingNewBoard = false
@@ -110,6 +111,11 @@ struct BoardListView: View {
                     }
                     .buttonStyle(.plain)
                     .contextMenu {
+                        Button {
+                            shareBoardAsImage(board)
+                        } label: {
+                            Label("共有", systemImage: "square.and.arrow.up")
+                        }
                         Button(role: .destructive) {
                             boardToDelete = board
                             showingDeleteConfirmation = true
@@ -121,6 +127,12 @@ struct BoardListView: View {
             }
             .padding(20)
         }
+    }
+
+    // MARK: - SNSシェア
+
+    private func shareBoardAsImage(_ board: Board) {
+        BoardShareService.share(board, displayScale: displayScale)
     }
 
     private func createBoard() {

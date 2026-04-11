@@ -118,7 +118,17 @@ struct BoardEditorView: View {
         .toolbarBackground(AppTheme.editorBackground, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .toolbar {
-            ToolbarItem(placement: .primaryAction) {
+            ToolbarItemGroup(placement: .primaryAction) {
+                Button {
+                    shareBoardAsImage()
+                } label: {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(placements.isEmpty ? AppTheme.textTertiary : AppTheme.accent)
+                }
+                .accessibilityLabel(String(localized: "共有"))
+                .disabled(placements.isEmpty)
+
                 Button {
                     showingSaveConfirmation = true
                 } label: {
@@ -126,7 +136,7 @@ struct BoardEditorView: View {
                         .font(.system(size: 15, weight: .medium))
                         .foregroundStyle(placements.isEmpty ? AppTheme.textTertiary : AppTheme.accent)
                 }
-                .accessibilityLabel("写真に保存")
+                .accessibilityLabel(String(localized: "写真に保存"))
                 .disabled(placements.isEmpty)
             }
         }
@@ -141,7 +151,7 @@ struct BoardEditorView: View {
             saveBoard()
         }) {
             BackgroundPatternPickerView(config: $backgroundConfig)
-                .presentationDetents([.medium, .large])
+                .presentationDetents([.large])
         }
         .sheet(isPresented: $showingFilterPicker) {
             if let id = selectedPlacementId,
@@ -169,7 +179,7 @@ struct BoardEditorView: View {
         }
         .alert("写真を保存", isPresented: $showingSaveConfirmation) {
             Button("保存") {
-                saveBoardAsImage()
+                Task { await saveBoardAsImage() }
             }
             Button("キャンセル", role: .cancel) {}
         } message: {
@@ -503,7 +513,7 @@ struct BoardEditorView: View {
         )
     }
 
-    private func toolbarButton(icon: String, label: String, color: Color, action: @escaping () -> Void) -> some View {
+    private func toolbarButton(icon: String, label: LocalizedStringKey, color: Color, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             VStack(spacing: 4) {
                 Image(systemName: icon)
@@ -749,37 +759,64 @@ struct BoardEditorView: View {
         }
     }
 
+    // MARK: - SNSシェア
+
+    private func shareBoardAsImage() {
+        BoardShareService.share(
+            placements: sortedPlacements,
+            canvasSize: canvasSize,
+            backgroundConfig: backgroundConfig,
+            customBackgroundImage: customBackgroundImage,
+            displayScale: displayScale
+        )
+    }
+
     // MARK: - 画像として保存
 
-    private func saveBoardAsImage() {
-        let content = BoardSnapshotView(placements: sortedPlacements, size: canvasSize, backgroundConfig: backgroundConfig, customBackgroundImage: customBackgroundImage, showWatermark: !SubscriptionManager.shared.isProUser)
+    private func saveBoardAsImage() async {
+        let isProUser = SubscriptionManager.shared.isProUser
+        let scale = displayScale
+        let placements = sortedPlacements
+        let size = canvasSize
+        let bgConfig = backgroundConfig
+        let bgImage = customBackgroundImage
 
-        let renderer = ImageRenderer(content: content)
-        renderer.scale = displayScale
+        let image = await Task.detached { @Sendable in
+            let content = BoardSnapshotView(
+                placements: placements,
+                size: size,
+                backgroundConfig: bgConfig,
+                customBackgroundImage: bgImage,
+                showWatermark: !isProUser
+            )
+            return await MainActor.run {
+                let renderer = ImageRenderer(content: content)
+                renderer.scale = scale
+                return renderer.uiImage
+            }
+        }.value
 
-        guard let image = renderer.uiImage else {
+        guard let image else {
             saveResultSuccess = false
             showingSaveResult = true
             return
         }
 
-        Task {
-            let status = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
-            guard status == .authorized else {
-                saveResultSuccess = false
-                showingSaveResult = true
-                return
-            }
-            do {
-                try await PHPhotoLibrary.shared().performChanges {
-                    PHAssetChangeRequest.creationRequestForAsset(from: image)
-                }
-                saveResultSuccess = true
-            } catch {
-                saveResultSuccess = false
-            }
+        let status = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
+        guard status == .authorized else {
+            saveResultSuccess = false
             showingSaveResult = true
+            return
         }
+        do {
+            try await PHPhotoLibrary.shared().performChanges {
+                PHAssetChangeRequest.creationRequestForAsset(from: image)
+            }
+            saveResultSuccess = true
+        } catch {
+            saveResultSuccess = false
+        }
+        showingSaveResult = true
     }
 }
 

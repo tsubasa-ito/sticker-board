@@ -3,6 +3,7 @@ import SwiftData
 
 struct HomeView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.displayScale) private var displayScale
     @Query(sort: \Board.createdAt, order: .forward) private var boards: [Board]
 
     private let newBoardCardID = "new-board"
@@ -228,6 +229,12 @@ struct HomeView: View {
                                     Label("名前を変更", systemImage: "pencil")
                                 }
 
+                                Button {
+                                    shareBoardAsImage(board)
+                                } label: {
+                                    Label("共有", systemImage: "square.and.arrow.up")
+                                }
+
                                 Divider()
 
                                 Button(role: .destructive) {
@@ -419,6 +426,12 @@ struct HomeView: View {
         let board = Board(title: title, boardType: boardType)
         modelContext.insert(board)
         onBoardCreated()
+    }
+
+    // MARK: - SNSシェア
+
+    private func shareBoardAsImage(_ board: Board) {
+        BoardShareService.share(board, displayScale: displayScale)
     }
 
     private func renameBoard() {
@@ -627,7 +640,7 @@ private struct NewBoardSheet: View {
     }
 
     /// ボードタイプ選択行（HStack: プレビュー + テキスト + チェックマーク）
-    private func boardTypeRow(type: BoardType, title: String, subtitle: String, icon: String, previewAspectRatio: CGFloat) -> some View {
+    private func boardTypeRow(type: BoardType, title: LocalizedStringKey, subtitle: LocalizedStringKey, icon: String, previewAspectRatio: CGFloat) -> some View {
         let isSelected = selectedType == type
         return Button {
             selectedType = type

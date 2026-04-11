@@ -17,7 +17,7 @@
 StickerBoard/
 ├── App/          # エントリーポイント（MainTabView）、カラーテーマ、外部URL定数
 ├── Models/       # SwiftData モデル（Sticker, Board, StickerPlacement, BackgroundPattern, StickerFilter, StickerBorder, SubscriptionProduct）+ ExchangeMessage（MultipeerConnectivity転送用Codableモデル）
-├── Services/     # BackgroundRemover, MaskCompositor, ImageStorage, BackgroundImageStorage, ImageCacheManager, StickerFilterService, StickerBorderService, SubscriptionManager, MotionManager, AppUpdateChecker, WidgetDataSyncService, ReviewRequestManager, MultipeerConnectivityManager
+├── Services/     # BackgroundRemover, MaskCompositor, ImageStorage, BackgroundImageStorage, ImageCacheManager, StickerFilterService, StickerBorderService, SubscriptionManager, MotionManager, AppUpdateChecker, WidgetDataSyncService, ReviewRequestManager, MultipeerConnectivityManager, BoardShareService
 └── Views/        # SwiftUI画面
     ├── Home/     # MainTabView（タブナビゲーション）、HomeView（ボード一覧カルーセル）
     ├── Onboarding/ # 初回起動オンボーディング（3ページガイド）
@@ -56,11 +56,22 @@ open StickerBoard.xcodeproj
 
 > **注意（Xcode 26 beta）:** Swift Testing の `@Test func` の関数名を数字（`0`〜`9`）で始めると `build-for-testing` がクラッシュする。関数名は必ず文字またはアンダースコアで始めること（例: `180度...` → `百八十度...` or `回転後...`）
 
+### ローカライズの動作確認（英語）
+
+スキームの Application Language を変更するとシミュレータ本体の言語を変えずにアプリだけ英語で起動できる：
+
+1. Xcode 左上のターゲット名をクリック → **Edit Scheme...**
+2. **Run** → **Options** タブを開く
+3. **Application Language** を **English** に変更 → **Close**
+4. 通常通りビルド・実行するとアプリが英語で起動する
+5. 確認後は **Application Language** を **System Language** に戻す
+
 ## 注意事項
 - Vision Frameworkの背景除去はシミュレータでは動作しない（実機のみ）
 - シミュレータではフォールバックとして元画像をそのまま返す
 - シール画像は Documents/Stickers/ にPNG保存、メタデータはSwiftDataに保存
 - ボード背景画像は Documents/Backgrounds/ にJPEG保存（長辺2048px、品質0.85）。BackgroundPatternConfig の customImageFileName でファイル名を管理。customImageCropX / customImageCropY（0.0〜1.0）でトリミング位置を保持
+- BackgroundPatternPickerView でパターン種別を切り替える際は patternType のみ変更し primaryColorHex / secondaryColorHex を引き継ぐ設計（プリセット固定色で全上書きしない）。写真背景（.custom）からの切り替え時のみ BackgroundPatternConfig.default のカラーにフォールバック。サムネイルも同様に現在の config の色をベースに表示する
 - AppTheme.screenBounds で画面サイズを取得する（UIScreen.main は deprecated のため UIWindowScene 経由）
 - StickerPlacement に imageFileName を直接保持する設計（SwiftDataのID問題回避のため）
 - Board の backgroundPatternData も placements と同様に Codable struct を JSON シリアライズして Data? に格納する設計
@@ -88,7 +99,8 @@ open StickerBoard.xcodeproj
 - バージョン管理: MARKETING_VERSION / CURRENT_PROJECT_VERSION は project.yml の settings.base で管理。Info.plist では `$(MARKETING_VERSION)` / `$(CURRENT_PROJECT_VERSION)` で参照する（project.yml の info.properties で指定済み）。Info.plist にバージョンを直接ハードコードしない
 - バンドルID: com.tebasaki.StickerBoard（project.yml で設定）
 - アプリ表示名: シールボード -デジタルシール帳-（CFBundleDisplayName）
-- 開発言語: ja（project.yml の `options.developmentLanguage` で設定。`developmentRegion = ja` / `knownRegions = (Base, ja)` として生成される）
+- 開発言語: ja（project.yml の `options.developmentLanguage` で設定。`developmentRegion = ja` / `knownRegions = (Base, ja, en)` として生成される）
+- ローカライズ: `Localizable.xcstrings`（アプリ全体の ja/en 翻訳、約470キー）と `InfoPlist.xcstrings`（権限説明文・CFBundleDisplayName）を `StickerBoard/` 直下に配置。SwiftUI の `Text()` は自動でローカライズ。非SwiftUI文字列（変数代入・アクセシビリティラベル等）は `String(localized:)` / `String(format: String(localized:), ...)` を使用する
 - ITSAppUsesNonExemptEncryption: NO（標準HTTPS通信のみ、App Store提出時の暗号化質問を省略）
 - 画面の向き: iPhone はポートレートのみ、iPad は全方向（iPad互換モードのマルチタスク対応に必要）
 - Xcode Cloud: mainブランチへのpushで自動ビルド→TestFlight配信。ci_scripts/ci_post_clone.sh で XcodeGen インストール＆プロジェクト生成を自動化
@@ -101,4 +113,5 @@ open StickerBoard.xcodeproj
 - AppUpdateChecker（Sendable シングルトン）がアプリ起動時に iTunes Lookup API でバージョンチェック。MainTabView の .task で呼び出し、24時間間隔で実行（@AppStorage("lastUpdateCheckDate")）。メジャーアップデートはスキップ不可（毎回表示）、マイナー/パッチは「あとで」でスキップ可能（@AppStorage("skippedVersion")）。ネットワークエラー時はサイレントにスキップし次回起動でリトライ
 - ReviewRequestManager（Sendable シングルトン）がアプリ内レビュー訴求を管理。`@Environment(\.requestReview)` による iOS 標準ダイアログのみ使用（カスタムUIなし・Appleガイドライン準拠）。トリガー条件: シール5/15/30枚目（`StickerCaptureView` sheet の onDismiss で呼び出し）、ボード新規作成時（alert dismiss 後 Task.sleep 600ms）、起動5回目（StickerBoardApp.init() で UserDefaults の "appLaunchCount" をインクリメント）。表示制御は 90日クールダウン＋365日ローリングウィンドウで年3回上限（@AppStorage("reviewRequestDatesJSON") に JSON 配列で最大3件の日時を保存）
 - Firebase Crashlytics: `StickerBoardApp.init()` の先頭で `FirebaseApp.configure()` を呼び出してクラッシュ検知を初期化。`GoogleService-Info.plist` はFirebaseコンソールからダウンロードして `StickerBoard/` 直下に配置する（.gitignore で除外）。Privacy Manifest（`StickerBoard/PrivacyInfo.xcprivacy`）にクラッシュデータ・パフォーマンスデータ・デバイスIDの申告を記載済み。Claude Code から MCP 経由でクラッシュ分析する方法は `docs/MCP_CRASHLYTICS.md` を参照
+- BoardShareService（`@MainActor enum`）はボードのSNSシェア機能を提供。`presentShareSheet()` は `async` で、`Task.detached { await MainActor.run { ImageRenderer(...); renderer.scale = ...; return renderer.uiImage } }` パターンでレンダリングをメインスレッドのブロックなしに実行する。`saveBoardAsImage()` も同パターン。呼び出し元（`share()` メソッド）は同期のままで内部で `Task { await presentShareSheet() }` を起動する設計
 - MultipeerConnectivity（β版シール交換）: `MultipeerConnectivityManager` が `@MainActor @Observable` シングルトンで MCSession / MCNearbyServiceAdvertiser / MCNearbyServiceBrowser を管理。`ExchangeMessage`（Codable）で画像データを転送し、受信後に `ImageStorage.save()` → SwiftData insert でライブラリに追加。`project.yml` に `NSLocalNetworkUsageDescription` と `NSBonjourServices`（`_stickerboard._tcp`, `_stickerboard._udp`）を追加済み。受信データのバリデーション: JSONペイロード上限 = maxImageDataSize×2（base64オーバーヘッド考慮）、展開後画像サイズ上限 = 10MB の二段階。Settings画面の「β機能」セクションからアクセス可能

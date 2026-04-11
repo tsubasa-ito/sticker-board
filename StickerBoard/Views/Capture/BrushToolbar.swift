@@ -27,8 +27,8 @@ struct BrushToolbar: View {
                 Slider(value: $brushSize, in: 5...80)
                     .tint(AppTheme.accent)
                     .frame(maxWidth: 120)
-                    .accessibilityLabel("ブラシサイズ")
-                    .accessibilityValue("\(Int(brushSize))ポイント")
+                    .accessibilityLabel(Text("ブラシサイズ"))
+                    .accessibilityValue(Text(String(format: String(localized: "%dポイント"), Int(brushSize))))
             }
 
             // Undo
@@ -38,8 +38,10 @@ struct BrushToolbar: View {
                     .foregroundStyle(canUndo ? AppTheme.accent : AppTheme.textTertiary)
             }
             .disabled(!canUndo)
-            .accessibilityLabel("取り消し")
-            .accessibilityHint(canUndo ? "直前の操作を取り消します" : "取り消せる操作がありません")
+            .accessibilityLabel(Text("取り消し"))
+            .accessibilityHint(canUndo
+                ? Text("直前の操作を取り消します")
+                : Text("取り消せる操作がありません"))
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
@@ -48,7 +50,7 @@ struct BrushToolbar: View {
         .shadow(color: .black.opacity(0.1), radius: 8, y: 4)
     }
 
-    private func modeButton(mode: BrushMode, icon: String, label: String) -> some View {
+    private func modeButton(mode: BrushMode, icon: String, label: LocalizedStringKey) -> some View {
         Button {
             withAnimation(.easeInOut(duration: 0.2)) {
                 brushMode = mode
@@ -72,8 +74,12 @@ struct BrushToolbar: View {
                 }
             }
         }
-        .accessibilityLabel(mode == .eraser ? "消しゴムモード" : "復元モード")
-        .accessibilityHint(mode == .eraser ? "不要な部分を消します" : "消しすぎた部分を復元します")
+        .accessibilityLabel(mode == .eraser
+            ? Text("消しゴムモード")
+            : Text("復元モード"))
+        .accessibilityHint(mode == .eraser
+            ? Text("不要な部分を消します")
+            : Text("消しすぎた部分を復元します"))
         .accessibilityAddTraits(brushMode == mode ? .isSelected : [])
     }
 }

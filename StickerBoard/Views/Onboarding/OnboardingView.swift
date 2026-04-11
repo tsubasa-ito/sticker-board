@@ -85,7 +85,7 @@ struct OnboardingView: View {
                     .shadow(color: AppTheme.accent.opacity(0.4), radius: 12, x: 0, y: 6)
             }
             .padding(.horizontal, 32)
-            .accessibilityLabel(currentPage < pages.count - 1 ? "次へ" : "はじめる")
+            .accessibilityLabel(currentPage < pages.count - 1 ? Text("次へ") : Text("はじめる"))
             .animation(.spring(duration: 0.3), value: currentPage)
         }
         .padding(.bottom, 48)

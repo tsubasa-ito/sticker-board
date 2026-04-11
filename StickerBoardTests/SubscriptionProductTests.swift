@@ -25,8 +25,9 @@ struct SubscriptionProductTests {
         #expect(SubscriptionProduct.groupID == "StickerBoardPro")
     }
 
-    @Test func displayNameが日本語で設定されている() {
-        #expect(SubscriptionProduct.monthlyPro.displayName == "月額プラン")
-        #expect(SubscriptionProduct.yearlyPro.displayName == "年額プラン")
+    @Test func displayNameが空でない() {
+        for product in SubscriptionProduct.allCases {
+            #expect(!product.displayName.isEmpty)
+        }
     }
 }

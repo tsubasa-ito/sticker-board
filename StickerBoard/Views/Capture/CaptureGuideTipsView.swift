@@ -3,7 +3,7 @@ import SwiftUI
 struct CaptureGuideTipsView: View {
     @AppStorage("captureGuideCollapsed") private var isCollapsed = false
 
-    private let tips: [(icon: String, text: String)] = [
+    private let tips: [(icon: String, text: LocalizedStringKey)] = [
         ("arrow.up.left.and.arrow.down.right", "シールをできるだけ大きく写す"),
         ("rectangle.dashed", "背景はなるべく無地・シンプルに"),
         ("sun.max.fill", "明るい場所で撮影する"),
@@ -43,12 +43,12 @@ struct CaptureGuideTipsView: View {
             }
             .buttonStyle(.plain)
             .accessibilityLabel("きれいに切り抜くコツ")
-            .accessibilityValue(isCollapsed ? "閉じている" : "開いている")
+            .accessibilityValue(isCollapsed ? Text("閉じている") : Text("開いている"))
 
             // ヒント一覧
             if !isCollapsed {
                 VStack(spacing: 10) {
-                    ForEach(tips, id: \.text) { tip in
+                    ForEach(tips, id: \.icon) { tip in
                         HStack(spacing: 10) {
                             Image(systemName: tip.icon)
                                 .font(.system(size: 12, weight: .medium))

@@ -35,7 +35,7 @@ struct StickerExchangeView: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
-                .padding(.bottom, 40)
+                .padding(.bottom, 100)
             }
         }
         .navigationTitle("シール交換")
@@ -57,7 +57,7 @@ struct StickerExchangeView: View {
             Button("拒否", role: .destructive) { manager.rejectPendingInvitation() }
         } message: {
             if let invitation = manager.pendingInvitation {
-                Text("\(invitation.peerId.displayName) からシール交換の申請が届きました")
+                Text(String(format: String(localized: "%@ からシール交換の申請が届きました"), invitation.peerId.displayName))
             }
         }
         .sheet(isPresented: $showStickerPicker) {
@@ -126,13 +126,13 @@ struct StickerExchangeView: View {
         HStack(spacing: 10) {
             StatusPillView(
                 icon: "dot.radiowaves.up.forward",
-                title: "発見待機",
+                title: "発見待機" as LocalizedStringKey,
                 isActive: manager.isAdvertising,
                 reduceMotion: reduceMotion
             )
             StatusPillView(
                 icon: "magnifyingglass",
-                title: "デバイス検索",
+                title: "デバイス検索" as LocalizedStringKey,
                 isActive: manager.isBrowsing,
                 reduceMotion: reduceMotion
             )
@@ -165,7 +165,7 @@ struct StickerExchangeView: View {
 
     private var discoveredPeersSection: some View {
         VStack(spacing: 0) {
-            sectionHeader(title: "近くのデバイス", icon: "iphone.radiowaves.left.and.right")
+            sectionHeader(title: "近くのデバイス" as LocalizedStringKey, icon: "iphone.radiowaves.left.and.right")
 
             VStack(spacing: 0) {
                 ForEach(manager.discoveredPeers, id: \.displayName) { peer in
@@ -184,7 +184,7 @@ struct StickerExchangeView: View {
     private var connectedPeersSection: some View {
         VStack(spacing: 16) {
             VStack(spacing: 0) {
-                sectionHeader(title: "接続中のデバイス", icon: "checkmark.circle.fill")
+                sectionHeader(title: "接続中のデバイス" as LocalizedStringKey, icon: "checkmark.circle.fill")
 
                 VStack(spacing: 0) {
                     ForEach(manager.connectedPeers, id: \.displayName) { peer in
@@ -232,12 +232,16 @@ struct StickerExchangeView: View {
                 Text(peer.displayName)
                     .font(.system(size: 15, weight: .medium, design: .rounded))
                     .foregroundStyle(AppTheme.textPrimary)
-                Text(isConnected ? "接続済み" : "接続待機中")
+                (isConnected ? Text("接続済み") : Text("接続待機中"))
                     .font(.system(size: 12, design: .rounded))
                     .foregroundStyle(isConnected ? AppTheme.softOrange : AppTheme.textTertiary)
             }
             .accessibilityElement(children: .combine)
-            .accessibilityLabel("\(peer.displayName), \(isConnected ? "接続済み" : "未接続")")
+            .accessibilityLabel(
+                isConnected
+                    ? Text(verbatim: peer.displayName) + Text(", ") + Text("接続済み")
+                    : Text(verbatim: peer.displayName) + Text(", ") + Text("未接続")
+            )
 
             Spacer()
 
@@ -250,7 +254,7 @@ struct StickerExchangeView: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
                 .background(AppTheme.accent, in: Capsule())
-                .accessibilityLabel("\(peer.displayName) に接続申請を送る")
+                .accessibilityLabel(Text(String(format: String(localized: "%@ に接続申請を送る"), peer.displayName)))
             }
         }
         .padding(.horizontal, 16)
@@ -261,22 +265,22 @@ struct StickerExchangeView: View {
 
     private var howToUseSection: some View {
         VStack(spacing: 0) {
-            sectionHeader(title: "使い方", icon: "info.circle")
+            sectionHeader(title: "使い方" as LocalizedStringKey, icon: "info.circle")
 
             VStack(spacing: 8) {
                 HStack(spacing: 8) {
-                    stepCard(step: "1", text: "相手も\nこの画面を開く", icon: "iphone.gen3")
-                    stepCard(step: "2", text: "「接続」を\nタップ", icon: "hand.tap.fill")
+                    stepCard(step: "1", text: "相手も\nこの画面を開く" as LocalizedStringKey, icon: "iphone.gen3")
+                    stepCard(step: "2", text: "「接続」を\nタップ" as LocalizedStringKey, icon: "hand.tap.fill")
                 }
                 HStack(spacing: 8) {
-                    stepCard(step: "3", text: "シールを\n選んで送る", icon: "seal.fill")
-                    stepCard(step: "4", text: "受け取って\nライブラリに保存", icon: "square.and.arrow.down.fill")
+                    stepCard(step: "3", text: "シールを\n選んで送る" as LocalizedStringKey, icon: "seal.fill")
+                    stepCard(step: "4", text: "受け取って\nライブラリに保存" as LocalizedStringKey, icon: "square.and.arrow.down.fill")
                 }
             }
         }
     }
 
-    private func stepCard(step: String, text: String, icon: String) -> some View {
+    private func stepCard(step: String, text: LocalizedStringKey, icon: String) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text(step)
@@ -300,12 +304,12 @@ struct StickerExchangeView: View {
         .padding(14)
         .stickerCard()
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("手順\(step): \(text.replacingOccurrences(of: "\n", with: ""))")
+        .accessibilityLabel(Text(verbatim: step) + Text(": ") + Text(text))
     }
 
     // MARK: - ヘルパー
 
-    private func sectionHeader(title: String, icon: String) -> some View {
+    private func sectionHeader(title: LocalizedStringKey, icon: String) -> some View {
         HStack(spacing: 6) {
             Image(systemName: icon)
                 .font(.system(size: 13, weight: .semibold))
@@ -325,7 +329,7 @@ struct StickerExchangeView: View {
 
 private struct StatusPillView: View {
     let icon: String
-    let title: String
+    let title: LocalizedStringKey
     let isActive: Bool
     let reduceMotion: Bool
 
@@ -376,7 +380,8 @@ private struct StatusPillView: View {
                 )
         )
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(title): \(isActive ? "アクティブ" : "停止中")")
+        .accessibilityLabel(Text(title))
+        .accessibilityValue(isActive ? Text("アクティブ") : Text("停止中"))
         .onAppear {
             guard isActive && !reduceMotion else { return }
             withAnimation(
@@ -528,7 +533,7 @@ private struct ExchangeStickerPickerView: View {
     private func sendSticker(_ sticker: Sticker) async {
         guard let image = ImageStorage.load(fileName: sticker.imageFileName),
               let imageData = image.pngData() else {
-            sendError = "シール画像の読み込みに失敗しました"
+            sendError = String(localized: "シール画像の読み込みに失敗しました")
             return
         }
         isSending = true
@@ -584,10 +589,10 @@ private struct ReceivedStickerSheet: View {
                     .resizable()
                     .scaledToFit()
                     .frame(maxHeight: 200)
-                    .accessibilityLabel("\(received.senderName) から受け取ったシール")
+                    .accessibilityLabel(Text(String(format: String(localized: "%@ から受け取ったシール"), received.senderName)))
             }
 
-            Text("\(received.senderName) から")
+            Text(String(format: String(localized: "%@ から"), received.senderName))
                 .font(.system(size: 14, design: .rounded))
                 .foregroundStyle(AppTheme.textSecondary)
 
@@ -619,7 +624,7 @@ private struct ReceivedStickerSheet: View {
                 }
                 .background(AppTheme.accent, in: RoundedRectangle(cornerRadius: 12))
                 .disabled(isSaving)
-                .accessibilityValue(isSaving ? "保存中" : "")
+                .accessibilityValue(isSaving ? Text("保存中") : Text(verbatim: ""))
             }
         }
         .padding(16)
