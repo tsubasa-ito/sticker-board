@@ -48,8 +48,6 @@ struct StickerCaptureView: View {
                     } else if originalImage != nil {
                         // 写真プレビュー（処理中はオーバーレイ表示）
                         pickerSection
-                    } else if isProcessing {
-                        processingSection
                     } else {
                         pickerSection
                     }
@@ -244,6 +242,7 @@ struct StickerCaptureView: View {
                                     }
                                 }
                                 .accessibilityElement(children: .combine)
+                                .accessibilityLabel("背景を除去しています。しばらくお待ちください")
                                 .onAppear {
                                     AccessibilityNotification.Announcement("背景を除去しています").post()
                                 }
@@ -612,9 +611,7 @@ struct StickerCaptureView: View {
                     errorMessage = error.localizedDescription
                 }
             }
-            if !Task.isCancelled {
-                withAnimation { isProcessing = false }
-            }
+            withAnimation { isProcessing = false }
         }
     }
 
