@@ -76,6 +76,7 @@ open StickerBoard.xcodeproj
 - StickerPlacement に imageFileName を直接保持する設計（SwiftDataのID問題回避のため）
 - Board の backgroundPatternData も placements と同様に Codable struct を JSON シリアライズして Data? に格納する設計
 - BackgroundRemover は入力画像の EXIF 向きを正規化し、長辺2048pxにリサイズする（cgImage とマスクの整合性確保 + メモリ最適化）
+- BackgroundRemover.processForCapture(from:) はキャプチャフロー専用の統合API。Vision を1回だけ呼び出し、被写体数に応じて `.singleSticker(BackgroundRemovalResult)` または `.multipleStickers([UIImage])` を返す `CaptureProcessingResult` enum に分岐する。StickerCaptureView.processImage() から呼び出す（旧 extractIndividualStickers + removeBackgroundWithMask の二段階呼び出しを廃止）
 - BackgroundRemover.removeBackgroundAtPoint(from:normalizedPoint:) は、VNInstanceMaskObservation の instanceMask ピクセルバッファからタップ位置のインスタンスIDを特定し、その被写体のみを切り抜く。StickerCaptureView で写真プレビューの長押しジェスチャーから呼び出される
 - フィルター（キラキラ・レトロ・パステル・ネオン・ぷっくり・ワッペン）は StickerPlacement の filterType に保存し、ボード配置単位で適用する設計（シール自体ではなく配置ごとにフィルターが異なる）
 - StickerFilterService は CIFilter ベースでオンザフライ処理。BoardEditorView ではフィルター適用画像をキャッシュして body 再評価時の再計算を回避
