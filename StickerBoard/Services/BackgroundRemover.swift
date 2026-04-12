@@ -199,9 +199,18 @@ struct BackgroundRemover {
             return [single]
         }
 
+        return try extractInstanceImages(from: observation, handler: handler, instances: allInstances)
+    }
+
+    /// 各インスタンスを個別に切り抜いて UIImage 配列として返す共通ヘルパー
+    private static func extractInstanceImages(
+        from observation: VNInstanceMaskObservation,
+        handler: VNImageRequestHandler,
+        instances: IndexSet
+    ) throws -> [UIImage] {
         var results: [UIImage] = []
-        for instanceId in allInstances {
-            let image: UIImage? = try autoreleasepool {
+        for instanceId in instances {
+            let sticker: UIImage? = try autoreleasepool {
                 let singleSet = IndexSet(integer: instanceId)
                 let maskedBuffer = try observation.generateMaskedImage(
                     ofInstances: singleSet,
@@ -214,7 +223,7 @@ struct BackgroundRemover {
                 }
                 return UIImage(cgImage: outputCGImage)
             }
-            if let image { results.append(image) }
+            if let sticker { results.append(sticker) }
         }
 
         if results.isEmpty {
@@ -237,28 +246,7 @@ struct BackgroundRemover {
         let allInstances = observation.allInstances
 
         if allInstances.count > 1 {
-            // 複数被写体: 個別に切り抜き
-            var results: [UIImage] = []
-            for instanceId in allInstances {
-                let sticker: UIImage? = try autoreleasepool {
-                    let singleSet = IndexSet(integer: instanceId)
-                    let maskedBuffer = try observation.generateMaskedImage(
-                        ofInstances: singleSet,
-                        from: handler,
-                        croppedToInstancesExtent: true
-                    )
-                    let ciImage = CIImage(cvPixelBuffer: maskedBuffer)
-                    guard let outputCGImage = ciContext.createCGImage(ciImage, from: ciImage.extent) else {
-                        return nil
-                    }
-                    return UIImage(cgImage: outputCGImage)
-                }
-                if let sticker { results.append(sticker) }
-            }
-
-            if results.isEmpty {
-                throw BackgroundRemoverError.noResult
-            }
+            let results = try extractInstanceImages(from: observation, handler: handler, instances: allInstances)
             return .multipleStickers(results)
         } else {
             // 単一被写体: マスク付きで返す（手動調整対応）
@@ -269,7 +257,7 @@ struct BackgroundRemover {
             }
             let maskImage = UIImage(cgImage: maskCGImage)
 
-            let processedImage = try applyMask(observation, instances: allInstances, to: cgImage, handler: handler)
+            let processedImage = try applyMask(maskPixelBuffer: maskPixelBuffer, to: cgImage)
 
             return .singleSticker(BackgroundRemovalResult(processedImage: processedImage, maskImage: maskImage, originalImage: image))
         }
