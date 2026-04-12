@@ -202,13 +202,15 @@ struct BackgroundRemover {
         return try extractInstanceImages(from: observation, handler: handler, instances: allInstances)
     }
 
-    /// 各インスタンスを個別に切り抜いて UIImage 配列として返す共通ヘルパー
+    /// 指定されたインスタンスを1件ずつ切り抜いて UIImage 配列を返す。
+    /// instances は空でないことを前提とする。全件レンダリング失敗した場合は noResult をスロー。
     private static func extractInstanceImages(
         from observation: VNInstanceMaskObservation,
         handler: VNImageRequestHandler,
         instances: IndexSet
     ) throws -> [UIImage] {
         var results: [UIImage] = []
+        var failedCount = 0
         for instanceId in instances {
             let sticker: UIImage? = try autoreleasepool {
                 let singleSet = IndexSet(integer: instanceId)
@@ -223,7 +225,15 @@ struct BackgroundRemover {
                 }
                 return UIImage(cgImage: outputCGImage)
             }
-            if let sticker { results.append(sticker) }
+            if let sticker {
+                results.append(sticker)
+            } else {
+                failedCount += 1
+            }
+        }
+
+        if failedCount > 0 {
+            print("[BackgroundRemover] extractInstanceImages: \(failedCount)件のインスタンスのレンダリングに失敗しました（成功: \(results.count)件）")
         }
 
         if results.isEmpty {
@@ -244,6 +254,12 @@ struct BackgroundRemover {
         }
 
         let allInstances = observation.allInstances
+
+        guard !allInstances.isEmpty else {
+            // Vision が observation を返したが被写体インスタンスがない場合は白マスクでフォールバック
+            let whiteMask = createWhiteMask(size: image.size)
+            return .singleSticker(BackgroundRemovalResult(processedImage: image, maskImage: whiteMask, originalImage: image))
+        }
 
         if allInstances.count > 1 {
             let results = try extractInstanceImages(from: observation, handler: handler, instances: allInstances)
