@@ -167,8 +167,8 @@ struct BackgroundRemover {
         }
         let maskImage = UIImage(cgImage: maskCGImage)
 
-        // 合成画像を生成
-        let processedImage = try applyMask(observation, instances: observation.allInstances, to: cgImage, handler: handler)
+        // 合成画像を生成（生成済みの maskPixelBuffer を再利用して二重計算を回避）
+        let processedImage = try applyMask(maskPixelBuffer: maskPixelBuffer, to: cgImage)
 
         return BackgroundRemovalResult(processedImage: processedImage, maskImage: maskImage, originalImage: image)
     }
