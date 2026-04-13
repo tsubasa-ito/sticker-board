@@ -20,6 +20,7 @@ struct StickerPlacementTests {
         #expect(placement.filter == .original)
         #expect(placement.borderWidth == .none)
         #expect(placement.borderColorHex == "FFFFFF")
+        #expect(placement.isLocked == false)
     }
 
     @Test func カスタム値で初期化できる() {
@@ -109,6 +110,7 @@ struct StickerPlacementTests {
         #expect(decoded.filter == original.filter)
         #expect(decoded.borderWidth == original.borderWidth)
         #expect(decoded.borderColorHex == original.borderColorHex)
+        #expect(decoded.isLocked == original.isLocked)
     }
 
     @Test func 旧フォーマットJSONからフォールバック値でデコードできる() throws {

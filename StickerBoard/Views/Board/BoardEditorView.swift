@@ -313,7 +313,6 @@ struct BoardEditorView: View {
                     placement: binding(for: placement),
                     image: loadedImages[placement.id],
                     isSelected: selectedPlacementId == placement.id,
-                    isLocked: placement.isLocked,
                     onTap: {
                         withAnimation(.easeInOut(duration: 0.15)) {
                             selectedPlacementId = placement.id
