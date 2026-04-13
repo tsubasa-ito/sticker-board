@@ -29,6 +29,7 @@ struct BoardEditorView: View {
     @State private var rebuildTask: Task<Void, Never>?
     @State private var updateTask: Task<Void, Never>?
     @State private var widgetSyncTask: Task<Void, Never>?
+    @State private var widgetSyncDebounceTask: Task<Void, Never>?
     @State private var hasPerformedInitialSync = false
     @State private var undoStack: [(placements: [StickerPlacement], backgroundConfig: BackgroundPatternConfig)] = []
 
@@ -218,7 +219,12 @@ struct BoardEditorView: View {
         .onDisappear {
             rebuildTask?.cancel()
             updateTask?.cancel()
-            saveBoard()
+            widgetSyncTask?.cancel()
+            widgetSyncDebounceTask?.cancel()
+            board.placements = placements
+            board.updatedAt = Date()
+            try? modelContext.save()
+            syncBoardToWidget()
             loadedImages = [:]
         }
         .onChange(of: canvasSize) { oldSize, newSize in
@@ -758,7 +764,21 @@ struct BoardEditorView: View {
         board.placements = placements
         board.updatedAt = Date()
         try? modelContext.save()
-        syncBoardToWidget()
+        debouncedSyncBoardToWidget()
+    }
+
+    /// ウィジェット同期をデバウンスして実行する。
+    /// 高頻度なジェスチャー操作（ピンチ拡大縮小の連続操作など）で saveBoard() が連続発火した場合に、
+    /// 重たい ImageRenderer 処理（3種類のウィジェットスナップショット生成）が並列で積み重なり、
+    /// メモリ圧迫→クラッシュを引き起こす問題を防ぐ。
+    /// 最後の呼び出しから 500ms 後に1回だけ syncBoardToWidget() を実行する。
+    private func debouncedSyncBoardToWidget() {
+        widgetSyncDebounceTask?.cancel()
+        widgetSyncDebounceTask = Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(500))
+            guard !Task.isCancelled else { return }
+            syncBoardToWidget()
+        }
     }
 
     private func syncBoardToWidget() {
