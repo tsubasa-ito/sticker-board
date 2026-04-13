@@ -2619,6 +2619,46 @@
         }
       }
     },
+    "ロック" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lock"
+          }
+        }
+      }
+    },
+    "ロック中" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Locked"
+          }
+        }
+      }
+    },
+    "ロック解除" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock"
+          }
+        }
+      }
+    },
+    "解除" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock"
+          }
+        }
+      }
+    },
     "効果" : {
       "comment" : "BoardEditorView toolbar: filter effects",
       "localizations" : {

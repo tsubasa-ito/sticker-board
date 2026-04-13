@@ -4,6 +4,7 @@ struct StickerItemView: View {
     @Binding var placement: StickerPlacement
     let image: UIImage?
     var isSelected: Bool = false
+    var isLocked: Bool = false
     var onTap: (() -> Void)?
     var onGestureEnded: (() -> Void)?
 
@@ -26,14 +27,18 @@ struct StickerItemView: View {
             .accessibilityValue(accessibilityDescription)
             .accessibilityAddTraits(isSelected ? .isSelected : [])
             .accessibilityAction(named: "選択") { onTap?() }
-            .accessibilityAction(named: "上に移動") { moveSticker(dx: 0, dy: -20) }
-            .accessibilityAction(named: "下に移動") { moveSticker(dx: 0, dy: 20) }
-            .accessibilityAction(named: "左に移動") { moveSticker(dx: -20, dy: 0) }
-            .accessibilityAction(named: "右に移動") { moveSticker(dx: 20, dy: 0) }
-            .accessibilityAction(named: "拡大") { resizeSticker(factor: 1.1) }
-            .accessibilityAction(named: "縮小") { resizeSticker(factor: 0.9) }
-            .accessibilityAction(named: "時計回りに回転") { rotateSticker(degrees: 15) }
-            .accessibilityAction(named: "反時計回りに回転") { rotateSticker(degrees: -15) }
+            .accessibilityAction(named: isLocked ? "ロック解除" : "ロック") {
+                placement.isLocked.toggle()
+                onGestureEnded?()
+            }
+            .accessibilityAction(named: "上に移動") { if !isLocked { moveSticker(dx: 0, dy: -20) } }
+            .accessibilityAction(named: "下に移動") { if !isLocked { moveSticker(dx: 0, dy: 20) } }
+            .accessibilityAction(named: "左に移動") { if !isLocked { moveSticker(dx: -20, dy: 0) } }
+            .accessibilityAction(named: "右に移動") { if !isLocked { moveSticker(dx: 20, dy: 0) } }
+            .accessibilityAction(named: "拡大") { if !isLocked { resizeSticker(factor: 1.1) } }
+            .accessibilityAction(named: "縮小") { if !isLocked { resizeSticker(factor: 0.9) } }
+            .accessibilityAction(named: "時計回りに回転") { if !isLocked { rotateSticker(degrees: 15) } }
+            .accessibilityAction(named: "反時計回りに回転") { if !isLocked { rotateSticker(degrees: -15) } }
     }
 
     // MARK: - コンテンツ
@@ -51,15 +56,15 @@ struct StickerItemView: View {
                 }
 
             if isSelected {
-                // タッチインジケーター
+                // 選択インジケーター（ロック中は南京錠アイコン）
                 ZStack {
                     Circle()
-                        .fill(AppTheme.accent.opacity(0.2))
+                        .fill(isLocked ? AppTheme.textSecondary.opacity(0.2) : AppTheme.accent.opacity(0.2))
                     Circle()
-                        .stroke(AppTheme.accent.opacity(0.6), lineWidth: 2)
-                    Image(systemName: "hand.tap.fill")
+                        .stroke(isLocked ? AppTheme.textSecondary.opacity(0.6) : AppTheme.accent.opacity(0.6), lineWidth: 2)
+                    Image(systemName: isLocked ? "lock.fill" : "hand.tap.fill")
                         .font(.system(size: 12))
-                        .foregroundStyle(AppTheme.accent)
+                        .foregroundStyle(isLocked ? AppTheme.textSecondary : AppTheme.accent)
                 }
                 .frame(width: 32, height: 32)
                 .offset(x: 12, y: -12)
@@ -104,7 +109,8 @@ struct StickerItemView: View {
         let y = Int(placement.positionY)
         let scale = Int(placement.scale * 100)
         let degrees = Int(placement.rotation * 180 / .pi)
-        return "位置: \(x), \(y)、サイズ: \(scale)%、回転: \(degrees)°"
+        let lockState = isLocked ? "、ロック中" : ""
+        return "位置: \(x), \(y)、サイズ: \(scale)%、回転: \(degrees)°\(lockState)"
     }
 
     private func moveSticker(dx: CGFloat, dy: CGFloat) {
@@ -131,9 +137,11 @@ struct StickerItemView: View {
     private var dragGesture: some Gesture {
         DragGesture()
             .onChanged { value in
+                guard !isLocked else { return }
                 dragOffset = value.translation
             }
             .onEnded { value in
+                guard !isLocked else { return }
                 placement.positionX += value.translation.width
                 placement.positionY += value.translation.height
                 dragOffset = .zero
@@ -144,9 +152,11 @@ struct StickerItemView: View {
     private var magnificationGesture: some Gesture {
         MagnifyGesture()
             .onChanged { value in
+                guard !isLocked else { return }
                 currentScale = value.magnification
             }
             .onEnded { value in
+                guard !isLocked else { return }
                 placement.scale *= value.magnification
                 currentScale = 1.0
                 onGestureEnded?()
@@ -156,9 +166,11 @@ struct StickerItemView: View {
     private var rotationGesture: some Gesture {
         RotateGesture()
             .onChanged { value in
+                guard !isLocked else { return }
                 currentRotation = value.rotation
             }
             .onEnded { value in
+                guard !isLocked else { return }
                 placement.rotation += value.rotation.radians
                 currentRotation = .zero
                 onGestureEnded?()

@@ -313,6 +313,7 @@ struct BoardEditorView: View {
                     placement: binding(for: placement),
                     image: loadedImages[placement.id],
                     isSelected: selectedPlacementId == placement.id,
+                    isLocked: placement.isLocked,
                     onTap: {
                         withAnimation(.easeInOut(duration: 0.15)) {
                             selectedPlacementId = placement.id
@@ -463,29 +464,39 @@ struct BoardEditorView: View {
 
                 // 効果
                 toolbarButton(icon: "wand.and.stars", label: "効果",
-                              color: selectedPlacementId != nil ? AppTheme.accent : AppTheme.textTertiary) {
+                              color: selectedPlacementId != nil && !isSelectedPlacementLocked ? AppTheme.accent : AppTheme.textTertiary) {
                     showingFilterPicker = true
                 }
-                .disabled(selectedPlacementId == nil)
+                .disabled(selectedPlacementId == nil || isSelectedPlacementLocked)
 
                 // 枠線
                 toolbarButton(icon: "square.dashed", label: "枠線",
-                              color: selectedPlacementId != nil ? AppTheme.accent : AppTheme.textTertiary) {
+                              color: selectedPlacementId != nil && !isSelectedPlacementLocked ? AppTheme.accent : AppTheme.textTertiary) {
                     showingBorderPicker = true
                 }
-                .disabled(selectedPlacementId == nil)
+                .disabled(selectedPlacementId == nil || isSelectedPlacementLocked)
 
                 // 前面
                 toolbarButton(icon: "square.2.layers.3d.top.filled", label: "前面",
-                              color: selectedPlacementId != nil ? AppTheme.textPrimary : AppTheme.textTertiary) {
+                              color: selectedPlacementId != nil && !isSelectedPlacementLocked ? AppTheme.textPrimary : AppTheme.textTertiary) {
                     applyToSelected { bringToFront($0) }
                 }
-                .disabled(selectedPlacementId == nil)
+                .disabled(selectedPlacementId == nil || isSelectedPlacementLocked)
 
                 // 背面
                 toolbarButton(icon: "square.2.layers.3d.bottom.filled", label: "背面",
-                              color: selectedPlacementId != nil ? AppTheme.textPrimary : AppTheme.textTertiary) {
+                              color: selectedPlacementId != nil && !isSelectedPlacementLocked ? AppTheme.textPrimary : AppTheme.textTertiary) {
                     applyToSelected { sendToBack($0) }
+                }
+                .disabled(selectedPlacementId == nil || isSelectedPlacementLocked)
+
+                // ロック / アンロック
+                toolbarButton(
+                    icon: isSelectedPlacementLocked ? "lock.fill" : "lock.open",
+                    label: isSelectedPlacementLocked ? "解除" : "ロック",
+                    color: selectedPlacementId != nil ? AppTheme.accent : AppTheme.textTertiary
+                ) {
+                    toggleLockForSelected()
                 }
                 .disabled(selectedPlacementId == nil)
 
@@ -498,7 +509,7 @@ struct BoardEditorView: View {
 
                 // 削除
                 toolbarButton(icon: "trash", label: "削除",
-                              color: selectedPlacementId != nil ? .red : AppTheme.textTertiary) {
+                              color: selectedPlacementId != nil && !isSelectedPlacementLocked ? .red : AppTheme.textTertiary) {
                     if let id = selectedPlacementId,
                        let placement = placements.first(where: { $0.id == id }) {
                         withAnimation {
@@ -507,7 +518,7 @@ struct BoardEditorView: View {
                         }
                     }
                 }
-                .disabled(selectedPlacementId == nil)
+                .disabled(selectedPlacementId == nil || isSelectedPlacementLocked)
             }
             .padding(.horizontal, 28)
         }
@@ -561,6 +572,18 @@ struct BoardEditorView: View {
 
     private var sortedPlacements: [StickerPlacement] {
         placements.sorted { $0.zIndex < $1.zIndex }
+    }
+
+    private var isSelectedPlacementLocked: Bool {
+        guard let id = selectedPlacementId else { return false }
+        return placements.first(where: { $0.id == id })?.isLocked ?? false
+    }
+
+    private func toggleLockForSelected() {
+        guard let id = selectedPlacementId,
+              let index = placements.firstIndex(where: { $0.id == id }) else { return }
+        placements[index].isLocked.toggle()
+        saveBoard()
     }
 
     private func binding(for placement: StickerPlacement) -> Binding<StickerPlacement> {
