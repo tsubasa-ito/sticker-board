@@ -172,13 +172,16 @@ struct HomeView: View {
         return canvasWidth / canvasHeight
     }
 
+    /// カルーセルカードの横幅（boardCard / newBoardCard 共通）
+    /// containerRelativeFrame は LazyHStack の全高を各カードに強制する場合があるため、
+    /// screenBounds から明示的に算出する
+    private var boardCardWidth: CGFloat {
+        let w = AppTheme.screenBounds.width
+        return w > 0 ? w - AppTheme.EditorLayout.horizontalPadding * 2 : 345
+    }
+
     private func boardCard(_ board: Board) -> some View {
-        // containerRelativeFrame(.horizontal) は LazyHStack の全高を各カードに強制する場合があるため、
-        // screenBounds から明示的にカードサイズを算出して frame で指定する
-        let screen = AppTheme.screenBounds
-        let cardWidth = screen.width > 0
-            ? screen.width - AppTheme.EditorLayout.horizontalPadding * 2
-            : 345
+        let cardWidth = boardCardWidth
         let cardAspectRatio: CGFloat = {
             switch board.boardType {
             case .widgetLarge: return BoardType.widgetLargeAspectRatio
@@ -326,12 +329,11 @@ struct HomeView: View {
                 }
                 .padding(.horizontal, 24)
             }
-            .aspectRatio(boardCardAspectRatio, contentMode: .fit)
+            .frame(width: boardCardWidth, height: boardCardWidth / boardCardAspectRatio)
         }
         .buttonStyle(.plain)
         .accessibilityLabel("新しいボードを作る")
         .accessibilityHint("タップして新しいボードを作成します")
-        .containerRelativeFrame(.horizontal)
     }
 
     // MARK: - ページインジケーター
