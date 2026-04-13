@@ -779,7 +779,7 @@ struct BoardEditorView: View {
             guard !Task.isCancelled else { return }
 
             // small ウィジェット専用スナップショット（154×154 pt）
-            let smallWidgetSize = CGSize(width: 154, height: 154)
+            let smallWidgetSize = BoardType.widgetSmallSize
             // widgetSmall ボードでは、boardCanvasZStack 内の BoardBackgroundView に .padding(24) が
             // 四方に適用されている。canvasSize は ZStack 全体（パディング込み）のサイズだが、
             // BoardSnapshotView では背景がフルサイズで描画されるため、座標系が異なる。
