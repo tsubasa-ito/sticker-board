@@ -155,7 +155,7 @@ struct HomeView: View {
         .scrollTargetBehavior(.viewAligned)
         .scrollIndicators(.hidden)
         .scrollPosition(id: $scrolledID)
-        .contentMargins(.horizontal, 20)
+        .contentMargins(.horizontal, AppTheme.EditorLayout.horizontalPadding)
         .opacity(animateIn ? 1 : 0)
         .offset(y: animateIn ? 0 : 30)
     }
@@ -469,16 +469,24 @@ private struct BoardStickerPreviewView: View {
     /// プレビュー用サムネイルサイズ（カルーセル内なので小さくてOK）
     private let previewThumbnailSize: CGFloat = 200
 
-    /// エディタで使われるキャンバス参照サイズ（シール座標の基準）
+    /// シール座標（positionX/Y）のマッピング基準となる参照キャンバスサイズ。
+    /// エディタのキャンバスと背景（カード）は共通の中心を持つため、カードサイズを参照することで
+    /// シール座標をそのままプレビュー空間に当てはめられる。
+    /// screenBounds が未確定の場合は boardCardAspectRatio に合わせたフォールバックを返す。
     private var referenceCanvasSize: CGSize {
-        let w = AppTheme.screenBounds.width
+        let s = AppTheme.screenBounds
+        let cardW = s.width - AppTheme.EditorLayout.horizontalPadding * 2
+        let cardH = s.height - AppTheme.EditorLayout.verticalChromeHeight
+        guard cardW > 0, cardH > 0 else {
+            return CGSize(width: 300, height: 400)
+        }
         switch boardType {
         case .standard:
-            return CGSize(width: w, height: AppTheme.screenBounds.height)
+            return CGSize(width: cardW, height: cardH)
         case .widgetLarge:
-            return CGSize(width: w, height: w / BoardType.widgetLargeAspectRatio)
+            return CGSize(width: cardW, height: cardW / BoardType.widgetLargeAspectRatio)
         case .widgetMedium:
-            return CGSize(width: w, height: w / BoardType.widgetMediumAspectRatio)
+            return CGSize(width: cardW, height: cardW / BoardType.widgetMediumAspectRatio)
         }
     }
 
