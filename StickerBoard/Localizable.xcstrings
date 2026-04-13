@@ -2659,6 +2659,72 @@
         }
       }
     },
+    "ズーム" : {
+      "comment" : "BoardEditorView toolbar: zoom mode toggle button",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoom"
+          }
+        }
+      }
+    },
+    "ズームモード" : {
+      "comment" : "BoardEditorView: zoom mode indicator label shown on canvas",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoom Mode"
+          }
+        }
+      }
+    },
+    "ズームモードON" : {
+      "comment" : "BoardEditorView: VoiceOver announcement when zoom mode is enabled",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoom mode on"
+          }
+        }
+      }
+    },
+    "ズームモードOFF" : {
+      "comment" : "BoardEditorView: VoiceOver announcement when zoom mode is disabled",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoom mode off"
+          }
+        }
+      }
+    },
+    "ズームをリセット" : {
+      "comment" : "BoardEditorView: accessibility label for zoom reset button",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset Zoom"
+          }
+        }
+      }
+    },
+    "倍率を1倍に戻します" : {
+      "comment" : "BoardEditorView: accessibility hint for zoom reset button",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resets zoom to 1x"
+          }
+        }
+      }
+    },
     "効果" : {
       "comment" : "BoardEditorView toolbar: filter effects",
       "localizations" : {

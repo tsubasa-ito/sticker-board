@@ -35,6 +35,13 @@ struct BoardEditorView: View {
     @State private var undoStack: [(placements: [StickerPlacement], backgroundConfig: BackgroundPatternConfig)] = []
     @State private var autoSaveTask: Task<Void, Never>?
 
+    // ズームモード
+    @State private var isZoomMode: Bool = false
+    @State private var canvasScale: CGFloat = 1.0
+    @State private var canvasOffset: CGSize = .zero
+    @GestureState private var liveZoomScale: CGFloat = 1.0
+    @GestureState private var livePanOffset: CGSize = .zero
+
     private let undoStackLimit = 20
 
     var body: some View {
@@ -44,7 +51,7 @@ struct BoardEditorView: View {
 
             // メインコンテンツ
             VStack(spacing: 0) {
-                canvasArea
+                zoomedCanvasArea
             }
 
             // フローティングUI（折りたたみ可能）
@@ -353,6 +360,7 @@ struct BoardEditorView: View {
                     placement: binding(for: placement),
                     image: loadedImages[placement.id],
                     isSelected: selectedPlacementId == placement.id,
+                    canvasScale: canvasScale,
                     onTap: {
                         withAnimation(.easeInOut(duration: 0.15)) {
                             selectedPlacementId = placement.id
@@ -366,6 +374,7 @@ struct BoardEditorView: View {
                     }
                 )
                 .zIndex(Double(placement.zIndex))
+                .allowsHitTesting(!isZoomMode)
             }
         }
         .onGeometryChange(for: CGSize.self) { proxy in
@@ -378,6 +387,80 @@ struct BoardEditorView: View {
                 widgetBadge
             }
         }
+    }
+
+    // MARK: - ズームキャンバスエリア
+
+    /// canvasArea をズーム変換でラップしたビュー。
+    /// ズームモードON時はピンチ＋ドラッグでキャンバス全体を拡縮・スクロールできる。
+    /// ズームモードOFF時は including: .none でジェスチャーを完全無効化（ビュー再生成なし）。
+    @ViewBuilder
+    private var zoomedCanvasArea: some View {
+        canvasArea
+            .scaleEffect(canvasScale * liveZoomScale)
+            .offset(
+                x: canvasOffset.width + livePanOffset.width,
+                y: canvasOffset.height + livePanOffset.height
+            )
+            .clipped()
+            .gesture(
+                MagnifyGesture()
+                    .updating($liveZoomScale) { value, state, _ in
+                        let newScale = canvasScale * value.magnification
+                        state = max(0.3, min(5.0, newScale)) / canvasScale
+                    }
+                    .onEnded { value in
+                        canvasScale = max(0.3, min(5.0, canvasScale * value.magnification))
+                    }
+                    .simultaneously(with:
+                        DragGesture()
+                            .updating($livePanOffset) { value, state, _ in
+                                state = value.translation
+                            }
+                            .onEnded { value in
+                                canvasOffset.width += value.translation.width
+                                canvasOffset.height += value.translation.height
+                            }
+                    ),
+                including: isZoomMode ? .all : .none
+            )
+            .overlay(alignment: .topLeading) {
+                if isZoomMode {
+                    Text("ズームモード")
+                        .font(.system(size: 11, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(AppTheme.accent.opacity(0.85), in: Capsule())
+                        .padding(.top, 36)
+                        .padding(.leading, 32)
+                        .allowsHitTesting(false)
+                        .accessibilityHidden(true)
+                        .transition(.opacity)
+                }
+            }
+            .overlay(alignment: .topTrailing) {
+                if isZoomMode && (canvasScale != 1.0 || canvasOffset != .zero) {
+                    Button {
+                        withAnimation(.spring(duration: 0.3)) {
+                            canvasScale = 1.0
+                            canvasOffset = .zero
+                        }
+                    } label: {
+                        Text("リセット")
+                            .font(.system(size: 11, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .background(AppTheme.editorDark.opacity(0.7), in: Capsule())
+                    }
+                    .padding(.top, 36)
+                    .padding(.trailing, 32)
+                    .accessibilityLabel(String(localized: "ズームをリセット"))
+                    .accessibilityHint(String(localized: "倍率を1倍に戻します"))
+                    .transition(.opacity)
+                }
+            }
     }
 
     private var widgetBadge: some View {
@@ -545,6 +628,22 @@ struct BoardEditorView: View {
                 .disabled(selectedPlacementId == nil)
 
                 // --- 低頻度（右側） ---
+
+                // ズーム
+                toolbarButton(
+                    icon: isZoomMode ? "magnifyingglass.circle.fill" : "magnifyingglass",
+                    label: "ズーム",
+                    color: isZoomMode ? AppTheme.accent : AppTheme.textPrimary
+                ) {
+                    withAnimation(.easeInOut(duration: 0.15)) {
+                        isZoomMode.toggle()
+                        selectedPlacementId = nil
+                    }
+                    let message = isZoomMode
+                        ? String(localized: "ズームモードON")
+                        : String(localized: "ズームモードOFF")
+                    UIAccessibility.post(notification: .announcement, argument: message)
+                }
 
                 // 背景
                 toolbarButton(icon: "paintpalette.fill", label: "背景", color: AppTheme.secondary) {
