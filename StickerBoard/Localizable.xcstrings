@@ -549,35 +549,8 @@
         }
       }
     },
-    "ウィジェット小" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Widget Small"
-          }
-        }
-      }
-    },
-    "ウィジェット小用" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "For Small Widget"
-          }
-        }
-      }
-    },
-    "ホーム画面の小サイズウィジェットにピッタリ" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Perfect for small home screen widgets"
-          }
-        }
-      }
+    "ウィジェット" : {
+
     },
     "ウィジェット中" : {
       "localizations" : {
@@ -615,6 +588,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "For Large Widget"
+          }
+        }
+      }
+    },
+    "ウィジェット小" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widget Small"
+          }
+        }
+      }
+    },
+    "ウィジェット小用" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For Small Widget"
           }
         }
       }
@@ -1986,6 +1979,16 @@
         }
       }
     },
+    "ホーム画面の小サイズウィジェットにピッタリ" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfect for small home screen widgets"
+          }
+        }
+      }
+    },
     "ホワイト" : {
       "localizations" : {
         "en" : {
@@ -2133,6 +2136,37 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Without Logo"
+          }
+        }
+      }
+    },
+    "ロック" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lock"
+          }
+        }
+      }
+    },
+    "ロック中" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Locked"
+          }
+        }
+      }
+    },
+    "ロック解除" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock"
           }
         }
       }
@@ -2615,46 +2649,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Front"
-          }
-        }
-      }
-    },
-    "ロック" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lock"
-          }
-        }
-      }
-    },
-    "ロック中" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Locked"
-          }
-        }
-      }
-    },
-    "ロック解除" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unlock"
-          }
-        }
-      }
-    },
-    "解除" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unlock"
           }
         }
       }
@@ -3707,6 +3701,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Long press to select a subject"
+          }
+        }
+      }
+    },
+    "解除" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock"
           }
         }
       }
