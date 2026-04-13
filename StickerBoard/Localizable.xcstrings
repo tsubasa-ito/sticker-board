@@ -2177,7 +2177,15 @@
       }
     },
     "リセット" : {
-
+      "comment" : "BoardEditorView: zoom reset button label",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset"
+          }
+        }
+      }
     },
     "レッド" : {
       "localizations" : {
