@@ -252,13 +252,17 @@ struct BoardEditorView: View {
 
     @ViewBuilder
     private var canvasArea: some View {
-        if board.boardType == .widgetLarge {
+        switch board.boardType {
+        case .widgetLarge:
             boardCanvasZStack
                 .aspectRatio(BoardType.widgetLargeAspectRatio, contentMode: .fit)
-        } else if board.boardType == .widgetMedium {
+        case .widgetMedium:
             boardCanvasZStack
                 .aspectRatio(BoardType.widgetMediumAspectRatio, contentMode: .fit)
-        } else {
+        case .widgetSmall:
+            boardCanvasZStack
+                .aspectRatio(BoardType.widgetSmallAspectRatio, contentMode: .fit)
+        case .standard:
             boardCanvasZStack
         }
     }
@@ -316,10 +320,15 @@ struct BoardEditorView: View {
     }
 
     private var widgetBadge: some View {
-        Label(
-            board.boardType == .widgetLarge ? "ウィジェット大" : "ウィジェット中",
-            systemImage: "apps.iphone"
-        )
+        let label: LocalizedStringKey = {
+            switch board.boardType {
+            case .widgetLarge: return "ウィジェット大"
+            case .widgetMedium: return "ウィジェット中"
+            case .widgetSmall: return "ウィジェット小"
+            default: return "ウィジェット"
+            }
+        }()
+        return Label(label, systemImage: "apps.iphone")
             .font(.system(size: 11, weight: .semibold, design: .rounded))
             .foregroundStyle(.white)
             .padding(.horizontal, 8)
@@ -738,6 +747,22 @@ struct BoardEditorView: View {
 
             guard !Task.isCancelled else { return }
 
+            // small ウィジェット専用スナップショット（154×154 pt）
+            let smallWidgetSize = CGSize(width: 154, height: 154)
+            let smallSnapshotView = BoardSnapshotView(
+                placements: currentPlacements,
+                size: currentCanvasSize,
+                renderSize: smallWidgetSize,
+                backgroundConfig: currentBgConfig,
+                customBackgroundImage: currentCustomBgImage,
+                showWatermark: false
+            )
+            let smallRenderer = await ImageRenderer(content: smallSnapshotView)
+            await MainActor.run { smallRenderer.scale = 2.0 }
+            let smallImage = await smallRenderer.uiImage
+
+            guard !Task.isCancelled else { return }
+
             WidgetDataSyncService.syncBoard(
                 boardId: boardId,
                 title: boardTitle,
@@ -745,6 +770,7 @@ struct BoardEditorView: View {
                 updatedAt: boardUpdatedAt,
                 snapshotImage: image,
                 largeSnapshotImage: largeImage,
+                smallSnapshotImage: smallImage,
                 allBoardsMetadata: allMetadata
             )
         }

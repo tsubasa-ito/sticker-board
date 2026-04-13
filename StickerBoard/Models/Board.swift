@@ -8,9 +8,12 @@ enum BoardType: String, Codable {
     case widgetLarge
     /// ウィジェット中用（364×170pt 比率）
     case widgetMedium
+    /// ウィジェット小用（154×154pt 正方形）
+    case widgetSmall
 
     static let widgetLargeAspectRatio: CGFloat = 364.0 / 382.0
     static let widgetMediumAspectRatio: CGFloat = 364.0 / 170.0
+    static let widgetSmallAspectRatio: CGFloat = 1.0
 }
 
 @Model

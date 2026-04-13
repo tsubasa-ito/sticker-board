@@ -67,7 +67,8 @@ enum WidgetDataSyncService {
             stickerCount: stickerCount,
             updatedAt: updatedAt,
             snapshotFileName: "\(boardId.uuidString).jpg",
-            largeSnapshotFileName: "\(boardId.uuidString)_large.jpg"
+            largeSnapshotFileName: "\(boardId.uuidString)_large.jpg",
+            smallSnapshotFileName: "\(boardId.uuidString)_small.jpg"
         )
     }
 
@@ -121,6 +122,7 @@ enum WidgetDataSyncService {
         updatedAt: Date,
         snapshotImage: UIImage,
         largeSnapshotImage: UIImage? = nil,
+        smallSnapshotImage: UIImage? = nil,
         allBoardsMetadata: [SharedBoardMetadata]
     ) {
         guard let snapshotsDir = snapshotsURL,
@@ -131,11 +133,15 @@ enum WidgetDataSyncService {
 
         let snapshotURL = snapshotsDir.appendingPathComponent("\(boardId.uuidString).jpg")
         let largeSnapshotURL = snapshotsDir.appendingPathComponent("\(boardId.uuidString)_large.jpg")
+        let smallSnapshotURL = snapshotsDir.appendingPathComponent("\(boardId.uuidString)_small.jpg")
 
         do {
             try saveSnapshot(snapshotImage, to: snapshotURL)
             if let largeImage = largeSnapshotImage {
                 try saveSnapshot(largeImage, to: largeSnapshotURL)
+            }
+            if let smallImage = smallSnapshotImage {
+                try saveSnapshot(smallImage, to: smallSnapshotURL)
             }
             try writeMetadataJSON(allBoardsMetadata, to: metaURL)
             WidgetCenter.shared.reloadTimelines(ofKind: SharedWidgetConstants.widgetKind)
@@ -168,8 +174,10 @@ enum WidgetDataSyncService {
 
         let snapshotURL = snapshotsDir.appendingPathComponent("\(boardId.uuidString).jpg")
         let largeSnapshotURL = snapshotsDir.appendingPathComponent("\(boardId.uuidString)_large.jpg")
+        let smallSnapshotURL = snapshotsDir.appendingPathComponent("\(boardId.uuidString)_small.jpg")
         deleteSnapshot(at: snapshotURL)
         deleteSnapshot(at: largeSnapshotURL)
+        deleteSnapshot(at: smallSnapshotURL)
 
         do {
             try writeMetadataJSON(remainingMetadata, to: metaURL)

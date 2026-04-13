@@ -177,6 +177,7 @@ struct HomeView: View {
             switch board.boardType {
             case .widgetLarge: return BoardType.widgetLargeAspectRatio
             case .widgetMedium: return BoardType.widgetMediumAspectRatio
+            case .widgetSmall: return BoardType.widgetSmallAspectRatio
             case .standard: return boardCardAspectRatio
             }
         }()
@@ -487,6 +488,8 @@ private struct BoardStickerPreviewView: View {
             return CGSize(width: cardW, height: cardW / BoardType.widgetLargeAspectRatio)
         case .widgetMedium:
             return CGSize(width: cardW, height: cardW / BoardType.widgetMediumAspectRatio)
+        case .widgetSmall:
+            return CGSize(width: cardW, height: cardW / BoardType.widgetSmallAspectRatio)
         }
     }
 
@@ -616,6 +619,13 @@ private struct NewBoardSheet: View {
                             subtitle: "ホーム画面の中サイズウィジェットにピッタリ",
                             icon: "apps.iphone",
                             previewAspectRatio: BoardType.widgetMediumAspectRatio
+                        )
+                        boardTypeRow(
+                            type: .widgetSmall,
+                            title: "ウィジェット小用",
+                            subtitle: "ホーム画面の小サイズウィジェットにピッタリ",
+                            icon: "square.fill",
+                            previewAspectRatio: BoardType.widgetSmallAspectRatio
                         )
                     }
                 }

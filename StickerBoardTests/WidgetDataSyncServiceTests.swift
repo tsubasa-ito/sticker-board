@@ -49,6 +49,18 @@ struct WidgetDataSyncServiceTests {
         #expect(metadata.largeSnapshotFileName == "\(boardId.uuidString)_large.jpg")
     }
 
+    @Test func generateMetadataでsmallSnapshotFileNameが正しく生成される() {
+        let boardId = UUID()
+        let metadata = WidgetDataSyncService.generateMetadata(
+            boardId: boardId,
+            title: "テストボード",
+            stickerCount: 3,
+            updatedAt: Date()
+        )
+
+        #expect(metadata.smallSnapshotFileName == "\(boardId.uuidString)_small.jpg")
+    }
+
     // MARK: - メタデータJSON書き出し・読み込み
 
     @Test func メタデータJSONの書き出しと読み込みが往復できる() throws {
