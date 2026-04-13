@@ -5,11 +5,15 @@ struct StickerItemView: View {
     let image: UIImage?
     var isSelected: Bool = false
     var onTap: (() -> Void)?
+    var onGestureStarted: (() -> Void)?
     var onGestureEnded: (() -> Void)?
 
     @State private var dragOffset: CGSize = .zero
     @State private var currentScale: CGFloat = 1.0
     @State private var currentRotation: Angle = .zero
+    @State private var dragGestureActive = false
+    @State private var magnificationGestureActive = false
+    @State private var rotationGestureActive = false
 
     var body: some View {
         stickerContent
@@ -130,9 +134,14 @@ struct StickerItemView: View {
         DragGesture()
             .onChanged { value in
                 guard !placement.isLocked else { return }
+                if !dragGestureActive {
+                    dragGestureActive = true
+                    onGestureStarted?()
+                }
                 dragOffset = value.translation
             }
             .onEnded { value in
+                dragGestureActive = false
                 guard !placement.isLocked else {
                     dragOffset = .zero
                     return
@@ -148,9 +157,14 @@ struct StickerItemView: View {
         MagnifyGesture()
             .onChanged { value in
                 guard !placement.isLocked else { return }
+                if !magnificationGestureActive {
+                    magnificationGestureActive = true
+                    onGestureStarted?()
+                }
                 currentScale = value.magnification
             }
             .onEnded { value in
+                magnificationGestureActive = false
                 guard !placement.isLocked else {
                     currentScale = 1.0
                     return
@@ -165,9 +179,14 @@ struct StickerItemView: View {
         RotateGesture()
             .onChanged { value in
                 guard !placement.isLocked else { return }
+                if !rotationGestureActive {
+                    rotationGestureActive = true
+                    onGestureStarted?()
+                }
                 currentRotation = value.rotation
             }
             .onEnded { value in
+                rotationGestureActive = false
                 guard !placement.isLocked else {
                     currentRotation = .zero
                     return
