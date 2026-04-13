@@ -29,6 +29,7 @@ struct BoardEditorView: View {
     @State private var rebuildTask: Task<Void, Never>?
     @State private var updateTask: Task<Void, Never>?
     @State private var widgetSyncTask: Task<Void, Never>?
+    @State private var hasPerformedInitialSync = false
 
     var body: some View {
         ZStack {
@@ -206,6 +207,13 @@ struct BoardEditorView: View {
             updateTask?.cancel()
             saveBoard()
             loadedImages = [:]
+        }
+        .onChange(of: canvasSize) { oldSize, newSize in
+            // キャンバスの初回レンダリング時（.zero → 実サイズ）にウィジェット同期を実行。
+            // アルゴリズム変更後の旧スナップショットが残らないようにする。
+            guard oldSize == .zero, newSize != .zero, !hasPerformedInitialSync else { return }
+            hasPerformedInitialSync = true
+            syncBoardToWidget()
         }
         .task {
             try? await Task.sleep(for: .seconds(3))
