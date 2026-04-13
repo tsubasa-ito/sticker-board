@@ -9,6 +9,7 @@ struct BoardEditorView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.displayScale) private var displayScale
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
 
     @State private var placements: [StickerPlacement] = []
     @State private var selectedPlacementId: UUID?
@@ -32,6 +33,7 @@ struct BoardEditorView: View {
     @State private var widgetSyncDebounceTask: Task<Void, Never>?
     @State private var hasPerformedInitialSync = false
     @State private var undoStack: [(placements: [StickerPlacement], backgroundConfig: BackgroundPatternConfig)] = []
+    @State private var autoSaveTask: Task<Void, Never>?
 
     private let undoStackLimit = 20
 
@@ -217,6 +219,7 @@ struct BoardEditorView: View {
             rebuildFilterCache()
         }
         .onDisappear {
+            autoSaveTask?.cancel()
             rebuildTask?.cancel()
             updateTask?.cancel()
             widgetSyncTask?.cancel()
@@ -226,6 +229,17 @@ struct BoardEditorView: View {
             try? modelContext.save()
             syncBoardToWidget()
             loadedImages = [:]
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .background {
+                saveBoard()
+            }
+        }
+        .onChange(of: placements) { _, _ in
+            scheduleAutoSave()
+        }
+        .onChange(of: backgroundConfig) { _, _ in
+            scheduleAutoSave()
         }
         .onChange(of: canvasSize) { oldSize, newSize in
             // キャンバスの初回レンダリング時（.zero → 実サイズ）にウィジェット同期を実行。
@@ -765,6 +779,17 @@ struct BoardEditorView: View {
         board.updatedAt = Date()
         try? modelContext.save()
         debouncedSyncBoardToWidget()
+    }
+
+    /// 800ms デバウンスで saveBoard() を呼び出す。
+    /// ジェスチャー実行中のクラッシュや onChange の連続発火に対する安全網として機能する。
+    private func scheduleAutoSave() {
+        autoSaveTask?.cancel()
+        autoSaveTask = Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(800))
+            guard !Task.isCancelled else { return }
+            saveBoard()
+        }
     }
 
     /// ウィジェット同期をデバウンスして実行する。
