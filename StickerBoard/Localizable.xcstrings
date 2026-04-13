@@ -3622,7 +3622,14 @@
       }
     },
     "背景を除去しています。しばらくお待ちください" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Removing background. Please wait a moment"
+          }
+        }
+      }
     },
     "背景色" : {
       "localizations" : {
