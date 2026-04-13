@@ -134,6 +134,22 @@ struct BoardEditorView: View {
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
                 Button {
+                    withAnimation(.easeInOut(duration: 0.15)) {
+                        isZoomMode.toggle()
+                        selectedPlacementId = nil
+                    }
+                    let message = isZoomMode
+                        ? String(localized: "ズームモードON")
+                        : String(localized: "ズームモードOFF")
+                    UIAccessibility.post(notification: .announcement, argument: message)
+                } label: {
+                    Image(systemName: isZoomMode ? "magnifyingglass.circle.fill" : "magnifyingglass")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(isZoomMode ? AppTheme.accent : AppTheme.textPrimary)
+                }
+                .accessibilityLabel(String(localized: "ズーム"))
+
+                Button {
                     undoLastAction()
                 } label: {
                     Image(systemName: "arrow.uturn.backward")
@@ -630,22 +646,6 @@ struct BoardEditorView: View {
                 .disabled(selectedPlacementId == nil)
 
                 // --- 低頻度（右側） ---
-
-                // ズーム
-                toolbarButton(
-                    icon: isZoomMode ? "magnifyingglass.circle.fill" : "magnifyingglass",
-                    label: "ズーム",
-                    color: isZoomMode ? AppTheme.accent : AppTheme.textPrimary
-                ) {
-                    withAnimation(.easeInOut(duration: 0.15)) {
-                        isZoomMode.toggle()
-                        selectedPlacementId = nil
-                    }
-                    let message = isZoomMode
-                        ? String(localized: "ズームモードON")
-                        : String(localized: "ズームモードOFF")
-                    UIAccessibility.post(notification: .announcement, argument: message)
-                }
 
                 // 背景
                 toolbarButton(icon: "paintpalette.fill", label: "背景", color: AppTheme.secondary) {
