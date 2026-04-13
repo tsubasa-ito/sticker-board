@@ -159,25 +159,26 @@ struct BoardEditorView: View {
                 .accessibilityLabel(String(localized: "元に戻す"))
                 .disabled(undoStack.isEmpty)
 
-                Button {
-                    shareBoardAsImage()
-                } label: {
-                    Image(systemName: "square.and.arrow.up")
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundStyle(placements.isEmpty ? AppTheme.textTertiary : AppTheme.accent)
-                }
-                .accessibilityLabel(String(localized: "共有"))
-                .disabled(placements.isEmpty)
+                Menu {
+                    Button {
+                        shareBoardAsImage()
+                    } label: {
+                        Label(String(localized: "共有"), systemImage: "square.and.arrow.up")
+                    }
+                    .disabled(placements.isEmpty)
 
-                Button {
-                    showingSaveConfirmation = true
+                    Button {
+                        showingSaveConfirmation = true
+                    } label: {
+                        Label(String(localized: "写真に保存"), systemImage: "arrow.down.to.line")
+                    }
+                    .disabled(placements.isEmpty)
                 } label: {
-                    Image(systemName: "arrow.down.to.line")
+                    Image(systemName: "ellipsis.circle")
                         .font(.system(size: 15, weight: .medium))
                         .foregroundStyle(placements.isEmpty ? AppTheme.textTertiary : AppTheme.accent)
                 }
-                .accessibilityLabel(String(localized: "写真に保存"))
-                .disabled(placements.isEmpty)
+                .accessibilityLabel(String(localized: "その他のアクション"))
             }
         }
         .sheet(isPresented: $showingStickerPicker) {

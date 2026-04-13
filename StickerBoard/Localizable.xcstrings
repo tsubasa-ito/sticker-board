@@ -549,35 +549,8 @@
         }
       }
     },
-    "ウィジェット小" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Widget Small"
-          }
-        }
-      }
-    },
-    "ウィジェット小用" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "For Small Widget"
-          }
-        }
-      }
-    },
-    "ホーム画面の小サイズウィジェットにピッタリ" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Perfect for small home screen widgets"
-          }
-        }
-      }
+    "ウィジェット" : {
+
     },
     "ウィジェット中" : {
       "localizations" : {
@@ -615,6 +588,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "For Large Widget"
+          }
+        }
+      }
+    },
+    "ウィジェット小" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widget Small"
+          }
+        }
+      }
+    },
+    "ウィジェット小用" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For Small Widget"
           }
         }
       }
@@ -1336,6 +1329,72 @@
         }
       }
     },
+    "ズーム" : {
+      "comment" : "BoardEditorView toolbar: zoom mode toggle button",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoom"
+          }
+        }
+      }
+    },
+    "ズームモード" : {
+      "comment" : "BoardEditorView: zoom mode indicator label shown on canvas",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoom Mode"
+          }
+        }
+      }
+    },
+    "ズームモードOFF" : {
+      "comment" : "BoardEditorView: VoiceOver announcement when zoom mode is disabled",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoom mode off"
+          }
+        }
+      }
+    },
+    "ズームモードON" : {
+      "comment" : "BoardEditorView: VoiceOver announcement when zoom mode is enabled",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoom mode on"
+          }
+        }
+      }
+    },
+    "その他のアクション" : {
+      "comment" : "BoardEditorView: accessibility label for ellipsis menu (share / save)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More Actions"
+          }
+        }
+      }
+    },
+    "ズームをリセット" : {
+      "comment" : "BoardEditorView: accessibility label for zoom reset button",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset Zoom"
+          }
+        }
+      }
+    },
     "スキップ" : {
       "localizations" : {
         "en" : {
@@ -1986,6 +2045,16 @@
         }
       }
     },
+    "ホーム画面の小サイズウィジェットにピッタリ" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfect for small home screen widgets"
+          }
+        }
+      }
+    },
     "ホワイト" : {
       "localizations" : {
         "en" : {
@@ -2107,6 +2176,9 @@
         }
       }
     },
+    "リセット" : {
+
+    },
     "レッド" : {
       "localizations" : {
         "en" : {
@@ -2133,6 +2205,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Without Logo"
+          }
+        }
+      }
+    },
+    "ロック" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lock"
+          }
+        }
+      }
+    },
+    "ロック中" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Locked"
+          }
+        }
+      }
+    },
+    "ロック解除" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock"
           }
         }
       }
@@ -2337,12 +2439,33 @@
         }
       }
     },
+    "倍率を1倍に戻します" : {
+      "comment" : "BoardEditorView: accessibility hint for zoom reset button",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resets zoom to 1x"
+          }
+        }
+      }
+    },
     "停止中" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Inactive"
+          }
+        }
+      }
+    },
+    "元に戻す" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Undo"
           }
         }
       }
@@ -2619,112 +2742,6 @@
         }
       }
     },
-    "ロック" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lock"
-          }
-        }
-      }
-    },
-    "ロック中" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Locked"
-          }
-        }
-      }
-    },
-    "ロック解除" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unlock"
-          }
-        }
-      }
-    },
-    "解除" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unlock"
-          }
-        }
-      }
-    },
-    "ズーム" : {
-      "comment" : "BoardEditorView toolbar: zoom mode toggle button",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoom"
-          }
-        }
-      }
-    },
-    "ズームモード" : {
-      "comment" : "BoardEditorView: zoom mode indicator label shown on canvas",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoom Mode"
-          }
-        }
-      }
-    },
-    "ズームモードON" : {
-      "comment" : "BoardEditorView: VoiceOver announcement when zoom mode is enabled",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoom mode on"
-          }
-        }
-      }
-    },
-    "ズームモードOFF" : {
-      "comment" : "BoardEditorView: VoiceOver announcement when zoom mode is disabled",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoom mode off"
-          }
-        }
-      }
-    },
-    "ズームをリセット" : {
-      "comment" : "BoardEditorView: accessibility label for zoom reset button",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reset Zoom"
-          }
-        }
-      }
-    },
-    "倍率を1倍に戻します" : {
-      "comment" : "BoardEditorView: accessibility hint for zoom reset button",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Resets zoom to 1x"
-          }
-        }
-      }
-    },
     "効果" : {
       "comment" : "BoardEditorView toolbar: filter effects",
       "localizations" : {
@@ -2747,16 +2764,6 @@
       }
     },
     "取り消し" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Undo"
-          }
-        }
-      }
-    },
-    "元に戻す" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3783,6 +3790,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Long press to select a subject"
+          }
+        }
+      }
+    },
+    "解除" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock"
           }
         }
       }
