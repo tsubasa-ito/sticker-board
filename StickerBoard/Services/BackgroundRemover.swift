@@ -3,6 +3,12 @@ import Vision
 import CoreImage
 import CoreImage.CIFilterBuiltins
 
+/// キャプチャフローの処理結果（単一 or 複数シール）
+enum CaptureProcessingResult {
+    case singleSticker(BackgroundRemovalResult)
+    case multipleStickers([UIImage])
+}
+
 struct BackgroundRemover {
 
     private static let ciContext = SharedCIContext.shared
@@ -85,6 +91,17 @@ struct BackgroundRemover {
         #endif
     }
 
+    /// キャプチャフロー用の統合処理（Vision を1回だけ呼び出して分岐する）
+    static func processForCapture(from image: UIImage) async throws -> CaptureProcessingResult {
+        let normalized = normalizeOrientation(image)
+        #if targetEnvironment(simulator)
+        let whiteMask = createWhiteMask(size: normalized.size)
+        return .singleSticker(BackgroundRemovalResult(processedImage: normalized, maskImage: whiteMask, originalImage: normalized))
+        #else
+        return try processForCaptureReal(from: normalized)
+        #endif
+    }
+
     private static func removeBackgroundAtPointReal(from image: UIImage, normalizedPoint: CGPoint) throws -> BackgroundRemovalResult {
         guard let cgImage = image.cgImage else {
             throw BackgroundRemoverError.invalidImage
@@ -150,8 +167,8 @@ struct BackgroundRemover {
         }
         let maskImage = UIImage(cgImage: maskCGImage)
 
-        // 合成画像を生成
-        let processedImage = try applyMask(observation, instances: observation.allInstances, to: cgImage, handler: handler)
+        // 合成画像を生成（生成済みの maskPixelBuffer を再利用して二重計算を回避）
+        let processedImage = try applyMask(maskPixelBuffer: maskPixelBuffer, to: cgImage)
 
         return BackgroundRemovalResult(processedImage: processedImage, maskImage: maskImage, originalImage: image)
     }
@@ -182,9 +199,20 @@ struct BackgroundRemover {
             return [single]
         }
 
+        return try extractInstanceImages(from: observation, handler: handler, instances: allInstances)
+    }
+
+    /// 指定されたインスタンスを1件ずつ切り抜いて UIImage 配列を返す。
+    /// instances は空でないことを前提とする。全件レンダリング失敗した場合は noResult をスロー。
+    private static func extractInstanceImages(
+        from observation: VNInstanceMaskObservation,
+        handler: VNImageRequestHandler,
+        instances: IndexSet
+    ) throws -> [UIImage] {
         var results: [UIImage] = []
-        for instanceId in allInstances {
-            let image: UIImage? = try autoreleasepool {
+        var failedCount = 0
+        for instanceId in instances {
+            let sticker: UIImage? = try autoreleasepool {
                 let singleSet = IndexSet(integer: instanceId)
                 let maskedBuffer = try observation.generateMaskedImage(
                     ofInstances: singleSet,
@@ -197,13 +225,58 @@ struct BackgroundRemover {
                 }
                 return UIImage(cgImage: outputCGImage)
             }
-            if let image { results.append(image) }
+            if let sticker {
+                results.append(sticker)
+            } else {
+                failedCount += 1
+            }
+        }
+
+        if failedCount > 0 {
+            print("[BackgroundRemover] extractInstanceImages: \(failedCount)件のインスタンスのレンダリングに失敗しました（成功: \(results.count)件）")
         }
 
         if results.isEmpty {
             throw BackgroundRemoverError.noResult
         }
         return results
+    }
+
+    private static func processForCaptureReal(from image: UIImage) throws -> CaptureProcessingResult {
+        guard let cgImage = image.cgImage else {
+            throw BackgroundRemoverError.invalidImage
+        }
+
+        guard let (observation, handler) = try performInstanceMask(on: cgImage) else {
+            // 被写体が検出されなかった場合、白マスクで単一シールとして返す
+            let whiteMask = createWhiteMask(size: image.size)
+            return .singleSticker(BackgroundRemovalResult(processedImage: image, maskImage: whiteMask, originalImage: image))
+        }
+
+        let allInstances = observation.allInstances
+
+        guard !allInstances.isEmpty else {
+            // Vision が observation を返したが被写体インスタンスがない場合は白マスクでフォールバック
+            let whiteMask = createWhiteMask(size: image.size)
+            return .singleSticker(BackgroundRemovalResult(processedImage: image, maskImage: whiteMask, originalImage: image))
+        }
+
+        if allInstances.count > 1 {
+            let results = try extractInstanceImages(from: observation, handler: handler, instances: allInstances)
+            return .multipleStickers(results)
+        } else {
+            // 単一被写体: マスク付きで返す（手動調整対応）
+            let maskPixelBuffer = try observation.generateScaledMaskForImage(forInstances: allInstances, from: handler)
+            let ciMask = CIImage(cvPixelBuffer: maskPixelBuffer)
+            guard let maskCGImage = ciContext.createCGImage(ciMask, from: ciMask.extent) else {
+                throw BackgroundRemoverError.renderFailed
+            }
+            let maskImage = UIImage(cgImage: maskCGImage)
+
+            let processedImage = try applyMask(maskPixelBuffer: maskPixelBuffer, to: cgImage)
+
+            return .singleSticker(BackgroundRemovalResult(processedImage: processedImage, maskImage: maskImage, originalImage: image))
+        }
     }
 
     private static func createWhiteMask(size: CGSize) -> UIImage {
