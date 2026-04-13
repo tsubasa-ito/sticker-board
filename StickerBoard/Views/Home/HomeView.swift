@@ -469,13 +469,17 @@ private struct BoardStickerPreviewView: View {
     /// プレビュー用サムネイルサイズ（カルーセル内なので小さくてOK）
     private let previewThumbnailSize: CGFloat = 200
 
-    /// エディタで使われるキャンバス参照サイズ（シール座標の基準）
-    /// シール positionX/Y はキャンバス中心からのオフセット。キャンバスとカードは中心が一致するため、
-    /// standardは背景（カード）サイズを参照し previewScale=1 で座標をそのままマッピングする。
+    /// シール座標（positionX/Y）のマッピング基準となる参照キャンバスサイズ。
+    /// エディタのキャンバスと背景（カード）は共通の中心を持つため、カードサイズを参照することで
+    /// シール座標をそのままプレビュー空間に当てはめられる。
+    /// screenBounds が未確定の場合は boardCardAspectRatio に合わせたフォールバックを返す。
     private var referenceCanvasSize: CGSize {
         let s = AppTheme.screenBounds
         let cardW = s.width - AppTheme.EditorLayout.horizontalPadding * 2
         let cardH = s.height - AppTheme.EditorLayout.verticalChromeHeight
+        guard cardW > 0, cardH > 0 else {
+            return CGSize(width: 300, height: 400)
+        }
         switch boardType {
         case .standard:
             return CGSize(width: cardW, height: cardH)
