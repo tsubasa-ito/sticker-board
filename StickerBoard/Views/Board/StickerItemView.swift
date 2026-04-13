@@ -4,6 +4,8 @@ struct StickerItemView: View {
     @Binding var placement: StickerPlacement
     let image: UIImage?
     var isSelected: Bool = false
+    /// キャンバスの現在のズーム倍率。ドラッグ座標の補正に使用する。
+    var canvasScale: CGFloat = 1.0
     var onTap: (() -> Void)?
     var onGestureStarted: (() -> Void)?
     var onGestureEnded: (() -> Void)?
@@ -142,7 +144,11 @@ struct StickerItemView: View {
                     dragGestureActive = true
                     onGestureStarted?()
                 }
-                dragOffset = value.translation
+                // キャンバスがズームされている場合、スクリーン座標をキャンバス座標に変換する
+                dragOffset = CGSize(
+                    width: value.translation.width / canvasScale,
+                    height: value.translation.height / canvasScale
+                )
             }
             .onEnded { value in
                 dragGestureActive = false
@@ -150,8 +156,8 @@ struct StickerItemView: View {
                     dragOffset = .zero
                     return
                 }
-                placement.positionX += value.translation.width
-                placement.positionY += value.translation.height
+                placement.positionX += value.translation.width / canvasScale
+                placement.positionY += value.translation.height / canvasScale
                 dragOffset = .zero
                 onGestureEnded?()
             }
