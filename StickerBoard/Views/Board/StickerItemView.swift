@@ -201,6 +201,8 @@ private struct StickerAccessibilityModifier: ViewModifier {
             .accessibilityAction(named: placement.isLocked ? "ロック解除" : "ロック") {
                 placement.isLocked.toggle()
                 onGestureEnded?()
+                let message = placement.isLocked ? String(localized: "ロック中") : String(localized: "ロック解除")
+                UIAccessibility.post(notification: .announcement, argument: message)
             }
             .accessibilityAction(named: "上に移動") { if !placement.isLocked { moveSticker(0, -20) } }
             .accessibilityAction(named: "下に移動") { if !placement.isLocked { moveSticker(0, 20) } }
