@@ -260,11 +260,18 @@ struct BoardEditorView: View {
             boardCanvasZStack
                 .aspectRatio(BoardType.widgetMediumAspectRatio, contentMode: .fit)
         case .widgetSmall:
+            // aspectRatio(1.0, .fit) が ZStack 内で意図通りに機能しないケースを防ぐため
+            // screenBounds から明示的に正方形の frame を算出して適用する
             boardCanvasZStack
-                .aspectRatio(BoardType.widgetSmallAspectRatio, contentMode: .fit)
+                .frame(width: widgetSmallCanvasSide, height: widgetSmallCanvasSide)
         case .standard:
             boardCanvasZStack
         }
+    }
+
+    private var widgetSmallCanvasSide: CGFloat {
+        let w = AppTheme.screenBounds.width
+        return w > 0 ? w : 393
     }
 
     private var boardCanvasZStack: some View {

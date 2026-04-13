@@ -173,6 +173,12 @@ struct HomeView: View {
     }
 
     private func boardCard(_ board: Board) -> some View {
+        // containerRelativeFrame(.horizontal) は LazyHStack の全高を各カードに強制する場合があるため、
+        // screenBounds から明示的にカードサイズを算出して frame で指定する
+        let screen = AppTheme.screenBounds
+        let cardWidth = screen.width > 0
+            ? screen.width - AppTheme.EditorLayout.horizontalPadding * 2
+            : 345
         let cardAspectRatio: CGFloat = {
             switch board.boardType {
             case .widgetLarge: return BoardType.widgetLargeAspectRatio
@@ -181,91 +187,89 @@ struct HomeView: View {
             case .standard: return boardCardAspectRatio
             }
         }()
-        return VStack(spacing: 0) {
-            // プレビューエリア
-            ZStack {
-                // ボード背景パターン
-                BoardCardBackground(config: board.backgroundPattern)
+        let cardHeight = cardWidth / cardAspectRatio
 
-                // シールプレビュー
-                if board.placements.isEmpty {
-                    Image(systemName: "sparkles")
-                        .font(.system(size: 40))
-                        .foregroundStyle(AppTheme.textTertiary.opacity(0.3))
-                } else {
-                    boardStickerPreview(board.placements, boardType: board.boardType)
-                }
+        return ZStack {
+            // ボード背景パターン
+            BoardCardBackground(config: board.backgroundPattern)
 
-                // ボトムグラデーション + タイトルオーバーレイ
-                VStack {
-                    Spacer()
-                    LinearGradient(
-                        colors: [.clear, .black.opacity(0.45)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: 120)
-                    .overlay(alignment: .bottomLeading) {
-                        HStack(alignment: .bottom) {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(board.title)
-                                    .font(.system(size: 24, weight: .heavy, design: .rounded))
-                                    .foregroundStyle(.white)
-                                    .lineLimit(1)
-                                    .shadow(color: .black.opacity(0.3), radius: 4, y: 2)
+            // シールプレビュー
+            if board.placements.isEmpty {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 40))
+                    .foregroundStyle(AppTheme.textTertiary.opacity(0.3))
+            } else {
+                boardStickerPreview(board.placements, boardType: board.boardType)
+            }
 
-                                Text("\(board.placements.count)枚")
-                                    .font(.system(size: 13, weight: .semibold, design: .rounded))
-                                    .foregroundStyle(.white.opacity(0.8))
-                            }
+            // ボトムグラデーション + タイトルオーバーレイ
+            VStack {
+                Spacer()
+                LinearGradient(
+                    colors: [.clear, .black.opacity(0.45)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 120)
+                .overlay(alignment: .bottomLeading) {
+                    HStack(alignment: .bottom) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(board.title)
+                                .font(.system(size: 24, weight: .heavy, design: .rounded))
+                                .foregroundStyle(.white)
+                                .lineLimit(1)
+                                .shadow(color: .black.opacity(0.3), radius: 4, y: 2)
 
-                            Spacer()
-
-                            Menu {
-                                Button {
-                                    boardToRename = board
-                                    renameBoardTitle = board.title
-                                    showingRenameBoard = true
-                                } label: {
-                                    Label("名前を変更", systemImage: "pencil")
-                                }
-
-                                Button {
-                                    shareBoardAsImage(board)
-                                } label: {
-                                    Label("共有", systemImage: "square.and.arrow.up")
-                                }
-
-                                Divider()
-
-                                Button(role: .destructive) {
-                                    boardToDelete = board
-                                    showingDeleteConfirmation = true
-                                } label: {
-                                    Label("削除", systemImage: "trash")
-                                }
-                            } label: {
-                                Image(systemName: "ellipsis")
-                                    .font(.system(size: 14, weight: .bold))
-                                    .foregroundStyle(.white.opacity(0.9))
-                                    .padding(10)
-                                    .background(.ultraThinMaterial.opacity(0.6))
-                                    .clipShape(Circle())
-                            }
-                            .accessibilityLabel("メニュー")
-                            .accessibilityHint("ボードの名前変更や削除ができます")
+                            Text("\(board.placements.count)枚")
+                                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                                .foregroundStyle(.white.opacity(0.8))
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 14)
+
+                        Spacer()
+
+                        Menu {
+                            Button {
+                                boardToRename = board
+                                renameBoardTitle = board.title
+                                showingRenameBoard = true
+                            } label: {
+                                Label("名前を変更", systemImage: "pencil")
+                            }
+
+                            Button {
+                                shareBoardAsImage(board)
+                            } label: {
+                                Label("共有", systemImage: "square.and.arrow.up")
+                            }
+
+                            Divider()
+
+                            Button(role: .destructive) {
+                                boardToDelete = board
+                                showingDeleteConfirmation = true
+                            } label: {
+                                Label("削除", systemImage: "trash")
+                            }
+                        } label: {
+                            Image(systemName: "ellipsis")
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundStyle(.white.opacity(0.9))
+                                .padding(10)
+                                .background(.ultraThinMaterial.opacity(0.6))
+                                .clipShape(Circle())
+                        }
+                        .accessibilityLabel("メニュー")
+                        .accessibilityHint("ボードの名前変更や削除ができます")
                     }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 14)
                 }
             }
-            .aspectRatio(cardAspectRatio, contentMode: .fit)
-            .clipShape(RoundedRectangle(cornerRadius: 28))
         }
+        .frame(width: cardWidth, height: cardHeight)
+        .clipShape(RoundedRectangle(cornerRadius: 28))
         .shadow(color: .black.opacity(0.12), radius: 24, x: 0, y: 12)
         .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 4)
-        .containerRelativeFrame(.horizontal)
     }
 
     // MARK: - ボードシールプレビュー
