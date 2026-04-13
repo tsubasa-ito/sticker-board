@@ -235,6 +235,11 @@ struct BoardEditorView: View {
             // .background に遷移しないケースでもデータを保護する
             if newPhase == .background || newPhase == .inactive {
                 saveBoard()
+                // saveBoard() 内の debouncedSyncBoardToWidget() は 500ms の遅延があるため、
+                // バックグラウンド移行時はサスペンドまでの時間内に同期を開始できるよう直接呼び出す
+                if newPhase == .background {
+                    syncBoardToWidget()
+                }
             }
         }
         .onChange(of: placements) { _, _ in
