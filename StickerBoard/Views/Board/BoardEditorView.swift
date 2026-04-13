@@ -690,6 +690,7 @@ struct BoardEditorView: View {
         let boardId = board.id
         let boardTitle = board.title
         let boardUpdatedAt = board.updatedAt
+        let boardType = board.boardType
         let currentPlacements = sortedPlacements
         let currentCanvasSize = canvasSize
         let currentBgConfig = backgroundConfig
@@ -756,9 +757,23 @@ struct BoardEditorView: View {
 
             // small ウィジェット専用スナップショット（154×154 pt）
             let smallWidgetSize = CGSize(width: 154, height: 154)
+            // widgetSmall ボードでは boardCanvasZStack 内の BoardBackgroundView に .padding(24) が
+            // 四方に適用されており、シール座標はパディングを含むキャンバス基準で保存されている。
+            // スナップショットでは背景がフル描画されるため、パディングを除いた背景サイズを座標基準に
+            // 渡すことで positionScale を補正し、エディタとウィジェットのシール位置を一致させる。
+            let boardBackgroundPadding: CGFloat = 24
+            let smallSnapshotRefSize: CGSize
+            if boardType == .widgetSmall {
+                smallSnapshotRefSize = CGSize(
+                    width: max(currentCanvasSize.width - boardBackgroundPadding * 2, 1),
+                    height: max(currentCanvasSize.height - boardBackgroundPadding * 2, 1)
+                )
+            } else {
+                smallSnapshotRefSize = currentCanvasSize
+            }
             let smallSnapshotView = BoardSnapshotView(
                 placements: currentPlacements,
-                size: currentCanvasSize,
+                size: smallSnapshotRefSize,
                 renderSize: smallWidgetSize,
                 backgroundConfig: currentBgConfig,
                 customBackgroundImage: currentCustomBgImage,
