@@ -360,7 +360,8 @@ struct BoardEditorView: View {
                     placement: binding(for: placement),
                     image: loadedImages[placement.id],
                     isSelected: selectedPlacementId == placement.id,
-                    canvasScale: canvasScale,
+                    // ズームモードOFF時は canvasScale=1.0 を渡してドラッグ補正をバイパスする
+                    canvasScale: isZoomMode ? canvasScale : 1.0,
                     onTap: {
                         withAnimation(.easeInOut(duration: 0.15)) {
                             selectedPlacementId = placement.id
@@ -375,6 +376,7 @@ struct BoardEditorView: View {
                 )
                 .zIndex(Double(placement.zIndex))
                 .allowsHitTesting(!isZoomMode)
+                .accessibilityHidden(isZoomMode)
             }
         }
         .onGeometryChange(for: CGSize.self) { proxy in
