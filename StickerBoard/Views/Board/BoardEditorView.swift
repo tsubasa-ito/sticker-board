@@ -803,9 +803,11 @@ struct BoardEditorView: View {
                 customBackgroundImage: currentCustomBgImage,
                 showWatermark: false
             )
-            let smallRenderer = await ImageRenderer(content: smallSnapshotView)
-            await MainActor.run { smallRenderer.scale = 2.0 }
-            let smallImage = await smallRenderer.uiImage
+            let smallImage = await MainActor.run {
+                let renderer = ImageRenderer(content: smallSnapshotView)
+                renderer.scale = 2.0
+                return renderer.uiImage
+            }
             if smallImage == nil {
                 Logger(subsystem: "com.tebasaki.StickerBoard", category: "WidgetSync")
                     .error("Small widget snapshot render failed for board \(boardId.uuidString) — widget will fall back to standard snapshot")
