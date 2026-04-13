@@ -14,6 +14,7 @@ enum BoardType: String, Codable {
     static let widgetLargeAspectRatio: CGFloat = 364.0 / 382.0
     static let widgetMediumAspectRatio: CGFloat = 364.0 / 170.0
     static let widgetSmallAspectRatio: CGFloat = 1.0
+    static let widgetSmallSize = CGSize(width: 154, height: 154)
 }
 
 @Model
