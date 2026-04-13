@@ -470,18 +470,19 @@ private struct BoardStickerPreviewView: View {
     private let previewThumbnailSize: CGFloat = 200
 
     /// エディタで使われるキャンバス参照サイズ（シール座標の基準）
-    /// standardボードはカードのアスペクト比に合わせてpreviewScaleが幅制約になるよう高さを算出する
+    /// シール positionX/Y はキャンバス中心からのオフセット。キャンバスとカードは中心が一致するため、
+    /// standardは背景（カード）サイズを参照し previewScale=1 で座標をそのままマッピングする。
     private var referenceCanvasSize: CGSize {
         let s = AppTheme.screenBounds
+        let cardW = s.width - AppTheme.EditorLayout.horizontalPadding * 2
+        let cardH = s.height - AppTheme.EditorLayout.verticalChromeHeight
         switch boardType {
         case .standard:
-            let cardH = s.height - AppTheme.EditorLayout.verticalChromeHeight
-            let cardW = s.width - AppTheme.EditorLayout.horizontalPadding * 2
-            return CGSize(width: s.width, height: s.width * cardH / cardW)
+            return CGSize(width: cardW, height: cardH)
         case .widgetLarge:
-            return CGSize(width: s.width, height: s.width / BoardType.widgetLargeAspectRatio)
+            return CGSize(width: cardW, height: cardW / BoardType.widgetLargeAspectRatio)
         case .widgetMedium:
-            return CGSize(width: s.width, height: s.width / BoardType.widgetMediumAspectRatio)
+            return CGSize(width: cardW, height: cardW / BoardType.widgetMediumAspectRatio)
         }
     }
 
