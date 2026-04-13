@@ -2690,6 +2690,16 @@
         }
       }
     },
+    "元に戻す" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Undo"
+          }
+        }
+      }
+    },
     "取り消せる操作がありません" : {
       "localizations" : {
         "en" : {

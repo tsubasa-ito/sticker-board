@@ -30,6 +30,9 @@ struct BoardEditorView: View {
     @State private var updateTask: Task<Void, Never>?
     @State private var widgetSyncTask: Task<Void, Never>?
     @State private var hasPerformedInitialSync = false
+    @State private var undoStack: [(placements: [StickerPlacement], backgroundConfig: BackgroundPatternConfig)] = []
+
+    private let undoStackLimit = 20
 
     var body: some View {
         ZStack {
@@ -120,6 +123,16 @@ struct BoardEditorView: View {
         .toolbarBackground(.visible, for: .navigationBar)
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
+                Button {
+                    undoLastAction()
+                } label: {
+                    Image(systemName: "arrow.uturn.backward")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(undoStack.isEmpty ? AppTheme.textTertiary : AppTheme.accent)
+                }
+                .accessibilityLabel(String(localized: "元に戻す"))
+                .disabled(undoStack.isEmpty)
+
                 Button {
                     shareBoardAsImage()
                 } label: {
@@ -318,6 +331,9 @@ struct BoardEditorView: View {
                             selectedPlacementId = placement.id
                         }
                     },
+                    onGestureStarted: {
+                        saveUndoSnapshot()
+                    },
                     onGestureEnded: {
                         saveBoard()
                     }
@@ -464,6 +480,7 @@ struct BoardEditorView: View {
                 // 効果
                 toolbarButton(icon: "wand.and.stars", label: "効果",
                               color: selectedPlacementId != nil && !isSelectedPlacementLocked ? AppTheme.accent : AppTheme.textTertiary) {
+                    saveUndoSnapshot()
                     showingFilterPicker = true
                 }
                 .disabled(selectedPlacementId == nil || isSelectedPlacementLocked)
@@ -471,6 +488,7 @@ struct BoardEditorView: View {
                 // 枠線
                 toolbarButton(icon: "square.dashed", label: "枠線",
                               color: selectedPlacementId != nil && !isSelectedPlacementLocked ? AppTheme.accent : AppTheme.textTertiary) {
+                    saveUndoSnapshot()
                     showingBorderPicker = true
                 }
                 .disabled(selectedPlacementId == nil || isSelectedPlacementLocked)
@@ -503,6 +521,7 @@ struct BoardEditorView: View {
 
                 // 背景
                 toolbarButton(icon: "paintpalette.fill", label: "背景", color: AppTheme.secondary) {
+                    saveUndoSnapshot()
                     showingBackgroundPicker = true
                 }
 
@@ -581,6 +600,7 @@ struct BoardEditorView: View {
     private func toggleLockForSelected() {
         guard let id = selectedPlacementId,
               let index = placements.firstIndex(where: { $0.id == id }) else { return }
+        saveUndoSnapshot()
         placements[index].isLocked.toggle()
         saveBoard()
     }
@@ -641,7 +661,31 @@ struct BoardEditorView: View {
         }
     }
 
+    // MARK: - Undo
+
+    private func saveUndoSnapshot() {
+        if let last = undoStack.last,
+           last.placements == placements,
+           last.backgroundConfig == backgroundConfig {
+            return
+        }
+        undoStack.append((placements: placements, backgroundConfig: backgroundConfig))
+        if undoStack.count > undoStackLimit {
+            undoStack.removeFirst()
+        }
+    }
+
+    private func undoLastAction() {
+        guard let snapshot = undoStack.popLast() else { return }
+        placements = snapshot.placements
+        backgroundConfig = snapshot.backgroundConfig
+        loadCustomBackgroundImage()
+        rebuildFilterCache()
+        saveBoard()
+    }
+
     private func addStickerToBoard(_ sticker: Sticker) {
+        saveUndoSnapshot()
         let maxZ = placements.map(\.zIndex).max() ?? -1
         let placement = StickerPlacement(
             stickerId: sticker.id,
@@ -676,6 +720,7 @@ struct BoardEditorView: View {
 
     private func reorderAndNormalizeZIndex(for placement: StickerPlacement, moveToFront: Bool) {
         guard let targetIndex = placements.firstIndex(where: { $0.id == placement.id }) else { return }
+        saveUndoSnapshot()
 
         var sortedIndices = placements.indices.sorted { placements[$0].zIndex < placements[$1].zIndex }
 
@@ -703,6 +748,7 @@ struct BoardEditorView: View {
     }
 
     private func removeFromBoard(_ placement: StickerPlacement) {
+        saveUndoSnapshot()
         loadedImages.removeValue(forKey: placement.id)
         placements.removeAll { $0.id == placement.id }
         saveBoard()
