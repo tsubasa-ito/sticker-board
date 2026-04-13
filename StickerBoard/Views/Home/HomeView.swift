@@ -155,7 +155,7 @@ struct HomeView: View {
         .scrollTargetBehavior(.viewAligned)
         .scrollIndicators(.hidden)
         .scrollPosition(id: $scrolledID)
-        .contentMargins(.horizontal, 20)
+        .contentMargins(.horizontal, AppTheme.EditorLayout.horizontalPadding)
         .opacity(animateIn ? 1 : 0)
         .offset(y: animateIn ? 0 : 30)
     }
