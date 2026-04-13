@@ -30,6 +30,7 @@ struct StickerItemView: View {
                 isSelected: isSelected,
                 accessibilityDescription: accessibilityDescription,
                 onTap: onTap,
+                onGestureStarted: onGestureStarted,
                 onGestureEnded: onGestureEnded,
                 moveSticker: moveSticker,
                 resizeSticker: resizeSticker,
@@ -110,6 +111,7 @@ struct StickerItemView: View {
     }
 
     private func moveSticker(dx: CGFloat, dy: CGFloat) {
+        onGestureStarted?()
         placement.positionX += dx
         placement.positionY += dy
         onGestureEnded?()
@@ -117,12 +119,14 @@ struct StickerItemView: View {
     }
 
     private func resizeSticker(factor: CGFloat) {
+        onGestureStarted?()
         placement.scale *= factor
         onGestureEnded?()
         UIAccessibility.post(notification: .announcement, argument: "サイズ: \(Int(placement.scale * 100))%")
     }
 
     private func rotateSticker(degrees: Double) {
+        onGestureStarted?()
         placement.rotation += degrees * .pi / 180
         onGestureEnded?()
         UIAccessibility.post(notification: .announcement, argument: "回転: \(Int(placement.rotation * 180 / .pi))°")
@@ -205,6 +209,7 @@ private struct StickerAccessibilityModifier: ViewModifier {
     let isSelected: Bool
     let accessibilityDescription: String
     let onTap: (() -> Void)?
+    let onGestureStarted: (() -> Void)?
     let onGestureEnded: (() -> Void)?
     let moveSticker: (CGFloat, CGFloat) -> Void
     let resizeSticker: (CGFloat) -> Void
@@ -218,6 +223,7 @@ private struct StickerAccessibilityModifier: ViewModifier {
             .accessibilityAddTraits(isSelected ? .isSelected : [])
             .accessibilityAction(named: "選択") { onTap?() }
             .accessibilityAction(named: placement.isLocked ? "ロック解除" : "ロック") {
+                onGestureStarted?()
                 placement.isLocked.toggle()
                 onGestureEnded?()
                 let message = placement.isLocked ? String(localized: "ロック中") : String(localized: "ロック解除")

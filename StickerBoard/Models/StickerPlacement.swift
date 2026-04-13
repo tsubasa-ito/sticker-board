@@ -1,6 +1,6 @@
 import Foundation
 
-struct StickerPlacement: Codable, Identifiable {
+struct StickerPlacement: Codable, Identifiable, Equatable {
     var id: UUID
     var stickerId: UUID
     var imageFileName: String

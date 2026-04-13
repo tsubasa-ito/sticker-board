@@ -664,6 +664,11 @@ struct BoardEditorView: View {
     // MARK: - Undo
 
     private func saveUndoSnapshot() {
+        if let last = undoStack.last,
+           last.placements == placements,
+           last.backgroundConfig == backgroundConfig {
+            return
+        }
         undoStack.append((placements: placements, backgroundConfig: backgroundConfig))
         if undoStack.count > undoStackLimit {
             undoStack.removeFirst()
@@ -675,6 +680,7 @@ struct BoardEditorView: View {
         placements = snapshot.placements
         backgroundConfig = snapshot.backgroundConfig
         loadCustomBackgroundImage()
+        rebuildFilterCache()
         saveBoard()
     }
 
