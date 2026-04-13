@@ -231,7 +231,9 @@ struct BoardEditorView: View {
             loadedImages = [:]
         }
         .onChange(of: scenePhase) { _, newPhase in
-            if newPhase == .background {
+            // .inactive も対象にすることで、着信やコントロールセンター表示など
+            // .background に遷移しないケースでもデータを保護する
+            if newPhase == .background || newPhase == .inactive {
                 saveBoard()
             }
         }
@@ -783,6 +785,8 @@ struct BoardEditorView: View {
 
     /// 800ms デバウンスで saveBoard() を呼び出す。
     /// ジェスチャー実行中のクラッシュや onChange の連続発火に対する安全網として機能する。
+    /// 各操作の明示的な saveBoard() と二重保存になるケースがあるが、
+    /// これは意図的な設計（即時保存の保証 + ウィジェット同期タイミングの維持）。
     private func scheduleAutoSave() {
         autoSaveTask?.cancel()
         autoSaveTask = Task { @MainActor in

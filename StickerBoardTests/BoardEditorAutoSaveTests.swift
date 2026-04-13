@@ -36,10 +36,12 @@ struct BoardEditorAutoSaveTests {
 
     @Test func backgroundへの移行時にsaveBoardが呼ばれる() throws {
         let content = try editorContent
-        // .background ケースで saveBoard() を呼ぶ onChange が存在する
-        let hasBackgroundSave = content.contains(".background") && content.contains("onChange(of: scenePhase")
-        #expect(hasBackgroundSave,
-                "scenePhase が .background になったときの saveBoard() 呼び出しが見つかりません")
+        // .background または .inactive ケースで saveBoard() を呼ぶ onChange が存在する
+        let hasScenePhaseOnChange = content.contains("onChange(of: scenePhase")
+        let hasBackgroundCase = content.contains(".background")
+        let hasInactiveCase = content.contains(".inactive")
+        #expect(hasScenePhaseOnChange && hasBackgroundCase && hasInactiveCase,
+                "scenePhase が .background/.inactive になったときの saveBoard() 呼び出しが見つかりません")
     }
 
     // MARK: - 層2: onChange + デバウンス800ms
