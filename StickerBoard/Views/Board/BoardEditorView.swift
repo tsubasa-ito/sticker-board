@@ -744,9 +744,21 @@ struct BoardEditorView: View {
 
             // large ウィジェット専用スナップショット（364×382 pt）
             let largeWidgetSize = CGSize(width: 364, height: 382)
+            // widgetSmall と同様に、boardCanvasZStack の背景は .padding(24) で縮小されている。
+            // widgetLarge ではキャンバスと背景のアスペクト比がほぼ一致するため補正が有効に機能する。
+            let largeSnapshotRefSize: CGSize
+            if boardType == .widgetLarge {
+                let pad: CGFloat = 24
+                largeSnapshotRefSize = CGSize(
+                    width: max(currentCanvasSize.width - pad * 2, 1),
+                    height: max(currentCanvasSize.height - pad * 2, 1)
+                )
+            } else {
+                largeSnapshotRefSize = currentCanvasSize
+            }
             let largeSnapshotView = BoardSnapshotView(
                 placements: currentPlacements,
-                size: currentCanvasSize,
+                size: largeSnapshotRefSize,
                 renderSize: largeWidgetSize,
                 backgroundConfig: currentBgConfig,
                 customBackgroundImage: currentCustomBgImage,
