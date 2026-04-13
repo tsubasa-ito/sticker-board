@@ -269,8 +269,11 @@ struct BoardEditorView: View {
         }
     }
 
+    /// widgetSmall キャンバスの一辺（正方形）。親 VStack が縦方向サイズを確定できないため
+    /// aspectRatio(1.0, .fit) が機能しないケースがあり、screenBounds.width で明示指定する
     private var widgetSmallCanvasSide: CGFloat {
         let w = AppTheme.screenBounds.width
+        // screenBounds が未確定（シーン起動直後など）の場合は iPhone 15 Pro 幅をフォールバックに使用
         return w > 0 ? w : 393
     }
 
@@ -757,10 +760,11 @@ struct BoardEditorView: View {
 
             // small ウィジェット専用スナップショット（154×154 pt）
             let smallWidgetSize = CGSize(width: 154, height: 154)
-            // widgetSmall ボードでは boardCanvasZStack 内の BoardBackgroundView に .padding(24) が
-            // 四方に適用されており、シール座標はパディングを含むキャンバス基準で保存されている。
-            // スナップショットでは背景がフル描画されるため、パディングを除いた背景サイズを座標基準に
-            // 渡すことで positionScale を補正し、エディタとウィジェットのシール位置を一致させる。
+            // widgetSmall ボードでは、boardCanvasZStack 内の BoardBackgroundView に .padding(24) が
+            // 四方に適用されている。canvasSize は ZStack 全体（パディング込み）のサイズだが、
+            // BoardSnapshotView では背景がフルサイズで描画されるため、座標系が異なる。
+            // (canvas - padding×2) を positionScale の基準サイズとして渡すことで
+            // 「背景端がエディタ上の背景端と一致する」よう補正する。
             let boardBackgroundPadding: CGFloat = 24
             let smallSnapshotRefSize: CGSize
             if boardType == .widgetSmall {
@@ -782,6 +786,10 @@ struct BoardEditorView: View {
             let smallRenderer = await ImageRenderer(content: smallSnapshotView)
             await MainActor.run { smallRenderer.scale = 2.0 }
             let smallImage = await smallRenderer.uiImage
+            if smallImage == nil {
+                Logger(subsystem: "com.tebasaki.StickerBoard", category: "WidgetSync")
+                    .error("Small widget snapshot render failed for board \(boardId.uuidString) — widget will fall back to standard snapshot")
+            }
 
             guard !Task.isCancelled else { return }
 

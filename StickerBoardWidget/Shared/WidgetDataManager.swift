@@ -52,9 +52,23 @@ enum WidgetDataManager {
     static func loadSnapshot(fileName: String) -> UIImage? {
         // パストラバーサル防止
         let sanitized = (fileName as NSString).lastPathComponent
-        guard let url = snapshotsURL?.appendingPathComponent(sanitized),
-              let data = try? Data(contentsOf: url) else { return nil }
-        return UIImage(data: data)
+        guard let url = snapshotsURL?.appendingPathComponent(sanitized) else {
+            logger.error("loadSnapshot: App Group container unavailable — entitlement may be missing")
+            return nil
+        }
+        let data: Data
+        do {
+            data = try Data(contentsOf: url)
+        } catch {
+            // 初回同期前やボード未選択時はファイルが存在しないため debug レベルで記録
+            logger.debug("loadSnapshot: '\(sanitized)' not found or unreadable — \(error.localizedDescription)")
+            return nil
+        }
+        guard let image = UIImage(data: data) else {
+            logger.error("loadSnapshot: '\(sanitized)' is not a valid image — file may be corrupt")
+            return nil
+        }
+        return image
     }
 
     /// 指定ボードIDのメタデータを取得する

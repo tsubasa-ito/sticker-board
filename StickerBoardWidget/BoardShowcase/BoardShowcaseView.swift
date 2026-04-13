@@ -95,6 +95,7 @@ struct BoardShowcaseSmallView: View {
         if let image = entry.smallSnapshotImage ?? entry.snapshotImage {
             GeometryReader { geo in
                 ZStack {
+                    // ボードの背景色でウィジェット全体を塗りつぶし
                     Color(hex: 0xFAF0DE)
 
                     Image(uiImage: image)

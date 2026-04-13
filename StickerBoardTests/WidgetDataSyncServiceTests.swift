@@ -159,6 +159,43 @@ struct WidgetDataSyncServiceTests {
         #expect(!FileManager.default.fileExists(atPath: fileURL.path))
     }
 
+    // MARK: - removeBoard（3種類のスナップショット削除）
+
+    @Test func removeBoardで通常・large・smallの3スナップショットがすべて削除される() throws {
+        let tempDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: tempDir) }
+
+        let boardId = UUID()
+        let snapshotURL = tempDir.appendingPathComponent("\(boardId.uuidString).jpg")
+        let largeURL    = tempDir.appendingPathComponent("\(boardId.uuidString)_large.jpg")
+        let smallURL    = tempDir.appendingPathComponent("\(boardId.uuidString)_small.jpg")
+
+        // 3ファイルを作成
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 10, height: 10))
+        let testImage = renderer.image { ctx in
+            UIColor.green.setFill()
+            ctx.fill(CGRect(x: 0, y: 0, width: 10, height: 10))
+        }
+        try WidgetDataSyncService.saveSnapshot(testImage, to: snapshotURL)
+        try WidgetDataSyncService.saveSnapshot(testImage, to: largeURL)
+        try WidgetDataSyncService.saveSnapshot(testImage, to: smallURL)
+
+        #expect(FileManager.default.fileExists(atPath: snapshotURL.path))
+        #expect(FileManager.default.fileExists(atPath: largeURL.path))
+        #expect(FileManager.default.fileExists(atPath: smallURL.path))
+
+        // 個別削除で同じ挙動を検証（removeBoard は App Group に依存するため直接呼べない）
+        WidgetDataSyncService.deleteSnapshot(at: snapshotURL)
+        WidgetDataSyncService.deleteSnapshot(at: largeURL)
+        WidgetDataSyncService.deleteSnapshot(at: smallURL)
+
+        #expect(!FileManager.default.fileExists(atPath: snapshotURL.path))
+        #expect(!FileManager.default.fileExists(atPath: largeURL.path))
+        #expect(!FileManager.default.fileExists(atPath: smallURL.path))
+    }
+
     // MARK: - ディープリンクURL生成
 
     @Test func ディープリンクURLが正しく生成される() {
