@@ -142,4 +142,64 @@ struct WidgetModelsTests {
         // nil の場合はキーが含まれないこと（decodeIfPresent を使うため）
         #expect(jsonObject?["largeSnapshotFileName"] == nil)
     }
+
+    // MARK: - smallSnapshotFileName
+
+    @Test func smallSnapshotFileNameがエンコード・デコードできる() throws {
+        let id = UUID()
+        let metadata = SharedBoardMetadata(
+            id: id.uuidString,
+            title: "テストボード",
+            stickerCount: 3,
+            updatedAt: Date(),
+            snapshotFileName: "\(id.uuidString).jpg",
+            smallSnapshotFileName: "\(id.uuidString)_small.jpg"
+        )
+
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let data = try encoder.encode(metadata)
+
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let decoded = try decoder.decode(SharedBoardMetadata.self, from: data)
+
+        #expect(decoded.smallSnapshotFileName == "\(id.uuidString)_small.jpg")
+    }
+
+    @Test func smallSnapshotFileNameがない古いJSONはnilとしてデコードされる() throws {
+        let oldJSON = """
+        {
+            "id": "AAAAAAAA-0000-0000-0000-000000000001",
+            "title": "古いボード",
+            "stickerCount": 2,
+            "updatedAt": "2025-01-01T00:00:00Z",
+            "snapshotFileName": "AAAAAAAA-0000-0000-0000-000000000001.jpg"
+        }
+        """.data(using: .utf8)!
+
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let decoded = try decoder.decode(SharedBoardMetadata.self, from: oldJSON)
+
+        #expect(decoded.smallSnapshotFileName == nil)
+        #expect(decoded.title == "古いボード")
+    }
+
+    @Test func smallSnapshotFileNameがnilの場合はJSONにキーが含まれない() throws {
+        let metadata = SharedBoardMetadata(
+            id: UUID().uuidString,
+            title: "テストボード",
+            stickerCount: 1,
+            updatedAt: Date(),
+            snapshotFileName: "board.jpg"
+        )
+
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let data = try encoder.encode(metadata)
+
+        let jsonObject = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+        #expect(jsonObject?["smallSnapshotFileName"] == nil)
+    }
 }

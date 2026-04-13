@@ -11,6 +11,8 @@ struct BoardShowcaseEntry: TimelineEntry {
     let snapshotImage: UIImage?
     /// largeウィジェット専用スナップショット（nil の場合は snapshotImage にフォールバック）
     let largeSnapshotImage: UIImage?
+    /// smallウィジェット専用スナップショット（nil の場合は snapshotImage にフォールバック）
+    let smallSnapshotImage: UIImage?
 }
 
 // MARK: - Timeline Provider
@@ -26,23 +28,26 @@ struct BoardShowcaseProvider: AppIntentTimelineProvider {
             boardTitle: "シールボード",
             stickerCount: 0,
             snapshotImage: nil,
-            largeSnapshotImage: nil
+            largeSnapshotImage: nil,
+            smallSnapshotImage: nil
         )
     }
 
     func snapshot(for configuration: BoardShowcaseConfigIntent, in context: Context) async -> BoardShowcaseEntry {
-        makeEntry(for: configuration, isLarge: context.family == .systemLarge)
+        makeEntry(for: configuration, family: context.family)
     }
 
     func timeline(for configuration: BoardShowcaseConfigIntent, in context: Context) async -> Timeline<BoardShowcaseEntry> {
-        let entry = makeEntry(for: configuration, isLarge: context.family == .systemLarge)
+        let entry = makeEntry(for: configuration, family: context.family)
         // ウィジェットはアプリ側から WidgetCenter.reloadTimelines で更新されるため、
         // タイムラインポリシーは .never を使用
         return Timeline(entries: [entry], policy: .never)
     }
 
-    /// - Parameter isLarge: largeサイズの場合は専用スナップショットを読み込む（メモリ最適化）
-    private func makeEntry(for configuration: BoardShowcaseConfigIntent, isLarge: Bool) -> BoardShowcaseEntry {
+    private func makeEntry(for configuration: BoardShowcaseConfigIntent, family: WidgetFamily) -> BoardShowcaseEntry {
+        let isLarge = family == .systemLarge
+        let isSmall = family == .systemSmall
+
         guard let board = configuration.board else {
             // ボード未選択時: 最初のボードをデフォルト表示
             if let first = WidgetDataManager.loadAllMetadata().first {
@@ -50,13 +55,17 @@ struct BoardShowcaseProvider: AppIntentTimelineProvider {
                 let largeImage = isLarge
                     ? first.largeSnapshotFileName.flatMap { WidgetDataManager.loadSnapshot(fileName: $0) }
                     : nil
+                let smallImage = isSmall
+                    ? first.smallSnapshotFileName.flatMap { WidgetDataManager.loadSnapshot(fileName: $0) }
+                    : nil
                 return BoardShowcaseEntry(
                     date: Date(),
                     boardId: first.id,
                     boardTitle: first.title,
                     stickerCount: first.stickerCount,
                     snapshotImage: image,
-                    largeSnapshotImage: largeImage
+                    largeSnapshotImage: largeImage,
+                    smallSnapshotImage: smallImage
                 )
             }
             return BoardShowcaseEntry(
@@ -65,7 +74,8 @@ struct BoardShowcaseProvider: AppIntentTimelineProvider {
                 boardTitle: "シールボード",
                 stickerCount: 0,
                 snapshotImage: nil,
-                largeSnapshotImage: nil
+                largeSnapshotImage: nil,
+                smallSnapshotImage: nil
             )
         }
 
@@ -74,6 +84,9 @@ struct BoardShowcaseProvider: AppIntentTimelineProvider {
         let largeImage = isLarge
             ? metadata?.largeSnapshotFileName.flatMap { WidgetDataManager.loadSnapshot(fileName: $0) }
             : nil
+        let smallImage = isSmall
+            ? metadata?.smallSnapshotFileName.flatMap { WidgetDataManager.loadSnapshot(fileName: $0) }
+            : nil
 
         return BoardShowcaseEntry(
             date: Date(),
@@ -81,7 +94,8 @@ struct BoardShowcaseProvider: AppIntentTimelineProvider {
             boardTitle: metadata?.title ?? board.title,
             stickerCount: metadata?.stickerCount ?? board.stickerCount,
             snapshotImage: image,
-            largeSnapshotImage: largeImage
+            largeSnapshotImage: largeImage,
+            smallSnapshotImage: smallImage
         )
     }
 }
@@ -96,6 +110,8 @@ struct BoardShowcaseEntryView: View {
         switch widgetFamily {
         case .systemLarge:
             BoardShowcaseLargeView(entry: entry)
+        case .systemSmall:
+            BoardShowcaseSmallView(entry: entry)
         default:
             BoardShowcaseMediumView(entry: entry)
         }
@@ -121,7 +137,7 @@ struct BoardShowcaseWidget: Widget {
         }
         .configurationDisplayName("ボードショーケース")
         .description("お気に入りのシールボードをホーム画面に飾ろう")
-        .supportedFamilies([.systemMedium, .systemLarge])
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
         .contentMarginsDisabled()
     }
 

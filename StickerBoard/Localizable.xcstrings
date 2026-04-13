@@ -549,6 +549,36 @@
         }
       }
     },
+    "ウィジェット小" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widget Small"
+          }
+        }
+      }
+    },
+    "ウィジェット小用" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For Small Widget"
+          }
+        }
+      }
+    },
+    "ホーム画面の小サイズウィジェットにピッタリ" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfect for small home screen widgets"
+          }
+        }
+      }
+    },
     "ウィジェット中" : {
       "localizations" : {
         "en" : {
@@ -3587,6 +3617,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Removing background..."
+          }
+        }
+      }
+    },
+    "背景を除去しています。しばらくお待ちください" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Removing background. Please wait a moment"
           }
         }
       }

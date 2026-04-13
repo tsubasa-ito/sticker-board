@@ -105,6 +105,8 @@ enum BoardShareService {
             return CGSize(width: width, height: width / BoardType.widgetLargeAspectRatio)
         case .widgetMedium:
             return CGSize(width: width, height: width / BoardType.widgetMediumAspectRatio)
+        case .widgetSmall:
+            return CGSize(width: width, height: width / BoardType.widgetSmallAspectRatio)
         case .standard:
             return CGSize(width: width, height: bounds.height - 200)
         }

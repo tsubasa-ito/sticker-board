@@ -29,6 +29,7 @@ struct BoardEditorView: View {
     @State private var rebuildTask: Task<Void, Never>?
     @State private var updateTask: Task<Void, Never>?
     @State private var widgetSyncTask: Task<Void, Never>?
+    @State private var hasPerformedInitialSync = false
 
     var body: some View {
         ZStack {
@@ -207,6 +208,13 @@ struct BoardEditorView: View {
             saveBoard()
             loadedImages = [:]
         }
+        .onChange(of: canvasSize) { oldSize, newSize in
+            // キャンバスの初回レンダリング時（.zero → 実サイズ）にウィジェット同期を実行。
+            // アルゴリズム変更後の旧スナップショットが残らないようにする。
+            guard oldSize == .zero, newSize != .zero, !hasPerformedInitialSync else { return }
+            hasPerformedInitialSync = true
+            syncBoardToWidget()
+        }
         .task {
             try? await Task.sleep(for: .seconds(3))
             withAnimation(.easeOut(duration: 0.5)) { showHint = false }
@@ -252,15 +260,29 @@ struct BoardEditorView: View {
 
     @ViewBuilder
     private var canvasArea: some View {
-        if board.boardType == .widgetLarge {
+        switch board.boardType {
+        case .widgetLarge:
             boardCanvasZStack
                 .aspectRatio(BoardType.widgetLargeAspectRatio, contentMode: .fit)
-        } else if board.boardType == .widgetMedium {
+        case .widgetMedium:
             boardCanvasZStack
                 .aspectRatio(BoardType.widgetMediumAspectRatio, contentMode: .fit)
-        } else {
+        case .widgetSmall:
+            // aspectRatio(1.0, .fit) が ZStack 内で意図通りに機能しないケースを防ぐため
+            // screenBounds から明示的に正方形の frame を算出して適用する
+            boardCanvasZStack
+                .frame(width: widgetSmallCanvasSide, height: widgetSmallCanvasSide)
+        case .standard:
             boardCanvasZStack
         }
+    }
+
+    /// widgetSmall キャンバスの一辺（正方形）。親 VStack が縦方向サイズを確定できないため
+    /// aspectRatio(1.0, .fit) が機能しないケースがあり、screenBounds.width で明示指定する
+    private var widgetSmallCanvasSide: CGFloat {
+        let w = AppTheme.screenBounds.width
+        // screenBounds が未確定（シーン起動直後など）の場合は iPhone 15 Pro 幅をフォールバックに使用
+        return w > 0 ? w : 393
     }
 
     private var boardCanvasZStack: some View {
@@ -316,10 +338,15 @@ struct BoardEditorView: View {
     }
 
     private var widgetBadge: some View {
-        Label(
-            board.boardType == .widgetLarge ? "ウィジェット大" : "ウィジェット中",
-            systemImage: "apps.iphone"
-        )
+        let label: LocalizedStringKey = {
+            switch board.boardType {
+            case .widgetLarge: return "ウィジェット大"
+            case .widgetMedium: return "ウィジェット中"
+            case .widgetSmall: return "ウィジェット小"
+            default: return "ウィジェット"
+            }
+        }()
+        return Label(label, systemImage: "apps.iphone")
             .font(.system(size: 11, weight: .semibold, design: .rounded))
             .foregroundStyle(.white)
             .padding(.horizontal, 8)
@@ -674,6 +701,7 @@ struct BoardEditorView: View {
         let boardId = board.id
         let boardTitle = board.title
         let boardUpdatedAt = board.updatedAt
+        let boardType = board.boardType
         let currentPlacements = sortedPlacements
         let currentCanvasSize = canvasSize
         let currentBgConfig = backgroundConfig
@@ -724,9 +752,21 @@ struct BoardEditorView: View {
 
             // large ウィジェット専用スナップショット（364×382 pt）
             let largeWidgetSize = CGSize(width: 364, height: 382)
+            // widgetSmall と同様に、boardCanvasZStack の背景は .padding(24) で縮小されている。
+            // widgetLarge ではキャンバスと背景のアスペクト比がほぼ一致するため補正が有効に機能する。
+            let largeSnapshotRefSize: CGSize
+            if boardType == .widgetLarge {
+                let pad: CGFloat = 24
+                largeSnapshotRefSize = CGSize(
+                    width: max(currentCanvasSize.width - pad * 2, 1),
+                    height: max(currentCanvasSize.height - pad * 2, 1)
+                )
+            } else {
+                largeSnapshotRefSize = currentCanvasSize
+            }
             let largeSnapshotView = BoardSnapshotView(
                 placements: currentPlacements,
-                size: currentCanvasSize,
+                size: largeSnapshotRefSize,
                 renderSize: largeWidgetSize,
                 backgroundConfig: currentBgConfig,
                 customBackgroundImage: currentCustomBgImage,
@@ -738,6 +778,43 @@ struct BoardEditorView: View {
 
             guard !Task.isCancelled else { return }
 
+            // small ウィジェット専用スナップショット（154×154 pt）
+            let smallWidgetSize = BoardType.widgetSmallSize
+            // widgetSmall ボードでは、boardCanvasZStack 内の BoardBackgroundView に .padding(24) が
+            // 四方に適用されている。canvasSize は ZStack 全体（パディング込み）のサイズだが、
+            // BoardSnapshotView では背景がフルサイズで描画されるため、座標系が異なる。
+            // (canvas - padding×2) を positionScale の基準サイズとして渡すことで
+            // 「背景端がエディタ上の背景端と一致する」よう補正する。
+            let boardBackgroundPadding: CGFloat = 24
+            let smallSnapshotRefSize: CGSize
+            if boardType == .widgetSmall {
+                smallSnapshotRefSize = CGSize(
+                    width: max(currentCanvasSize.width - boardBackgroundPadding * 2, 1),
+                    height: max(currentCanvasSize.height - boardBackgroundPadding * 2, 1)
+                )
+            } else {
+                smallSnapshotRefSize = currentCanvasSize
+            }
+            let smallSnapshotView = BoardSnapshotView(
+                placements: currentPlacements,
+                size: smallSnapshotRefSize,
+                renderSize: smallWidgetSize,
+                backgroundConfig: currentBgConfig,
+                customBackgroundImage: currentCustomBgImage,
+                showWatermark: false
+            )
+            let smallImage = await MainActor.run {
+                let renderer = ImageRenderer(content: smallSnapshotView)
+                renderer.scale = 2.0
+                return renderer.uiImage
+            }
+            if smallImage == nil {
+                Logger(subsystem: "com.tebasaki.StickerBoard", category: "WidgetSync")
+                    .error("Small widget snapshot render failed for board \(boardId.uuidString) — widget will fall back to standard snapshot")
+            }
+
+            guard !Task.isCancelled else { return }
+
             WidgetDataSyncService.syncBoard(
                 boardId: boardId,
                 title: boardTitle,
@@ -745,6 +822,7 @@ struct BoardEditorView: View {
                 updatedAt: boardUpdatedAt,
                 snapshotImage: image,
                 largeSnapshotImage: largeImage,
+                smallSnapshotImage: smallImage,
                 allBoardsMetadata: allMetadata
             )
         }

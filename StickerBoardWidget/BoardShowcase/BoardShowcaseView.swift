@@ -85,6 +85,45 @@ struct BoardShowcaseLargeView: View {
     }
 }
 
+// MARK: - Small サイズ
+
+struct BoardShowcaseSmallView: View {
+    let entry: BoardShowcaseEntry
+
+    var body: some View {
+        // smallSnapshotImage が存在する場合はそちらを優先（154×154 で生成済み）
+        if let image = entry.smallSnapshotImage ?? entry.snapshotImage {
+            GeometryReader { geo in
+                ZStack {
+                    // ボードの背景色でウィジェット全体を塗りつぶし
+                    Color(hex: 0xFAF0DE)
+
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: geo.size.width, height: geo.size.height)
+                        .clipped()
+                }
+            }
+        } else {
+            placeholderView
+        }
+    }
+
+    private var placeholderView: some View {
+        VStack(spacing: 6) {
+            Image(systemName: "square.grid.2x2")
+                .font(.system(size: 22))
+                .foregroundStyle(Color(hex: 0xE87A2E))
+            Text("ボードを選択")
+                .font(.system(size: 11, weight: .semibold, design: .rounded))
+                .foregroundStyle(Color(hex: 0x2A2D5B))
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(hex: 0xFAF0DE))
+    }
+}
+
 // MARK: - Hex Color Extension (ウィジェット用)
 
 extension Color {

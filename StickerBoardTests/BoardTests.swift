@@ -284,19 +284,36 @@ struct BoardTests {
         #expect(board.title == "ウィジェット中ボード")
     }
 
+    @Test func widgetSmallボードを作成できる() throws {
+        let container = try makeContainer()
+        let context = ModelContext(container)
+        let board = Board(title: "ウィジェット小ボード", boardType: .widgetSmall)
+        context.insert(board)
+
+        #expect(board.boardType == .widgetSmall)
+        #expect(board.title == "ウィジェット小ボード")
+    }
+
+    @Test func widgetSmallのアスペクト比が1対1である() {
+        #expect(BoardType.widgetSmallAspectRatio == 1.0)
+    }
+
     @Test func boardTypeRawValueが正しく保存される() throws {
         let container = try makeContainer()
         let context = ModelContext(container)
         let standard = Board(title: "標準")
         let widgetL = Board(title: "ウィジェット大", boardType: .widgetLarge)
         let widgetM = Board(title: "ウィジェット中", boardType: .widgetMedium)
+        let widgetS = Board(title: "ウィジェット小", boardType: .widgetSmall)
         context.insert(standard)
         context.insert(widgetL)
         context.insert(widgetM)
+        context.insert(widgetS)
 
         #expect(standard.boardTypeRawValue == "standard")
         #expect(widgetL.boardTypeRawValue == "widgetLarge")
         #expect(widgetM.boardTypeRawValue == "widgetMedium")
+        #expect(widgetS.boardTypeRawValue == "widgetSmall")
     }
 
     @Test func 無効なrawValueはstandardにフォールバックする() throws {
@@ -321,6 +338,8 @@ struct BoardTests {
         #expect(board.boardType == .widgetLarge)
         board.boardType = .widgetMedium
         #expect(board.boardType == .widgetMedium)
+        board.boardType = .widgetSmall
+        #expect(board.boardType == .widgetSmall)
     }
 
     // MARK: - placementsData 直接変更時のキャッシュ無効化

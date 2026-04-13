@@ -9,6 +9,8 @@ struct SharedBoardMetadata: Codable, Sendable {
     let snapshotFileName: String
     /// largeウィジェット専用スナップショットのファイル名（nil = 未生成）
     var largeSnapshotFileName: String?
+    /// smallウィジェット専用スナップショットのファイル名（nil = 未生成）
+    var smallSnapshotFileName: String?
 
     init(
         id: String,
@@ -16,7 +18,8 @@ struct SharedBoardMetadata: Codable, Sendable {
         stickerCount: Int,
         updatedAt: Date,
         snapshotFileName: String,
-        largeSnapshotFileName: String? = nil
+        largeSnapshotFileName: String? = nil,
+        smallSnapshotFileName: String? = nil
     ) {
         self.id = id
         self.title = title
@@ -24,5 +27,6 @@ struct SharedBoardMetadata: Codable, Sendable {
         self.updatedAt = updatedAt
         self.snapshotFileName = snapshotFileName
         self.largeSnapshotFileName = largeSnapshotFileName
+        self.smallSnapshotFileName = smallSnapshotFileName
     }
 }
