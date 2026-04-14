@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import CoreImage.CIFilterBuiltins
 
 // MARK: - ブラシモード
 
@@ -181,7 +182,7 @@ class MaskCanvasContainerView: UIView {
 class MaskOverlayView: UIView {
     private var cachedInvertedMask: CGImage?
     private static let ciContext = CIContext(options: [.useSoftwareRenderer: false])
-    private let invertFilter: CIFilter = CIFilter(name: "CIColorInvert")!
+    private let invertFilter = CIFilter.colorInvert()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -214,8 +215,7 @@ class MaskOverlayView: UIView {
     }
 
     private func invertMask(_ mask: CGImage) -> CGImage? {
-        let ciImage = CIImage(cgImage: mask)
-        invertFilter.setValue(ciImage, forKey: kCIInputImageKey)
+        invertFilter.inputImage = CIImage(cgImage: mask)
         guard let output = invertFilter.outputImage else { return nil }
         return Self.ciContext.createCGImage(output, from: output.extent)
     }
