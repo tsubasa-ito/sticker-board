@@ -181,6 +181,7 @@ class MaskCanvasContainerView: UIView {
 class MaskOverlayView: UIView {
     private var cachedInvertedMask: CGImage?
     private static let ciContext = CIContext(options: [.useSoftwareRenderer: false])
+    private static let invertFilter: CIFilter = CIFilter(name: "CIColorInvert")!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -214,9 +215,8 @@ class MaskOverlayView: UIView {
 
     private func invertMask(_ mask: CGImage) -> CGImage? {
         let ciImage = CIImage(cgImage: mask)
-        guard let filter = CIFilter(name: "CIColorInvert") else { return nil }
-        filter.setValue(ciImage, forKey: kCIInputImageKey)
-        guard let output = filter.outputImage else { return nil }
+        Self.invertFilter.setValue(ciImage, forKey: kCIInputImageKey)
+        guard let output = Self.invertFilter.outputImage else { return nil }
         return Self.ciContext.createCGImage(output, from: output.extent)
     }
 }
@@ -230,8 +230,6 @@ class MaskCanvasUIView: UIView {
     private weak var coordinator: MaskDrawingCanvas.Coordinator?
     weak var maskOverlayView: MaskOverlayView?
     private var lastPoint: CGPoint?
-    private var needsOverlayUpdate = false
-    private var displayLink: CADisplayLink?
     private var isExternalUpdate = false
 
     init(imageSize: CGSize, initialMask: UIImage, coordinator: MaskDrawingCanvas.Coordinator) {
@@ -248,39 +246,10 @@ class MaskCanvasUIView: UIView {
         accessibilityHint = String(localized: "指でなぞってマスクを編集します。2本指でズームやスクロールができます")
 
         setupMaskContext(with: initialMask)
-        setupDisplayLink()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    deinit {
-        displayLink?.invalidate()
-    }
-
-    override func willMove(toWindow newWindow: UIWindow?) {
-        super.willMove(toWindow: newWindow)
-        if newWindow == nil {
-            displayLink?.invalidate()
-            displayLink = nil
-        } else if displayLink == nil {
-            setupDisplayLink()
-        }
-    }
-
-    private func setupDisplayLink() {
-        displayLink = CADisplayLink(target: self, selector: #selector(displayLinkFired))
-        displayLink?.preferredFrameRateRange = CAFrameRateRange(minimum: 15, maximum: 30)
-        displayLink?.add(to: .main, forMode: .common)
-    }
-
-    @objc private func displayLinkFired() {
-        guard needsOverlayUpdate else { return }
-        needsOverlayUpdate = false
-        if let cgImage = maskContext?.makeImage() {
-            maskOverlayView?.updateMask(cgImage)
-        }
     }
 
     private func setupMaskContext(with mask: UIImage) {
@@ -324,47 +293,50 @@ class MaskCanvasUIView: UIView {
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first, let ctx = maskContext else { return }
-        let currentPoint = touch.location(in: self)
-        let previousPoint = lastPoint ?? currentPoint
 
         let brushRadius = coordinator?.brushSize ?? 30
         let isEraser = coordinator?.brushMode == .eraser
-
         let viewToImageX = imageSize.width / bounds.width
         let viewToImageY = imageSize.height / bounds.height
-
-        let imgPrevious = CGPoint(x: previousPoint.x * viewToImageX, y: (bounds.height - previousPoint.y) * viewToImageY)
-        let imgCurrent = CGPoint(x: currentPoint.x * viewToImageX, y: (bounds.height - currentPoint.y) * viewToImageY)
         let imgBrushRadius = brushRadius * viewToImageX
-
         let grayValue: CGFloat = isEraser ? 0.0 : 1.0
         ctx.setFillColor(gray: grayValue, alpha: 1.0)
 
-        let distance = hypot(imgCurrent.x - imgPrevious.x, imgCurrent.y - imgPrevious.y)
-        let step = max(imgBrushRadius * 0.3, 1.0)
-        let steps = max(Int(distance / step), 1)
+        // coalescedTouches で間引かれたタッチポイントをすべて処理しストロークを滑らかにする
+        let touchesToProcess = event?.coalescedTouches(for: touch) ?? [touch]
+        for coalescedTouch in touchesToProcess {
+            let currentPoint = coalescedTouch.location(in: self)
+            let previousPoint = lastPoint ?? currentPoint
 
-        for i in 0...steps {
-            let t = CGFloat(i) / CGFloat(steps)
-            let x = imgPrevious.x + (imgCurrent.x - imgPrevious.x) * t
-            let y = imgPrevious.y + (imgCurrent.y - imgPrevious.y) * t
-            let rect = CGRect(
-                x: x - imgBrushRadius,
-                y: y - imgBrushRadius,
-                width: imgBrushRadius * 2,
-                height: imgBrushRadius * 2
-            )
-            ctx.fillEllipse(in: rect)
+            let imgPrevious = CGPoint(x: previousPoint.x * viewToImageX, y: (bounds.height - previousPoint.y) * viewToImageY)
+            let imgCurrent = CGPoint(x: currentPoint.x * viewToImageX, y: (bounds.height - currentPoint.y) * viewToImageY)
+
+            let distance = hypot(imgCurrent.x - imgPrevious.x, imgCurrent.y - imgPrevious.y)
+            let step = max(imgBrushRadius * 0.3, 1.0)
+            let steps = max(Int(distance / step), 1)
+
+            for i in 0...steps {
+                let t = CGFloat(i) / CGFloat(steps)
+                let x = imgPrevious.x + (imgCurrent.x - imgPrevious.x) * t
+                let y = imgPrevious.y + (imgCurrent.y - imgPrevious.y) * t
+                ctx.fillEllipse(in: CGRect(x: x - imgBrushRadius, y: y - imgBrushRadius,
+                                           width: imgBrushRadius * 2, height: imgBrushRadius * 2))
+            }
+
+            lastPoint = currentPoint
         }
 
-        lastPoint = currentPoint
-        needsOverlayUpdate = true
+        // 直接更新することでタッチ→描画反映のレイテンシをゼロにする
+        updateOverlayFromMask()
+    }
+
+    private func updateOverlayFromMask() {
+        guard let cgImage = maskContext?.makeImage() else { return }
+        maskOverlayView?.updateMask(cgImage)
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         lastPoint = nil
-        // 最終フレームを即座に反映
-        needsOverlayUpdate = false
         if let cgImage = maskContext?.makeImage() {
             maskOverlayView?.updateMask(cgImage)
             delegate?.canvasStrokeCompleted(mask: UIImage(cgImage: cgImage))
