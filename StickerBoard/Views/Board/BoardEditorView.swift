@@ -9,6 +9,7 @@ struct BoardEditorView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.displayScale) private var displayScale
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
 
     @State private var placements: [StickerPlacement] = []
     @State private var selectedPlacementId: UUID?
@@ -29,6 +30,19 @@ struct BoardEditorView: View {
     @State private var rebuildTask: Task<Void, Never>?
     @State private var updateTask: Task<Void, Never>?
     @State private var widgetSyncTask: Task<Void, Never>?
+    @State private var widgetSyncDebounceTask: Task<Void, Never>?
+    @State private var hasPerformedInitialSync = false
+    @State private var undoStack: [(placements: [StickerPlacement], backgroundConfig: BackgroundPatternConfig)] = []
+    @State private var autoSaveTask: Task<Void, Never>?
+
+    // ズームモード
+    @State private var isZoomMode: Bool = false
+    @State private var canvasScale: CGFloat = 1.0
+    @State private var canvasOffset: CGSize = .zero
+    @GestureState private var liveZoomScale: CGFloat = 1.0
+    @GestureState private var livePanOffset: CGSize = .zero
+
+    private let undoStackLimit = 20
 
     var body: some View {
         ZStack {
@@ -37,7 +51,7 @@ struct BoardEditorView: View {
 
             // メインコンテンツ
             VStack(spacing: 0) {
-                canvasArea
+                zoomedCanvasArea
             }
 
             // フローティングUI（折りたたみ可能）
@@ -120,24 +134,51 @@ struct BoardEditorView: View {
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
                 Button {
-                    shareBoardAsImage()
+                    withAnimation(.easeInOut(duration: 0.15)) {
+                        isZoomMode.toggle()
+                        selectedPlacementId = nil
+                    }
+                    let message = isZoomMode
+                        ? String(localized: "ズームモードON")
+                        : String(localized: "ズームモードOFF")
+                    UIAccessibility.post(notification: .announcement, argument: message)
                 } label: {
-                    Image(systemName: "square.and.arrow.up")
+                    Image(systemName: isZoomMode ? "magnifyingglass.circle.fill" : "magnifyingglass")
                         .font(.system(size: 15, weight: .medium))
-                        .foregroundStyle(placements.isEmpty ? AppTheme.textTertiary : AppTheme.accent)
+                        .foregroundStyle(isZoomMode ? AppTheme.accent : AppTheme.textPrimary)
                 }
-                .accessibilityLabel(String(localized: "共有"))
-                .disabled(placements.isEmpty)
+                .accessibilityLabel(String(localized: "ズーム"))
 
                 Button {
-                    showingSaveConfirmation = true
+                    undoLastAction()
                 } label: {
-                    Image(systemName: "arrow.down.to.line")
+                    Image(systemName: "arrow.uturn.backward")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(undoStack.isEmpty ? AppTheme.textTertiary : AppTheme.accent)
+                }
+                .accessibilityLabel(String(localized: "元に戻す"))
+                .disabled(undoStack.isEmpty)
+
+                Menu {
+                    Button {
+                        shareBoardAsImage()
+                    } label: {
+                        Label(String(localized: "共有"), systemImage: "square.and.arrow.up")
+                    }
+                    .disabled(placements.isEmpty)
+
+                    Button {
+                        showingSaveConfirmation = true
+                    } label: {
+                        Label(String(localized: "写真に保存"), systemImage: "arrow.down.to.line")
+                    }
+                    .disabled(placements.isEmpty)
+                } label: {
+                    Image(systemName: "ellipsis.circle")
                         .font(.system(size: 15, weight: .medium))
                         .foregroundStyle(placements.isEmpty ? AppTheme.textTertiary : AppTheme.accent)
                 }
-                .accessibilityLabel(String(localized: "写真に保存"))
-                .disabled(placements.isEmpty)
+                .accessibilityLabel(String(localized: "その他のアクション"))
             }
         }
         .sheet(isPresented: $showingStickerPicker) {
@@ -202,10 +243,41 @@ struct BoardEditorView: View {
             rebuildFilterCache()
         }
         .onDisappear {
+            autoSaveTask?.cancel()
             rebuildTask?.cancel()
             updateTask?.cancel()
-            saveBoard()
+            widgetSyncTask?.cancel()
+            widgetSyncDebounceTask?.cancel()
+            board.placements = placements
+            board.updatedAt = Date()
+            try? modelContext.save()
+            syncBoardToWidget()
             loadedImages = [:]
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            // .inactive も対象にすることで、着信やコントロールセンター表示など
+            // .background に遷移しないケースでもデータを保護する
+            if newPhase == .background || newPhase == .inactive {
+                saveBoard()
+                // saveBoard() 内の debouncedSyncBoardToWidget() は 500ms の遅延があるため、
+                // バックグラウンド移行時はサスペンドまでの時間内に同期を開始できるよう直接呼び出す
+                if newPhase == .background {
+                    syncBoardToWidget()
+                }
+            }
+        }
+        .onChange(of: placements) { _, _ in
+            scheduleAutoSave()
+        }
+        .onChange(of: backgroundConfig) { _, _ in
+            scheduleAutoSave()
+        }
+        .onChange(of: canvasSize) { oldSize, newSize in
+            // キャンバスの初回レンダリング時（.zero → 実サイズ）にウィジェット同期を実行。
+            // アルゴリズム変更後の旧スナップショットが残らないようにする。
+            guard oldSize == .zero, newSize != .zero, !hasPerformedInitialSync else { return }
+            hasPerformedInitialSync = true
+            syncBoardToWidget()
         }
         .task {
             try? await Task.sleep(for: .seconds(3))
@@ -252,15 +324,29 @@ struct BoardEditorView: View {
 
     @ViewBuilder
     private var canvasArea: some View {
-        if board.boardType == .widgetLarge {
+        switch board.boardType {
+        case .widgetLarge:
             boardCanvasZStack
                 .aspectRatio(BoardType.widgetLargeAspectRatio, contentMode: .fit)
-        } else if board.boardType == .widgetMedium {
+        case .widgetMedium:
             boardCanvasZStack
                 .aspectRatio(BoardType.widgetMediumAspectRatio, contentMode: .fit)
-        } else {
+        case .widgetSmall:
+            // aspectRatio(1.0, .fit) が ZStack 内で意図通りに機能しないケースを防ぐため
+            // screenBounds から明示的に正方形の frame を算出して適用する
+            boardCanvasZStack
+                .frame(width: widgetSmallCanvasSide, height: widgetSmallCanvasSide)
+        case .standard:
             boardCanvasZStack
         }
+    }
+
+    /// widgetSmall キャンバスの一辺（正方形）。親 VStack が縦方向サイズを確定できないため
+    /// aspectRatio(1.0, .fit) が機能しないケースがあり、screenBounds.width で明示指定する
+    private var widgetSmallCanvasSide: CGFloat {
+        let w = AppTheme.screenBounds.width
+        // screenBounds が未確定（シーン起動直後など）の場合は iPhone 15 Pro 幅をフォールバックに使用
+        return w > 0 ? w : 393
     }
 
     private var boardCanvasZStack: some View {
@@ -291,16 +377,23 @@ struct BoardEditorView: View {
                     placement: binding(for: placement),
                     image: loadedImages[placement.id],
                     isSelected: selectedPlacementId == placement.id,
+                    // ズームモードOFF時は canvasScale=1.0 を渡してドラッグ補正をバイパスする
+                    canvasScale: isZoomMode ? canvasScale : 1.0,
                     onTap: {
                         withAnimation(.easeInOut(duration: 0.15)) {
                             selectedPlacementId = placement.id
                         }
+                    },
+                    onGestureStarted: {
+                        saveUndoSnapshot()
                     },
                     onGestureEnded: {
                         saveBoard()
                     }
                 )
                 .zIndex(Double(placement.zIndex))
+                .allowsHitTesting(!isZoomMode)
+                .accessibilityHidden(isZoomMode)
             }
         }
         .onGeometryChange(for: CGSize.self) { proxy in
@@ -315,11 +408,90 @@ struct BoardEditorView: View {
         }
     }
 
+    // MARK: - ズームキャンバスエリア
+
+    /// canvasArea をズーム変換でラップしたビュー。
+    /// ズームモードON時はピンチ＋ドラッグでキャンバス全体を拡縮・スクロールできる。
+    /// ズームモードOFF時は including: .none でジェスチャーを完全無効化（ビュー再生成なし）。
+    @ViewBuilder
+    private var zoomedCanvasArea: some View {
+        canvasArea
+            .scaleEffect(canvasScale * liveZoomScale)
+            .offset(
+                x: canvasOffset.width + livePanOffset.width,
+                y: canvasOffset.height + livePanOffset.height
+            )
+            .clipped()
+            .gesture(
+                MagnifyGesture()
+                    .updating($liveZoomScale) { value, state, _ in
+                        let newScale = canvasScale * value.magnification
+                        state = max(0.3, min(5.0, newScale)) / canvasScale
+                    }
+                    .onEnded { value in
+                        canvasScale = max(0.3, min(5.0, canvasScale * value.magnification))
+                    }
+                    .simultaneously(with:
+                        DragGesture()
+                            .updating($livePanOffset) { value, state, _ in
+                                state = value.translation
+                            }
+                            .onEnded { value in
+                                canvasOffset.width += value.translation.width
+                                canvasOffset.height += value.translation.height
+                            }
+                    ),
+                including: isZoomMode ? .all : .none
+            )
+            .overlay(alignment: .topLeading) {
+                if isZoomMode {
+                    Text("ズームモード")
+                        .font(.system(size: 11, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(AppTheme.accent.opacity(0.85), in: Capsule())
+                        .padding(.top, 36)
+                        .padding(.leading, 32)
+                        .allowsHitTesting(false)
+                        .accessibilityHidden(true)
+                        .transition(.opacity)
+                }
+            }
+            .overlay(alignment: .topTrailing) {
+                if isZoomMode && (canvasScale != 1.0 || canvasOffset != .zero) {
+                    Button {
+                        withAnimation(.spring(duration: 0.3)) {
+                            canvasScale = 1.0
+                            canvasOffset = .zero
+                        }
+                    } label: {
+                        Text("リセット")
+                            .font(.system(size: 11, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .background(AppTheme.editorDark.opacity(0.7), in: Capsule())
+                    }
+                    .padding(.top, 36)
+                    .padding(.trailing, 32)
+                    .accessibilityLabel(String(localized: "ズームをリセット"))
+                    .accessibilityHint(String(localized: "倍率を1倍に戻します"))
+                    .transition(.opacity)
+                }
+            }
+    }
+
     private var widgetBadge: some View {
-        Label(
-            board.boardType == .widgetLarge ? "ウィジェット大" : "ウィジェット中",
-            systemImage: "apps.iphone"
-        )
+        let label: LocalizedStringKey = {
+            switch board.boardType {
+            case .widgetLarge: return "ウィジェット大"
+            case .widgetMedium: return "ウィジェット中"
+            case .widgetSmall: return "ウィジェット小"
+            default: return "ウィジェット"
+            }
+        }()
+        return Label(label, systemImage: "apps.iphone")
             .font(.system(size: 11, weight: .semibold, design: .rounded))
             .foregroundStyle(.white)
             .padding(.horizontal, 8)
@@ -436,29 +608,41 @@ struct BoardEditorView: View {
 
                 // 効果
                 toolbarButton(icon: "wand.and.stars", label: "効果",
-                              color: selectedPlacementId != nil ? AppTheme.accent : AppTheme.textTertiary) {
+                              color: selectedPlacementId != nil && !isSelectedPlacementLocked ? AppTheme.accent : AppTheme.textTertiary) {
+                    saveUndoSnapshot()
                     showingFilterPicker = true
                 }
-                .disabled(selectedPlacementId == nil)
+                .disabled(selectedPlacementId == nil || isSelectedPlacementLocked)
 
                 // 枠線
                 toolbarButton(icon: "square.dashed", label: "枠線",
-                              color: selectedPlacementId != nil ? AppTheme.accent : AppTheme.textTertiary) {
+                              color: selectedPlacementId != nil && !isSelectedPlacementLocked ? AppTheme.accent : AppTheme.textTertiary) {
+                    saveUndoSnapshot()
                     showingBorderPicker = true
                 }
-                .disabled(selectedPlacementId == nil)
+                .disabled(selectedPlacementId == nil || isSelectedPlacementLocked)
 
                 // 前面
                 toolbarButton(icon: "square.2.layers.3d.top.filled", label: "前面",
-                              color: selectedPlacementId != nil ? AppTheme.textPrimary : AppTheme.textTertiary) {
+                              color: selectedPlacementId != nil && !isSelectedPlacementLocked ? AppTheme.textPrimary : AppTheme.textTertiary) {
                     applyToSelected { bringToFront($0) }
                 }
-                .disabled(selectedPlacementId == nil)
+                .disabled(selectedPlacementId == nil || isSelectedPlacementLocked)
 
                 // 背面
                 toolbarButton(icon: "square.2.layers.3d.bottom.filled", label: "背面",
-                              color: selectedPlacementId != nil ? AppTheme.textPrimary : AppTheme.textTertiary) {
+                              color: selectedPlacementId != nil && !isSelectedPlacementLocked ? AppTheme.textPrimary : AppTheme.textTertiary) {
                     applyToSelected { sendToBack($0) }
+                }
+                .disabled(selectedPlacementId == nil || isSelectedPlacementLocked)
+
+                // ロック / アンロック
+                toolbarButton(
+                    icon: isSelectedPlacementLocked ? "lock.fill" : "lock.open",
+                    label: isSelectedPlacementLocked ? "解除" : "ロック",
+                    color: selectedPlacementId != nil ? AppTheme.accent : AppTheme.textTertiary
+                ) {
+                    toggleLockForSelected()
                 }
                 .disabled(selectedPlacementId == nil)
 
@@ -466,12 +650,13 @@ struct BoardEditorView: View {
 
                 // 背景
                 toolbarButton(icon: "paintpalette.fill", label: "背景", color: AppTheme.secondary) {
+                    saveUndoSnapshot()
                     showingBackgroundPicker = true
                 }
 
                 // 削除
                 toolbarButton(icon: "trash", label: "削除",
-                              color: selectedPlacementId != nil ? .red : AppTheme.textTertiary) {
+                              color: selectedPlacementId != nil && !isSelectedPlacementLocked ? .red : AppTheme.textTertiary) {
                     if let id = selectedPlacementId,
                        let placement = placements.first(where: { $0.id == id }) {
                         withAnimation {
@@ -480,7 +665,7 @@ struct BoardEditorView: View {
                         }
                     }
                 }
-                .disabled(selectedPlacementId == nil)
+                .disabled(selectedPlacementId == nil || isSelectedPlacementLocked)
             }
             .padding(.horizontal, 28)
         }
@@ -534,6 +719,19 @@ struct BoardEditorView: View {
 
     private var sortedPlacements: [StickerPlacement] {
         placements.sorted { $0.zIndex < $1.zIndex }
+    }
+
+    private var isSelectedPlacementLocked: Bool {
+        guard let id = selectedPlacementId else { return false }
+        return placements.first(where: { $0.id == id })?.isLocked ?? false
+    }
+
+    private func toggleLockForSelected() {
+        guard let id = selectedPlacementId,
+              let index = placements.firstIndex(where: { $0.id == id }) else { return }
+        saveUndoSnapshot()
+        placements[index].isLocked.toggle()
+        saveBoard()
     }
 
     private func binding(for placement: StickerPlacement) -> Binding<StickerPlacement> {
@@ -592,7 +790,31 @@ struct BoardEditorView: View {
         }
     }
 
+    // MARK: - Undo
+
+    private func saveUndoSnapshot() {
+        if let last = undoStack.last,
+           last.placements == placements,
+           last.backgroundConfig == backgroundConfig {
+            return
+        }
+        undoStack.append((placements: placements, backgroundConfig: backgroundConfig))
+        if undoStack.count > undoStackLimit {
+            undoStack.removeFirst()
+        }
+    }
+
+    private func undoLastAction() {
+        guard let snapshot = undoStack.popLast() else { return }
+        placements = snapshot.placements
+        backgroundConfig = snapshot.backgroundConfig
+        loadCustomBackgroundImage()
+        rebuildFilterCache()
+        saveBoard()
+    }
+
     private func addStickerToBoard(_ sticker: Sticker) {
+        saveUndoSnapshot()
         let maxZ = placements.map(\.zIndex).max() ?? -1
         let placement = StickerPlacement(
             stickerId: sticker.id,
@@ -627,6 +849,7 @@ struct BoardEditorView: View {
 
     private func reorderAndNormalizeZIndex(for placement: StickerPlacement, moveToFront: Bool) {
         guard let targetIndex = placements.firstIndex(where: { $0.id == placement.id }) else { return }
+        saveUndoSnapshot()
 
         var sortedIndices = placements.indices.sorted { placements[$0].zIndex < placements[$1].zIndex }
 
@@ -654,6 +877,7 @@ struct BoardEditorView: View {
     }
 
     private func removeFromBoard(_ placement: StickerPlacement) {
+        saveUndoSnapshot()
         loadedImages.removeValue(forKey: placement.id)
         placements.removeAll { $0.id == placement.id }
         saveBoard()
@@ -663,7 +887,34 @@ struct BoardEditorView: View {
         board.placements = placements
         board.updatedAt = Date()
         try? modelContext.save()
-        syncBoardToWidget()
+        debouncedSyncBoardToWidget()
+    }
+
+    /// 800ms デバウンスで saveBoard() を呼び出す。
+    /// ジェスチャー実行中のクラッシュや onChange の連続発火に対する安全網として機能する。
+    /// 各操作の明示的な saveBoard() と二重保存になるケースがあるが、
+    /// これは意図的な設計（即時保存の保証 + ウィジェット同期タイミングの維持）。
+    private func scheduleAutoSave() {
+        autoSaveTask?.cancel()
+        autoSaveTask = Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(800))
+            guard !Task.isCancelled else { return }
+            saveBoard()
+        }
+    }
+
+    /// ウィジェット同期をデバウンスして実行する。
+    /// 高頻度なジェスチャー操作（ピンチ拡大縮小の連続操作など）で saveBoard() が連続発火した場合に、
+    /// 重たい ImageRenderer 処理（3種類のウィジェットスナップショット生成）が並列で積み重なり、
+    /// メモリ圧迫→クラッシュを引き起こす問題を防ぐ。
+    /// 最後の呼び出しから 500ms 後に1回だけ syncBoardToWidget() を実行する。
+    private func debouncedSyncBoardToWidget() {
+        widgetSyncDebounceTask?.cancel()
+        widgetSyncDebounceTask = Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(500))
+            guard !Task.isCancelled else { return }
+            syncBoardToWidget()
+        }
     }
 
     private func syncBoardToWidget() {
@@ -674,6 +925,7 @@ struct BoardEditorView: View {
         let boardId = board.id
         let boardTitle = board.title
         let boardUpdatedAt = board.updatedAt
+        let boardType = board.boardType
         let currentPlacements = sortedPlacements
         let currentCanvasSize = canvasSize
         let currentBgConfig = backgroundConfig
@@ -724,9 +976,21 @@ struct BoardEditorView: View {
 
             // large ウィジェット専用スナップショット（364×382 pt）
             let largeWidgetSize = CGSize(width: 364, height: 382)
+            // widgetSmall と同様に、boardCanvasZStack の背景は .padding(24) で縮小されている。
+            // widgetLarge ではキャンバスと背景のアスペクト比がほぼ一致するため補正が有効に機能する。
+            let largeSnapshotRefSize: CGSize
+            if boardType == .widgetLarge {
+                let pad: CGFloat = 24
+                largeSnapshotRefSize = CGSize(
+                    width: max(currentCanvasSize.width - pad * 2, 1),
+                    height: max(currentCanvasSize.height - pad * 2, 1)
+                )
+            } else {
+                largeSnapshotRefSize = currentCanvasSize
+            }
             let largeSnapshotView = BoardSnapshotView(
                 placements: currentPlacements,
-                size: currentCanvasSize,
+                size: largeSnapshotRefSize,
                 renderSize: largeWidgetSize,
                 backgroundConfig: currentBgConfig,
                 customBackgroundImage: currentCustomBgImage,
@@ -738,6 +1002,43 @@ struct BoardEditorView: View {
 
             guard !Task.isCancelled else { return }
 
+            // small ウィジェット専用スナップショット（154×154 pt）
+            let smallWidgetSize = BoardType.widgetSmallSize
+            // widgetSmall ボードでは、boardCanvasZStack 内の BoardBackgroundView に .padding(24) が
+            // 四方に適用されている。canvasSize は ZStack 全体（パディング込み）のサイズだが、
+            // BoardSnapshotView では背景がフルサイズで描画されるため、座標系が異なる。
+            // (canvas - padding×2) を positionScale の基準サイズとして渡すことで
+            // 「背景端がエディタ上の背景端と一致する」よう補正する。
+            let boardBackgroundPadding: CGFloat = 24
+            let smallSnapshotRefSize: CGSize
+            if boardType == .widgetSmall {
+                smallSnapshotRefSize = CGSize(
+                    width: max(currentCanvasSize.width - boardBackgroundPadding * 2, 1),
+                    height: max(currentCanvasSize.height - boardBackgroundPadding * 2, 1)
+                )
+            } else {
+                smallSnapshotRefSize = currentCanvasSize
+            }
+            let smallSnapshotView = BoardSnapshotView(
+                placements: currentPlacements,
+                size: smallSnapshotRefSize,
+                renderSize: smallWidgetSize,
+                backgroundConfig: currentBgConfig,
+                customBackgroundImage: currentCustomBgImage,
+                showWatermark: false
+            )
+            let smallImage = await MainActor.run {
+                let renderer = ImageRenderer(content: smallSnapshotView)
+                renderer.scale = 2.0
+                return renderer.uiImage
+            }
+            if smallImage == nil {
+                Logger(subsystem: "com.tebasaki.StickerBoard", category: "WidgetSync")
+                    .error("Small widget snapshot render failed for board \(boardId.uuidString) — widget will fall back to standard snapshot")
+            }
+
+            guard !Task.isCancelled else { return }
+
             WidgetDataSyncService.syncBoard(
                 boardId: boardId,
                 title: boardTitle,
@@ -745,6 +1046,7 @@ struct BoardEditorView: View {
                 updatedAt: boardUpdatedAt,
                 snapshotImage: image,
                 largeSnapshotImage: largeImage,
+                smallSnapshotImage: smallImage,
                 allBoardsMetadata: allMetadata
             )
         }

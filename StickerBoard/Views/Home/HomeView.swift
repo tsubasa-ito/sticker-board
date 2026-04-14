@@ -155,7 +155,7 @@ struct HomeView: View {
         .scrollTargetBehavior(.viewAligned)
         .scrollIndicators(.hidden)
         .scrollPosition(id: $scrolledID)
-        .contentMargins(.horizontal, 20)
+        .contentMargins(.horizontal, AppTheme.EditorLayout.horizontalPadding)
         .opacity(animateIn ? 1 : 0)
         .offset(y: animateIn ? 0 : 30)
     }
@@ -172,99 +172,107 @@ struct HomeView: View {
         return canvasWidth / canvasHeight
     }
 
+    /// カルーセルカードの横幅（boardCard / newBoardCard 共通）
+    /// containerRelativeFrame は LazyHStack の全高を各カードに強制する場合があるため、
+    /// screenBounds から明示的に算出する
+    private var boardCardWidth: CGFloat {
+        let w = AppTheme.screenBounds.width
+        return w > 0 ? w - AppTheme.EditorLayout.horizontalPadding * 2 : 345
+    }
+
     private func boardCard(_ board: Board) -> some View {
+        let cardWidth = boardCardWidth
         let cardAspectRatio: CGFloat = {
             switch board.boardType {
             case .widgetLarge: return BoardType.widgetLargeAspectRatio
             case .widgetMedium: return BoardType.widgetMediumAspectRatio
+            case .widgetSmall: return BoardType.widgetSmallAspectRatio
             case .standard: return boardCardAspectRatio
             }
         }()
-        return VStack(spacing: 0) {
-            // プレビューエリア
-            ZStack {
-                // ボード背景パターン
-                BoardCardBackground(config: board.backgroundPattern)
+        let cardHeight = cardWidth / cardAspectRatio
 
-                // シールプレビュー
-                if board.placements.isEmpty {
-                    Image(systemName: "sparkles")
-                        .font(.system(size: 40))
-                        .foregroundStyle(AppTheme.textTertiary.opacity(0.3))
-                } else {
-                    boardStickerPreview(board.placements, boardType: board.boardType)
-                }
+        return ZStack {
+            // ボード背景パターン
+            BoardCardBackground(config: board.backgroundPattern)
 
-                // ボトムグラデーション + タイトルオーバーレイ
-                VStack {
-                    Spacer()
-                    LinearGradient(
-                        colors: [.clear, .black.opacity(0.45)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: 120)
-                    .overlay(alignment: .bottomLeading) {
-                        HStack(alignment: .bottom) {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(board.title)
-                                    .font(.system(size: 24, weight: .heavy, design: .rounded))
-                                    .foregroundStyle(.white)
-                                    .lineLimit(1)
-                                    .shadow(color: .black.opacity(0.3), radius: 4, y: 2)
+            // シールプレビュー
+            if board.placements.isEmpty {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 40))
+                    .foregroundStyle(AppTheme.textTertiary.opacity(0.3))
+            } else {
+                boardStickerPreview(board.placements, boardType: board.boardType)
+            }
 
-                                Text("\(board.placements.count)枚")
-                                    .font(.system(size: 13, weight: .semibold, design: .rounded))
-                                    .foregroundStyle(.white.opacity(0.8))
-                            }
+            // ボトムグラデーション + タイトルオーバーレイ
+            VStack {
+                Spacer()
+                LinearGradient(
+                    colors: [.clear, .black.opacity(0.45)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 120)
+                .overlay(alignment: .bottomLeading) {
+                    HStack(alignment: .bottom) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(board.title)
+                                .font(.system(size: 24, weight: .heavy, design: .rounded))
+                                .foregroundStyle(.white)
+                                .lineLimit(1)
+                                .shadow(color: .black.opacity(0.3), radius: 4, y: 2)
 
-                            Spacer()
-
-                            Menu {
-                                Button {
-                                    boardToRename = board
-                                    renameBoardTitle = board.title
-                                    showingRenameBoard = true
-                                } label: {
-                                    Label("名前を変更", systemImage: "pencil")
-                                }
-
-                                Button {
-                                    shareBoardAsImage(board)
-                                } label: {
-                                    Label("共有", systemImage: "square.and.arrow.up")
-                                }
-
-                                Divider()
-
-                                Button(role: .destructive) {
-                                    boardToDelete = board
-                                    showingDeleteConfirmation = true
-                                } label: {
-                                    Label("削除", systemImage: "trash")
-                                }
-                            } label: {
-                                Image(systemName: "ellipsis")
-                                    .font(.system(size: 14, weight: .bold))
-                                    .foregroundStyle(.white.opacity(0.9))
-                                    .padding(10)
-                                    .background(.ultraThinMaterial.opacity(0.6))
-                                    .clipShape(Circle())
-                            }
-                            .accessibilityLabel("メニュー")
-                            .accessibilityHint("ボードの名前変更や削除ができます")
+                            Text("\(board.placements.count)枚")
+                                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                                .foregroundStyle(.white.opacity(0.8))
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 14)
+
+                        Spacer()
+
+                        Menu {
+                            Button {
+                                boardToRename = board
+                                renameBoardTitle = board.title
+                                showingRenameBoard = true
+                            } label: {
+                                Label("名前を変更", systemImage: "pencil")
+                            }
+
+                            Button {
+                                shareBoardAsImage(board)
+                            } label: {
+                                Label("共有", systemImage: "square.and.arrow.up")
+                            }
+
+                            Divider()
+
+                            Button(role: .destructive) {
+                                boardToDelete = board
+                                showingDeleteConfirmation = true
+                            } label: {
+                                Label("削除", systemImage: "trash")
+                            }
+                        } label: {
+                            Image(systemName: "ellipsis")
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundStyle(.white.opacity(0.9))
+                                .padding(10)
+                                .background(.ultraThinMaterial.opacity(0.6))
+                                .clipShape(Circle())
+                        }
+                        .accessibilityLabel("メニュー")
+                        .accessibilityHint("ボードの名前変更や削除ができます")
                     }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 14)
                 }
             }
-            .aspectRatio(cardAspectRatio, contentMode: .fit)
-            .clipShape(RoundedRectangle(cornerRadius: 28))
         }
+        .frame(width: cardWidth, height: cardHeight)
+        .clipShape(RoundedRectangle(cornerRadius: 28))
         .shadow(color: .black.opacity(0.12), radius: 24, x: 0, y: 12)
         .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 4)
-        .containerRelativeFrame(.horizontal)
     }
 
     // MARK: - ボードシールプレビュー
@@ -321,12 +329,11 @@ struct HomeView: View {
                 }
                 .padding(.horizontal, 24)
             }
-            .aspectRatio(boardCardAspectRatio, contentMode: .fit)
+            .frame(width: boardCardWidth, height: boardCardWidth / boardCardAspectRatio)
         }
         .buttonStyle(.plain)
         .accessibilityLabel("新しいボードを作る")
         .accessibilityHint("タップして新しいボードを作成します")
-        .containerRelativeFrame(.horizontal)
     }
 
     // MARK: - ページインジケーター
@@ -469,16 +476,26 @@ private struct BoardStickerPreviewView: View {
     /// プレビュー用サムネイルサイズ（カルーセル内なので小さくてOK）
     private let previewThumbnailSize: CGFloat = 200
 
-    /// エディタで使われるキャンバス参照サイズ（シール座標の基準）
+    /// シール座標（positionX/Y）のマッピング基準となる参照キャンバスサイズ。
+    /// エディタのキャンバスと背景（カード）は共通の中心を持つため、カードサイズを参照することで
+    /// シール座標をそのままプレビュー空間に当てはめられる。
+    /// screenBounds が未確定の場合は boardCardAspectRatio に合わせたフォールバックを返す。
     private var referenceCanvasSize: CGSize {
-        let w = AppTheme.screenBounds.width
+        let s = AppTheme.screenBounds
+        let cardW = s.width - AppTheme.EditorLayout.horizontalPadding * 2
+        let cardH = s.height - AppTheme.EditorLayout.verticalChromeHeight
+        guard cardW > 0, cardH > 0 else {
+            return CGSize(width: 300, height: 400)
+        }
         switch boardType {
         case .standard:
-            return CGSize(width: w, height: AppTheme.screenBounds.height)
+            return CGSize(width: cardW, height: cardH)
         case .widgetLarge:
-            return CGSize(width: w, height: w / BoardType.widgetLargeAspectRatio)
+            return CGSize(width: cardW, height: cardW / BoardType.widgetLargeAspectRatio)
         case .widgetMedium:
-            return CGSize(width: w, height: w / BoardType.widgetMediumAspectRatio)
+            return CGSize(width: cardW, height: cardW / BoardType.widgetMediumAspectRatio)
+        case .widgetSmall:
+            return CGSize(width: cardW, height: cardW / BoardType.widgetSmallAspectRatio)
         }
     }
 
@@ -608,6 +625,13 @@ private struct NewBoardSheet: View {
                             subtitle: "ホーム画面の中サイズウィジェットにピッタリ",
                             icon: "apps.iphone",
                             previewAspectRatio: BoardType.widgetMediumAspectRatio
+                        )
+                        boardTypeRow(
+                            type: .widgetSmall,
+                            title: "ウィジェット小用",
+                            subtitle: "ホーム画面の小サイズウィジェットにピッタリ",
+                            icon: "square.fill",
+                            previewAspectRatio: BoardType.widgetSmallAspectRatio
                         )
                     }
                 }

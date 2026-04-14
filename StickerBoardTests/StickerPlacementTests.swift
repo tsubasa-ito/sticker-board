@@ -20,6 +20,7 @@ struct StickerPlacementTests {
         #expect(placement.filter == .original)
         #expect(placement.borderWidth == .none)
         #expect(placement.borderColorHex == "FFFFFF")
+        #expect(placement.isLocked == false)
     }
 
     @Test func カスタム値で初期化できる() {
@@ -109,6 +110,7 @@ struct StickerPlacementTests {
         #expect(decoded.filter == original.filter)
         #expect(decoded.borderWidth == original.borderWidth)
         #expect(decoded.borderColorHex == original.borderColorHex)
+        #expect(decoded.isLocked == original.isLocked)
     }
 
     @Test func 旧フォーマットJSONからフォールバック値でデコードできる() throws {
@@ -145,5 +147,46 @@ struct StickerPlacementTests {
         placement.borderWidthType = "invalid_width"
 
         #expect(placement.borderWidth == .none)
+    }
+
+    // MARK: - ロック機能
+
+    @Test func デフォルトでisLockedはfalse() {
+        let placement = StickerPlacement(stickerId: UUID(), imageFileName: "test.png")
+        #expect(placement.isLocked == false)
+    }
+
+    @Test func isLockedをtrueに設定できる() {
+        var placement = StickerPlacement(stickerId: UUID(), imageFileName: "test.png")
+        placement.isLocked = true
+        #expect(placement.isLocked == true)
+    }
+
+    @Test func isLockedがJSONエンコードデコードで往復できる() throws {
+        var original = StickerPlacement(stickerId: UUID(), imageFileName: "lock_test.png")
+        original.isLocked = true
+
+        let data = try JSONEncoder().encode(original)
+        let decoded = try JSONDecoder().decode(StickerPlacement.self, from: data)
+
+        #expect(decoded.isLocked == true)
+    }
+
+    @Test func isLockedを含まない旧JSONはfalseにフォールバックする() throws {
+        let json = """
+        {
+            "id": "33333333-3333-3333-3333-333333333333",
+            "stickerId": "44444444-4444-4444-4444-444444444444",
+            "imageFileName": "old.png",
+            "positionX": 0,
+            "positionY": 0,
+            "scale": 1.0,
+            "rotation": 0,
+            "zIndex": 0
+        }
+        """
+
+        let decoded = try JSONDecoder().decode(StickerPlacement.self, from: Data(json.utf8))
+        #expect(decoded.isLocked == false)
     }
 }

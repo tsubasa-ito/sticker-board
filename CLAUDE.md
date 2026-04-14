@@ -76,6 +76,7 @@ open StickerBoard.xcodeproj
 - StickerPlacement に imageFileName を直接保持する設計（SwiftDataのID問題回避のため）
 - Board の backgroundPatternData も placements と同様に Codable struct を JSON シリアライズして Data? に格納する設計
 - BackgroundRemover は入力画像の EXIF 向きを正規化し、長辺2048pxにリサイズする（cgImage とマスクの整合性確保 + メモリ最適化）
+- BackgroundRemover.processForCapture(from:) はキャプチャフロー専用の統合API。Vision を1回だけ呼び出し、被写体数に応じて `.singleSticker(BackgroundRemovalResult)` または `.multipleStickers([UIImage])` を返す `CaptureProcessingResult` enum に分岐する。StickerCaptureView.processImage() から呼び出す（旧 extractIndividualStickers + removeBackgroundWithMask の二段階呼び出しを廃止）
 - BackgroundRemover.removeBackgroundAtPoint(from:normalizedPoint:) は、VNInstanceMaskObservation の instanceMask ピクセルバッファからタップ位置のインスタンスIDを特定し、その被写体のみを切り抜く。StickerCaptureView で写真プレビューの長押しジェスチャーから呼び出される
 - フィルター（キラキラ・レトロ・パステル・ネオン・ぷっくり・ワッペン）は StickerPlacement の filterType に保存し、ボード配置単位で適用する設計（シール自体ではなく配置ごとにフィルターが異なる）
 - StickerFilterService は CIFilter ベースでオンザフライ処理。BoardEditorView ではフィルター適用画像をキャッシュして body 再評価時の再計算を回避
@@ -86,6 +87,11 @@ open StickerBoard.xcodeproj
 - StickerLibraryView は @Query ではなく FetchDescriptor + fetchLimit/fetchOffset によるページネーション（30枚ずつ無限スクロール）でシールを取得する設計（大量シール時のメモリ最適化）
 - サムネイル表示（StickerThumbnailView, QuickPickThumbnail, BoardStickerPreviewView）は ImageStorage.loadThumbnail() 経由で縮小画像を使用
 - 枠線（ボーダー）は StickerPlacement の borderWidthType / borderColorHex に保存し、フィルターと同様に配置単位で管理する設計
+- シールロックは StickerPlacement の isLocked: Bool = false に保存（旧データとの後方互換性: decodeIfPresent でデフォルト false）。ロック中はドラッグ・ピンチ・回転ジェスチャーおよび効果・枠線・前面・背面・削除ボタンを無効化。VoiceOver はロック/解除アクション + UIAccessibility.post アナウンス対応
+- キャンバスズームモード（BoardEditorView）: `isZoomMode: Bool`, `canvasScale: CGFloat = 1.0`, `canvasOffset: CGSize = .zero`, `@GestureState liveZoomScale/livePanOffset` で管理。`zoomedCanvasArea` が canvasArea をラップし scaleEffect + offset + .clipped() を適用。ズームモードOFF時は `.gesture(including: .none)` でジェスチャー完全無効化（ビュー再生成なし）。ズーム範囲: 0.3x〜5.0x。`StickerItemView` に `canvasScale` パラメータを渡し、ズームモードON時のみドラッグ量を `/canvasScale` で補正（OFF時は canvasScale=1.0 を渡してバイパス）。ズームモード中はシールに `.allowsHitTesting(false)` + `.accessibilityHidden(true)` を適用。ズームボタンはナビゲーションバー（`.primaryAction`）に配置
+- ナビゲーションバー右側（BoardEditorView）: ズーム → Undo → ⋯（`ellipsis.circle` Menu）の順。Menu内に「共有」（`square.and.arrow.up`）と「写真に保存」（`arrow.down.to.line`）をまとめ、頻度の低い操作をナビバーから省く設計。シール0枚時は両アクションを `.disabled`
+- 自動保存（BoardEditorView）: 2層構造でデータを保護。層1: `@Environment(\.scenePhase)` の `.background`/`.inactive` 移行時に `saveBoard()` を即時呼び出し（`.background` 時は `syncBoardToWidget()` も直接呼び出してデバウンス遅延前のサスペンドに備える）。層2: `onChange(of: placements)` / `onChange(of: backgroundConfig)` で 800ms デバウンスの `scheduleAutoSave()` をトリガー（ジェスチャー中クラッシュ対策）。`autoSaveTask` は `onDisappear` でキャンセル。既存の明示的 `saveBoard()` 呼び出しはすべてそのまま残す設計（即時保存の保証・Widget同期タイミングの維持）
+- Undo機能: BoardEditorView の `undoStack: [(placements: [StickerPlacement], backgroundConfig: BackgroundPatternConfig)]`（最大20ステップ）で操作前スナップショットを管理。`saveUndoSnapshot()` は重複チェック付き（同一状態はスキップ）。`undoLastAction()` はスタックをpopして状態を復元後 `rebuildFilterCache()` → `saveBoard()` を呼ぶ（削除undoで画像が消えないよう必須）。StickerItemView の `onGestureStarted` コールバックでジェスチャー開始時にスナップショットを保存。VoiceOverアクセシビリティアクション（移動/リサイズ/回転/ロック）も `onGestureStarted` 経由でundo対応済み。`StickerPlacement` は `Equatable` に準拠（重複チェック用）
 - StickerBorderService は CIMorphologyMaximum でアルファマスクを膨張させて輪郭に沿った枠線を描画。フィルター適用後の画像に枠線を重ねる（描画順序: フィルター → 枠線）
 - ImageCacheManager の processed() メソッドがフィルター＋枠線の統合キャッシュを管理。キーは「fileName_filterType_borderWidth_borderColorHex」形式
 - ホログラフィック効果（HolographicEffectModifier）はリアルタイムのビューレベル効果であり、フィルター/ボーダーのような画像処理とは独立。CoreMotion のジャイロスコープ（MotionManager シングルトン）でデバイスの傾きに連動した3D回転・レインボーグラデーション・スペキュラハイライトを表示。シミュレータではフォールバックとして自動アニメーションを使用。`@Environment(\.accessibilityReduceMotion)` で「視差効果を減らす」設定時は3D回転・自動アニメーションを無効化し静的表示にフォールバック（WCAG 2.3.3準拠）
@@ -109,7 +115,7 @@ open StickerBoard.xcodeproj
 - ディープリンク: `stickerboard://board/{boardId}` でウィジェットタップ → ボード編集画面に直接遷移。StickerBoardApp の `.onOpenURL` でハンドリング
 - `Shared/` ディレクトリのファイルはメインアプリ・ウィジェット両ターゲットに含まれる（project.yml の sources で指定）。共有型や定数はここに配置する
 - Widget Extension（`StickerBoardWidgetExtension`）は `AppIntentConfiguration` でボード選択。`BoardEntity` が `AppEntity` として機能する
-- BoardType enum（`Board.swift` に定義）: `.standard`（通常の縦長キャンバス）/ `.widgetLarge`（364×382pt比率のウィジェット専用キャンバス）。`boardTypeRawValue: String = "standard"` で SwiftData の自動マイグレーション対応。ボード作成時に `NewBoardSheet` でタイプを選択。`BoardType.widgetLargeAspectRatio = 364/382` 定数を参照
+- BoardType enum（`Board.swift` に定義）: `.standard`（通常の縦長キャンバス）/ `.widgetLarge`（364×382pt比率のウィジェット専用キャンバス）/ `.widgetSmall`（正方形キャンバス）。`boardTypeRawValue: String = "standard"` で SwiftData の自動マイグレーション対応。ボード作成時に `NewBoardSheet` でタイプを選択。`BoardType.widgetLargeAspectRatio = 364/382`、`BoardType.widgetSmallAspectRatio = 1.0` 定数を参照
 - AppUpdateChecker（Sendable シングルトン）がアプリ起動時に iTunes Lookup API でバージョンチェック。MainTabView の .task で呼び出し、24時間間隔で実行（@AppStorage("lastUpdateCheckDate")）。メジャーアップデートはスキップ不可（毎回表示）、マイナー/パッチは「あとで」でスキップ可能（@AppStorage("skippedVersion")）。ネットワークエラー時はサイレントにスキップし次回起動でリトライ
 - ReviewRequestManager（Sendable シングルトン）がアプリ内レビュー訴求を管理。`@Environment(\.requestReview)` による iOS 標準ダイアログのみ使用（カスタムUIなし・Appleガイドライン準拠）。トリガー条件: シール5/15/30枚目（`StickerCaptureView` sheet の onDismiss で呼び出し）、ボード新規作成時（alert dismiss 後 Task.sleep 600ms）、起動5回目（StickerBoardApp.init() で UserDefaults の "appLaunchCount" をインクリメント）。表示制御は 90日クールダウン＋365日ローリングウィンドウで年3回上限（@AppStorage("reviewRequestDatesJSON") に JSON 配列で最大3件の日時を保存）
 - Firebase Crashlytics: `StickerBoardApp.init()` の先頭で `FirebaseApp.configure()` を呼び出してクラッシュ検知を初期化。`GoogleService-Info.plist` はFirebaseコンソールからダウンロードして `StickerBoard/` 直下に配置する（.gitignore で除外）。Privacy Manifest（`StickerBoard/PrivacyInfo.xcprivacy`）にクラッシュデータ・パフォーマンスデータ・デバイスIDの申告を記載済み。Claude Code から MCP 経由でクラッシュ分析する方法は `docs/MCP_CRASHLYTICS.md` を参照

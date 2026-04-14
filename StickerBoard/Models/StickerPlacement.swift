@@ -1,6 +1,6 @@
 import Foundation
 
-struct StickerPlacement: Codable, Identifiable {
+struct StickerPlacement: Codable, Identifiable, Equatable {
     var id: UUID
     var stickerId: UUID
     var imageFileName: String
@@ -12,6 +12,7 @@ struct StickerPlacement: Codable, Identifiable {
     var filterType: String = "original"
     var borderWidthType: String = "none"
     var borderColorHex: String = "FFFFFF"
+    var isLocked: Bool = false
 
     init(stickerId: UUID, imageFileName: String, positionX: Double = 0, positionY: Double = 0, scale: Double = 1.0, rotation: Double = 0, zIndex: Int = 0, filterType: StickerFilter = .original, borderWidth: StickerBorderWidth = .none, borderColorHex: String = "FFFFFF") {
         self.id = UUID()
@@ -40,6 +41,7 @@ struct StickerPlacement: Codable, Identifiable {
         filterType = try container.decodeIfPresent(String.self, forKey: .filterType) ?? "original"
         borderWidthType = try container.decodeIfPresent(String.self, forKey: .borderWidthType) ?? "none"
         borderColorHex = try container.decodeIfPresent(String.self, forKey: .borderColorHex) ?? "FFFFFF"
+        isLocked = try container.decodeIfPresent(Bool.self, forKey: .isLocked) ?? false
     }
 
     /// 現在のフィルター種別

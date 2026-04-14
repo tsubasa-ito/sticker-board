@@ -45,8 +45,9 @@ struct StickerCaptureView: View {
                     } else if let processedImage {
                         // 切り抜き結果（単一）
                         resultSection(processedImage)
-                    } else if isProcessing {
-                        processingSection
+                    } else if originalImage != nil {
+                        // 写真プレビュー（処理中はオーバーレイ表示）
+                        pickerSection
                     } else {
                         pickerSection
                     }
@@ -224,27 +225,53 @@ struct StickerCaptureView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                         .shadow(color: .black.opacity(0.1), radius: 8, y: 4)
                         .overlay {
-                            GeometryReader { geometry in
-                                Color.clear
-                                    .contentShape(Rectangle())
-                                    .gesture(
-                                        LongPressGesture(minimumDuration: 0.5)
-                                            .sequenced(before: DragGesture(minimumDistance: 0))
-                                            .onChanged { value in
-                                                switch value {
-                                                case .second(true, let drag):
-                                                    if let drag, !isProcessing {
-                                                        pressLocation = drag.startLocation
-                                                        longPressImageViewSize = geometry.size
-                                                        let generator = UIImpactFeedbackGenerator(style: .medium)
-                                                        generator.impactOccurred()
-                                                        processImageAtPoint()
+                            if isProcessing {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .fill(.black.opacity(0.5))
+                                    VStack(spacing: 12) {
+                                        ProgressView()
+                                            .controlSize(.large)
+                                            .tint(.white)
+                                        Text("背景を除去しています...")
+                                            .font(.system(size: 15, weight: .semibold, design: .rounded))
+                                            .foregroundStyle(.white)
+                                        Text("AIが被写体を検出しています")
+                                            .font(.system(size: 12, design: .rounded))
+                                            .foregroundStyle(.white.opacity(0.7))
+                                    }
+                                }
+                                .accessibilityElement(children: .combine)
+                                .accessibilityLabel("背景を除去しています。しばらくお待ちください")
+                                .onAppear {
+                                    AccessibilityNotification.Announcement("背景を除去しています").post()
+                                }
+                            }
+                        }
+                        .overlay {
+                            if !isProcessing {
+                                GeometryReader { geometry in
+                                    Color.clear
+                                        .contentShape(Rectangle())
+                                        .gesture(
+                                            LongPressGesture(minimumDuration: 0.5)
+                                                .sequenced(before: DragGesture(minimumDistance: 0))
+                                                .onChanged { value in
+                                                    switch value {
+                                                    case .second(true, let drag):
+                                                        if let drag {
+                                                            pressLocation = drag.startLocation
+                                                            longPressImageViewSize = geometry.size
+                                                            let generator = UIImpactFeedbackGenerator(style: .medium)
+                                                            generator.impactOccurred()
+                                                            processImageAtPoint()
+                                                        }
+                                                    default:
+                                                        break
                                                     }
-                                                default:
-                                                    break
                                                 }
-                                            }
-                                    )
+                                        )
+                                }
                             }
                         }
                         .accessibilityLabel("選択した写真のプレビュー")
@@ -264,12 +291,13 @@ struct StickerCaptureView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
-                        .foregroundStyle(AppTheme.secondary)
+                        .foregroundStyle(isProcessing ? AppTheme.secondary.opacity(0.4) : AppTheme.secondary)
                         .background {
                             RoundedRectangle(cornerRadius: 14)
-                                .strokeBorder(AppTheme.secondary, lineWidth: 2)
+                                .strokeBorder(isProcessing ? AppTheme.secondary.opacity(0.4) : AppTheme.secondary, lineWidth: 2)
                         }
                     }
+                    .disabled(isProcessing)
                     .accessibilityLabel("すべて自動で切り抜く")
                     .accessibilityHint("写真内のすべての被写体を自動的に検出して切り抜きます")
                 }
@@ -561,25 +589,20 @@ struct StickerCaptureView: View {
         processingTask?.cancel()
         processingTask = Task {
             do {
-                // まず複数オブジェクト検出を試みる
-                let results = try await BackgroundRemover.extractIndividualStickers(from: originalImage)
+                let result = try await BackgroundRemover.processForCapture(from: originalImage)
 
                 guard !Task.isCancelled else { return }
 
-                if results.count > 1 {
+                switch result {
+                case .singleSticker(let bgResult):
                     withAnimation(.spring(duration: 0.5)) {
-                        extractedStickers = results
+                        backgroundRemovalResult = bgResult
+                        processedImage = bgResult.processedImage
                         self.originalImage = nil
                     }
-                } else {
-                    // 単一シール: マスク付きで処理（手動調整を可能にする）
-                    let result = try await BackgroundRemover.removeBackgroundWithMask(from: originalImage)
-
-                    guard !Task.isCancelled else { return }
-
+                case .multipleStickers(let stickers):
                     withAnimation(.spring(duration: 0.5)) {
-                        backgroundRemovalResult = result
-                        processedImage = result.processedImage
+                        extractedStickers = stickers
                         self.originalImage = nil
                     }
                 }
@@ -588,9 +611,7 @@ struct StickerCaptureView: View {
                     errorMessage = error.localizedDescription
                 }
             }
-            if !Task.isCancelled {
-                withAnimation { isProcessing = false }
-            }
+            withAnimation { isProcessing = false }
         }
     }
 
