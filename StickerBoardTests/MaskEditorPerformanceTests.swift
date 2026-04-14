@@ -60,7 +60,10 @@ struct MaskEditorPerformanceTests {
 
     @Test func touchesMovedでupdateOverlayFromMaskが呼ばれること() throws {
         let content = try canvasContent
-        // touchesMoved 内の本体を抽出して確認
+        // 注意: 中括弧カウントによるスコープ特定は実装変更に弱い脆弱なパターンです。
+        // このテストが予期せず失敗した場合は、touchesMoved のシグネチャや
+        // メソッドのネスト構造が変わっていないか MaskDrawingCanvas.swift を確認してください。
+        // プロジェクトの慣習（ソースコード文字列解析）に従い、このパターンを採用しています。
         let range = try #require(content.range(of: "func touchesMoved("),
                                  "touchesMoved が見つかりません")
         let fromMoved = content[range.lowerBound...]
