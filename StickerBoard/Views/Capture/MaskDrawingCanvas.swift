@@ -181,7 +181,7 @@ class MaskCanvasContainerView: UIView {
 class MaskOverlayView: UIView {
     private var cachedInvertedMask: CGImage?
     private static let ciContext = CIContext(options: [.useSoftwareRenderer: false])
-    private static let invertFilter: CIFilter = CIFilter(name: "CIColorInvert")!
+    private let invertFilter: CIFilter = CIFilter(name: "CIColorInvert")!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -215,8 +215,8 @@ class MaskOverlayView: UIView {
 
     private func invertMask(_ mask: CGImage) -> CGImage? {
         let ciImage = CIImage(cgImage: mask)
-        Self.invertFilter.setValue(ciImage, forKey: kCIInputImageKey)
-        guard let output = Self.invertFilter.outputImage else { return nil }
+        invertFilter.setValue(ciImage, forKey: kCIInputImageKey)
+        guard let output = invertFilter.outputImage else { return nil }
         return Self.ciContext.createCGImage(output, from: output.extent)
     }
 }

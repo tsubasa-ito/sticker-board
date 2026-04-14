@@ -92,11 +92,16 @@ struct MaskEditorPerformanceTests {
 
     // MARK: - CIFilter キャッシュ
 
-    @Test func invertFilterがstaticキャッシュされていること() throws {
+    @Test func invertFilterがインスタンスプロパティとしてキャッシュされていること() throws {
         let content = try canvasContent
+        // CIFilter はスレッドセーフでないため static 共有は禁止。インスタンスプロパティとしてキャッシュする
         #expect(
-            content.contains("static let invertFilter") || content.contains("static var invertFilter"),
-            "MaskOverlayView.invertFilter が static プロパティになっていません。毎フレームの CIFilter 生成コストを排除するために static キャッシュが必要です"
+            content.contains("let invertFilter") || content.contains("var invertFilter"),
+            "MaskOverlayView.invertFilter がインスタンスプロパティとしてキャッシュされていません。毎フレームの CIFilter 生成コストを排除するためにインスタンスキャッシュが必要です"
+        )
+        #expect(
+            !content.contains("static let invertFilter") && !content.contains("static var invertFilter"),
+            "CIFilter は NSObject のミュータブルサブクラスでスレッドセーフではないため static 共有は禁止です"
         )
     }
 }
