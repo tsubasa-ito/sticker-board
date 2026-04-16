@@ -36,6 +36,23 @@ enum AppTheme {
     /// 薄いボーダー
     static let borderSubtle = Color(hex: 0xE5DDD0)
 
+    // MARK: - 手帳カラー（クリアバインダースタイル）
+
+    /// リング柱（スパイン）の背景色 - 透明感のあるライトグレー
+    static let notebookSpine = Color(hex: 0xDDE2EA)
+    /// リング外側（シルバーハイライト）
+    static let notebookRingLight = Color(hex: 0xF2F4F7)
+    /// リング中間（クロームシルバー）
+    static let notebookRingMid = Color(hex: 0xB8C0CC)
+    /// リング暗部（ダークシルバー）
+    static let notebookRingDark = Color(hex: 0x7A8494)
+    /// リング穴の色（透明感を出す深みグレー）
+    static let notebookRingHole = Color(hex: 0x4A5260)
+    /// ページの紙色（クリーンホワイト）
+    static let notebookPage = Color(hex: 0xFFFFFF)
+    /// 表紙色（クリア/フロスト感のあるライトブルーグレー）
+    static let notebookCover = Color(hex: 0xEEF2F8)
+
     // MARK: - チェッカーボード
 
     static let checkerLight = Color(hex: 0xFFFEFC)

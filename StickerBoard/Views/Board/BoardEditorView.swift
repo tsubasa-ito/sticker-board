@@ -5,6 +5,8 @@ import os
 
 struct BoardEditorView: View {
     @Bindable var board: Board
+    /// 手帳内でのページ番号（1始まり）。奇数=リング左、偶数=リング右
+    var pageIndex: Int = 1
     @Query(sort: \Sticker.createdAt, order: .reverse) private var allStickers: [Sticker]
     @Environment(\.modelContext) private var modelContext
     @Environment(\.displayScale) private var displayScale
@@ -285,39 +287,11 @@ struct BoardEditorView: View {
         }
     }
 
-    // MARK: - 背景
+    // MARK: - 背景（手帳のデスク - クリアバインダー）
 
     private var editorBackground: some View {
-        ZStack {
-            AppTheme.editorBackground
-                .ignoresSafeArea()
-
-            Canvas { context, size in
-                let spacing: CGFloat = 40
-                let dotSize: CGFloat = 1.5
-                let rows = Int(size.height / spacing) + 1
-                let cols = Int(size.width / spacing) + 1
-
-                for row in 0..<rows {
-                    for col in 0..<cols {
-                        let point = CGPoint(
-                            x: CGFloat(col) * spacing + spacing / 2,
-                            y: CGFloat(row) * spacing + spacing / 2
-                        )
-                        context.fill(
-                            Path(ellipseIn: CGRect(
-                                x: point.x - dotSize / 2,
-                                y: point.y - dotSize / 2,
-                                width: dotSize,
-                                height: dotSize
-                            )),
-                            with: .color(AppTheme.editorDark.opacity(0.03))
-                        )
-                    }
-                }
-            }
+        AppTheme.notebookCover
             .ignoresSafeArea()
-        }
     }
 
     // MARK: - キャンバスエリア
@@ -351,11 +325,8 @@ struct BoardEditorView: View {
 
     private var boardCanvasZStack: some View {
         ZStack {
-            // ボードカード（背景パターン付き）
+            // ページ背景（手帳スタイル：枠なし・フルフィル）
             BoardBackgroundView(config: backgroundConfig, customImage: customBackgroundImage)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-                .shadow(color: .black.opacity(0.08), radius: 20, y: 4)
-                .padding(24)
 
             // タップで選択解除
             Color.clear
@@ -404,6 +375,15 @@ struct BoardEditorView: View {
         .overlay(alignment: .topTrailing) {
             if board.boardType != .standard {
                 widgetBadge
+            }
+        }
+        // 手帳リング列（表紙=0 はリングなし、奇数=左、偶数=右）
+        .overlay(alignment: pageIndex % 2 == 1 ? .leading : .trailing) {
+            if pageIndex > 0 {
+                NotebookRingView()
+                    .frame(width: 32)
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
             }
         }
     }

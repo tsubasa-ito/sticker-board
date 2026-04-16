@@ -21,18 +21,42 @@ struct StickerBoardApp: App {
 
         let container: ModelContainer
         do {
-            container = try ModelContainer(for: Sticker.self, Board.self)
+            container = try ModelContainer(for: Sticker.self, Board.self, Notebook.self)
         } catch {
             fatalError("Could not create ModelContainer: \(error)")
         }
         self.container = container
 
-        // 初回起動時にデフォルトボードを作成
+        // デフォルト手帳の作成と既存ボードの割り当て
         let context = container.mainContext
-        let boardCount = (try? context.fetchCount(FetchDescriptor<Board>())) ?? 0
-        if boardCount == 0 {
-            let defaultBoard = Board(title: "はじめてのボード")
-            context.insert(defaultBoard)
+        let notebookCount = (try? context.fetchCount(FetchDescriptor<Notebook>())) ?? 0
+        if notebookCount == 0 {
+            // 初回: デフォルト手帳を作成
+            let defaultNotebook = Notebook(title: "はじめての手帳")
+            context.insert(defaultNotebook)
+            // 既存ボードを全てデフォルト手帳に割り当て
+            let allBoards = (try? context.fetch(FetchDescriptor<Board>())) ?? []
+            for board in allBoards {
+                if board.notebookIdString.isEmpty {
+                    board.notebookIdString = defaultNotebook.id.uuidString
+                }
+            }
+            // まだボードがなければデフォルトページを作成
+            if allBoards.isEmpty {
+                let defaultBoard = Board(title: "はじめてのページ")
+                defaultBoard.notebookIdString = defaultNotebook.id.uuidString
+                context.insert(defaultBoard)
+            }
+        } else {
+            // 既存手帳あり: 未割り当てボードをエラー防止で最初の手帳に割り当て
+            if let firstNotebook = try? context.fetch(FetchDescriptor<Notebook>()).first {
+                let orphans = (try? context.fetch(
+                    FetchDescriptor<Board>(predicate: #Predicate { $0.notebookIdString == "" })
+                )) ?? []
+                for board in orphans {
+                    board.notebookIdString = firstNotebook.id.uuidString
+                }
+            }
         }
 
         // グローバルNavBar外観設定

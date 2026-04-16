@@ -4,16 +4,35 @@ import SwiftData
 struct HomeView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.displayScale) private var displayScale
-    @Query(sort: \Board.createdAt, order: .forward) private var boards: [Board]
 
-    private let newBoardCardID = "new-board"
+    /// 表示対象の手帳
+    var notebook: Notebook
+
+    @Query private var boards: [Board]
+
+    private let newPageTag = "new-page"
 
     @Binding var hideTabBar: Bool
     @Binding var deepLinkBoardId: UUID?
     var onBoardCreated: () -> Void = {}
 
     @State private var showingBoardTypePicker = false
-    @State private var scrolledID: String?
+    @State private var currentPageTag: String? = "cover"
+    /// 表紙エディタ用（通常ページの selectedBoard と分離してクラッシュを防ぐ）
+    @State private var selectedCoverBoard: Board?
+
+    init(notebook: Notebook, hideTabBar: Binding<Bool>, deepLinkBoardId: Binding<UUID?>, onBoardCreated: @escaping () -> Void = {}) {
+        self.notebook = notebook
+        self._hideTabBar = hideTabBar
+        self._deepLinkBoardId = deepLinkBoardId
+        self.onBoardCreated = onBoardCreated
+        let notebookId = notebook.id.uuidString
+        self._boards = Query(
+            filter: #Predicate<Board> { board in board.notebookIdString == notebookId },
+            sort: \Board.createdAt,
+            order: .forward
+        )
+    }
     @State private var animateIn = false
     @State private var selectedBoard: Board?
     @State private var boardToRename: Board?
@@ -27,32 +46,24 @@ struct HomeView: View {
 
     var body: some View {
         ZStack {
-            AppTheme.backgroundPrimary
-                .ignoresSafeArea()
+            AppTheme.backgroundPrimary.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                if boards.isEmpty {
-                    emptyState
-                        .frame(maxHeight: .infinity)
-                } else {
-                    Spacer(minLength: 8)
+                notebookPagesView
+                    .frame(maxHeight: .infinity)
 
-                    boardCarousel
+                notebookPageDots
+                    .padding(.top, 12)
+                    .padding(.bottom, 8)
 
-                    pageIndicators
-                        .padding(.top, 16)
-
-                    Spacer(minLength: 100)
-                }
+                Spacer(minLength: 90)
             }
         }
-        .navigationTitle("シールボード")
+        .navigationTitle(currentPageTitle)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
-                Button {
-                    showingSettings = true
-                } label: {
+                Button { showingSettings = true } label: {
                     Image(systemName: "gearshape")
                         .font(.system(size: 17, weight: .medium))
                         .foregroundStyle(AppTheme.textSecondary)
@@ -61,14 +72,12 @@ struct HomeView: View {
                 .accessibilityHint("設定画面を開きます")
             }
             ToolbarItem(placement: .principal) {
-                Text("シールボード")
+                Text(currentPageTitle)
                     .font(.system(size: 20, weight: .heavy, design: .rounded))
                     .foregroundStyle(AppTheme.accent)
             }
             ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    showingOnboarding = true
-                } label: {
+                Button { showingOnboarding = true } label: {
                     Image(systemName: "questionmark.circle")
                         .font(.system(size: 17, weight: .medium))
                         .foregroundStyle(AppTheme.textSecondary)
@@ -88,8 +97,16 @@ struct HomeView: View {
         .sheet(isPresented: $showingPaywall) {
             PaywallView()
         }
+        // 表紙専用ナビゲーション（pageIndex=0 でリングなし）
+        .navigationDestination(item: $selectedCoverBoard) { board in
+            BoardEditorView(board: board, pageIndex: 0)
+                .onAppear { hideTabBar = true }
+                .onDisappear { hideTabBar = false }
+        }
+        // 通常ページナビゲーション
         .navigationDestination(item: $selectedBoard) { board in
-            BoardEditorView(board: board)
+            let pageIndex = (regularBoards.firstIndex(where: { $0.id == board.id }) ?? 0) + 1
+            BoardEditorView(board: board, pageIndex: pageIndex)
                 .onAppear { hideTabBar = true }
                 .onDisappear { hideTabBar = false }
         }
@@ -114,10 +131,18 @@ struct HomeView: View {
         } message: { board in
             Text("「\(board.title)」を削除しますか？\nこの操作は取り消せません。")
         }
-        .onAppear {
-            withAnimation(.easeOut(duration: 0.8)) {
-                animateIn = true
+        .task {
+            // 表紙ボードが存在しない場合は自動作成
+            if coverBoard == nil {
+                let cover = Board(title: "表紙")
+                cover.notebookIdString = notebook.id.uuidString
+                modelContext.insert(cover)
+                try? modelContext.save()
+                notebook.coverBoardId = cover.id.uuidString
             }
+        }
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.8)) { animateIn = true }
         }
         .onChange(of: deepLinkBoardId) {
             guard let boardId = deepLinkBoardId else { return }
@@ -128,314 +153,436 @@ struct HomeView: View {
         }
     }
 
-    // MARK: - ボードカルーセル
+    // MARK: - 表紙・通常ページの分離
 
-    private var boardCarousel: some View {
-        ScrollView(.horizontal) {
-            LazyHStack(spacing: 12) {
-                ForEach(boards) { board in
-                    boardCard(board)
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            selectedBoard = board
-                        }
-                        .accessibilityElement(children: .combine)
-                        .accessibilityLabel("\(board.title)、シール\(board.placements.count)枚")
-                        .accessibilityHint("タップしてボードを編集します")
-                        .accessibilityAddTraits(.isButton)
+    /// 表紙として指定されたボード
+    private var coverBoard: Board? {
+        boards.first { $0.id.uuidString == notebook.coverBoardId }
+    }
+
+    /// 表紙を除いた通常ページ一覧
+    private var regularBoards: [Board] {
+        boards.filter { $0.id.uuidString != notebook.coverBoardId }
+    }
+
+    // MARK: - 手帳ページ群（ScrollView + ページめくりアニメーション）
+
+    private var notebookPagesView: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            LazyHStack(spacing: 0) {
+
+                // 表紙（フェード＋スケール）
+                coverPage
+                    .containerRelativeFrame(.horizontal)
+                    .id("cover")
+                    .scrollTransition(axis: .horizontal) { content, phase in
+                        content
+                            .opacity(phase.isIdentity ? 1.0 : max(0.45, 1.0 - abs(phase.value) * 0.55))
+                            .scaleEffect(phase.isIdentity ? 1.0 : max(0.96, 1.0 - abs(phase.value) * 0.04))
+                    }
+
+                // ボードページ（リング軸中心の3Dフリップ）
+                ForEach(Array(regularBoards.enumerated()), id: \.element.id) { index, board in
+                    let pageIndex = index + 1
+                    let ringOnLeft = pageIndex % 2 == 1
+
+                    boardPage(board: board, pageIndex: pageIndex)
+                        .containerRelativeFrame(.horizontal)
                         .id(board.id.uuidString)
+                        .scrollTransition(axis: .horizontal) { content, phase in
+                            content
+                                // リング側を軸にページが"開かれる"回転
+                                .rotation3DEffect(
+                                    .degrees(Double(ringOnLeft ? 1 : -1) * phase.value * 12),
+                                    axis: (x: 0, y: 1, z: 0),
+                                    anchor: ringOnLeft ? .leading : .trailing,
+                                    perspective: 0.28
+                                )
+                                .opacity(phase.isIdentity ? 1.0 : max(0.45, 1.0 - abs(phase.value) * 0.50))
+                        }
                 }
 
-                // 新規ボード作成カード
-                newBoardCard
-                    .id(newBoardCardID)
+                // 新規ページ枠（最終ページに合わせた方向）
+                let newPageIndex = regularBoards.count + 1
+                let newRingOnLeft = newPageIndex % 2 == 1
+                newPagePlaceholder
+                    .containerRelativeFrame(.horizontal)
+                    .id(newPageTag)
+                    .scrollTransition(axis: .horizontal) { content, phase in
+                        content
+                            .rotation3DEffect(
+                                .degrees(Double(newRingOnLeft ? 1 : -1) * phase.value * 12),
+                                axis: (x: 0, y: 1, z: 0),
+                                anchor: newRingOnLeft ? .leading : .trailing,
+                                perspective: 0.28
+                            )
+                            .opacity(phase.isIdentity ? 1.0 : max(0.45, 1.0 - abs(phase.value) * 0.50))
+                    }
             }
             .scrollTargetLayout()
         }
         .scrollTargetBehavior(.viewAligned)
+        .scrollPosition(id: $currentPageTag)
         .scrollIndicators(.hidden)
-        .scrollPosition(id: $scrolledID)
-        .contentMargins(.horizontal, AppTheme.EditorLayout.horizontalPadding)
         .opacity(animateIn ? 1 : 0)
-        .offset(y: animateIn ? 0 : 30)
+        .offset(y: animateIn ? 0 : 24)
     }
 
-    // MARK: - ボードカード
+    // MARK: - 表紙ページ（ページ0・リングなし・デコレーション可）
 
-    /// エディタのキャンバスと同じ比率を算出（画面からナビバー・ツールバー・パディング分を引く）
-    private var boardCardAspectRatio: CGFloat {
-        let screen = AppTheme.screenBounds
-        let canvasWidth = screen.width - (AppTheme.EditorLayout.horizontalPadding * 2)
-        let canvasHeight = screen.height - AppTheme.EditorLayout.verticalChromeHeight
-        // 起動直後に screenBounds が未確定の場合は妥当なデフォルト比率を返す
-        guard canvasWidth > 0, canvasHeight > 0 else { return 0.75 }
-        return canvasWidth / canvasHeight
-    }
-
-    /// カルーセルカードの横幅（boardCard / newBoardCard 共通）
-    /// containerRelativeFrame は LazyHStack の全高を各カードに強制する場合があるため、
-    /// screenBounds から明示的に算出する
-    private var boardCardWidth: CGFloat {
-        let w = AppTheme.screenBounds.width
-        return w > 0 ? w - AppTheme.EditorLayout.horizontalPadding * 2 : 345
-    }
-
-    private func boardCard(_ board: Board) -> some View {
-        let cardWidth = boardCardWidth
-        let cardAspectRatio: CGFloat = {
-            switch board.boardType {
-            case .widgetLarge: return BoardType.widgetLargeAspectRatio
-            case .widgetMedium: return BoardType.widgetMediumAspectRatio
-            case .widgetSmall: return BoardType.widgetSmallAspectRatio
-            case .standard: return boardCardAspectRatio
-            }
-        }()
-        let cardHeight = cardWidth / cardAspectRatio
-
-        return ZStack {
-            // ボード背景パターン
-            BoardCardBackground(config: board.backgroundPattern)
-
-            // シールプレビュー
-            if board.placements.isEmpty {
-                Image(systemName: "sparkles")
-                    .font(.system(size: 40))
-                    .foregroundStyle(AppTheme.textTertiary.opacity(0.3))
+    private var coverPage: some View {
+        ZStack {
+            if let cover = coverBoard {
+                // 実際のボードコンテンツ（背景＋シール）
+                BoardCardBackground(config: cover.backgroundPattern)
+                if !cover.placements.isEmpty {
+                    boardStickerPreview(cover.placements, boardType: cover.boardType)
+                } else {
+                    // 未デコレーション時のデフォルト表示
+                    defaultCoverDecoration
+                }
             } else {
-                boardStickerPreview(board.placements, boardType: board.boardType)
+                AppTheme.notebookCover
+                defaultCoverDecoration
             }
 
-            // ボトムグラデーション + タイトルオーバーレイ
+            // 外枠（透明プラスチック感）
+            Rectangle()
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [.white.opacity(0.7), .white.opacity(0.2)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1.5
+                )
+
+            // 下部タイトルバッジ
             VStack {
                 Spacer()
-                LinearGradient(
-                    colors: [.clear, .black.opacity(0.45)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(height: 120)
-                .overlay(alignment: .bottomLeading) {
-                    HStack(alignment: .bottom) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(board.title)
-                                .font(.system(size: 24, weight: .heavy, design: .rounded))
-                                .foregroundStyle(.white)
-                                .lineLimit(1)
-                                .shadow(color: .black.opacity(0.3), radius: 4, y: 2)
-
-                            Text("\(board.placements.count)枚")
-                                .font(.system(size: 13, weight: .semibold, design: .rounded))
-                                .foregroundStyle(.white.opacity(0.8))
-                        }
-
-                        Spacer()
-
-                        Menu {
-                            Button {
-                                boardToRename = board
-                                renameBoardTitle = board.title
-                                showingRenameBoard = true
-                            } label: {
-                                Label("名前を変更", systemImage: "pencil")
-                            }
-
-                            Button {
-                                shareBoardAsImage(board)
-                            } label: {
-                                Label("共有", systemImage: "square.and.arrow.up")
-                            }
-
-                            Divider()
-
-                            Button(role: .destructive) {
-                                boardToDelete = board
-                                showingDeleteConfirmation = true
-                            } label: {
-                                Label("削除", systemImage: "trash")
-                            }
-                        } label: {
-                            Image(systemName: "ellipsis")
-                                .font(.system(size: 14, weight: .bold))
-                                .foregroundStyle(.white.opacity(0.9))
-                                .padding(10)
-                                .background(.ultraThinMaterial.opacity(0.6))
-                                .clipShape(Circle())
-                        }
-                        .accessibilityLabel("メニュー")
-                        .accessibilityHint("ボードの名前変更や削除ができます")
+                HStack {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("シールボード")
+                            .font(.system(size: 15, weight: .heavy, design: .rounded))
+                            .foregroundStyle(AppTheme.textPrimary.opacity(0.85))
+                        Text(regularBoards.isEmpty
+                             ? "右にスワイプしてページを追加"
+                             : (regularBoards.count == 1 ? "1ページ" : "\(regularBoards.count)ページ"))
+                            .font(.system(size: 11, design: .rounded))
+                            .foregroundStyle(AppTheme.textSecondary.opacity(0.75))
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 14)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 10))
+                    .padding(.leading, 16)
+                    .padding(.bottom, 20)
+                    Spacer()
                 }
             }
+            .allowsHitTesting(false)
         }
-        .frame(width: cardWidth, height: cardHeight)
-        .clipShape(RoundedRectangle(cornerRadius: 28))
-        .shadow(color: .black.opacity(0.12), radius: 24, x: 0, y: 12)
-        .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 4)
+        .padding(.vertical, 8)
+        .shadow(color: .black.opacity(0.10), radius: 18, x: 0, y: 6)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            // 専用 State を使うことで通常ページの navigationDestination と衝突しない
+            if let cover = coverBoard { selectedCoverBoard = cover }
+        }
+        .accessibilityLabel("表紙。タップして編集します")
+        .accessibilityHint("シールや背景を追加してデコレーションできます")
+        .accessibilityAddTraits(.isButton)
     }
 
-    // MARK: - ボードシールプレビュー
-
-    /// ボードエディタと同じレイアウトを縮小して表示する
-    private func boardStickerPreview(_ placements: [StickerPlacement], boardType: BoardType) -> some View {
-        BoardStickerPreviewView(placements: placements, boardType: boardType)
-    }
-
-    // MARK: - 新規ボードカード
-
-    private var newBoardCard: some View {
-        Button {
-            if !SubscriptionManager.shared.isProUser && boards.count >= 1 {
-                showingPaywall = true
-            } else {
-                showingBoardTypePicker = true
-            }
-        } label: {
+    private var defaultCoverDecoration: some View {
+        VStack(spacing: 20) {
             ZStack {
-                RoundedRectangle(cornerRadius: 28)
+                Circle()
+                    .fill(AppTheme.accent.opacity(0.10))
+                    .frame(width: 90, height: 90)
+                Circle()
+                    .strokeBorder(AppTheme.accent.opacity(0.18), lineWidth: 1.5)
+                    .frame(width: 90, height: 90)
+                Image(systemName: "book.closed.fill")
+                    .font(.system(size: 42))
+                    .foregroundStyle(AppTheme.accent.opacity(0.7))
+            }
+            Text("タップして表紙をデコレーション")
+                .font(.system(size: 12, weight: .medium, design: .rounded))
+                .foregroundStyle(AppTheme.textTertiary.opacity(0.6))
+        }
+        .accessibilityHidden(true)
+    }
+
+    // MARK: - ボードページ（奇数=リング左、偶数=リング右）
+
+    private func boardPage(board: Board, pageIndex: Int) -> some View {
+        let ringOnLeft = pageIndex % 2 == 1
+
+        return HStack(spacing: 0) {
+            if ringOnLeft {
+                NotebookRingView().frame(width: 32)
+            }
+
+            ZStack {
+                // クリアページスリーブ感のある白いページ
+                AppTheme.notebookPage
+                    .overlay {
+                        // ページ外枠（プラスチックスリーブの縁取り）
+                        Rectangle()
+                            .strokeBorder(AppTheme.notebookSpine.opacity(0.4), lineWidth: 1)
+                    }
+
+                boardPreviewContent(board: board)
+                pageNumberLabel(pageIndex: pageIndex, ringOnLeft: ringOnLeft)
+            }
+            // めくれる側のエッジシャドウ（ページの厚み感）
+            .shadow(
+                color: .black.opacity(0.06),
+                radius: 6,
+                x: ringOnLeft ? 3 : -3,
+                y: 0
+            )
+
+            if !ringOnLeft {
+                NotebookRingView().frame(width: 32)
+            }
+        }
+        .padding(.vertical, 8)
+        .shadow(color: .black.opacity(0.12), radius: 16, x: 0, y: 5)
+        .contentShape(Rectangle())
+        .onTapGesture { selectedBoard = board }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(board.title)、シール\(board.placements.count)枚")
+        .accessibilityHint("タップしてページを編集します")
+        .accessibilityAddTraits(.isButton)
+    }
+
+    // MARK: - 新規ページプレースホルダー
+
+    private var newPagePlaceholder: some View {
+        let pageIndex = boards.count + 1
+        let ringOnLeft = pageIndex % 2 == 1
+
+        return HStack(spacing: 0) {
+            if ringOnLeft {
+                NotebookRingView().frame(width: 32)
+            }
+
+            ZStack {
+                AppTheme.notebookPage
+                    .overlay {
+                        Rectangle()
+                            .strokeBorder(AppTheme.notebookSpine.opacity(0.4), lineWidth: 1)
+                    }
+
+                Rectangle()
                     .strokeBorder(
-                        AppTheme.accent.opacity(0.25),
-                        style: StrokeStyle(lineWidth: 2.5, dash: [12, 8])
+                        AppTheme.accent.opacity(0.18),
+                        style: StrokeStyle(lineWidth: 1.5, dash: [14, 10])
                     )
-                    .background(
-                        RoundedRectangle(cornerRadius: 28)
-                            .fill(AppTheme.backgroundCard.opacity(0.5))
-                    )
+                    .padding(32)
 
                 VStack(spacing: 20) {
                     ZStack {
                         Circle()
-                            .fill(AppTheme.accent.opacity(0.1))
-                            .frame(width: 80, height: 80)
+                            .fill(AppTheme.accent.opacity(0.08))
+                            .frame(width: 76, height: 76)
                         Circle()
-                            .fill(AppTheme.accent.opacity(0.18))
-                            .frame(width: 62, height: 62)
+                            .strokeBorder(
+                                AppTheme.accent.opacity(0.22),
+                                style: StrokeStyle(lineWidth: 2, dash: [6, 4])
+                            )
+                            .frame(width: 76, height: 76)
                         Image(systemName: "plus")
-                            .font(.system(size: 28, weight: .bold))
+                            .font(.system(size: 30, weight: .medium))
                             .foregroundStyle(AppTheme.accent)
                     }
 
                     VStack(spacing: 6) {
-                        Text("新しいボードを作る")
-                            .font(.system(size: 18, weight: .bold, design: .rounded))
+                        Text("新しいページを追加")
+                            .font(.system(size: 17, weight: .bold, design: .rounded))
                             .foregroundStyle(AppTheme.textPrimary)
-
-                        Text("シールを撮影して\n自分だけのボードを作ろう")
+                        Text("タップしてページを作成")
                             .font(.system(size: 13, design: .rounded))
                             .foregroundStyle(AppTheme.textSecondary)
-                            .multilineTextAlignment(.center)
                     }
                 }
-                .padding(.horizontal, 24)
+
+                pageNumberLabel(pageIndex: pageIndex, ringOnLeft: ringOnLeft)
             }
-            .frame(width: boardCardWidth, height: boardCardWidth / boardCardAspectRatio)
+            .shadow(
+                color: .black.opacity(0.04),
+                radius: 8,
+                x: ringOnLeft ? 4 : -4,
+                y: 0
+            )
+
+            if !ringOnLeft {
+                NotebookRingView().frame(width: 32)
+            }
         }
-        .buttonStyle(.plain)
-        .accessibilityLabel("新しいボードを作る")
-        .accessibilityHint("タップして新しいボードを作成します")
+        .padding(.vertical, 8)
+        .shadow(color: .black.opacity(0.10), radius: 16, x: 0, y: 5)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            if !SubscriptionManager.shared.isProUser && regularBoards.count >= 1 {
+                showingPaywall = true
+            } else {
+                showingBoardTypePicker = true
+            }
+        }
+        .accessibilityLabel("新しいページを追加")
+        .accessibilityHint("タップして新しいページを作成します")
+        .accessibilityAddTraits(.isButton)
     }
 
-    // MARK: - ページインジケーター
+    // MARK: - ボードプレビューコンテンツ
 
-    private var pageIndicators: some View {
-        HStack(spacing: 6) {
-            let totalPages = boards.count + 1
+    private func boardPreviewContent(board: Board) -> some View {
+        ZStack {
+            BoardCardBackground(config: board.backgroundPattern)
+
+            if board.placements.isEmpty {
+                VStack(spacing: 10) {
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 28))
+                        .foregroundStyle(AppTheme.textTertiary.opacity(0.25))
+                        .accessibilityHidden(true)
+                    Text("シールを貼ってみよう")
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .foregroundStyle(AppTheme.textTertiary.opacity(0.35))
+                }
+            } else {
+                boardStickerPreview(board.placements, boardType: board.boardType)
+            }
+
+            boardTitleOverlay(board: board)
+        }
+    }
+
+    private func boardTitleOverlay(board: Board) -> some View {
+        VStack {
+            HStack(alignment: .top) {
+                Text(board.title)
+                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .foregroundStyle(AppTheme.textPrimary.opacity(0.80))
+                    .lineLimit(1)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(.ultraThinMaterial, in: Capsule())
+                    .padding(.top, 14)
+                    .padding(.leading, 12)
+
+                Spacer()
+
+                Menu {
+                    Button {
+                        boardToRename = board
+                        renameBoardTitle = board.title
+                        showingRenameBoard = true
+                    } label: {
+                        Label("名前を変更", systemImage: "pencil")
+                    }
+                    Button { shareBoardAsImage(board) } label: {
+                        Label("共有", systemImage: "square.and.arrow.up")
+                    }
+                    Divider()
+                    Button(role: .destructive) {
+                        boardToDelete = board
+                        showingDeleteConfirmation = true
+                    } label: {
+                        Label("削除", systemImage: "trash")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundStyle(AppTheme.textSecondary.opacity(0.6))
+                        .padding(9)
+                        .background(.ultraThinMaterial, in: Circle())
+                        .padding(.top, 12)
+                        .padding(.trailing, 12)
+                }
+                .accessibilityLabel("メニュー")
+                .accessibilityHint("ページの名前変更や削除ができます")
+            }
+            Spacer()
+        }
+    }
+
+    // MARK: - ページ番号ラベル
+
+    private func pageNumberLabel(pageIndex: Int, ringOnLeft: Bool) -> some View {
+        VStack {
+            Spacer()
+            HStack {
+                if ringOnLeft { Spacer() }
+                Text("— \(pageIndex) —")
+                    .font(.system(size: 11, weight: .light, design: .serif))
+                    .foregroundStyle(AppTheme.textTertiary.opacity(0.45))
+                    .padding(ringOnLeft ? .trailing : .leading, 16)
+                    .padding(.bottom, 14)
+                if !ringOnLeft { Spacer() }
+            }
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+
+    // MARK: - ページドットインジケーター
+
+    private var notebookPageDots: some View {
+        let totalPages = regularBoards.count + 2  // 表紙 + 通常ページ + 新規枠
+        return HStack(spacing: 5) {
             ForEach(0..<totalPages, id: \.self) { index in
+                let isCurrent = index == notebookCurrentIndex
                 Capsule()
-                    .fill(
-                        index == currentPageIndex
-                            ? AppTheme.accent
-                            : AppTheme.accent.opacity(0.2)
-                    )
-                    .frame(
-                        width: index == currentPageIndex ? 24 : 8,
-                        height: 8
-                    )
-                    .animation(.spring(duration: 0.3), value: currentPageIndex)
+                    .fill(isCurrent ? AppTheme.accent : AppTheme.accent.opacity(0.2))
+                    .frame(width: isCurrent ? 20 : 6, height: 6)
+                    .animation(.spring(duration: 0.3), value: notebookCurrentIndex)
             }
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("ページ \(currentPageIndex + 1) / \(boards.count + 1)")
-        .accessibilityValue(currentPageIndex < boards.count ? boards[currentPageIndex].title : "新しいボードを作る")
+        .accessibilityLabel("ページ \(notebookCurrentIndex + 1) / \(totalPages)")
     }
 
-    private var currentPageIndex: Int {
-        guard let id = scrolledID else { return 0 }
-        if let index = boards.firstIndex(where: { $0.id.uuidString == id }) {
-            return index
-        }
-        if id == newBoardCardID {
-            return boards.count
-        }
-        return 0
+    private var notebookCurrentIndex: Int {
+        let tag = currentPageTag ?? "cover"
+        if tag == "cover" { return 0 }
+        if tag == newPageTag { return regularBoards.count + 1 }
+        return (regularBoards.firstIndex(where: { $0.id.uuidString == tag }) ?? -1) + 1
     }
 
-    // MARK: - 空の状態
-
-    private var emptyState: some View {
-        VStack(spacing: 28) {
-            ZStack {
-                Circle()
-                    .fill(AppTheme.accent.opacity(0.06))
-                    .frame(width: 140, height: 140)
-
-                Circle()
-                    .fill(AppTheme.accent.opacity(0.1))
-                    .frame(width: 100, height: 100)
-
-                Image(systemName: "sparkles")
-                    .font(.system(size: 44))
-                    .foregroundStyle(AppTheme.accent)
-            }
-
-            VStack(spacing: 6) {
-                Text("新しいボードを作る")
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
-                    .foregroundStyle(AppTheme.textPrimary)
-
-                Text("シールを撮影して\n自分だけのボードを作ろう")
-                    .font(.system(size: 13, design: .rounded))
-                    .foregroundStyle(AppTheme.textSecondary)
-                    .multilineTextAlignment(.center)
-            }
-
-            Button {
-                if !SubscriptionManager.shared.isProUser && boards.count >= 1 {
-                    showingPaywall = true
-                } else {
-                    showingBoardTypePicker = true
-                }
-            } label: {
-                HStack(spacing: 8) {
-                    Image(systemName: "plus.circle.fill")
-                        .font(.system(size: 16))
-                        .accessibilityHidden(true)
-                    Text("ボードを作る")
-                        .font(.system(size: 16, weight: .bold, design: .rounded))
-                }
-                .foregroundStyle(.white)
-                .padding(.horizontal, 28)
-                .padding(.vertical, 16)
-                .background(AppTheme.accent, in: Capsule())
-                .shadow(color: AppTheme.accent.opacity(0.4), radius: 12, y: 6)
-            }
-            .accessibilityLabel("新しいボードを作る")
-            .accessibilityHint("タップして新しいボードを作成します")
+    private var currentPageTitle: String {
+        let tag = currentPageTag ?? "cover"
+        if tag == "cover" { return "表紙" }
+        if let board = regularBoards.first(where: { $0.id.uuidString == tag }) {
+            return board.title
         }
-        .opacity(animateIn ? 1 : 0)
-        .offset(y: animateIn ? 0 : 20)
+        return "シールボード"
+    }
+
+    // MARK: - ボードシールプレビュー
+
+    private func boardStickerPreview(_ placements: [StickerPlacement], boardType: BoardType) -> some View {
+        BoardStickerPreviewView(placements: placements, boardType: boardType)
     }
 
     // MARK: - アクション
 
     private func createBoard(title: String, boardType: BoardType) {
         let board = Board(title: title, boardType: boardType)
+        board.notebookIdString = notebook.id.uuidString
         modelContext.insert(board)
+        // 新規ページへスクロール（SwiftData更新後に遅延実行）
+        let newId = board.id.uuidString
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(150))
+            withAnimation(.easeOut(duration: 0.4)) {
+                currentPageTag = newId
+            }
+        }
         onBoardCreated()
     }
-
-    // MARK: - SNSシェア
 
     private func shareBoardAsImage(_ board: Board) {
         BoardShareService.share(board, displayScale: displayScale)
@@ -452,9 +599,13 @@ struct HomeView: View {
     }
 
     private func deleteBoard(_ board: Board) {
+        // 表紙ボードは削除しない
+        guard board.id.uuidString != notebook.coverBoardId else {
+            boardToDelete = nil
+            return
+        }
         let deletedId = board.id
-        // delete 前にメタデータを生成（@Query が stale になる前に）
-        let remaining = boards.filter { $0.id != deletedId }.map { b in
+        let remaining = regularBoards.filter { $0.id != deletedId }.map { b in
             WidgetDataSyncService.generateMetadata(
                 boardId: b.id, title: b.title,
                 stickerCount: b.placements.count, updatedAt: b.updatedAt
@@ -473,13 +624,8 @@ private struct BoardStickerPreviewView: View {
     var boardType: BoardType = .standard
     @State private var images: [UUID: UIImage] = [:]
 
-    /// プレビュー用サムネイルサイズ（カルーセル内なので小さくてOK）
     private let previewThumbnailSize: CGFloat = 200
 
-    /// シール座標（positionX/Y）のマッピング基準となる参照キャンバスサイズ。
-    /// エディタのキャンバスと背景（カード）は共通の中心を持つため、カードサイズを参照することで
-    /// シール座標をそのままプレビュー空間に当てはめられる。
-    /// screenBounds が未確定の場合は boardCardAspectRatio に合わせたフォールバックを返す。
     private var referenceCanvasSize: CGSize {
         let s = AppTheme.screenBounds
         let cardW = s.width - AppTheme.EditorLayout.horizontalPadding * 2
@@ -549,9 +695,7 @@ private struct BoardStickerPreviewView: View {
             }.value
             images = loaded
         }
-        .onDisappear {
-            images = [:]
-        }
+        .onDisappear { images = [:] }
     }
 }
 
@@ -587,9 +731,8 @@ private struct NewBoardSheet: View {
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 28) {
-                // ボード名入力
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("ボード名")
+                    Text("ページ名")
                         .font(.system(size: 13, weight: .semibold, design: .rounded))
                         .foregroundStyle(AppTheme.textSecondary)
 
@@ -598,9 +741,8 @@ private struct NewBoardSheet: View {
                         .submitLabel(.done)
                 }
 
-                // ボードタイプ選択
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("ボードの種類")
+                    Text("ページの種類")
                         .font(.system(size: 13, weight: .semibold, design: .rounded))
                         .foregroundStyle(AppTheme.textSecondary)
 
@@ -641,7 +783,7 @@ private struct NewBoardSheet: View {
             .padding(.horizontal, 20)
             .padding(.top, 24)
             .background(AppTheme.backgroundPrimary.ignoresSafeArea())
-            .navigationTitle("新しいボード")
+            .navigationTitle("新しいページ")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -663,14 +805,12 @@ private struct NewBoardSheet: View {
         }
     }
 
-    /// ボードタイプ選択行（HStack: プレビュー + テキスト + チェックマーク）
     private func boardTypeRow(type: BoardType, title: LocalizedStringKey, subtitle: LocalizedStringKey, icon: String, previewAspectRatio: CGFloat) -> some View {
         let isSelected = selectedType == type
         return Button {
             selectedType = type
         } label: {
             HStack(spacing: 14) {
-                // アスペクト比を固定枠内で可視化（縦長 vs 横長の違いが直感的にわかる）
                 ZStack {
                     Color.clear
                     RoundedRectangle(cornerRadius: 8)
@@ -729,8 +869,9 @@ private struct NewBoardSheet: View {
 }
 
 #Preview {
+    let notebook = Notebook(title: "プレビュー手帳")
     NavigationStack {
-        HomeView(hideTabBar: .constant(false), deepLinkBoardId: .constant(nil))
+        HomeView(notebook: notebook, hideTabBar: .constant(false), deepLinkBoardId: .constant(nil))
     }
-    .modelContainer(for: [Sticker.self, Board.self], inMemory: true)
+    .modelContainer(for: [Sticker.self, Board.self, Notebook.self], inMemory: true)
 }

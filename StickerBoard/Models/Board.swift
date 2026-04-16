@@ -26,6 +26,8 @@ final class Board {
     var placementsData: Data?
     var backgroundPatternData: Data?
     var boardTypeRawValue: String = BoardType.standard.rawValue
+    /// 所属する手帳のUUID文字列（空文字＝未割り当て）
+    var notebookIdString: String = ""
 
     var boardType: BoardType {
         get { BoardType(rawValue: boardTypeRawValue) ?? .standard }

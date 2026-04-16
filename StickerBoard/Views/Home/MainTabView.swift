@@ -47,16 +47,9 @@ struct MainTabView: View {
         ZStack(alignment: .bottom) {
             ZStack {
                 NavigationStack {
-                    HomeView(
+                    NotebookListView(
                         hideTabBar: $hideTabBar,
-                        deepLinkBoardId: $deepLinkBoardId,
-                        onBoardCreated: {
-                            Task { @MainActor in
-                                // alert の dismiss アニメーション完了を待つ
-                                try? await Task.sleep(for: .milliseconds(600))
-                                triggerReviewIfNeeded()
-                            }
-                        }
+                        deepLinkBoardId: $deepLinkBoardId
                     )
                 }
                 .opacity(selectedTab == .home ? 1 : 0)

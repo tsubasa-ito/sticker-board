@@ -7,6 +7,9 @@
     "--" : {
 
     },
+    "— %lld —" : {
+
+    },
     "・" : {
       "localizations" : {
         "en" : {
@@ -137,6 +140,16 @@
         }
       }
     },
+    "%@、%lldページ" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@、%2$lldページ"
+          }
+        }
+      }
+    },
     "%@、シール%lld枚" : {
       "localizations" : {
         "en" : {
@@ -256,6 +269,9 @@
         }
       }
     },
+    "%lldページ" : {
+
+    },
     "%lld個のシールを検出しました" : {
       "localizations" : {
         "en" : {
@@ -319,6 +335,9 @@
           }
         }
       }
+    },
+    "1ページ" : {
+
     },
     "AIが自動で背景を除去。\nキレイに切り抜かれたシールがコレクションに" : {
       "localizations" : {
@@ -1014,6 +1033,9 @@
         }
       }
     },
+    "シールや背景を追加してデコレーションできます" : {
+
+    },
     "シールを\n選んで送る" : {
       "localizations" : {
         "en" : {
@@ -1085,6 +1107,7 @@
       }
     },
     "シールを撮影して\n自分だけのボードを作ろう" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1123,6 +1146,9 @@
           }
         }
       }
+    },
+    "シールを貼ってみよう" : {
+
     },
     "シールを追加" : {
       "localizations" : {
@@ -1373,17 +1399,6 @@
         }
       }
     },
-    "その他のアクション" : {
-      "comment" : "BoardEditorView: accessibility label for ellipsis menu (share / save)",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "More Actions"
-          }
-        }
-      }
-    },
     "ズームをリセット" : {
       "comment" : "BoardEditorView: accessibility label for zoom reset button",
       "localizations" : {
@@ -1485,6 +1500,17 @@
         }
       }
     },
+    "その他のアクション" : {
+      "comment" : "BoardEditorView: accessibility label for ellipsis menu (share / save)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More Actions"
+          }
+        }
+      }
+    },
     "タップしてプレビューを表示" : {
       "localizations" : {
         "en" : {
@@ -1495,7 +1521,14 @@
         }
       }
     },
+    "タップしてページを作成" : {
+
+    },
+    "タップしてページを編集します" : {
+
+    },
     "タップしてボードを編集します" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1505,7 +1538,17 @@
         }
       }
     },
+    "タップして手帳を作成します" : {
+
+    },
+    "タップして手帳を開きます" : {
+
+    },
+    "タップして新しいページを作成します" : {
+
+    },
     "タップして新しいボードを作成します" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1514,6 +1557,9 @@
           }
         }
       }
+    },
+    "タップして表紙をデコレーション" : {
+
     },
     "ツールバーを展開" : {
       "localizations" : {
@@ -1865,6 +1911,18 @@
         }
       }
     },
+    "ページなし" : {
+
+    },
+    "ページの名前変更や削除ができます" : {
+
+    },
+    "ページの種類" : {
+
+    },
+    "ページ名" : {
+
+    },
     "ベビーブルー" : {
       "localizations" : {
         "en" : {
@@ -1916,6 +1974,7 @@
       }
     },
     "ボードの名前変更や削除ができます" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1926,6 +1985,7 @@
       }
     },
     "ボードの種類" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1936,6 +1996,7 @@
       }
     },
     "ボードを作る" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2064,6 +2125,9 @@
           }
         }
       }
+    },
+    "マイ手帳" : {
+
     },
     "マスクエディタを開いて切り抜き範囲を手動で調整します" : {
       "localizations" : {
@@ -2841,6 +2905,9 @@
         }
       }
     },
+    "右にスワイプしてページを追加" : {
+
+    },
     "右に回転" : {
       "localizations" : {
         "en" : {
@@ -3103,6 +3170,15 @@
         }
       }
     },
+    "手帳の名前" : {
+
+    },
+    "手帳メニュー" : {
+
+    },
+    "手帳を削除" : {
+
+    },
     "手順%@: %@" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -3250,6 +3326,12 @@
         }
       }
     },
+    "新しいページ" : {
+
+    },
+    "新しいページを追加" : {
+
+    },
     "新しいボード" : {
       "localizations" : {
         "en" : {
@@ -3271,6 +3353,7 @@
       }
     },
     "新しいボードを作る" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3299,6 +3382,15 @@
           }
         }
       }
+    },
+    "新しい手帳" : {
+
+    },
+    "新しい手帳の名前を入力してください" : {
+
+    },
+    "新しい手帳を追加" : {
+
     },
     "新着順" : {
       "localizations" : {
@@ -3791,6 +3883,9 @@
           }
         }
       }
+    },
+    "表紙。タップして編集します" : {
+
     },
     "被写体を長押しして選択できます" : {
       "localizations" : {
