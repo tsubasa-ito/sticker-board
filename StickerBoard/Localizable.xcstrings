@@ -1495,6 +1495,16 @@
         }
       }
     },
+    "タップしてボードに追加" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap to add to board"
+          }
+        }
+      }
+    },
     "タップしてボードを編集します" : {
       "localizations" : {
         "en" : {

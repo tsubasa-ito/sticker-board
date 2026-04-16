@@ -8,6 +8,7 @@ struct StickerLibraryView: View {
         category: "StickerLibraryView"
     )
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) private var dismiss
     @Query private var boards: [Board]
     @State private var displayedStickers: [Sticker] = []
     @State private var totalCount: Int = 0
@@ -29,6 +30,10 @@ struct StickerLibraryView: View {
     @Namespace private var previewNamespace
     let refreshTrigger: UUID
     var onAddSticker: () -> Void = {}
+    /// ピッカーモード: nil 以外のとき、シールタップでコールバックを呼び出してピッカーとして動作する
+    var onStickerPicked: ((Sticker) -> Void)? = nil
+
+    private var isPicking: Bool { onStickerPicked != nil }
 
     private let pageSize = 30
 
@@ -91,7 +96,7 @@ struct StickerLibraryView: View {
     private var libraryContent: some View {
         mainStack
             .overlay {
-                if let sticker = previewSticker {
+                if !isPicking, let sticker = previewSticker {
                     StickerPreviewOverlay(
                         sticker: sticker,
                         namespace: previewNamespace,
@@ -113,21 +118,27 @@ struct StickerLibraryView: View {
                     )
                 }
             }
-            .navigationTitle("ライブラリ")
+            .navigationTitle(isPicking ? "シールを選択" : "ライブラリ")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        Picker("並び替え", selection: sortBinding) {
-                            Text("新着順").tag(true)
-                            Text("古い順").tag(false)
-                        }
-                    } label: {
-                        Image(systemName: "arrow.up.arrow.down")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundStyle(sortNewest ? AppTheme.textSecondary : AppTheme.accent)
+                if isPicking {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("閉じる") { dismiss() }
                     }
-                    .accessibilityLabel("並び替え")
+                } else {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Menu {
+                            Picker("並び替え", selection: sortBinding) {
+                                Text("新着順").tag(true)
+                                Text("古い順").tag(false)
+                            }
+                        } label: {
+                            Image(systemName: "arrow.up.arrow.down")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundStyle(sortNewest ? AppTheme.textSecondary : AppTheme.accent)
+                        }
+                        .accessibilityLabel("並び替え")
+                    }
                 }
             }
             .alert("シールを削除", isPresented: deleteAlertBinding, presenting: deleteInfo) { info in
@@ -247,50 +258,58 @@ struct StickerLibraryView: View {
                 .accessibilityLabel("全\(totalCount)枚のシール")
 
                 LazyVGrid(columns: columns, spacing: 14) {
-                    addStickerCard
+                    if !isPicking {
+                        addStickerCard
+                    }
 
                     ForEach(displayedStickers) { sticker in
                         StickerThumbnailView(sticker: sticker, refreshTrigger: thumbnailRefreshID)
                             .matchedGeometryEffect(id: sticker.id, in: previewNamespace)
                             .opacity(previewSticker?.id == sticker.id ? 0 : 1)
                             .onTapGesture {
-                                withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
-                                    previewSticker = sticker
+                                if isPicking {
+                                    onStickerPicked?(sticker)
+                                } else {
+                                    withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
+                                        previewSticker = sticker
+                                    }
                                 }
                             }
                             .accessibilityAddTraits(.isButton)
-                            .accessibilityHint("タップしてプレビューを表示")
+                            .accessibilityHint(isPicking ? String(localized: "タップしてボードに追加") : String(localized: "タップしてプレビューを表示"))
                             .contextMenu {
-                                Button {
-                                    StickerShareService.share(sticker)
-                                } label: {
-                                    Label("共有", systemImage: "square.and.arrow.up")
-                                }
-                                Button {
-                                    saveSticker(sticker)
-                                } label: {
-                                    Label("写真に保存", systemImage: "square.and.arrow.down")
-                                }
-                                Divider()
-                                Button {
-                                    rotateSticker(sticker, clockwise: false)
-                                } label: {
-                                    Label("左に回転", systemImage: "rotate.left")
-                                }
-                                Button {
-                                    rotateSticker(sticker, clockwise: true)
-                                } label: {
-                                    Label("右に回転", systemImage: "rotate.right")
-                                }
-                                Button {
-                                    startMaskEdit(sticker)
-                                } label: {
-                                    Label("不要部分を除去", systemImage: "eraser.line.dashed")
-                                }
-                                Button(role: .destructive) {
-                                    deleteInfo = (sticker, boardsUsing(sticker))
-                                } label: {
-                                    Label("削除", systemImage: "trash")
+                                if !isPicking {
+                                    Button {
+                                        StickerShareService.share(sticker)
+                                    } label: {
+                                        Label("共有", systemImage: "square.and.arrow.up")
+                                    }
+                                    Button {
+                                        saveSticker(sticker)
+                                    } label: {
+                                        Label("写真に保存", systemImage: "square.and.arrow.down")
+                                    }
+                                    Divider()
+                                    Button {
+                                        rotateSticker(sticker, clockwise: false)
+                                    } label: {
+                                        Label("左に回転", systemImage: "rotate.left")
+                                    }
+                                    Button {
+                                        rotateSticker(sticker, clockwise: true)
+                                    } label: {
+                                        Label("右に回転", systemImage: "rotate.right")
+                                    }
+                                    Button {
+                                        startMaskEdit(sticker)
+                                    } label: {
+                                        Label("不要部分を除去", systemImage: "eraser.line.dashed")
+                                    }
+                                    Button(role: .destructive) {
+                                        deleteInfo = (sticker, boardsUsing(sticker))
+                                    } label: {
+                                        Label("削除", systemImage: "trash")
+                                    }
                                 }
                             }
                             .onAppear {

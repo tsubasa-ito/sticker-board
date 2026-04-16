@@ -5,7 +5,6 @@ import os
 
 struct BoardEditorView: View {
     @Bindable var board: Board
-    @Query(sort: \Sticker.createdAt, order: .reverse) private var allStickers: [Sticker]
     @Environment(\.modelContext) private var modelContext
     @Environment(\.displayScale) private var displayScale
     @Environment(\.dismiss) private var dismiss
@@ -13,14 +12,13 @@ struct BoardEditorView: View {
 
     @State private var placements: [StickerPlacement] = []
     @State private var selectedPlacementId: UUID?
-    @State private var showingStickerPicker = false
+    @State private var showingInlineLibrary = false
     @State private var showingSaveConfirmation = false
     @State private var showingSaveResult = false
     @State private var saveResultSuccess = false
     @State private var canvasSize: CGSize = .zero
     @State private var showHint = true
     @State private var bottomBarExpanded = true
-    @State private var showQuickPicks = false
     @State private var showingBackgroundPicker = false
     @State private var backgroundConfig: BackgroundPatternConfig = .default
     @State private var customBackgroundImage: UIImage?
@@ -63,7 +61,6 @@ struct BoardEditorView: View {
                     Button {
                         withAnimation(.spring(duration: 0.3)) {
                             bottomBarExpanded = false
-                            showQuickPicks = false
                         }
                     } label: {
                         VStack(spacing: 2) {
@@ -80,10 +77,6 @@ struct BoardEditorView: View {
                     .accessibilityLabel("ツールバーを折りたたむ")
                     .accessibilityHint("ツールバーを非表示にします")
 
-                    if showQuickPicks && !allStickers.isEmpty {
-                        stickerQuickPicks
-                            .transition(.move(edge: .bottom).combined(with: .opacity))
-                    }
                     floatingToolbar
                         .padding(.horizontal, 16)
                         .padding(.bottom, 10)
@@ -115,7 +108,6 @@ struct BoardEditorView: View {
                 }
             }
             .animation(.spring(duration: 0.3), value: bottomBarExpanded)
-            .animation(.spring(duration: 0.3), value: showQuickPicks)
 
             // ヒントトースト
             if showHint && !placements.isEmpty {
@@ -181,10 +173,17 @@ struct BoardEditorView: View {
                 .accessibilityLabel(String(localized: "その他のアクション"))
             }
         }
-        .sheet(isPresented: $showingStickerPicker) {
-            StickerPickerSheet(stickers: allStickers) { sticker in
-                addStickerToBoard(sticker)
+        .sheet(isPresented: $showingInlineLibrary) {
+            NavigationStack {
+                StickerLibraryView(
+                    refreshTrigger: UUID(),
+                    onStickerPicked: { sticker in
+                        addStickerToBoard(sticker)
+                        showingInlineLibrary = false
+                    }
+                )
             }
+            .presentationDetents([.large])
         }
         .sheet(isPresented: $showingBackgroundPicker, onDismiss: {
             board.backgroundPattern = backgroundConfig
@@ -549,49 +548,6 @@ struct BoardEditorView: View {
         .accessibilityLabel("ヒント: ドラッグで移動、ピンチでサイズ変更")
     }
 
-    // MARK: - シールクイックピック
-
-    private var stickerQuickPicks: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 10) {
-                ForEach(allStickers) { sticker in
-                    Button {
-                        addStickerToBoard(sticker)
-                    } label: {
-                        QuickPickThumbnail(fileName: sticker.imageFileName)
-                    }
-                }
-
-                // 全て見るボタン
-                Button {
-                    showQuickPicks = false
-                    showingStickerPicker = true
-                } label: {
-                    VStack(spacing: 4) {
-                        Image(systemName: "square.grid.2x2")
-                            .font(.system(size: 16))
-                        Text("全て")
-                            .font(.system(size: 9, weight: .medium, design: .rounded))
-                    }
-                    .foregroundStyle(AppTheme.accent)
-                    .frame(width: 56, height: 56)
-                    .padding(4)
-                    .background(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 14)
-                            .stroke(AppTheme.accent.opacity(0.3), lineWidth: 1.5)
-                    )
-                    .shadow(color: .black.opacity(0.06), radius: 4, y: 2)
-                }
-                .accessibilityLabel("すべてのシールを表示")
-            }
-            .padding(.horizontal, 24)
-            .padding(.vertical, 8)
-        }
-        .frame(height: 80)
-    }
-
     // MARK: - フローティングツールバー
 
     private var floatingToolbar: some View {
@@ -601,9 +557,7 @@ struct BoardEditorView: View {
 
                 // 追加
                 toolbarButton(icon: "plus.circle.fill", label: "追加", color: AppTheme.accent) {
-                    withAnimation(.spring(duration: 0.3)) {
-                        showQuickPicks.toggle()
-                    }
+                    showingInlineLibrary = true
                 }
 
                 // 効果
@@ -1122,38 +1076,6 @@ struct BoardEditorView: View {
     }
 }
 
-// MARK: - クイックピックサムネイル（非同期画像読み込み）
-
-private struct QuickPickThumbnail: View {
-    let fileName: String
-    @State private var image: UIImage?
-
-    var body: some View {
-        Group {
-            if let image {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 56, height: 56)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-            } else {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(AppTheme.editorBackground)
-                    .frame(width: 56, height: 56)
-            }
-        }
-        .padding(4)
-        .background(.white)
-        .clipShape(RoundedRectangle(cornerRadius: 14))
-        .shadow(color: .black.opacity(0.04), radius: 4, y: 2)
-        .task {
-            image = await Task.detached {
-                ImageStorage.loadThumbnail(fileName: fileName, size: 112)
-            }.value
-        }
-    }
-}
-
 // MARK: - ボードスナップショット（画像書き出し・ウィジェット共有用）
 
 struct BoardSnapshotView: View {
@@ -1340,60 +1262,3 @@ private struct PlacementBorderPickerSheet: View {
     }
 }
 
-// MARK: - シール選択シート
-
-struct StickerPickerSheet: View {
-    let stickers: [Sticker]
-    let onSelect: (Sticker) -> Void
-    @Environment(\.dismiss) private var dismiss
-
-    private let columns = [GridItem(.adaptive(minimum: 80), spacing: 14)]
-
-    var body: some View {
-        NavigationStack {
-            ZStack {
-                AppTheme.backgroundPrimary
-                    .ignoresSafeArea()
-
-                Group {
-                    if stickers.isEmpty {
-                        VStack(spacing: 12) {
-                            Image(systemName: "star.slash")
-                                .font(.system(size: 36))
-                                .foregroundStyle(AppTheme.textTertiary)
-
-                            Text("シールがありません")
-                                .font(.system(size: 16, weight: .medium, design: .rounded))
-                                .foregroundStyle(AppTheme.textSecondary)
-
-                            Text("先にホームからシールを追加してください")
-                                .font(.system(size: 13, design: .rounded))
-                                .foregroundStyle(AppTheme.textTertiary)
-                        }
-                    } else {
-                        ScrollView {
-                            LazyVGrid(columns: columns, spacing: 14) {
-                                ForEach(stickers) { sticker in
-                                    Button {
-                                        onSelect(sticker)
-                                        dismiss()
-                                    } label: {
-                                        StickerThumbnailView(sticker: sticker)
-                                    }
-                                }
-                            }
-                            .padding(20)
-                        }
-                    }
-                }
-            }
-            .navigationTitle("シールを選択")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("閉じる") { dismiss() }
-                }
-            }
-        }
-    }
-}
