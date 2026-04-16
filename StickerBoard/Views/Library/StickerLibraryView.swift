@@ -263,60 +263,7 @@ struct StickerLibraryView: View {
                     }
 
                     ForEach(displayedStickers) { sticker in
-                        StickerThumbnailView(sticker: sticker, refreshTrigger: thumbnailRefreshID)
-                            .matchedGeometryEffect(id: sticker.id, in: previewNamespace)
-                            .opacity(previewSticker?.id == sticker.id ? 0 : 1)
-                            .onTapGesture {
-                                if isPicking {
-                                    onStickerPicked?(sticker)
-                                } else {
-                                    withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
-                                        previewSticker = sticker
-                                    }
-                                }
-                            }
-                            .accessibilityAddTraits(.isButton)
-                            .accessibilityHint(isPicking ? String(localized: "タップしてボードに追加") : String(localized: "タップしてプレビューを表示"))
-                            .contextMenu {
-                                if !isPicking {
-                                    Button {
-                                        StickerShareService.share(sticker)
-                                    } label: {
-                                        Label("共有", systemImage: "square.and.arrow.up")
-                                    }
-                                    Button {
-                                        saveSticker(sticker)
-                                    } label: {
-                                        Label("写真に保存", systemImage: "square.and.arrow.down")
-                                    }
-                                    Divider()
-                                    Button {
-                                        rotateSticker(sticker, clockwise: false)
-                                    } label: {
-                                        Label("左に回転", systemImage: "rotate.left")
-                                    }
-                                    Button {
-                                        rotateSticker(sticker, clockwise: true)
-                                    } label: {
-                                        Label("右に回転", systemImage: "rotate.right")
-                                    }
-                                    Button {
-                                        startMaskEdit(sticker)
-                                    } label: {
-                                        Label("不要部分を除去", systemImage: "eraser.line.dashed")
-                                    }
-                                    Button(role: .destructive) {
-                                        deleteInfo = (sticker, boardsUsing(sticker))
-                                    } label: {
-                                        Label("削除", systemImage: "trash")
-                                    }
-                                }
-                            }
-                            .onAppear {
-                                if sticker.id == displayedStickers.last?.id {
-                                    loadNextPage()
-                                }
-                            }
+                        stickerCell(for: sticker)
                     }
                 }
 
@@ -334,6 +281,71 @@ struct StickerLibraryView: View {
             .padding(20)
         }
         .safeAreaPadding(.bottom, 80)
+    }
+
+    // MARK: - シールセル（ピッカーモード対応）
+
+    /// ピッカーモード（isPicking == true）では contextMenu を付与せず、ロングプレスのプレビュー動作を防ぐ
+    @ViewBuilder
+    private func stickerCell(for sticker: Sticker) -> some View {
+        let base = StickerThumbnailView(sticker: sticker, refreshTrigger: thumbnailRefreshID)
+            .matchedGeometryEffect(id: sticker.id, in: previewNamespace)
+            .opacity(previewSticker?.id == sticker.id ? 0 : 1)
+            .onTapGesture {
+                if isPicking {
+                    onStickerPicked?(sticker)
+                } else {
+                    withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
+                        previewSticker = sticker
+                    }
+                }
+            }
+            .accessibilityAddTraits(.isButton)
+            .accessibilityHint(isPicking ? String(localized: "タップしてボードに追加") : String(localized: "タップしてプレビューを表示"))
+            .onAppear {
+                if sticker.id == displayedStickers.last?.id {
+                    loadNextPage()
+                }
+            }
+
+        if isPicking {
+            base
+        } else {
+            base
+                .contextMenu {
+                    Button {
+                        StickerShareService.share(sticker)
+                    } label: {
+                        Label("共有", systemImage: "square.and.arrow.up")
+                    }
+                    Button {
+                        saveSticker(sticker)
+                    } label: {
+                        Label("写真に保存", systemImage: "square.and.arrow.down")
+                    }
+                    Divider()
+                    Button {
+                        rotateSticker(sticker, clockwise: false)
+                    } label: {
+                        Label("左に回転", systemImage: "rotate.left")
+                    }
+                    Button {
+                        rotateSticker(sticker, clockwise: true)
+                    } label: {
+                        Label("右に回転", systemImage: "rotate.right")
+                    }
+                    Button {
+                        startMaskEdit(sticker)
+                    } label: {
+                        Label("不要部分を除去", systemImage: "eraser.line.dashed")
+                    }
+                    Button(role: .destructive) {
+                        deleteInfo = (sticker, boardsUsing(sticker))
+                    } label: {
+                        Label("削除", systemImage: "trash")
+                    }
+                }
+        }
     }
 
     private func boardsUsing(_ sticker: Sticker) -> [Board] {

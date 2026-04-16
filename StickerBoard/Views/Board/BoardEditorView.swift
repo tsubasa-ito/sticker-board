@@ -13,6 +13,7 @@ struct BoardEditorView: View {
     @State private var placements: [StickerPlacement] = []
     @State private var selectedPlacementId: UUID?
     @State private var showingInlineLibrary = false
+    @State private var inlineLibraryRefreshTrigger = UUID()
     @State private var showingSaveConfirmation = false
     @State private var showingSaveResult = false
     @State private var saveResultSuccess = false
@@ -176,7 +177,7 @@ struct BoardEditorView: View {
         .sheet(isPresented: $showingInlineLibrary) {
             NavigationStack {
                 StickerLibraryView(
-                    refreshTrigger: UUID(),
+                    refreshTrigger: inlineLibraryRefreshTrigger,
                     onStickerPicked: { sticker in
                         addStickerToBoard(sticker)
                         showingInlineLibrary = false
