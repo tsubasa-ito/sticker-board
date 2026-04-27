@@ -85,7 +85,8 @@ open StickerBoard.xcodeproj
 - ImageStorage.rotateAndOverwrite(fileName:clockwise:) はディスクからの読み込み → UIImage.rotatedBy90Degrees(clockwise:) で90度回転 → overwrite() の順で処理する。回転メソッドは ImageCacheManager.swift の UIImage 拡張に定義。UIGraphicsImageRendererFormat.scale に元画像のスケールを引き継がないとピクセル寸法が変わるため注意
 - ImageStorageError には encodingFailed / deletionFailed / loadFailed の3ケースあり。loadFailed は rotateAndOverwrite で対象ファイルが見つからない場合に投げる
 - StickerLibraryView は @Query ではなく FetchDescriptor + fetchLimit/fetchOffset によるページネーション（30枚ずつ無限スクロール）でシールを取得する設計（大量シール時のメモリ最適化）
-- サムネイル表示（StickerThumbnailView, QuickPickThumbnail, BoardStickerPreviewView）は ImageStorage.loadThumbnail() 経由で縮小画像を使用
+- StickerLibraryView はピッカーモード対応（`onStickerPicked: ((Sticker) -> Void)? = nil`）。nil 以外のとき、シールタップでコールバックを呼び出しプレビュー/コンテキストメニュー/さらに追加カードを非表示にする。BoardEditorView の「追加」ボタン → `.sheet(isPresented: $showingInlineLibrary)` でピッカーモードのライブラリをボトムシート表示し、選択後にシールをボード中央に配置して自動クローズする
+- サムネイル表示（StickerThumbnailView, BoardStickerPreviewView）は ImageStorage.loadThumbnail() 経由で縮小画像を使用
 - 枠線（ボーダー）は StickerPlacement の borderWidthType / borderColorHex に保存し、フィルターと同様に配置単位で管理する設計
 - シールロックは StickerPlacement の isLocked: Bool = false に保存（旧データとの後方互換性: decodeIfPresent でデフォルト false）。ロック中はドラッグ・ピンチ・回転ジェスチャーおよび効果・枠線・前面・背面・削除ボタンを無効化。VoiceOver はロック/解除アクション + UIAccessibility.post アナウンス対応
 - キャンバスズームモード（BoardEditorView）: `isZoomMode: Bool`, `canvasScale: CGFloat = 1.0`, `canvasOffset: CGSize = .zero`, `@GestureState liveZoomScale/livePanOffset` で管理。`zoomedCanvasArea` が canvasArea をラップし scaleEffect + offset + .clipped() を適用。ズームモードOFF時は `.gesture(including: .none)` でジェスチャー完全無効化（ビュー再生成なし）。ズーム範囲: 0.3x〜5.0x。`StickerItemView` に `canvasScale` パラメータを渡し、ズームモードON時のみドラッグ量を `/canvasScale` で補正（OFF時は canvasScale=1.0 を渡してバイパス）。ズームモード中はシールに `.allowsHitTesting(false)` + `.accessibilityHidden(true)` を適用。ズームボタンはナビゲーションバー（`.primaryAction`）に配置
