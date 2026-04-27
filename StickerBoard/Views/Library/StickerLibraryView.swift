@@ -29,6 +29,8 @@ struct StickerLibraryView: View {
     @Namespace private var previewNamespace
     let refreshTrigger: UUID
     var onAddSticker: () -> Void = {}
+    /// 通知ディープリンク経由で開いた際にプレビュー表示するシールID（消費後に nil リセットされる）
+    var highlightStickerId: Binding<UUID?> = .constant(nil)
 
     private let pageSize = 30
 
@@ -177,6 +179,21 @@ struct StickerLibraryView: View {
         }
         .onChange(of: refreshTrigger) {
             refreshIfNeeded()
+        }
+        .task(id: highlightStickerId.wrappedValue) {
+            guard let targetId = highlightStickerId.wrappedValue else { return }
+            if let sticker = displayedStickers.first(where: { $0.id == targetId }) {
+                withAnimation(.spring(duration: 0.35, bounce: 0.2)) { previewSticker = sticker }
+            } else {
+                var descriptor = FetchDescriptor<Sticker>(
+                    predicate: #Predicate { $0.id == targetId }
+                )
+                descriptor.fetchLimit = 1
+                if let sticker = try? modelContext.fetch(descriptor).first {
+                    withAnimation(.spring(duration: 0.35, bounce: 0.2)) { previewSticker = sticker }
+                }
+            }
+            highlightStickerId.wrappedValue = nil
         }
     }
 
