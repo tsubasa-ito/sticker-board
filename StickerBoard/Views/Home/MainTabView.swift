@@ -67,7 +67,7 @@ struct MainTabView: View {
                     StickerLibraryView(
                         refreshTrigger: libraryRefreshID,
                         onAddSticker: { showCapture = true },
-                        highlightStickerId: deepLinkStickerId
+                        highlightStickerId: $deepLinkStickerId
                     )
                 }
                 .opacity(selectedTab == .library ? 1 : 0)
@@ -93,6 +93,9 @@ struct MainTabView: View {
                     let stickerCount = (try? modelContext.fetchCount(FetchDescriptor<Sticker>())) ?? 0
                     if ReviewRequestManager.shared.isStickerMilestone(stickerCount) {
                         pendingReviewTrigger = true
+                    }
+                    Task {
+                        await UnplacedStickerReminderService.shared.rescheduleIfNeeded(context: modelContext)
                     }
                 })
             }

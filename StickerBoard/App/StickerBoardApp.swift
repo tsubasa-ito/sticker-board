@@ -2,9 +2,34 @@ import FirebaseCore
 import FirebaseCrashlytics
 import SwiftUI
 import SwiftData
+import UserNotifications
+
+// MARK: - 通知デリゲート（通知タップ → ディープリンク変換）
+
+extension Notification.Name {
+    static let openStickerDeepLink = Notification.Name("openStickerDeepLink")
+}
+
+final class NotificationDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        UNUserNotificationCenter.current().delegate = self
+        return true
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                didReceive response: UNNotificationResponse) async {
+        guard let idString = response.notification.request.content.userInfo["stickerId"] as? String,
+              let uuid = UUID(uuidString: idString) else { return }
+        await MainActor.run {
+            NotificationCenter.default.post(name: .openStickerDeepLink, object: uuid)
+        }
+    }
+}
 
 @main
 struct StickerBoardApp: App {
+    @UIApplicationDelegateAdaptor(NotificationDelegate.self) private var notificationDelegate
     let container: ModelContainer
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @State private var deepLinkBoardId: UUID?
@@ -76,6 +101,9 @@ struct StickerBoardApp: App {
                     } else if let stickerId = UnplacedStickerReminderService.parseStickerId(from: url) {
                         deepLinkStickerId = stickerId
                     }
+                }
+                .onReceive(NotificationCenter.default.publisher(for: .openStickerDeepLink)) { notification in
+                    deepLinkStickerId = notification.object as? UUID
                 }
                 .task {
                     await UnplacedStickerReminderService.shared.rescheduleIfNeeded(

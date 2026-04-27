@@ -129,6 +129,7 @@ final class UnplacedStickerReminderService: Sendable {
                     )
                     continuation.resume(returning: attachment)
                 } catch {
+                    try? FileManager.default.removeItem(at: tempURL)
                     continuation.resume(returning: nil)
                 }
             }
