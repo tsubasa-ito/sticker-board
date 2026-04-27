@@ -116,7 +116,8 @@ final class UnplacedStickerReminderService: Sendable {
 
         return await withCheckedContinuation { continuation in
             Task.detached {
-                guard let thumbnail = ImageStorage.loadThumbnail(fileName: fileName, size: 200),
+                // ImageIO ベースでフル解像度をメモリに展開せず直接サムネイル生成（通知用途のためキャッシュ不要）
+                guard let thumbnail = ImageStorage.createThumbnailFromDisk(fileName: fileName, maxPixelSize: 200),
                       let data = thumbnail.pngData() else {
                     continuation.resume(returning: nil)
                     return
