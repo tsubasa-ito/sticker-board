@@ -14,7 +14,7 @@ options:
 packages:
   FirebaseiOSSDK:
     url: https://github.com/firebase/firebase-ios-sdk
-    from: "11.0.0"
+    from: "12.12.1"
 
 settings:
   base:
