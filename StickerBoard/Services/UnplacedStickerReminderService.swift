@@ -52,8 +52,16 @@ final class UnplacedStickerReminderService: Sendable {
         content.sound = .default
         content.userInfo = ["stickerId": sticker.id.uuidString]
 
-        if let attachment = await makeThumbnailAttachment(fileName: sticker.imageFileName) {
+        var temporaryAttachmentURL: URL?
+        if let (attachment, url) = await makeThumbnailAttachment(fileName: sticker.imageFileName) {
             content.attachments = [attachment]
+            temporaryAttachmentURL = url
+        }
+        defer {
+            // UNNotificationAttachment はファイルをコピーするため、登録後に一時ファイルを削除
+            if let url = temporaryAttachmentURL {
+                try? FileManager.default.removeItem(at: url)
+            }
         }
 
         var dateComponents = DateComponents()
@@ -110,7 +118,7 @@ final class UnplacedStickerReminderService: Sendable {
 
     // MARK: - Private
 
-    private func makeThumbnailAttachment(fileName: String) async -> UNNotificationAttachment? {
+    private func makeThumbnailAttachment(fileName: String) async -> (UNNotificationAttachment, URL)? {
         let tempURL = FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString + ".png")
 
@@ -128,7 +136,7 @@ final class UnplacedStickerReminderService: Sendable {
                         identifier: "sticker-thumbnail",
                         url: tempURL
                     )
-                    continuation.resume(returning: attachment)
+                    continuation.resume(returning: (attachment, tempURL))
                 } catch {
                     try? FileManager.default.removeItem(at: tempURL)
                     continuation.resume(returning: nil)
