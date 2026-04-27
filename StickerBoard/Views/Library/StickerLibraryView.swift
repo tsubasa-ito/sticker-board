@@ -287,25 +287,26 @@ struct StickerLibraryView: View {
     /// ピッカーモード（isPicking == true）では contextMenu を付与せず、ロングプレスのプレビュー動作を防ぐ
     @ViewBuilder
     private func stickerCell(for sticker: Sticker) -> some View {
-        let base = StickerThumbnailView(sticker: sticker, refreshTrigger: thumbnailRefreshID)
-            .matchedGeometryEffect(id: sticker.id, in: previewNamespace)
-            .opacity(previewSticker?.id == sticker.id ? 0 : 1)
-            .onTapGesture {
-                if isPicking {
-                    onStickerPicked?(sticker)
-                } else {
-                    withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
-                        previewSticker = sticker
-                    }
+        let base = Button {
+            if isPicking {
+                onStickerPicked?(sticker)
+            } else {
+                withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
+                    previewSticker = sticker
                 }
             }
-            .accessibilityAddTraits(.isButton)
-            .accessibilityHint(isPicking ? String(localized: "タップしてボードに追加") : String(localized: "タップしてプレビューを表示"))
-            .onAppear {
-                if sticker.id == displayedStickers.last?.id {
-                    loadNextPage()
-                }
+        } label: {
+            StickerThumbnailView(sticker: sticker, refreshTrigger: thumbnailRefreshID)
+                .matchedGeometryEffect(id: sticker.id, in: previewNamespace)
+                .opacity(previewSticker?.id == sticker.id ? 0 : 1)
+        }
+        .buttonStyle(.plain)
+        .accessibilityHint(isPicking ? String(localized: "タップしてボードに追加") : String(localized: "タップしてプレビューを表示"))
+        .onAppear {
+            if sticker.id == displayedStickers.last?.id {
+                loadNextPage()
             }
+        }
 
         if isPicking {
             base
