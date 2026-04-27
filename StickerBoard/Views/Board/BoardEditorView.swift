@@ -184,7 +184,7 @@ struct BoardEditorView: View {
                     }
                 )
             }
-            .presentationDetents([.large])
+            .presentationDetents([.medium, .large])
         }
         .sheet(isPresented: $showingBackgroundPicker, onDismiss: {
             board.backgroundPattern = backgroundConfig
