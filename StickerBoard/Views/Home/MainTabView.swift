@@ -22,6 +22,7 @@ struct MainTabView: View {
     }
 
     @Binding var deepLinkBoardId: UUID?
+    @Binding var deepLinkStickerId: UUID?
 
     @State private var selectedTab: Tab = .home
     @State private var showCapture = false
@@ -65,7 +66,8 @@ struct MainTabView: View {
                 NavigationStack {
                     StickerLibraryView(
                         refreshTrigger: libraryRefreshID,
-                        onAddSticker: { showCapture = true }
+                        onAddSticker: { showCapture = true },
+                        highlightStickerId: deepLinkStickerId
                     )
                 }
                 .opacity(selectedTab == .library ? 1 : 0)
@@ -104,6 +106,11 @@ struct MainTabView: View {
         .onChange(of: deepLinkBoardId) {
             if deepLinkBoardId != nil {
                 selectedTab = .home
+            }
+        }
+        .onChange(of: deepLinkStickerId) {
+            if deepLinkStickerId != nil {
+                selectedTab = .library
             }
         }
         .alert(
