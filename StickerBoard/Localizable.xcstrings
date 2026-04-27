@@ -1495,6 +1495,16 @@
         }
       }
     },
+    "タップしてボードに追加" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap to add to board"
+          }
+        }
+      }
+    },
     "タップしてボードを編集します" : {
       "localizations" : {
         "en" : {
@@ -4109,6 +4119,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Links"
+          }
+        }
+      }
+    },
+    "通知" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications"
+          }
+        }
+      }
+    },
+    "未配置シールリマインダー" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unplaced Sticker Reminder"
+          }
+        }
+      }
+    },
+    "毎週土曜10時に、まだ貼っていないシールをお知らせします" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reminds you every Saturday at 10 AM about stickers not yet placed on a board"
+          }
+        }
+      }
+    },
+    "このシール、まだボードに貼ってないよ📌" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This sticker hasn't been placed on a board yet 📌"
           }
         }
       }

@@ -45,6 +45,7 @@
 		57ADA124B508F310C9786DDD /* SettingsAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEA269B34011892E6EAED96D /* SettingsAccessibilityTests.swift */; };
 		5AAD2F7A210494638C8EEBB5 /* CaptureAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530CD661BF00498FE8299E3E /* CaptureAccessibilityTests.swift */; };
 		5B8080F39AD1A32DC7ED0038 /* BoardEditorAutoSaveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1291650F18A23BA888E48341 /* BoardEditorAutoSaveTests.swift */; };
+		5FC3719147861C14AC8E9DAF /* UnplacedStickerReminderServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C338D21810E525E53BDD2B /* UnplacedStickerReminderServiceTests.swift */; };
 		6067D39F10AE564CBDA09EA8 /* BoardEditorPinchPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75326EBD9D2597D4ABB590F /* BoardEditorPinchPerformanceTests.swift */; };
 		62899C4D692BD195F7F0A16B /* OnboardingPageIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A6669D6CA5D4EAD5DB7BF3C /* OnboardingPageIndicator.swift */; };
 		65C2B4E7FEA4EACCD89B17F5 /* WidgetDataSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA9B705D7B3675A472439D3 /* WidgetDataSyncService.swift */; };
@@ -99,6 +100,7 @@
 		D4E664769E3A40050B09AA6A /* BackgroundPatternPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CE8160539FD33AFF7809C92 /* BackgroundPatternPickerView.swift */; };
 		D60EA71E7EF817ABF7C9D220 /* BoardShareServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5AF5A572900934DD45A38A /* BoardShareServiceTests.swift */; };
 		D741DBFD1F632B3907AE5F50 /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1211D3F280555E23A6562B3 /* ImageCacheManager.swift */; };
+		D887EEC25D30C3F2D61AD426 /* UnplacedStickerReminderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 196F1549BFC58B230405CFA8 /* UnplacedStickerReminderService.swift */; };
 		D8FB4DBA0430E40FCFD3F87F /* StickerFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A215C34AD5CB548459350358 /* StickerFilterTests.swift */; };
 		D9F5D0B1D91568E3331B22EE /* StickerShareServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8EB1C52BF7B32985F173FC /* StickerShareServiceTests.swift */; };
 		DB745BDCC883E3A46CBFB7C1 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C9A3FC5FB8145015E1952AD /* MainTabView.swift */; };
@@ -160,6 +162,7 @@
 		11C89501ABCC774418176436 /* WidgetModelsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetModelsTests.swift; sourceTree = "<group>"; };
 		1291650F18A23BA888E48341 /* BoardEditorAutoSaveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEditorAutoSaveTests.swift; sourceTree = "<group>"; };
 		184AC63B41CB824E00123DE8 /* DebugPrintRemovalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugPrintRemovalTests.swift; sourceTree = "<group>"; };
+		196F1549BFC58B230405CFA8 /* UnplacedStickerReminderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnplacedStickerReminderService.swift; sourceTree = "<group>"; };
 		19E5D6F908EE947CC125BAC4 /* StickerBorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerBorder.swift; sourceTree = "<group>"; };
 		1A6669D6CA5D4EAD5DB7BF3C /* OnboardingPageIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageIndicator.swift; sourceTree = "<group>"; };
 		1BF7C58976D7F4A010B330FC /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -229,6 +232,7 @@
 		B03A91B141329E13EDBEAE9A /* StickerPlacementTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerPlacementTests.swift; sourceTree = "<group>"; };
 		B201CDCE2F666FBBD15D4F72 /* CaptureGuideTipsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureGuideTipsView.swift; sourceTree = "<group>"; };
 		B24A758064D0878810AE99A9 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
+		B5C338D21810E525E53BDD2B /* UnplacedStickerReminderServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnplacedStickerReminderServiceTests.swift; sourceTree = "<group>"; };
 		B705C9966BB0F482903B62FE /* WidgetDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataManager.swift; sourceTree = "<group>"; };
 		B8B41B23D775F8487A3B361B /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		BC7D45D8C72A452AD58666E2 /* StickerExchangeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerExchangeView.swift; sourceTree = "<group>"; };
@@ -418,6 +422,7 @@
 				D44F094F53D9CC5028477F0F /* StickerFilterService.swift */,
 				38FDFEFAB3742B009EA8F50B /* StickerShareService.swift */,
 				9FFB83566A2BC0906338F77F /* SubscriptionManager.swift */,
+				196F1549BFC58B230405CFA8 /* UnplacedStickerReminderService.swift */,
 				3AA9B705D7B3675A472439D3 /* WidgetDataSyncService.swift */,
 			);
 			path = Services;
@@ -548,6 +553,7 @@
 				3F8EB1C52BF7B32985F173FC /* StickerShareServiceTests.swift */,
 				BCDBB451BECC869CD24CAF7B /* SubscriptionProductTests.swift */,
 				351900E2F8D31C115B9F755A /* UIImageExtensionTests.swift */,
+				B5C338D21810E525E53BDD2B /* UnplacedStickerReminderServiceTests.swift */,
 				827CF4CCF758CF7D72CCC423 /* WidgetDataSyncServiceTests.swift */,
 				11C89501ABCC774418176436 /* WidgetModelsTests.swift */,
 			);
@@ -753,6 +759,7 @@
 				8F02D30B673FB50BF6AD2D84 /* StickerShareService.swift in Sources */,
 				91B6DD4664FB19D95590BC04 /* SubscriptionManager.swift in Sources */,
 				CB5CDB350C326919C148B630 /* SubscriptionProduct.swift in Sources */,
+				D887EEC25D30C3F2D61AD426 /* UnplacedStickerReminderService.swift in Sources */,
 				65C2B4E7FEA4EACCD89B17F5 /* WidgetDataSyncService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -802,6 +809,7 @@
 				D9F5D0B1D91568E3331B22EE /* StickerShareServiceTests.swift in Sources */,
 				55E9EE6723FF659967D5B49F /* SubscriptionProductTests.swift in Sources */,
 				33D1A0E16223FCAC8B67B99B /* UIImageExtensionTests.swift in Sources */,
+				5FC3719147861C14AC8E9DAF /* UnplacedStickerReminderServiceTests.swift in Sources */,
 				AF1C7EC7EF7362CD7ABA273B /* WidgetDataSyncServiceTests.swift in Sources */,
 				239BFA049BCEBDA3E5B04875 /* WidgetModelsTests.swift in Sources */,
 			);

@@ -8,6 +8,7 @@ struct StickerLibraryView: View {
         category: "StickerLibraryView"
     )
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) private var dismiss
     @Query private var boards: [Board]
     @State private var displayedStickers: [Sticker] = []
     @State private var totalCount: Int = 0
@@ -29,6 +30,12 @@ struct StickerLibraryView: View {
     @Namespace private var previewNamespace
     let refreshTrigger: UUID
     var onAddSticker: () -> Void = {}
+    /// ピッカーモード: nil 以外のとき、シールタップでコールバックを呼び出してピッカーとして動作する
+    var onStickerPicked: ((Sticker) -> Void)? = nil
+    /// 通知ディープリンク経由で開いた際にプレビュー表示するシールID（消費後に nil リセットされる）
+    var highlightStickerId: Binding<UUID?> = .constant(nil)
+
+    private var isPicking: Bool { onStickerPicked != nil }
 
     private let pageSize = 30
 
@@ -91,7 +98,7 @@ struct StickerLibraryView: View {
     private var libraryContent: some View {
         mainStack
             .overlay {
-                if let sticker = previewSticker {
+                if !isPicking, let sticker = previewSticker {
                     StickerPreviewOverlay(
                         sticker: sticker,
                         namespace: previewNamespace,
@@ -113,9 +120,14 @@ struct StickerLibraryView: View {
                     )
                 }
             }
-            .navigationTitle("ライブラリ")
+            .navigationTitle(isPicking ? "シールを選択" : "ライブラリ")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                if isPicking {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("閉じる") { dismiss() }
+                    }
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Picker("並び替え", selection: sortBinding) {
@@ -177,6 +189,21 @@ struct StickerLibraryView: View {
         }
         .onChange(of: refreshTrigger) {
             refreshIfNeeded()
+        }
+        .task(id: highlightStickerId.wrappedValue) {
+            guard let targetId = highlightStickerId.wrappedValue else { return }
+            if let sticker = displayedStickers.first(where: { $0.id == targetId }) {
+                withAnimation(.spring(duration: 0.35, bounce: 0.2)) { previewSticker = sticker }
+            } else {
+                var descriptor = FetchDescriptor<Sticker>(
+                    predicate: #Predicate { $0.id == targetId }
+                )
+                descriptor.fetchLimit = 1
+                if let sticker = try? modelContext.fetch(descriptor).first {
+                    withAnimation(.spring(duration: 0.35, bounce: 0.2)) { previewSticker = sticker }
+                }
+            }
+            highlightStickerId.wrappedValue = nil
         }
     }
 
@@ -247,57 +274,12 @@ struct StickerLibraryView: View {
                 .accessibilityLabel("全\(totalCount)枚のシール")
 
                 LazyVGrid(columns: columns, spacing: 14) {
-                    addStickerCard
+                    if !isPicking {
+                        addStickerCard
+                    }
 
                     ForEach(displayedStickers) { sticker in
-                        StickerThumbnailView(sticker: sticker, refreshTrigger: thumbnailRefreshID)
-                            .matchedGeometryEffect(id: sticker.id, in: previewNamespace)
-                            .opacity(previewSticker?.id == sticker.id ? 0 : 1)
-                            .onTapGesture {
-                                withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
-                                    previewSticker = sticker
-                                }
-                            }
-                            .accessibilityAddTraits(.isButton)
-                            .accessibilityHint("タップしてプレビューを表示")
-                            .contextMenu {
-                                Button {
-                                    StickerShareService.share(sticker)
-                                } label: {
-                                    Label("共有", systemImage: "square.and.arrow.up")
-                                }
-                                Button {
-                                    saveSticker(sticker)
-                                } label: {
-                                    Label("写真に保存", systemImage: "square.and.arrow.down")
-                                }
-                                Divider()
-                                Button {
-                                    rotateSticker(sticker, clockwise: false)
-                                } label: {
-                                    Label("左に回転", systemImage: "rotate.left")
-                                }
-                                Button {
-                                    rotateSticker(sticker, clockwise: true)
-                                } label: {
-                                    Label("右に回転", systemImage: "rotate.right")
-                                }
-                                Button {
-                                    startMaskEdit(sticker)
-                                } label: {
-                                    Label("不要部分を除去", systemImage: "eraser.line.dashed")
-                                }
-                                Button(role: .destructive) {
-                                    deleteInfo = (sticker, boardsUsing(sticker))
-                                } label: {
-                                    Label("削除", systemImage: "trash")
-                                }
-                            }
-                            .onAppear {
-                                if sticker.id == displayedStickers.last?.id {
-                                    loadNextPage()
-                                }
-                            }
+                        stickerCell(for: sticker)
                     }
                 }
 
@@ -315,6 +297,72 @@ struct StickerLibraryView: View {
             .padding(20)
         }
         .safeAreaPadding(.bottom, 80)
+    }
+
+    // MARK: - シールセル（ピッカーモード対応）
+
+    /// ピッカーモード（isPicking == true）では contextMenu を付与せず、ロングプレスのプレビュー動作を防ぐ
+    @ViewBuilder
+    private func stickerCell(for sticker: Sticker) -> some View {
+        let base = Button {
+            if isPicking {
+                onStickerPicked?(sticker)
+            } else {
+                withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
+                    previewSticker = sticker
+                }
+            }
+        } label: {
+            StickerThumbnailView(sticker: sticker, refreshTrigger: thumbnailRefreshID)
+                .matchedGeometryEffect(id: sticker.id, in: previewNamespace)
+                .opacity(previewSticker?.id == sticker.id ? 0 : 1)
+        }
+        .buttonStyle(.plain)
+        .accessibilityHint(isPicking ? String(localized: "タップしてボードに追加") : String(localized: "タップしてプレビューを表示"))
+        .onAppear {
+            if sticker.id == displayedStickers.last?.id {
+                loadNextPage()
+            }
+        }
+
+        if isPicking {
+            base
+        } else {
+            base
+                .contextMenu {
+                    Button {
+                        StickerShareService.share(sticker)
+                    } label: {
+                        Label("共有", systemImage: "square.and.arrow.up")
+                    }
+                    Button {
+                        saveSticker(sticker)
+                    } label: {
+                        Label("写真に保存", systemImage: "square.and.arrow.down")
+                    }
+                    Divider()
+                    Button {
+                        rotateSticker(sticker, clockwise: false)
+                    } label: {
+                        Label("左に回転", systemImage: "rotate.left")
+                    }
+                    Button {
+                        rotateSticker(sticker, clockwise: true)
+                    } label: {
+                        Label("右に回転", systemImage: "rotate.right")
+                    }
+                    Button {
+                        startMaskEdit(sticker)
+                    } label: {
+                        Label("不要部分を除去", systemImage: "eraser.line.dashed")
+                    }
+                    Button(role: .destructive) {
+                        deleteInfo = (sticker, boardsUsing(sticker))
+                    } label: {
+                        Label("削除", systemImage: "trash")
+                    }
+                }
+        }
     }
 
     private func boardsUsing(_ sticker: Sticker) -> [Board] {

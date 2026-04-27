@@ -11,6 +11,8 @@ struct SettingsView: View {
     @State private var selectedPlan: SubscriptionProduct = .yearlyPro
     @State private var errorMessage: String?
     @State private var isLoadingProducts = false
+    @State private var reminderEnabled = UnplacedStickerReminderService.shared.isEnabled
+    @Environment(\.modelContext) private var modelContext
 
 
     var body: some View {
@@ -29,6 +31,7 @@ struct SettingsView: View {
                     }
 
                     noticesSection
+                    notificationsSection
                     betaSection
                     relatedLinksSection
                 }
@@ -564,6 +567,60 @@ struct SettingsView: View {
             .buttonStyle(.plain)
             .stickerCard()
             .accessibilityLabel("シール交換 β版 — 近くのデバイスとシールを交換できます")
+        }
+    }
+
+    // MARK: - 通知セクション
+
+    private var notificationsSection: some View {
+        VStack(spacing: 0) {
+            sectionHeader(title: "通知", icon: "bell")
+
+            HStack(spacing: 12) {
+                Image(systemName: "pin.fill")
+                    .font(.system(size: 14))
+                    .foregroundStyle(AppTheme.accent)
+                    .frame(width: 28)
+                    .accessibilityHidden(true)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("未配置シールリマインダー")
+                        .font(.system(size: 15, design: .rounded))
+                        .foregroundStyle(AppTheme.textPrimary)
+                    Text("毎週土曜10時に、まだ貼っていないシールをお知らせします")
+                        .font(.system(size: 12, design: .rounded))
+                        .foregroundStyle(AppTheme.textSecondary)
+                }
+
+                Spacer()
+
+                Toggle("", isOn: $reminderEnabled)
+                    .labelsHidden()
+                    .tint(AppTheme.accent)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .stickerCard()
+            .onChange(of: reminderEnabled) { _, newValue in
+                Task { await handleReminderToggle(newValue) }
+            }
+        }
+        .accessibilityElement(children: .contain)
+    }
+
+    private func handleReminderToggle(_ enabled: Bool) async {
+        let service = UnplacedStickerReminderService.shared
+        service.setEnabled(enabled)
+        if enabled {
+            let granted = await service.requestAuthorization()
+            if !granted {
+                reminderEnabled = false
+                service.setEnabled(false)
+                return
+            }
+            await service.rescheduleIfNeeded(context: modelContext)
+        } else {
+            service.cancelNotification()
         }
     }
 
