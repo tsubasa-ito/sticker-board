@@ -125,20 +125,19 @@ struct StickerLibraryView: View {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("閉じる") { dismiss() }
                     }
-                } else {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Menu {
-                            Picker("並び替え", selection: sortBinding) {
-                                Text("新着順").tag(true)
-                                Text("古い順").tag(false)
-                            }
-                        } label: {
-                            Image(systemName: "arrow.up.arrow.down")
-                                .font(.system(size: 14, weight: .medium))
-                                .foregroundStyle(sortNewest ? AppTheme.textSecondary : AppTheme.accent)
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        Picker("並び替え", selection: sortBinding) {
+                            Text("新着順").tag(true)
+                            Text("古い順").tag(false)
                         }
-                        .accessibilityLabel("並び替え")
+                    } label: {
+                        Image(systemName: "arrow.up.arrow.down")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundStyle(sortNewest ? AppTheme.textSecondary : AppTheme.accent)
                     }
+                    .accessibilityLabel("並び替え")
                 }
             }
             .alert("シールを削除", isPresented: deleteAlertBinding, presenting: deleteInfo) { info in
