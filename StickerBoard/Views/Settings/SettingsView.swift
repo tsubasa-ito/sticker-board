@@ -30,8 +30,8 @@ struct SettingsView: View {
                         faqSection
                     }
 
-                    notificationsSection
                     noticesSection
+                    notificationsSection
                     betaSection
                     relatedLinksSection
                 }
