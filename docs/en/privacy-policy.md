@@ -1,6 +1,6 @@
 # StickerBoard Privacy Policy
 
-Last updated: April 11, 2026
+Last updated: April 27, 2026
 
 ## Introduction
 
@@ -38,6 +38,7 @@ The App stores the following data on the device only, to provide its features:
 ### App Settings
 - Onboarding completion status
 - Subscription (Pro Plan) status cache
+- Unplaced sticker reminder notification ON/OFF setting
 
 All of this data is stored on the device and is never transmitted externally via the network.
 
@@ -56,6 +57,16 @@ The App may request access to the photo library for photographing stickers or sa
 - Images selected from the photo library are used solely for sticker extraction processing
 - Exported board images or individual sticker images are saved to the photo library upon user request
 - Photo library images are never transmitted externally
+
+## Notification Feature
+
+The App uses local notifications to remind you about unplaced stickers.
+
+- **Purpose**: If you have stickers that have not been placed on any board, you will receive a reminder notification every Saturday at 10:00 AM
+- **Data transmitted**: Notifications are generated solely on the device. No data is sent to external servers
+- **When permission is requested**: Notification permission is requested after completing the onboarding on first launch
+- **Enabling/disabling**: Notifications can be disabled at any time from the "Notifications" section in Settings
+- **Revoking permission**: Notification access can be disabled at any time in iOS Settings > StickerBoard > Notifications
 
 ## Board and Sticker Sharing
 
