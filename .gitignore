@@ -26,3 +26,4 @@ StickerBoard/GoogleService-Info.plist
 # Misc
 *.swp
 *~
+.superset/
