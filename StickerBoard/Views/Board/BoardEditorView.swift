@@ -180,7 +180,8 @@ struct BoardEditorView: View {
         .sheet(isPresented: $showingInlineLibrary, onDismiss: {
             if pendingOpenCapture {
                 pendingOpenCapture = false
-                Task { showingCapture = true }
+                // dismiss アニメーションとの競合を防ぐため次のメインループで表示
+                Task { @MainActor in showingCapture = true }
             }
         }) {
             NavigationStack {
@@ -201,14 +202,16 @@ struct BoardEditorView: View {
         .sheet(isPresented: $showingCapture, onDismiss: {
             if stickerSavedInCapture {
                 stickerSavedInCapture = false
+                // showingCapture が true の間に更新すると onChange が発火しないため onDismiss で行う
                 inlineLibraryRefreshTrigger = UUID()
-                Task { showingInlineLibrary = true }
+                // dismiss アニメーションとの競合を防ぐため次のメインループで表示
+                Task { @MainActor in showingInlineLibrary = true }
             }
         }) {
             NavigationStack {
                 StickerCaptureView(onStickerSaved: {
                     stickerSavedInCapture = true
-                    Task {
+                    Task { @MainActor in
                         await UnplacedStickerReminderService.shared.rescheduleIfNeeded(context: modelContext)
                     }
                 })
