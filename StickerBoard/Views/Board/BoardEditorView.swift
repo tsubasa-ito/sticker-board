@@ -180,7 +180,7 @@ struct BoardEditorView: View {
         .sheet(isPresented: $showingInlineLibrary, onDismiss: {
             if pendingOpenCapture {
                 pendingOpenCapture = false
-                showingCapture = true
+                Task { showingCapture = true }
             }
         }) {
             NavigationStack {
@@ -201,9 +201,8 @@ struct BoardEditorView: View {
         .sheet(isPresented: $showingCapture, onDismiss: {
             if stickerSavedInCapture {
                 stickerSavedInCapture = false
-                // onDismiss でトリガーすることで、ライブラリが表示中に onChange が確実に発火する
                 inlineLibraryRefreshTrigger = UUID()
-                showingInlineLibrary = true
+                Task { showingInlineLibrary = true }
             }
         }) {
             NavigationStack {
