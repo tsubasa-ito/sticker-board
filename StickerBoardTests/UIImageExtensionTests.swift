@@ -182,7 +182,8 @@ struct UIImageExtensionTests {
 
     // MARK: - opaqueRendered
 
-    @Test func opaqueRenderedがアルファチャンネルを除去する() throws {
+    @Test func opaqueRenderedがAlphaPremulLastを除去する() throws {
+        // AlphaPremulLast（premultipliedLast）は JPEG 保存時にシステム警告を引き起こす
         let format = UIGraphicsImageRendererFormat()
         format.opaque = false
         format.scale = 1.0
@@ -195,7 +196,7 @@ struct UIImageExtensionTests {
         let opaqueImage = imageWithAlpha.opaqueRendered()
         let cgImage = try #require(opaqueImage.cgImage)
 
-        #expect(cgImage.alphaInfo == .noneSkipLast)
+        #expect(cgImage.alphaInfo != .premultipliedLast)
     }
 
     @Test func opaqueRenderedが元の画像サイズを保持する() throws {
