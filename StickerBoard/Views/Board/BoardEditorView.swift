@@ -201,13 +201,17 @@ struct BoardEditorView: View {
         .sheet(isPresented: $showingCapture, onDismiss: {
             if stickerSavedInCapture {
                 stickerSavedInCapture = false
+                // onDismiss でトリガーすることで、ライブラリが表示中に onChange が確実に発火する
+                inlineLibraryRefreshTrigger = UUID()
                 showingInlineLibrary = true
             }
         }) {
             NavigationStack {
                 StickerCaptureView(onStickerSaved: {
-                    inlineLibraryRefreshTrigger = UUID()
                     stickerSavedInCapture = true
+                    Task {
+                        await UnplacedStickerReminderService.shared.rescheduleIfNeeded(context: modelContext)
+                    }
                 })
             }
         }
@@ -273,6 +277,8 @@ struct BoardEditorView: View {
             updateTask?.cancel()
             widgetSyncTask?.cancel()
             widgetSyncDebounceTask?.cancel()
+            pendingOpenCapture = false
+            stickerSavedInCapture = false
             board.placements = placements
             board.updatedAt = Date()
             try? modelContext.save()
