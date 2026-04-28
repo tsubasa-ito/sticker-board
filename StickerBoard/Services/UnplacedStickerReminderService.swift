@@ -1,13 +1,16 @@
 import Foundation
+import OSLog
 import UserNotifications
 import SwiftData
 import UIKit
 
 final class UnplacedStickerReminderService: Sendable {
+
     static let shared = UnplacedStickerReminderService()
 
     static let notificationIdentifier = "unplaced-sticker-reminder"
     private static let isEnabledKey = "unplacedStickerReminderEnabled"
+    private static let logger = Logger(subsystem: "com.tebasaki.StickerBoard", category: "ReminderService")
 
     // MARK: - 有効/無効管理
 
@@ -78,7 +81,11 @@ final class UnplacedStickerReminderService: Sendable {
 
         let center = UNUserNotificationCenter.current()
         center.removePendingNotificationRequests(withIdentifiers: [Self.notificationIdentifier])
-        try? await center.add(request)
+        do {
+            try await center.add(request)
+        } catch {
+            Self.logger.error("通知スケジューリングに失敗: \(error)")
+        }
     }
 
     func cancelNotification() {
@@ -90,11 +97,19 @@ final class UnplacedStickerReminderService: Sendable {
     // MARK: - 起動時リスケジュール
 
     @MainActor
-    func rescheduleIfNeeded(context: ModelContext) async {
-        guard isEnabled else { return }
+    func rescheduleIfNeeded(context: ModelContext, defaults: UserDefaults = .standard) async {
+        guard isEnabled(in: defaults) else { return }
 
-        let stickers = (try? context.fetch(FetchDescriptor<Sticker>())) ?? []
-        let boards = (try? context.fetch(FetchDescriptor<Board>())) ?? []
+        let stickers: [Sticker]
+        let boards: [Board]
+        do {
+            stickers = try context.fetch(FetchDescriptor<Sticker>())
+            boards = try context.fetch(FetchDescriptor<Board>())
+        } catch {
+            Self.logger.error("データフェッチに失敗: \(error)")
+            return
+        }
+
         let unplaced = detectUnplaced(stickers: stickers, boards: boards)
 
         if let sticker = unplaced.randomElement() {
