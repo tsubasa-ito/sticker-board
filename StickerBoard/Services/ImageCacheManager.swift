@@ -365,4 +365,25 @@ extension UIImage {
         guard let croppedCGImage = cgImage.cropping(to: trimRect) else { return self }
         return UIImage(cgImage: croppedCGImage, scale: scale, orientation: imageOrientation)
     }
+
+    /// アルファチャンネルを除去して不透明フォーマット（noneSkipLast）の画像を返す。
+    /// 不透明なボードスナップショットを AlphaPremulLast 付きで JPEG 保存するとシステム警告が発生し
+    /// デコード時のメモリが最大2倍になるため、保存前にこのメソッドで変換する。
+    func opaqueRendered() -> UIImage {
+        guard let cgImage else { return self }
+        let colorSpace = cgImage.colorSpace ?? CGColorSpaceCreateDeviceRGB()
+        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipLast.rawValue)
+        guard let context = CGContext(
+            data: nil,
+            width: cgImage.width,
+            height: cgImage.height,
+            bitsPerComponent: 8,
+            bytesPerRow: 0,
+            space: colorSpace,
+            bitmapInfo: bitmapInfo
+        ) else { return self }
+        context.draw(cgImage, in: CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height))
+        guard let result = context.makeImage() else { return self }
+        return UIImage(cgImage: result, scale: scale, orientation: imageOrientation)
+    }
 }
