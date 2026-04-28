@@ -33,6 +33,9 @@ struct BoardEditorView: View {
     @State private var hasPerformedInitialSync = false
     @State private var undoStack: [(placements: [StickerPlacement], backgroundConfig: BackgroundPatternConfig)] = []
     @State private var autoSaveTask: Task<Void, Never>?
+    @State private var showingCapture = false
+    @State private var pendingOpenCapture = false
+    @State private var stickerSavedInCapture = false
 
     // ズームモード
     @State private var isZoomMode: Bool = false
@@ -174,10 +177,19 @@ struct BoardEditorView: View {
                 .accessibilityLabel(String(localized: "その他のアクション"))
             }
         }
-        .sheet(isPresented: $showingInlineLibrary) {
+        .sheet(isPresented: $showingInlineLibrary, onDismiss: {
+            if pendingOpenCapture {
+                pendingOpenCapture = false
+                showingCapture = true
+            }
+        }) {
             NavigationStack {
                 StickerLibraryView(
                     refreshTrigger: inlineLibraryRefreshTrigger,
+                    onAddSticker: {
+                        pendingOpenCapture = true
+                        showingInlineLibrary = false
+                    },
                     onStickerPicked: { sticker in
                         addStickerToBoard(sticker)
                         showingInlineLibrary = false
@@ -185,6 +197,19 @@ struct BoardEditorView: View {
                 )
             }
             .presentationDetents([.medium, .large])
+        }
+        .sheet(isPresented: $showingCapture, onDismiss: {
+            if stickerSavedInCapture {
+                stickerSavedInCapture = false
+                showingInlineLibrary = true
+            }
+        }) {
+            NavigationStack {
+                StickerCaptureView(onStickerSaved: {
+                    inlineLibraryRefreshTrigger = UUID()
+                    stickerSavedInCapture = true
+                })
+            }
         }
         .sheet(isPresented: $showingBackgroundPicker, onDismiss: {
             board.backgroundPattern = backgroundConfig
