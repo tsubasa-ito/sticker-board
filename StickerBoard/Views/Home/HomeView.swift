@@ -37,7 +37,7 @@ struct HomeView: View {
                 } else {
                     Spacer(minLength: 8)
 
-                    boardCarousel
+                    boardCarousel(maxHeight: carouselMaxCardHeight)
 
                     pageIndicators
                         .padding(.top, 16)
@@ -130,11 +130,11 @@ struct HomeView: View {
 
     // MARK: - ボードカルーセル
 
-    private var boardCarousel: some View {
+    private func boardCarousel(maxHeight: CGFloat) -> some View {
         ScrollView(.horizontal) {
             LazyHStack(spacing: 12) {
                 ForEach(boards) { board in
-                    boardCard(board)
+                    boardCard(board, maxHeight: maxHeight)
                         .contentShape(Rectangle())
                         .onTapGesture {
                             selectedBoard = board
@@ -147,13 +147,14 @@ struct HomeView: View {
                 }
 
                 // 新規ボード作成カード
-                newBoardCard
+                newBoardCard(maxHeight: maxHeight)
                     .id(newBoardCardID)
             }
             .scrollTargetLayout()
         }
         .scrollTargetBehavior(.viewAligned)
         .scrollIndicators(.hidden)
+        .scrollClipDisabled()
         .scrollPosition(id: $scrolledID)
         .contentMargins(.horizontal, AppTheme.EditorLayout.horizontalPadding)
         .opacity(animateIn ? 1 : 0)
@@ -172,6 +173,12 @@ struct HomeView: View {
         return canvasWidth / canvasHeight
     }
 
+    /// カルーセルカードの最大高さ（エディタのキャンバス高さより少し小さくしてカードが収まるようにする）
+    private var carouselMaxCardHeight: CGFloat {
+        let ideal = AppTheme.screenBounds.height - AppTheme.EditorLayout.verticalChromeHeight
+        return max(ideal - 70, 200)
+    }
+
     /// カルーセルカードの横幅（boardCard / newBoardCard 共通）
     /// containerRelativeFrame は LazyHStack の全高を各カードに強制する場合があるため、
     /// screenBounds から明示的に算出する
@@ -180,8 +187,8 @@ struct HomeView: View {
         return w > 0 ? w - AppTheme.EditorLayout.horizontalPadding * 2 : 345
     }
 
-    private func boardCard(_ board: Board) -> some View {
-        let cardWidth = boardCardWidth
+    private func boardCard(_ board: Board, maxHeight: CGFloat = .greatestFiniteMagnitude) -> some View {
+        let fullWidth = boardCardWidth
         let cardAspectRatio: CGFloat = {
             switch board.boardType {
             case .widgetLarge: return BoardType.widgetLargeAspectRatio
@@ -190,7 +197,10 @@ struct HomeView: View {
             case .standard: return boardCardAspectRatio
             }
         }()
-        let cardHeight = cardWidth / cardAspectRatio
+        let idealHeight = fullWidth / cardAspectRatio
+        let scale = min(1.0, maxHeight / idealHeight)
+        let cardWidth = fullWidth * scale
+        let cardHeight = idealHeight * scale
 
         return ZStack {
             // ボード背景パターン
@@ -284,8 +294,13 @@ struct HomeView: View {
 
     // MARK: - 新規ボードカード
 
-    private var newBoardCard: some View {
-        Button {
+    private func newBoardCard(maxHeight: CGFloat = .greatestFiniteMagnitude) -> some View {
+        let fullWidth = boardCardWidth
+        let idealHeight = fullWidth / boardCardAspectRatio
+        let scale = min(1.0, maxHeight / idealHeight)
+        let cardWidth = fullWidth * scale
+        let cardHeight = idealHeight * scale
+        return Button {
             if !SubscriptionManager.shared.isProUser && boards.count >= 1 {
                 showingPaywall = true
             } else {
@@ -329,7 +344,7 @@ struct HomeView: View {
                 }
                 .padding(.horizontal, 24)
             }
-            .frame(width: boardCardWidth, height: boardCardWidth / boardCardAspectRatio)
+            .frame(width: cardWidth, height: cardHeight)
         }
         .buttonStyle(.plain)
         .accessibilityLabel("新しいボードを作る")
