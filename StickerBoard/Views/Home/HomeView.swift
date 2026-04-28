@@ -30,26 +30,19 @@ struct HomeView: View {
             AppTheme.backgroundPrimary
                 .ignoresSafeArea()
 
-            GeometryReader { geo in
-                // 利用可能な高さから周辺要素の最小高さを引いてカルーセル最大高さを算出
-                // 内訳: topSpacer(8) + pageIndicatorPad(16) + dotHeight(8) + bottomSpacer(26) = 58
-                // Dynamic Island 端末では cardHeight = screen.height - 244 = geo.size.height - 58 となり
-                // エディタのキャンバスとまったく同じ高さになる
-                let carouselMaxHeight = max(geo.size.height - 58, 200)
-                VStack(spacing: 0) {
-                    if boards.isEmpty {
-                        emptyState
-                            .frame(maxHeight: .infinity)
-                    } else {
-                        Spacer(minLength: 8)
+            VStack(spacing: 0) {
+                if boards.isEmpty {
+                    emptyState
+                        .frame(maxHeight: .infinity)
+                } else {
+                    Spacer(minLength: 8)
 
-                        boardCarousel(maxHeight: carouselMaxHeight)
+                    boardCarousel(maxHeight: carouselMaxCardHeight)
 
-                        pageIndicators
-                            .padding(.top, 16)
+                    pageIndicators
+                        .padding(.top, 16)
 
-                        Spacer(minLength: 26)
-                    }
+                    Spacer(minLength: 100)
                 }
             }
         }
@@ -161,6 +154,7 @@ struct HomeView: View {
         }
         .scrollTargetBehavior(.viewAligned)
         .scrollIndicators(.hidden)
+        .scrollClipDisabled()
         .scrollPosition(id: $scrolledID)
         .contentMargins(.horizontal, AppTheme.EditorLayout.horizontalPadding)
         .opacity(animateIn ? 1 : 0)
@@ -179,6 +173,12 @@ struct HomeView: View {
         return canvasWidth / canvasHeight
     }
 
+    /// カルーセルカードの最大高さ（エディタのキャンバス高さより少し小さくしてカードが収まるようにする）
+    private var carouselMaxCardHeight: CGFloat {
+        let ideal = AppTheme.screenBounds.height - AppTheme.EditorLayout.verticalChromeHeight
+        return max(ideal - 70, 200)
+    }
+
     /// カルーセルカードの横幅（boardCard / newBoardCard 共通）
     /// containerRelativeFrame は LazyHStack の全高を各カードに強制する場合があるため、
     /// screenBounds から明示的に算出する
@@ -188,7 +188,7 @@ struct HomeView: View {
     }
 
     private func boardCard(_ board: Board, maxHeight: CGFloat = .greatestFiniteMagnitude) -> some View {
-        let cardWidth = boardCardWidth
+        let fullWidth = boardCardWidth
         let cardAspectRatio: CGFloat = {
             switch board.boardType {
             case .widgetLarge: return BoardType.widgetLargeAspectRatio
@@ -197,7 +197,10 @@ struct HomeView: View {
             case .standard: return boardCardAspectRatio
             }
         }()
-        let cardHeight = min(cardWidth / cardAspectRatio, maxHeight)
+        let idealHeight = fullWidth / cardAspectRatio
+        let scale = min(1.0, maxHeight / idealHeight)
+        let cardWidth = fullWidth * scale
+        let cardHeight = idealHeight * scale
 
         return ZStack {
             // ボード背景パターン
@@ -292,7 +295,12 @@ struct HomeView: View {
     // MARK: - 新規ボードカード
 
     private func newBoardCard(maxHeight: CGFloat = .greatestFiniteMagnitude) -> some View {
-        Button {
+        let fullWidth = boardCardWidth
+        let idealHeight = fullWidth / boardCardAspectRatio
+        let scale = min(1.0, maxHeight / idealHeight)
+        let cardWidth = fullWidth * scale
+        let cardHeight = idealHeight * scale
+        return Button {
             if !SubscriptionManager.shared.isProUser && boards.count >= 1 {
                 showingPaywall = true
             } else {
@@ -336,7 +344,7 @@ struct HomeView: View {
                 }
                 .padding(.horizontal, 24)
             }
-            .frame(width: boardCardWidth, height: min(boardCardWidth / boardCardAspectRatio, maxHeight))
+            .frame(width: cardWidth, height: cardHeight)
         }
         .buttonStyle(.plain)
         .accessibilityLabel("新しいボードを作る")
