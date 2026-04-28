@@ -32,8 +32,10 @@ struct HomeView: View {
 
             GeometryReader { geo in
                 // 利用可能な高さから周辺要素の最小高さを引いてカルーセル最大高さを算出
-                // 内訳: topSpacer(8) + pageIndicatorPad(16) + dotHeight(8) + bottomSpacer(100) = 132
-                let carouselMaxHeight = max(geo.size.height - 132, 200)
+                // 内訳: topSpacer(8) + pageIndicatorPad(16) + dotHeight(8) + bottomSpacer(26) = 58
+                // Dynamic Island 端末では cardHeight = screen.height - 244 = geo.size.height - 58 となり
+                // エディタのキャンバスとまったく同じ高さになる
+                let carouselMaxHeight = max(geo.size.height - 58, 200)
                 VStack(spacing: 0) {
                     if boards.isEmpty {
                         emptyState
@@ -46,7 +48,7 @@ struct HomeView: View {
                         pageIndicators
                             .padding(.top, 16)
 
-                        Spacer(minLength: 100)
+                        Spacer(minLength: 26)
                     }
                 }
             }
