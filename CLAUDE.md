@@ -95,6 +95,7 @@ open StickerBoard.xcodeproj
 - Undo機能: BoardEditorView の `undoStack: [(placements: [StickerPlacement], backgroundConfig: BackgroundPatternConfig)]`（最大20ステップ）で操作前スナップショットを管理。`saveUndoSnapshot()` は重複チェック付き（同一状態はスキップ）。`undoLastAction()` はスタックをpopして状態を復元後 `rebuildFilterCache()` → `saveBoard()` を呼ぶ（削除undoで画像が消えないよう必須）。StickerItemView の `onGestureStarted` コールバックでジェスチャー開始時にスナップショットを保存。VoiceOverアクセシビリティアクション（移動/リサイズ/回転/ロック）も `onGestureStarted` 経由でundo対応済み。`StickerPlacement` は `Equatable` に準拠（重複チェック用）
 - StickerBorderService は CIMorphologyMaximum でアルファマスクを膨張させて輪郭に沿った枠線を描画。フィルター適用後の画像に枠線を重ねる（描画順序: フィルター → 枠線）
 - ImageCacheManager の processed() メソッドがフィルター＋枠線の統合キャッシュを管理。キーは「fileName_filterType_borderWidth_borderColorHex」形式
+- UIImage.opaqueRendered()（ImageCacheManager.swift の UIImage 拡張）は `UIGraphicsImageRendererFormat.opaque = true` で AlphaPremulLast フォーマットを除去した不透明画像を返す。ImageRenderer が生成するボードスナップショットは常に AlphaPremulLast のため、JPEG 保存（WidgetDataSyncService.saveSnapshot）・Photos 保存（saveBoardAsImage）の前に呼び出す
 - ホログラフィック効果（HolographicEffectModifier）はリアルタイムのビューレベル効果であり、フィルター/ボーダーのような画像処理とは独立。CoreMotion のジャイロスコープ（MotionManager シングルトン）でデバイスの傾きに連動した3D回転・レインボーグラデーション・スペキュラハイライトを表示。シミュレータではフォールバックとして自動アニメーションを使用。`@Environment(\.accessibilityReduceMotion)` で「視差効果を減らす」設定時は3D回転・自動アニメーションを無効化し静的表示にフォールバック（WCAG 2.3.3準拠）
 - StickerBoardApp.init() で初回起動時（ボード0件）にデフォルトボード「はじめてのボード」を自動作成する
 - @AppStorage("hasCompletedOnboarding") で初回起動オンボーディングの表示制御。初回は .fullScreenCover で OnboardingView を表示し、完了後は非表示。HomeView のナビバー「?」ボタンから再表示可能
@@ -108,6 +109,7 @@ open StickerBoard.xcodeproj
 - アプリ表示名: シールボード -デジタルシール帳-（CFBundleDisplayName）
 - 開発言語: ja（project.yml の `options.developmentLanguage` で設定。`developmentRegion = ja` / `knownRegions = (Base, ja, en)` として生成される）
 - ローカライズ: `Localizable.xcstrings`（アプリ全体の ja/en 翻訳、約470キー）と `InfoPlist.xcstrings`（権限説明文・CFBundleDisplayName）を `StickerBoard/` 直下に配置。SwiftUI の `Text()` は自動でローカライズ。非SwiftUI文字列（変数代入・アクセシビリティラベル等）は `String(localized:)` / `String(format: String(localized:), ...)` を使用する
+- ローカライズテスト: `sourceLanguage = ja` の xcstrings では `String(localized:bundle:locale:)` の `locale:` パラメータは言語選択に効かない（数値/日付フォーマットのみに影響）。英語翻訳を検証するには `Bundle.main.path(forResource: "en", ofType: "lproj").flatMap { Bundle(path: $0) }` で `en.lproj` バンドルを直接取得し `String(localized:bundle:)` に渡す（`LocalizationTests.swift` の `enBundle` プロパティ参照）
 - ITSAppUsesNonExemptEncryption: NO（標準HTTPS通信のみ、App Store提出時の暗号化質問を省略）
 - 画面の向き: iPhone はポートレートのみ、iPad は全方向（iPad互換モードのマルチタスク対応に必要）
 - Xcode Cloud: mainブランチへのpushで自動ビルド→TestFlight配信。ci_scripts/ci_post_clone.sh で XcodeGen インストール＆プロジェクト生成を自動化

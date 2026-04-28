@@ -179,4 +179,53 @@ struct UIImageExtensionTests {
         #expect(cgImage.width == 100)
         #expect(cgImage.height == 80)
     }
+
+    // MARK: - opaqueRendered
+
+    @Test func opaqueRenderedがAlphaPremulLastを除去する() throws {
+        // AlphaPremulLast（premultipliedLast）は JPEG 保存時にシステム警告を引き起こす
+        let format = UIGraphicsImageRendererFormat()
+        format.opaque = false
+        format.scale = 1.0
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 100, height: 100), format: format)
+        let imageWithAlpha = renderer.image { ctx in
+            UIColor.red.setFill()
+            ctx.fill(CGRect(origin: .zero, size: CGSize(width: 100, height: 100)))
+        }
+
+        let opaqueImage = imageWithAlpha.opaqueRendered()
+        let cgImage = try #require(opaqueImage.cgImage)
+
+        #expect(cgImage.alphaInfo != .premultipliedLast)
+    }
+
+    @Test func opaqueRenderedが元の画像サイズを保持する() throws {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1.0
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 200, height: 150), format: format)
+        let image = renderer.image { ctx in
+            UIColor.blue.setFill()
+            ctx.fill(CGRect(origin: .zero, size: CGSize(width: 200, height: 150)))
+        }
+
+        let opaqueImage = image.opaqueRendered()
+        let cgImage = try #require(opaqueImage.cgImage)
+
+        #expect(cgImage.width == 200)
+        #expect(cgImage.height == 150)
+    }
+
+    @Test func opaqueRenderedが元のscaleを保持する() {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 2.0
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 100, height: 100), format: format)
+        let image = renderer.image { ctx in
+            UIColor.blue.setFill()
+            ctx.fill(CGRect(origin: .zero, size: CGSize(width: 100, height: 100)))
+        }
+
+        let opaqueImage = image.opaqueRendered()
+
+        #expect(opaqueImage.scale == 2.0)
+    }
 }

@@ -1098,9 +1098,10 @@ struct BoardEditorView: View {
             showingSaveResult = true
             return
         }
+        let opaqueImage = image.opaqueRendered()
         do {
             try await PHPhotoLibrary.shared().performChanges {
-                PHAssetChangeRequest.creationRequestForAsset(from: image)
+                PHAssetChangeRequest.creationRequestForAsset(from: opaqueImage)
             }
             saveResultSuccess = true
         } catch {
