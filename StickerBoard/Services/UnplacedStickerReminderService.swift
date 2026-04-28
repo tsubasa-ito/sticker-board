@@ -98,7 +98,10 @@ final class UnplacedStickerReminderService: Sendable {
 
     @MainActor
     func rescheduleIfNeeded(context: ModelContext, defaults: UserDefaults = .standard) async {
-        guard isEnabled(in: defaults) else { return }
+        guard isEnabled(in: defaults) else {
+            cancelNotification()
+            return
+        }
 
         let stickers: [Sticker]
         let boards: [Board]
