@@ -72,7 +72,7 @@ open StickerBoard.xcodeproj
 - シール画像は Documents/Stickers/ にPNG保存、メタデータはSwiftDataに保存
 - ボード背景画像は Documents/Backgrounds/ にJPEG保存（長辺2048px、品質0.85）。BackgroundPatternConfig の customImageFileName でファイル名を管理。customImageCropX / customImageCropY（0.0〜1.0）でトリミング位置を保持
 - BackgroundPatternPickerView でパターン種別を切り替える際は patternType のみ変更し primaryColorHex / secondaryColorHex を引き継ぐ設計（プリセット固定色で全上書きしない）。写真背景（.custom）からの切り替え時のみ BackgroundPatternConfig.default のカラーにフォールバック。サムネイルも同様に現在の config の色をベースに表示する
-- AppTheme.screenBounds で画面サイズを取得する（UIScreen.main は deprecated のため UIWindowScene 経由）
+- AppTheme.screenBounds で画面サイズを取得する（UIScreen.main は deprecated のため UIWindowScene 経由）。ZStack に `.ignoresSafeArea()` を持つ子ビューが存在する場合、GeometryReader はセーフエリア外を含むフルスクリーン高さを返すため誤測定になる。代わりに `AppTheme.screenBounds` を直接使用する（HomeView のカルーセルカード高さ算出が該当）
 - StickerPlacement に imageFileName を直接保持する設計（SwiftDataのID問題回避のため）
 - Board の backgroundPatternData も placements と同様に Codable struct を JSON シリアライズして Data? に格納する設計
 - BackgroundRemover は入力画像の EXIF 向きを正規化し、長辺2048pxにリサイズする（cgImage とマスクの整合性確保 + メモリ最適化）
