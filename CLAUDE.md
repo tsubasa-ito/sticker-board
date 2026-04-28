@@ -85,7 +85,7 @@ open StickerBoard.xcodeproj
 - ImageStorage.rotateAndOverwrite(fileName:clockwise:) はディスクからの読み込み → UIImage.rotatedBy90Degrees(clockwise:) で90度回転 → overwrite() の順で処理する。回転メソッドは ImageCacheManager.swift の UIImage 拡張に定義。UIGraphicsImageRendererFormat.scale に元画像のスケールを引き継がないとピクセル寸法が変わるため注意
 - ImageStorageError には encodingFailed / deletionFailed / loadFailed の3ケースあり。loadFailed は rotateAndOverwrite で対象ファイルが見つからない場合に投げる
 - StickerLibraryView は @Query ではなく FetchDescriptor + fetchLimit/fetchOffset によるページネーション（30枚ずつ無限スクロール）でシールを取得する設計（大量シール時のメモリ最適化）
-- StickerLibraryView はピッカーモード対応（`onStickerPicked: ((Sticker) -> Void)? = nil`）。nil 以外のとき、シールタップでコールバックを呼び出しプレビュー/コンテキストメニュー/さらに追加カードを非表示にする。BoardEditorView の「追加」ボタン → `.sheet(isPresented: $showingInlineLibrary)` でピッカーモードのライブラリをボトムシート表示し、選択後にシールをボード中央に配置して自動クローズする
+- StickerLibraryView はピッカーモード対応（`onStickerPicked: ((Sticker) -> Void)? = nil`）。nil 以外のとき、シールタップでコールバックを呼び出しプレビュー/コンテキストメニュー/グリッド先頭の「さらに追加」カードを非表示にする。空の状態で表示される「シールを追加する」ボタンは `onAddSticker` コールバックで制御（ピッカーモードでも有効）。BoardEditorView の「追加」ボタン → `.sheet(isPresented: $showingInlineLibrary)` でピッカーモードのライブラリをボトムシート表示し、選択後にシールをボード中央に配置して自動クローズする。シール0枚時に「シールを追加する」をタップするとライブラリを閉じて `StickerCaptureView` を表示し、保存後に `showingInlineLibrary = true` でライブラリを再表示する（`pendingOpenCapture` / `stickerSavedInCapture` フラグで SwiftUI の同一階層シート制約を回避）
 - サムネイル表示（StickerThumbnailView, BoardStickerPreviewView）は ImageStorage.loadThumbnail() 経由で縮小画像を使用
 - 枠線（ボーダー）は StickerPlacement の borderWidthType / borderColorHex に保存し、フィルターと同様に配置単位で管理する設計
 - シールロックは StickerPlacement の isLocked: Bool = false に保存（旧データとの後方互換性: decodeIfPresent でデフォルト false）。ロック中はドラッグ・ピンチ・回転ジェスチャーおよび効果・枠線・前面・背面・削除ボタンを無効化。VoiceOver はロック/解除アクション + UIAccessibility.post アナウンス対応
