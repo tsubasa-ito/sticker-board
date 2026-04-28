@@ -365,4 +365,16 @@ extension UIImage {
         guard let croppedCGImage = cgImage.cropping(to: trimRect) else { return self }
         return UIImage(cgImage: croppedCGImage, scale: scale, orientation: imageOrientation)
     }
+
+    /// アルファチャンネルを除去して不透明フォーマットの画像を返す。
+    /// 不透明なボードスナップショットを AlphaPremulLast 付きで JPEG 保存するとシステム警告が発生し
+    /// デコード時のメモリが最大2倍になるため、保存前にこのメソッドで変換する。
+    func opaqueRendered() -> UIImage {
+        let format = UIGraphicsImageRendererFormat()
+        format.opaque = true
+        format.scale = scale
+        return UIGraphicsImageRenderer(size: size, format: format).image { _ in
+            draw(in: CGRect(origin: .zero, size: size))
+        }
+    }
 }

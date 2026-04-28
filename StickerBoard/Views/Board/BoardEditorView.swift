@@ -33,6 +33,9 @@ struct BoardEditorView: View {
     @State private var hasPerformedInitialSync = false
     @State private var undoStack: [(placements: [StickerPlacement], backgroundConfig: BackgroundPatternConfig)] = []
     @State private var autoSaveTask: Task<Void, Never>?
+    @State private var showingCapture = false
+    @State private var pendingOpenCapture = false
+    @State private var stickerSavedInCapture = false
 
     // ズームモード
     @State private var isZoomMode: Bool = false
@@ -174,10 +177,20 @@ struct BoardEditorView: View {
                 .accessibilityLabel(String(localized: "その他のアクション"))
             }
         }
-        .sheet(isPresented: $showingInlineLibrary) {
+        .sheet(isPresented: $showingInlineLibrary, onDismiss: {
+            if pendingOpenCapture {
+                pendingOpenCapture = false
+                // dismiss アニメーションとの競合を防ぐため次のメインループで表示
+                Task { @MainActor in showingCapture = true }
+            }
+        }) {
             NavigationStack {
                 StickerLibraryView(
                     refreshTrigger: inlineLibraryRefreshTrigger,
+                    onAddSticker: {
+                        pendingOpenCapture = true
+                        showingInlineLibrary = false
+                    },
                     onStickerPicked: { sticker in
                         addStickerToBoard(sticker)
                         showingInlineLibrary = false
@@ -185,6 +198,24 @@ struct BoardEditorView: View {
                 )
             }
             .presentationDetents([.medium, .large])
+        }
+        .sheet(isPresented: $showingCapture, onDismiss: {
+            if stickerSavedInCapture {
+                stickerSavedInCapture = false
+                // showingCapture が true の間に更新すると onChange が発火しないため onDismiss で行う
+                inlineLibraryRefreshTrigger = UUID()
+                // dismiss アニメーションとの競合を防ぐため次のメインループで表示
+                Task { @MainActor in showingInlineLibrary = true }
+            }
+        }) {
+            NavigationStack {
+                StickerCaptureView(onStickerSaved: {
+                    stickerSavedInCapture = true
+                    Task { @MainActor in
+                        await UnplacedStickerReminderService.shared.rescheduleIfNeeded(context: modelContext)
+                    }
+                })
+            }
         }
         .sheet(isPresented: $showingBackgroundPicker, onDismiss: {
             board.backgroundPattern = backgroundConfig
@@ -248,6 +279,8 @@ struct BoardEditorView: View {
             updateTask?.cancel()
             widgetSyncTask?.cancel()
             widgetSyncDebounceTask?.cancel()
+            pendingOpenCapture = false
+            stickerSavedInCapture = false
             board.placements = placements
             board.updatedAt = Date()
             try? modelContext.save()
@@ -1065,9 +1098,10 @@ struct BoardEditorView: View {
             showingSaveResult = true
             return
         }
+        let opaqueImage = image.opaqueRendered()
         do {
             try await PHPhotoLibrary.shared().performChanges {
-                PHAssetChangeRequest.creationRequestForAsset(from: image)
+                PHAssetChangeRequest.creationRequestForAsset(from: opaqueImage)
             }
             saveResultSuccess = true
         } catch {
