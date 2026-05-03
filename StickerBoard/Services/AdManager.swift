@@ -127,9 +127,8 @@ final class AdManager {
 
 private extension AdManager {
     enum AdUnitID {
-        // TODO: App Store 提出前に AdMob コンソールの本番 ID に差し替えること
-        static let interstitial = "ca-app-pub-3940256099942544/4411468910"
-        static let native = "ca-app-pub-3940256099942544/3986624511"
+        static let interstitial = "ca-app-pub-3940256099942544/4411468910"  // TODO: 本番インタースティシャルIDに差し替えること
+        static let native = "ca-app-pub-6267199278067658/3000803125"
     }
 }
 
