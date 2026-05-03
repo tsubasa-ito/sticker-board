@@ -812,6 +812,16 @@
         }
       }
     },
+    "このシール、まだボードに貼ってないよ📌" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This sticker hasn't been placed on a board yet 📌"
+          }
+        }
+      }
+    },
     "このシールは%lld個のボードで使用されています。削除するとボードからも取り除かれます。" : {
       "localizations" : {
         "en" : {
@@ -1373,17 +1383,6 @@
         }
       }
     },
-    "その他のアクション" : {
-      "comment" : "BoardEditorView: accessibility label for ellipsis menu (share / save)",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "More Actions"
-          }
-        }
-      }
-    },
     "ズームをリセット" : {
       "comment" : "BoardEditorView: accessibility label for zoom reset button",
       "localizations" : {
@@ -1426,6 +1425,7 @@
       }
     },
     "すべてのシールを表示" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1481,6 +1481,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Swipe to adjust background image position"
+          }
+        }
+      }
+    },
+    "その他のアクション" : {
+      "comment" : "BoardEditorView: accessibility label for ellipsis menu (share / save)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More Actions"
           }
         }
       }
@@ -2489,6 +2500,7 @@
       }
     },
     "先にホームからシールを追加してください" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2521,6 +2533,7 @@
       }
     },
     "全て" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3440,6 +3453,16 @@
         }
       }
     },
+    "未配置シールリマインダー" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unplaced Sticker Reminder"
+          }
+        }
+      }
+    },
     "枠線" : {
       "localizations" : {
         "en" : {
@@ -3506,6 +3529,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Next"
+          }
+        }
+      }
+    },
+    "毎週土曜10時に、まだ貼っていないシールをお知らせします" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reminds you every Saturday at 10 AM about stickers not yet placed on a board"
           }
         }
       }
@@ -4013,6 +4046,16 @@
         }
       }
     },
+    "通知" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications"
+          }
+        }
+      }
+    },
     "適用" : {
       "localizations" : {
         "en" : {
@@ -4119,46 +4162,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Links"
-          }
-        }
-      }
-    },
-    "通知" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Notifications"
-          }
-        }
-      }
-    },
-    "未配置シールリマインダー" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unplaced Sticker Reminder"
-          }
-        }
-      }
-    },
-    "毎週土曜10時に、まだ貼っていないシールをお知らせします" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reminds you every Saturday at 10 AM about stickers not yet placed on a board"
-          }
-        }
-      }
-    },
-    "このシール、まだボードに貼ってないよ📌" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This sticker hasn't been placed on a board yet 📌"
           }
         }
       }

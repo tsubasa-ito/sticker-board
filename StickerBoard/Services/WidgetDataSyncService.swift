@@ -95,7 +95,10 @@ enum WidgetDataSyncService {
 
     /// スナップショット画像をJPEGとして保存する
     static func saveSnapshot(_ image: UIImage, to url: URL) throws {
-        guard let data = image.jpegData(compressionQuality: 0.85) else {
+        // AlphaPremulLast フォーマットの画像を不透明フォーマットに変換してから JPEG エンコード
+        // （JPEG はアルファ非対応のため、変換しないとシステム警告が発生しメモリ効率も悪化する）
+        let opaqueImage = image.opaqueRendered()
+        guard let data = opaqueImage.jpegData(compressionQuality: 0.85) else {
             throw WidgetSyncError.snapshotEncodingFailed
         }
         try data.write(to: url, options: .atomic)

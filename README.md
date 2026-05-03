@@ -6,6 +6,23 @@
 
 子どもの頃にシール手帳に夢中になった世代が、大人になった今もシール集めの楽しさをスマホで体験できます。
 
+## 関連リンク
+
+### SNS / 発信
+
+| プラットフォーム | URL |
+|---|---|
+| note | https://note.com/colorfreemap |
+
+### 記事
+
+| タイトル | URL | 状態 |
+|---|---|---|
+| アプリ紹介記事（izanami.dev） | https://izanami.dev/post/f02941c4-8a84-4c61-bfbd-43606ed68073 | 公開済み |
+| 開発の思いを書いた note 記事 | （公開後に追記） | 下書き: [`docs/note_article.md`](docs/note_article.md) |
+
+---
+
 ## 機能
 
 - **撮影ガイド** — シール追加画面にきれいに切り抜くための撮影のコツを表示（折りたたみ可能、状態を記憶）
@@ -33,6 +50,7 @@
 - **シール交換 β版** — MultipeerConnectivity（近距離Bluetooth/Wi-Fi P2P）を使って近くのデバイスとシールを交換できるβ版機能。設定画面の「β機能」セクションからアクセス。デバイス検索 → 接続申請 → シール選択 → 送信 → 受信したシールをライブラリに保存する一連のフローをサポート
 - **ボードショーケースウィジェット** — WidgetKit でお気に入りのボードをホーム画面に飾れるウィジェット機能（Small / Medium / Large サイズ対応）。ウィジェット長押しでボード選択、タップでボード編集画面に直接遷移（完全無料）
 - **ウィジェット用ボード** — ボード作成時に「ウィジェット用」タイプを選ぶと、専用比率のキャンバスで編集できる。Large（364×382pt）と Small（正方形）の2種類に対応し、WYSIWYG でホーム画面への表示と一致したレイアウトが可能
+- **広告表示（AdMob）** — 無料ユーザー向けに、シールライブラリ内へのネイティブ広告挿入・エクスポート/写真保存3回ごとのインタースティシャル広告表示に対応。ATT（App Tracking Transparency）ダイアログをオンボーディング完了後に表示。Pro ユーザーには一切広告を表示しない
 - **英語ローカライズ** — 日本語・英語に対応（`Localizable.xcstrings` で管理）。端末言語に合わせて全画面が自動翻訳される
 
 ## 技術スタック
@@ -45,6 +63,7 @@
 | データ保存 | SwiftData + FileManager |
 | 課金 | StoreKit 2（自動更新サブスクリプション） |
 | ウィジェット | WidgetKit + AppIntentConfiguration |
+| 広告 | Google Mobile Ads SDK（AdMob） |
 | クラッシュ検知 | Firebase Crashlytics |
 | プロジェクト管理 | XcodeGen |
 | 対応OS | iOS 18+ |
@@ -160,6 +179,7 @@ StickerBoard/
 │   ├── SubscriptionManager.swift    # StoreKit 2 サブスクリプション管理
 │   ├── AppUpdateChecker.swift       # App Storeバージョンチェック・アップデート通知
 │   ├── WidgetDataSyncService.swift  # ウィジェットへのスナップショット・メタデータ同期
+│   ├── AdManager.swift              # Google AdMob 広告管理（ネイティブ・インタースティシャル、ATT対応）
 │   └── MultipeerConnectivityManager.swift # β版シール交換（P2P近距離通信）
 └── Views/
     ├── Home/
@@ -182,7 +202,8 @@ StickerBoard/
     ├── Paywall/
     │   └── PaywallView.swift         # ペイウォール・ProBadge
     ├── Library/
-    │   └── StickerLibraryView.swift  # シール一覧
+    │   ├── StickerLibraryView.swift  # シール一覧
+    │   └── NativeAdCard.swift        # ネイティブ広告カード（グリッド内挿入用）
     ├── Exchange/
     │   └── StickerExchangeView.swift # β版シール交換（MultipeerConnectivity）
     └── Board/

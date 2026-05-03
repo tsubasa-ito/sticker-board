@@ -7,71 +7,75 @@ import Foundation
 
 struct LocalizationTests {
 
-    private let appBundle = Bundle.main
-    private let enLocale = Locale(identifier: "en")
+    // en.lproj バンドルを直接使うことで言語を確実に英語に固定する
+    // （sourceLanguage = ja のため locale: パラメータは言語選択に効かない）
+    private var enBundle: Bundle {
+        Bundle.main.path(forResource: "en", ofType: "lproj")
+            .flatMap { Bundle(path: $0) } ?? Bundle.main
+    }
 
     // MARK: - 主要UI文字列の英語翻訳確認
 
     @Test func スキップが英語でSkipになる() {
-        #expect(String(localized: "スキップ", bundle: appBundle, locale: enLocale) == "Skip")
+        #expect(String(localized: "スキップ", bundle: enBundle) == "Skip")
     }
 
     @Test func 次へが英語でNextになる() {
-        #expect(String(localized: "次へ", bundle: appBundle, locale: enLocale) == "Next")
+        #expect(String(localized: "次へ", bundle: enBundle) == "Next")
     }
 
     @Test func はじめるが英語でGetStartedになる() {
-        #expect(String(localized: "はじめる", bundle: appBundle, locale: enLocale) == "Get Started")
+        #expect(String(localized: "はじめる", bundle: enBundle) == "Get Started")
     }
 
     @Test func 設定が英語でSettingsになる() {
-        #expect(String(localized: "設定", bundle: appBundle, locale: enLocale) == "Settings")
+        #expect(String(localized: "設定", bundle: enBundle) == "Settings")
     }
 
     @Test func キャンセルが英語でCancelになる() {
-        #expect(String(localized: "キャンセル", bundle: appBundle, locale: enLocale) == "Cancel")
+        #expect(String(localized: "キャンセル", bundle: enBundle) == "Cancel")
     }
 
     @Test func 削除が英語でDeleteになる() {
-        #expect(String(localized: "削除", bundle: appBundle, locale: enLocale) == "Delete")
+        #expect(String(localized: "削除", bundle: enBundle) == "Delete")
     }
 
     // MARK: - フィルター displayName
 
     @Test func オリジナルが英語でOriginalになる() {
-        #expect(String(localized: "オリジナル", bundle: appBundle, locale: enLocale) == "Original")
+        #expect(String(localized: "オリジナル", bundle: enBundle) == "Original")
     }
 
     @Test func キラキラが英語でSparkleになる() {
-        #expect(String(localized: "キラキラ", bundle: appBundle, locale: enLocale) == "Sparkle")
+        #expect(String(localized: "キラキラ", bundle: enBundle) == "Sparkle")
     }
 
     @Test func レトロが英語でRetroになる() {
-        #expect(String(localized: "レトロ", bundle: appBundle, locale: enLocale) == "Retro")
+        #expect(String(localized: "レトロ", bundle: enBundle) == "Retro")
     }
 
     @Test func パステルが英語でPastelになる() {
-        #expect(String(localized: "パステル", bundle: appBundle, locale: enLocale) == "Pastel")
+        #expect(String(localized: "パステル", bundle: enBundle) == "Pastel")
     }
 
     // MARK: - サブスクリプション displayName
 
     @Test func 月額プランが英語でMonthlyPlanになる() {
-        #expect(String(localized: "月額プラン", bundle: appBundle, locale: enLocale) == "Monthly Plan")
+        #expect(String(localized: "月額プラン", bundle: enBundle) == "Monthly Plan")
     }
 
     @Test func 年額プランが英語でYearlyPlanになる() {
-        #expect(String(localized: "年額プラン", bundle: appBundle, locale: enLocale) == "Yearly Plan")
+        #expect(String(localized: "年額プラン", bundle: enBundle) == "Yearly Plan")
     }
 
     // MARK: - 背景パターン displayName
 
     @Test func 無地が英語でSolidになる() {
-        #expect(String(localized: "無地", bundle: appBundle, locale: enLocale) == "Solid")
+        #expect(String(localized: "無地", bundle: enBundle) == "Solid")
     }
 
     @Test func ドットが英語でDotsになる() {
-        #expect(String(localized: "ドット", bundle: appBundle, locale: enLocale) == "Dots")
+        #expect(String(localized: "ドット", bundle: enBundle) == "Dots")
     }
 
     // MARK: - ランタイム非依存チェック（現在のロケールでも動作することを確認）

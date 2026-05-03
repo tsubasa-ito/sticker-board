@@ -1,5 +1,6 @@
 import FirebaseCore
 import FirebaseCrashlytics
+import GoogleMobileAds
 import SwiftUI
 import SwiftData
 import UserNotifications
@@ -44,6 +45,8 @@ struct StickerBoardApp: App {
             Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(false)
             #endif
         }
+
+        // Google Mobile Ads SDK 初期化は ATT 許可後に AdManager.preloadAll() から呼ぶ
 
         let container: ModelContainer
         do {
@@ -92,6 +95,10 @@ struct StickerBoardApp: App {
                         hasCompletedOnboarding = true
                         Task {
                             await UnplacedStickerReminderService.shared.requestAuthorization()
+                            // オンボーディング完了後に ATT 許可を要求
+                            try? await Task.sleep(for: .seconds(1))
+                            await AdManager.shared.requestTrackingPermissionIfNeeded()
+                            AdManager.shared.preloadAll()
                         }
                     }
                 }
@@ -109,6 +116,11 @@ struct StickerBoardApp: App {
                     await UnplacedStickerReminderService.shared.rescheduleIfNeeded(
                         context: container.mainContext
                     )
+                    // 起動時にATT確認（オンボーディング済みの場合）と広告プリロード
+                    if hasCompletedOnboarding {
+                        await AdManager.shared.requestTrackingPermissionIfNeeded()
+                    }
+                    AdManager.shared.preloadAll()
                 }
         }
         .modelContainer(container)

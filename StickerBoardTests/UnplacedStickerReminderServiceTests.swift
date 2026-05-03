@@ -182,4 +182,45 @@ struct UnplacedStickerReminderServiceTests {
         let id = UnplacedStickerReminderService.parseStickerId(from: url)
         #expect(id == nil)
     }
+
+    // MARK: - rescheduleIfNeeded
+
+    @Test @MainActor func rescheduleIfNeeded_無効化状態_早期リターンしクラッシュしない() async throws {
+        let container = try makeContainer()
+        let context = ModelContext(container)
+        let service = UnplacedStickerReminderService.shared
+        let defaults = UserDefaults(suiteName: "test-\(UUID())")!
+
+        service.setEnabled(false, in: defaults)
+        await service.rescheduleIfNeeded(context: context, defaults: defaults)
+    }
+
+    @Test @MainActor func rescheduleIfNeeded_有効化かつ全シール配置済み_クラッシュしない() async throws {
+        let container = try makeContainer()
+        let context = ModelContext(container)
+        let service = UnplacedStickerReminderService.shared
+        let defaults = UserDefaults(suiteName: "test-\(UUID())")!
+
+        service.setEnabled(true, in: defaults)
+        let sticker = makeStickerWith(fileName: "placed.png", in: context)
+        let _ = makeBoardWith(placements: [sticker.imageFileName], in: context)
+        try context.save()
+
+        await service.rescheduleIfNeeded(context: context, defaults: defaults)
+    }
+
+    @Test @MainActor func rescheduleIfNeeded_有効化かつ未配置シールあり_通知権限なしでもクラッシュしない() async throws {
+        let container = try makeContainer()
+        let context = ModelContext(container)
+        let service = UnplacedStickerReminderService.shared
+        let defaults = UserDefaults(suiteName: "test-\(UUID())")!
+
+        service.setEnabled(true, in: defaults)
+        let _ = makeStickerWith(fileName: "unplaced.png", in: context)
+        try context.save()
+
+        // テスト環境では通知権限がないため center.add(request) がエラーを投げるが、
+        // do-catch で適切にハンドリングされクラッシュしないことを確認
+        await service.rescheduleIfNeeded(context: context, defaults: defaults)
+    }
 }

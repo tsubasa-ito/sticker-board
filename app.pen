@@ -1,0 +1,4059 @@
+{
+  "version": "2.11",
+  "children": [
+    {
+      "type": "frame",
+      "id": "TsxL0",
+      "x": 0,
+      "y": 0,
+      "name": "ホームタブ",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#FAF0DE",
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "L353u",
+          "x": 0,
+          "y": 0,
+          "name": "NavBar",
+          "width": 393,
+          "height": 96,
+          "fill": "#FAF0DE",
+          "layout": "none"
+        },
+        {
+          "type": "text",
+          "id": "Z6qw4x",
+          "x": 136,
+          "y": 56,
+          "name": "NavTitle",
+          "fill": "#E87A2E",
+          "content": "シールボード",
+          "fontFamily": "Inter",
+          "fontSize": 20,
+          "fontWeight": "900"
+        },
+        {
+          "type": "frame",
+          "id": "POSHM",
+          "x": 16,
+          "y": 48,
+          "name": "GearBtn",
+          "width": 36,
+          "height": 36,
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "KLAl5",
+              "x": 8,
+              "y": 7,
+              "name": "homeGearIcon",
+              "fill": "#6B6D8E",
+              "content": "⚙",
+              "fontFamily": "Inter",
+              "fontSize": 20,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "rN9ld",
+          "x": 341,
+          "y": 48,
+          "name": "HelpBtn",
+          "width": 36,
+          "height": 36,
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "T726VD",
+              "x": 12,
+              "y": 7,
+              "name": "homeHelpIcon",
+              "fill": "#6B6D8E",
+              "content": "?",
+              "fontFamily": "Inter",
+              "fontSize": 18,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "phUkZ",
+          "x": 0,
+          "y": 95,
+          "name": "NavDivider",
+          "fill": "#E5DDD0",
+          "width": 393,
+          "height": 1
+        },
+        {
+          "type": "frame",
+          "id": "ToWnZ",
+          "x": 24,
+          "y": 108,
+          "name": "BoardCard1",
+          "clip": true,
+          "width": 345,
+          "height": 570,
+          "cornerRadius": 28,
+          "layout": "none",
+          "children": [
+            {
+              "type": "rectangle",
+              "id": "zk6l9",
+              "x": 0,
+              "y": 0,
+              "name": "CardBg",
+              "fill": "#E8E0D5",
+              "width": 345,
+              "height": 570
+            },
+            {
+              "type": "ellipse",
+              "id": "HeokK",
+              "x": 60,
+              "y": 80,
+              "name": "StickerMock1",
+              "opacity": 0.8,
+              "fill": "#E87A2E",
+              "width": 110,
+              "height": 110
+            },
+            {
+              "type": "ellipse",
+              "id": "dJS6j",
+              "x": 200,
+              "y": 140,
+              "name": "StickerMock2",
+              "opacity": 0.7,
+              "fill": "#2A2D5B",
+              "width": 85,
+              "height": 85
+            },
+            {
+              "type": "ellipse",
+              "id": "diqnu",
+              "x": 130,
+              "y": 260,
+              "name": "StickerMock3",
+              "opacity": 0.9,
+              "fill": "#F0A870",
+              "width": 70,
+              "height": 70
+            },
+            {
+              "type": "rectangle",
+              "id": "J4H50K",
+              "x": 0,
+              "y": 430,
+              "name": "BottomGrad",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 180,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#00000000",
+                    "position": 0
+                  },
+                  {
+                    "color": "#00000073",
+                    "position": 1
+                  }
+                ]
+              },
+              "width": 345,
+              "height": 140
+            },
+            {
+              "type": "text",
+              "id": "HdKrQ",
+              "x": 16,
+              "y": 452,
+              "name": "BoardTitle",
+              "fill": "#FFFFFF",
+              "content": "夏のシール集め",
+              "fontFamily": "Inter",
+              "fontSize": 22,
+              "fontWeight": "900"
+            },
+            {
+              "type": "text",
+              "id": "l4nWAR",
+              "x": 16,
+              "y": 478,
+              "name": "StickerCount",
+              "fill": "#FFFFFFCC",
+              "content": "3枚",
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "600"
+            },
+            {
+              "type": "ellipse",
+              "id": "dToaQ",
+              "x": 295,
+              "y": 524,
+              "name": "MenuBtn",
+              "fill": "#FFFFFF26",
+              "width": 34,
+              "height": 34
+            },
+            {
+              "type": "text",
+              "id": "erFTA",
+              "x": 299,
+              "y": 533,
+              "name": "MenuDots",
+              "fill": "#FFFFFFEE",
+              "content": "•••",
+              "fontFamily": "Inter",
+              "fontSize": 10,
+              "fontWeight": "700"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "OabtN",
+          "x": 161,
+          "y": 694,
+          "name": "PageIndicators",
+          "width": 71,
+          "height": 8,
+          "gap": 6,
+          "children": [
+            {
+              "type": "rectangle",
+              "cornerRadius": 4,
+              "id": "V5M31l",
+              "name": "dot1",
+              "fill": "#E87A2E",
+              "width": 24,
+              "height": 8
+            },
+            {
+              "type": "rectangle",
+              "cornerRadius": 4,
+              "id": "gCPJU",
+              "name": "dot2",
+              "fill": "#E87A2E33",
+              "width": 8,
+              "height": 8
+            },
+            {
+              "type": "rectangle",
+              "cornerRadius": 4,
+              "id": "D9wsQ",
+              "name": "dot3",
+              "fill": "#E87A2E33",
+              "width": 8,
+              "height": 8
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 32,
+          "id": "yFzDZ",
+          "x": 32,
+          "y": 766,
+          "name": "TabBarBg",
+          "fill": "#EAEAEA",
+          "width": 329,
+          "height": 64,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#00000014",
+            "offset": {
+              "x": 0,
+              "y": -4
+            },
+            "blur": 24
+          }
+        },
+        {
+          "type": "ellipse",
+          "id": "QeDT4",
+          "x": 56,
+          "y": 775,
+          "name": "HomeTabActive",
+          "fill": "#E87A2E",
+          "width": 46,
+          "height": 46
+        },
+        {
+          "type": "icon_font",
+          "id": "IChlp",
+          "x": 68,
+          "y": 787,
+          "name": "HomeIcon",
+          "width": 22,
+          "height": 22,
+          "iconFontName": "grid-2x2",
+          "iconFontFamily": "lucide",
+          "fill": "#FFFFFF"
+        },
+        {
+          "type": "ellipse",
+          "id": "o9ioIC",
+          "x": 168,
+          "y": 747,
+          "name": "CaptureBtn",
+          "fill": "#E87A2E",
+          "width": 56,
+          "height": 56,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#E87A2E66",
+            "offset": {
+              "x": 0,
+              "y": 4
+            },
+            "blur": 10
+          }
+        },
+        {
+          "type": "icon_font",
+          "id": "f9dmV",
+          "x": 184,
+          "y": 762,
+          "name": "PlusIcon",
+          "width": 26,
+          "height": 26,
+          "iconFontName": "plus",
+          "iconFontFamily": "lucide",
+          "fill": "#FFFFFF"
+        },
+        {
+          "type": "icon_font",
+          "id": "eUEqt",
+          "x": 288,
+          "y": 787,
+          "name": "LibraryIcon",
+          "width": 22,
+          "height": 22,
+          "iconFontName": "star",
+          "iconFontFamily": "lucide",
+          "fill": "#6B6D8E"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "h9DO5",
+      "x": 430,
+      "y": 0,
+      "name": "ライブラリタブ",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#FAF0DE",
+      "layout": "none",
+      "children": [
+        {
+          "type": "rectangle",
+          "id": "WRy6l",
+          "x": 0,
+          "y": 0,
+          "name": "LibNavBg",
+          "fill": "#FAF0DE",
+          "width": 393,
+          "height": 96
+        },
+        {
+          "type": "text",
+          "id": "qjD3U",
+          "x": 165,
+          "y": 58,
+          "name": "LibNavTitle",
+          "fill": "#2A2D5B",
+          "content": "ライブラリ",
+          "fontFamily": "Inter",
+          "fontSize": 17,
+          "fontWeight": "700"
+        },
+        {
+          "type": "icon_font",
+          "id": "Y3Pad",
+          "x": 353,
+          "y": 56,
+          "name": "SortIcon",
+          "width": 20,
+          "height": 20,
+          "iconFontName": "arrow-up-down",
+          "iconFontFamily": "lucide",
+          "fill": "#6B6D8E"
+        },
+        {
+          "type": "rectangle",
+          "id": "oyDQb",
+          "x": 0,
+          "y": 95,
+          "name": "libDivider",
+          "fill": "#E5DDD0",
+          "width": 393,
+          "height": 1
+        },
+        {
+          "type": "frame",
+          "id": "o7rfTQ",
+          "x": 20,
+          "y": 112,
+          "name": "CountBadge",
+          "width": 64,
+          "height": 24,
+          "fill": "#E87A2E1A",
+          "cornerRadius": 12,
+          "gap": 4,
+          "children": [
+            {
+              "type": "icon_font",
+              "id": "pbgS4",
+              "name": "libCountStar",
+              "width": 12,
+              "height": 12,
+              "iconFontName": "star",
+              "iconFontFamily": "lucide",
+              "fill": "#E87A2E"
+            },
+            {
+              "type": "text",
+              "id": "EOdf5",
+              "name": "libCountText",
+              "fill": "#E87A2E",
+              "content": "12枚",
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "700"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "jxIJV",
+          "x": 20,
+          "y": 148,
+          "name": "AddCard",
+          "width": 100,
+          "height": 100,
+          "fill": "#E87A2E0A",
+          "cornerRadius": 14,
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "#E87A2E66"
+          },
+          "layout": "vertical",
+          "gap": 8,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "ellipse",
+              "id": "gZaPO",
+              "name": "addCircle",
+              "fill": "#E87A2E1F",
+              "width": 44,
+              "height": 44
+            },
+            {
+              "type": "icon_font",
+              "id": "MEAP9",
+              "name": "addPlusIcon",
+              "width": 22,
+              "height": 22,
+              "iconFontName": "plus",
+              "iconFontFamily": "lucide",
+              "fill": "#E87A2E"
+            },
+            {
+              "type": "text",
+              "id": "dlzHb",
+              "name": "addLabel",
+              "fill": "#E87A2E",
+              "content": "さらに追加",
+              "fontFamily": "Inter",
+              "fontSize": 11,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 14,
+          "id": "C5uLXI",
+          "x": 134,
+          "y": 148,
+          "name": "SC1",
+          "fill": "#FFFEF8",
+          "width": 100,
+          "height": 100,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0000000F",
+            "offset": {
+              "x": 0,
+              "y": 3
+            },
+            "blur": 6
+          }
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 14,
+          "id": "H5EXIx",
+          "x": 252,
+          "y": 148,
+          "name": "SC2",
+          "fill": "#FFFEF8",
+          "width": 100,
+          "height": 100,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0000000F",
+            "offset": {
+              "x": 0,
+              "y": 3
+            },
+            "blur": 6
+          }
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 14,
+          "id": "lb0Gd",
+          "x": 20,
+          "y": 276,
+          "name": "SC3",
+          "fill": "#FFFEF8",
+          "width": 100,
+          "height": 100,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0000000F",
+            "offset": {
+              "x": 0,
+              "y": 3
+            },
+            "blur": 6
+          }
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 14,
+          "id": "sNkTg",
+          "x": 134,
+          "y": 276,
+          "name": "SC4",
+          "fill": "#FFFEF8",
+          "width": 100,
+          "height": 100,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0000000F",
+            "offset": {
+              "x": 0,
+              "y": 3
+            },
+            "blur": 6
+          }
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 14,
+          "id": "oNAYK",
+          "x": 252,
+          "y": 276,
+          "name": "SC5",
+          "fill": "#FFFEF8",
+          "width": 100,
+          "height": 100,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0000000F",
+            "offset": {
+              "x": 0,
+              "y": 3
+            },
+            "blur": 6
+          }
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 14,
+          "id": "TXwj0",
+          "x": 20,
+          "y": 404,
+          "name": "SC6",
+          "fill": "#FFFEF8",
+          "width": 100,
+          "height": 100,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0000000F",
+            "offset": {
+              "x": 0,
+              "y": 3
+            },
+            "blur": 6
+          }
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 14,
+          "id": "mlgdd",
+          "x": 134,
+          "y": 404,
+          "name": "SC7",
+          "fill": "#FFFEF8",
+          "width": 100,
+          "height": 100,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0000000F",
+            "offset": {
+              "x": 0,
+              "y": 3
+            },
+            "blur": 6
+          }
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 14,
+          "id": "I1JVm",
+          "x": 252,
+          "y": 404,
+          "name": "SC8",
+          "fill": "#FFFEF8",
+          "width": 100,
+          "height": 100,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0000000F",
+            "offset": {
+              "x": 0,
+              "y": 3
+            },
+            "blur": 6
+          }
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 32,
+          "id": "yAvPV",
+          "x": 32,
+          "y": 766,
+          "name": "TabBarBg",
+          "fill": "#EAEAEA",
+          "width": 329,
+          "height": 64,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#00000014",
+            "offset": {
+              "x": 0,
+              "y": -4
+            },
+            "blur": 24
+          }
+        },
+        {
+          "type": "icon_font",
+          "id": "s1HY4g",
+          "x": 81,
+          "y": 787,
+          "name": "libHomeIcon",
+          "width": 22,
+          "height": 22,
+          "iconFontName": "grid-2x2",
+          "iconFontFamily": "lucide",
+          "fill": "#6B6D8E"
+        },
+        {
+          "type": "ellipse",
+          "id": "yXyId",
+          "x": 168,
+          "y": 747,
+          "name": "CaptureBtn",
+          "fill": "#E87A2E",
+          "width": 56,
+          "height": 56,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#E87A2E66",
+            "offset": {
+              "x": 0,
+              "y": 4
+            },
+            "blur": 10
+          }
+        },
+        {
+          "type": "icon_font",
+          "id": "IERik",
+          "x": 184,
+          "y": 762,
+          "name": "libCapturePlusIcon",
+          "width": 26,
+          "height": 26,
+          "iconFontName": "plus",
+          "iconFontFamily": "lucide",
+          "fill": "#FFFFFF"
+        },
+        {
+          "type": "ellipse",
+          "id": "QVxE2",
+          "x": 272,
+          "y": 775,
+          "name": "LibActiveTab",
+          "fill": "#E87A2E",
+          "width": 46,
+          "height": 46
+        },
+        {
+          "type": "icon_font",
+          "id": "d0hywf",
+          "x": 284,
+          "y": 787,
+          "name": "libActiveIcon",
+          "width": 22,
+          "height": 22,
+          "iconFontName": "star",
+          "iconFontFamily": "lucide",
+          "fill": "#FFFFFF"
+        },
+        {
+          "type": "ellipse",
+          "id": "AADcM",
+          "x": 152,
+          "y": 166,
+          "name": "S1Inner",
+          "opacity": 0.85,
+          "fill": "#E87A2E",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "type": "ellipse",
+          "id": "wOOeu",
+          "x": 270,
+          "y": 166,
+          "name": "S2Inner",
+          "opacity": 0.85,
+          "fill": "#2A2D5B",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 10,
+          "id": "q5Voop",
+          "x": 38,
+          "y": 294,
+          "name": "S3Inner",
+          "opacity": 0.85,
+          "fill": "#F0A870",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "type": "ellipse",
+          "id": "XdaaK",
+          "x": 152,
+          "y": 294,
+          "name": "S4Inner",
+          "opacity": 0.85,
+          "fill": "#B5D8F7",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 10,
+          "id": "AExLZ",
+          "x": 270,
+          "y": 294,
+          "name": "S5Inner",
+          "opacity": 0.6,
+          "fill": "#E87A2E",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "type": "ellipse",
+          "id": "sMQ13",
+          "x": 38,
+          "y": 422,
+          "name": "S6Inner",
+          "opacity": 0.7,
+          "fill": "#2A2D5B",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 10,
+          "id": "jHXLZ",
+          "x": 152,
+          "y": 422,
+          "name": "S7Inner",
+          "opacity": 0.9,
+          "fill": "#FFF5C3",
+          "width": 64,
+          "height": 64
+        },
+        {
+          "type": "ellipse",
+          "id": "dvOHj",
+          "x": 270,
+          "y": 422,
+          "name": "S8Inner",
+          "opacity": 0.8,
+          "fill": "#F0A870",
+          "width": 64,
+          "height": 64
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "ovD7h",
+      "x": 860,
+      "y": 0,
+      "name": "ボード編集",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#F2EDE4",
+      "layout": "none",
+      "children": [
+        {
+          "type": "rectangle",
+          "id": "ceZH5",
+          "x": 0,
+          "y": 0,
+          "name": "EdNavBg",
+          "fill": "#F2EDE4",
+          "width": 393,
+          "height": 96
+        },
+        {
+          "type": "text",
+          "id": "n00wOq",
+          "x": 125,
+          "y": 58,
+          "name": "EdNavTitle",
+          "fill": "#2A2D5B",
+          "content": "夏のシール集め",
+          "fontFamily": "Inter",
+          "fontSize": 17,
+          "fontWeight": "700"
+        },
+        {
+          "type": "icon_font",
+          "id": "m3c7q",
+          "x": 16,
+          "y": 56,
+          "name": "BackIcon",
+          "width": 20,
+          "height": 20,
+          "iconFontName": "chevron-left",
+          "iconFontFamily": "lucide",
+          "fill": "#2A2D5B"
+        },
+        {
+          "type": "text",
+          "id": "MK4gC",
+          "x": 38,
+          "y": 58,
+          "name": "edBackLabel",
+          "fill": "#2A2D5B",
+          "content": "戻る",
+          "fontFamily": "Inter",
+          "fontSize": 17,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "icon_font",
+          "id": "t04a9",
+          "x": 294,
+          "y": 57,
+          "name": "edZoomIcon",
+          "width": 18,
+          "height": 18,
+          "iconFontName": "search",
+          "iconFontFamily": "lucide",
+          "fill": "#E87A2E"
+        },
+        {
+          "type": "icon_font",
+          "id": "UGOAF",
+          "x": 322,
+          "y": 57,
+          "name": "edUndoIcon",
+          "width": 18,
+          "height": 18,
+          "iconFontName": "undo-2",
+          "iconFontFamily": "lucide",
+          "fill": "#E87A2E"
+        },
+        {
+          "type": "icon_font",
+          "id": "yrX3g",
+          "x": 354,
+          "y": 57,
+          "name": "edMenuIcon",
+          "width": 18,
+          "height": 18,
+          "iconFontName": "circle-ellipsis",
+          "iconFontFamily": "lucide",
+          "fill": "#E87A2E"
+        },
+        {
+          "type": "rectangle",
+          "id": "k6rXD",
+          "x": 0,
+          "y": 95,
+          "name": "edNavDivider",
+          "fill": "#E5DDD0",
+          "width": 393,
+          "height": 1
+        },
+        {
+          "type": "frame",
+          "id": "qbFSW",
+          "x": 24,
+          "y": 108,
+          "name": "Canvas",
+          "clip": true,
+          "width": 345,
+          "height": 570,
+          "fill": "#FAF0DE",
+          "cornerRadius": 16,
+          "layout": "none",
+          "children": [
+            {
+              "type": "ellipse",
+              "id": "g8GdDA",
+              "x": 40,
+              "y": 40,
+              "name": "canvasBgDot1",
+              "fill": "#2A2D5B08",
+              "width": 4,
+              "height": 4
+            },
+            {
+              "type": "ellipse",
+              "id": "BL8tq",
+              "x": 80,
+              "y": 40,
+              "name": "canvasBgDot2",
+              "fill": "#2A2D5B08",
+              "width": 4,
+              "height": 4
+            },
+            {
+              "type": "ellipse",
+              "id": "y6IQrg",
+              "x": 40,
+              "y": 80,
+              "name": "canvasBgDot3",
+              "fill": "#2A2D5B08",
+              "width": 4,
+              "height": 4
+            },
+            {
+              "type": "ellipse",
+              "id": "SBVrb",
+              "x": 30,
+              "y": 60,
+              "name": "EdSticker1",
+              "opacity": 0.88,
+              "fill": "#E87A2E",
+              "width": 120,
+              "height": 120,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#00000026",
+                "offset": {
+                  "x": 0,
+                  "y": 4
+                },
+                "blur": 8
+              }
+            },
+            {
+              "type": "ellipse",
+              "id": "opuF1",
+              "x": 190,
+              "y": 120,
+              "name": "EdSticker2",
+              "opacity": 0.8,
+              "fill": "#2A2D5B",
+              "width": 95,
+              "height": 95,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#00000026",
+                "offset": {
+                  "x": 0,
+                  "y": 4
+                },
+                "blur": 8
+              }
+            },
+            {
+              "type": "rectangle",
+              "cornerRadius": 12,
+              "id": "d8guNO",
+              "x": 80,
+              "y": 280,
+              "name": "EdSticker3",
+              "opacity": 0.9,
+              "fill": "#F0A870",
+              "width": 90,
+              "height": 90,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#00000026",
+                "offset": {
+                  "x": 0,
+                  "y": 4
+                },
+                "blur": 8
+              }
+            },
+            {
+              "type": "rectangle",
+              "cornerRadius": 10,
+              "id": "K94mlY",
+              "x": 230,
+              "y": 360,
+              "name": "EdSticker4",
+              "opacity": 0.85,
+              "fill": "#B5D8F7",
+              "width": 80,
+              "height": 80,
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#00000026",
+                "offset": {
+                  "x": 0,
+                  "y": 4
+                },
+                "blur": 8
+              }
+            },
+            {
+              "type": "rectangle",
+              "cornerRadius": 14,
+              "id": "rCaTd",
+              "x": 28,
+              "y": 58,
+              "name": "SelectedBorder",
+              "width": 124,
+              "height": 124,
+              "stroke": {
+                "align": "outside",
+                "thickness": 2,
+                "fill": "#E87A2E"
+              }
+            },
+            {
+              "type": "ellipse",
+              "id": "K0CYra",
+              "x": 23,
+              "y": 53,
+              "name": "Handle1",
+              "fill": "#E87A2E",
+              "width": 10,
+              "height": 10
+            },
+            {
+              "type": "ellipse",
+              "id": "NYhP5",
+              "x": 147,
+              "y": 53,
+              "name": "Handle2",
+              "fill": "#E87A2E",
+              "width": 10,
+              "height": 10
+            },
+            {
+              "type": "ellipse",
+              "id": "gJwoP",
+              "x": 147,
+              "y": 177,
+              "name": "Handle3",
+              "fill": "#E87A2E",
+              "width": 10,
+              "height": 10
+            },
+            {
+              "type": "ellipse",
+              "id": "SRPwy",
+              "x": 23,
+              "y": 177,
+              "name": "Handle4",
+              "fill": "#E87A2E",
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "T8PQI",
+          "x": 157,
+          "y": 689,
+          "name": "CollapseHandle",
+          "width": 79,
+          "height": 20,
+          "layout": "vertical",
+          "gap": 3,
+          "children": [
+            {
+              "type": "rectangle",
+              "cornerRadius": 2,
+              "id": "j17nk",
+              "name": "handleBar",
+              "fill": "#A0A2B866",
+              "width": 36,
+              "height": 4
+            },
+            {
+              "type": "icon_font",
+              "id": "T2dvW",
+              "name": "chevDown",
+              "width": 10,
+              "height": 10,
+              "iconFontName": "chevron-down",
+              "iconFontFamily": "lucide",
+              "fill": "#A0A2B8"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "NZGA7",
+          "x": 16,
+          "y": 716,
+          "name": "FloatingToolbar",
+          "width": 361,
+          "height": 64,
+          "fill": "#FFFFFF99",
+          "cornerRadius": 32,
+          "gap": 16,
+          "padding": [
+            0,
+            28
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "c7JkAw",
+              "name": "TbAdd",
+              "width": 40,
+              "height": 48,
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "tECQX",
+                  "name": "tbAddIcon",
+                  "width": 24,
+                  "height": 24,
+                  "iconFontName": "plus",
+                  "iconFontFamily": "lucide",
+                  "fill": "#E87A2E"
+                },
+                {
+                  "type": "text",
+                  "id": "M8xF1",
+                  "name": "tbAddLabel",
+                  "fill": "#E87A2E",
+                  "content": "追加",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "idG1w",
+              "name": "TbEffect",
+              "width": 40,
+              "height": 48,
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "Ci0Qn",
+                  "name": "tbEffectIcon",
+                  "width": 24,
+                  "height": 24,
+                  "iconFontName": "wand-sparkles",
+                  "iconFontFamily": "lucide",
+                  "fill": "#E87A2E"
+                },
+                {
+                  "type": "text",
+                  "id": "SRHRj",
+                  "name": "tbEffectLabel",
+                  "fill": "#E87A2E",
+                  "content": "効果",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "YPM5B",
+              "name": "TbBorder",
+              "width": 40,
+              "height": 48,
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "u1glX",
+                  "name": "tbBorderIcon",
+                  "width": 24,
+                  "height": 24,
+                  "iconFontName": "square-dashed",
+                  "iconFontFamily": "lucide",
+                  "fill": "#E87A2E"
+                },
+                {
+                  "type": "text",
+                  "id": "B9xg4n",
+                  "name": "tbBorderLabel",
+                  "fill": "#E87A2E",
+                  "content": "枠線",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "KLorp",
+              "name": "TbFront",
+              "width": 40,
+              "height": 48,
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "T1O3TF",
+                  "name": "tbFrontIcon",
+                  "width": 24,
+                  "height": 24,
+                  "iconFontName": "layers",
+                  "iconFontFamily": "lucide",
+                  "fill": "#2A2D5B"
+                },
+                {
+                  "type": "text",
+                  "id": "Yqlte",
+                  "name": "tbFrontLabel",
+                  "fill": "#2A2D5B",
+                  "content": "前面",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "bWYsV",
+              "name": "TbBack",
+              "width": 40,
+              "height": 48,
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "L1UVA0",
+                  "name": "tbBackIcon",
+                  "width": 24,
+                  "height": 24,
+                  "iconFontName": "layers",
+                  "iconFontFamily": "lucide",
+                  "fill": "#2A2D5B"
+                },
+                {
+                  "type": "text",
+                  "id": "AQLjV",
+                  "name": "tbBackLabel",
+                  "fill": "#2A2D5B",
+                  "content": "背面",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Z4RIK",
+              "name": "TbBg",
+              "width": 40,
+              "height": 48,
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "FSfZC",
+                  "name": "tbBgIcon",
+                  "width": 24,
+                  "height": 24,
+                  "iconFontName": "palette",
+                  "iconFontFamily": "lucide",
+                  "fill": "#2A2D5B"
+                },
+                {
+                  "type": "text",
+                  "id": "A19X4w",
+                  "name": "tbBgLabel",
+                  "fill": "#2A2D5B",
+                  "content": "背景",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "opg3J",
+              "name": "TbLock",
+              "width": 40,
+              "height": 48,
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "SbDSh",
+                  "name": "tbLockIcon",
+                  "width": 24,
+                  "height": 24,
+                  "iconFontName": "lock-open",
+                  "iconFontFamily": "lucide",
+                  "fill": "#E87A2E"
+                },
+                {
+                  "type": "text",
+                  "id": "wILqC",
+                  "name": "tbLockLabel",
+                  "fill": "#E87A2E",
+                  "content": "ロック",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "RbhVa",
+              "name": "TbDelete",
+              "width": 40,
+              "height": 48,
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "VShgE",
+                  "name": "tbDeleteIcon",
+                  "width": 24,
+                  "height": 24,
+                  "iconFontName": "trash-2",
+                  "iconFontFamily": "lucide",
+                  "fill": "#E87A2E"
+                },
+                {
+                  "type": "text",
+                  "id": "cEf6r",
+                  "name": "tbDeleteLabel",
+                  "fill": "#E87A2E",
+                  "content": "削除",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "C6tYJ",
+      "x": 1290,
+      "y": 0,
+      "name": "ペイウォール",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#FAF0DE",
+      "layout": "none",
+      "children": [
+        {
+          "type": "text",
+          "id": "bmzrI",
+          "x": 340,
+          "y": 16,
+          "name": "LaterBtn",
+          "fill": "#A0A2B8",
+          "content": "あとで",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "500"
+        },
+        {
+          "type": "ellipse",
+          "id": "xDvu7",
+          "x": 157,
+          "y": 44,
+          "name": "IconOuter",
+          "fill": "#E87A2E0F",
+          "width": 80,
+          "height": 80
+        },
+        {
+          "type": "ellipse",
+          "id": "JeA0p",
+          "x": 166,
+          "y": 54,
+          "name": "IconInner",
+          "fill": "#E87A2E21",
+          "width": 62,
+          "height": 62
+        },
+        {
+          "type": "icon_font",
+          "id": "dtgc1",
+          "x": 182,
+          "y": 72,
+          "name": "pwCrownIcon",
+          "width": 30,
+          "height": 30,
+          "iconFontName": "crown",
+          "iconFontFamily": "lucide",
+          "fill": "#E87A2E"
+        },
+        {
+          "type": "text",
+          "id": "hY1hc",
+          "x": 105,
+          "y": 140,
+          "name": "PwTitle",
+          "fill": "#2A2D5B",
+          "content": "StickerBoard Pro",
+          "fontFamily": "Inter",
+          "fontSize": 22,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "t5QUNf",
+          "x": 118,
+          "y": 170,
+          "name": "PwSubtitle",
+          "fill": "#6B6D8E",
+          "content": "すべての機能をアンロック",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "OgiKw",
+          "x": 24,
+          "y": 200,
+          "name": "FeatureCard",
+          "width": 345,
+          "height": 245,
+          "fill": "#FFFEF8",
+          "cornerRadius": 16,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0000000F",
+            "offset": {
+              "x": 0,
+              "y": 4
+            },
+            "blur": 8
+          },
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "uQBUH",
+              "name": "FR1",
+              "width": "fill_container",
+              "height": 48,
+              "gap": 14,
+              "padding": [
+                0,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "eRA2l",
+                  "name": "iw1",
+                  "width": 36,
+                  "height": 36,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 9,
+                      "id": "cpIj1",
+                      "x": 0,
+                      "y": 0,
+                      "name": "ibg1",
+                      "fill": "#E87A2E1F",
+                      "width": 36,
+                      "height": 36
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "lo2Nd",
+                      "x": 9,
+                      "y": 9,
+                      "name": "ico1",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "star",
+                      "iconFontFamily": "lucide",
+                      "fill": "#E87A2E"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "MYHQr",
+                  "name": "fr1text",
+                  "fill": "#2A2D5B",
+                  "content": "シール保存",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "rectangle",
+                  "id": "I9H3hr",
+                  "name": "fr1spacer",
+                  "fill": "#00000000",
+                  "width": "fill_container",
+                  "height": 1
+                },
+                {
+                  "type": "frame",
+                  "id": "dcYiB",
+                  "name": "fr1badge",
+                  "height": 24,
+                  "fill": "#E87A2E1A",
+                  "cornerRadius": 12,
+                  "padding": [
+                    0,
+                    10
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "yqZ1e",
+                      "name": "fr1badgeText",
+                      "fill": "#E87A2E",
+                      "content": "無制限",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "700"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "ZigER",
+              "name": "fr1div",
+              "fill": "#E5DDD0",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "type": "frame",
+              "id": "AYc7A",
+              "name": "FR2",
+              "width": "fill_container",
+              "height": 48,
+              "gap": 14,
+              "padding": [
+                0,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ouYcI",
+                  "name": "iw2",
+                  "width": 36,
+                  "height": 36,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 9,
+                      "id": "vtrKv",
+                      "x": 0,
+                      "y": 0,
+                      "name": "ibg2",
+                      "fill": "#2A2D5B1F",
+                      "width": 36,
+                      "height": 36
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "Z2etA",
+                      "x": 9,
+                      "y": 9,
+                      "name": "ico2",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "copy",
+                      "iconFontFamily": "lucide",
+                      "fill": "#2A2D5B"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "xKt9z",
+                  "name": "fr2text",
+                  "fill": "#2A2D5B",
+                  "content": "ボード作成",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "rectangle",
+                  "id": "OVYyf",
+                  "name": "fr2spacer",
+                  "fill": "#00000000",
+                  "width": "fill_container",
+                  "height": 1
+                },
+                {
+                  "type": "frame",
+                  "id": "dpSCx",
+                  "name": "fr2badge",
+                  "height": 24,
+                  "fill": "#E87A2E1A",
+                  "cornerRadius": 12,
+                  "padding": [
+                    0,
+                    10
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "psbTR",
+                      "name": "fr2badgeText",
+                      "fill": "#E87A2E",
+                      "content": "無制限",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "700"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "b9Uvg",
+              "name": "fr2div",
+              "fill": "#E5DDD0",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "type": "frame",
+              "id": "KWvOd",
+              "name": "FR3",
+              "width": "fill_container",
+              "height": 48,
+              "gap": 14,
+              "padding": [
+                0,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "sDa7n",
+                  "name": "iw3",
+                  "width": 36,
+                  "height": 36,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 9,
+                      "id": "uVIaj",
+                      "x": 0,
+                      "y": 0,
+                      "name": "ibg3",
+                      "fill": "#F0A8701F",
+                      "width": 36,
+                      "height": 36
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "n3FcYa",
+                      "x": 9,
+                      "y": 9,
+                      "name": "ico3",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "square-dashed",
+                      "iconFontFamily": "lucide",
+                      "fill": "#F0A870"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "yM0oJ",
+                  "name": "fr3text",
+                  "fill": "#2A2D5B",
+                  "content": "枠線バリエーション",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "rectangle",
+                  "id": "GaaeY",
+                  "name": "fr3spacer",
+                  "fill": "#00000000",
+                  "width": "fill_container",
+                  "height": 1
+                },
+                {
+                  "type": "frame",
+                  "id": "xGvBv",
+                  "name": "fr3badge",
+                  "height": 24,
+                  "fill": "#E87A2E1A",
+                  "cornerRadius": 12,
+                  "padding": [
+                    0,
+                    10
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "B0cMQ",
+                      "name": "fr3badgeText",
+                      "fill": "#E87A2E",
+                      "content": "全開放",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "700"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "kWAgr",
+              "name": "fr3div",
+              "fill": "#E5DDD0",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "type": "frame",
+              "id": "PZ4Nx",
+              "name": "FR4",
+              "width": "fill_container",
+              "height": 48,
+              "gap": 14,
+              "padding": [
+                0,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "EJY0D",
+                  "name": "iw4",
+                  "width": 36,
+                  "height": 36,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 9,
+                      "id": "zfPdv",
+                      "x": 0,
+                      "y": 0,
+                      "name": "ibg4",
+                      "fill": "#B5D8F71F",
+                      "width": 36,
+                      "height": 36
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "vZ0AV",
+                      "x": 9,
+                      "y": 9,
+                      "name": "ico4",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "palette",
+                      "iconFontFamily": "lucide",
+                      "fill": "#B5D8F7"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "HukGv",
+                  "name": "fr4text",
+                  "fill": "#2A2D5B",
+                  "content": "背景パターン",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "rectangle",
+                  "id": "D92WaJ",
+                  "name": "fr4spacer",
+                  "fill": "#00000000",
+                  "width": "fill_container",
+                  "height": 1
+                },
+                {
+                  "type": "frame",
+                  "id": "WlxvE",
+                  "name": "fr4badge",
+                  "height": 24,
+                  "fill": "#E87A2E1A",
+                  "cornerRadius": 12,
+                  "padding": [
+                    0,
+                    10
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ItSl3",
+                      "name": "fr4badgeText",
+                      "fill": "#E87A2E",
+                      "content": "全開放",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "700"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "dqPpO",
+              "name": "fr4div",
+              "fill": "#E5DDD0",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "type": "frame",
+              "id": "DAegs",
+              "name": "FR5",
+              "width": "fill_container",
+              "height": 48,
+              "gap": 14,
+              "padding": [
+                0,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "xxDs0",
+                  "name": "iw5",
+                  "width": 36,
+                  "height": 36,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 9,
+                      "id": "d1qbo",
+                      "x": 0,
+                      "y": 0,
+                      "name": "ibg5",
+                      "fill": "#2A2D5B1F",
+                      "width": 36,
+                      "height": 36
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "hV0RR",
+                      "x": 9,
+                      "y": 9,
+                      "name": "ico5",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "download",
+                      "iconFontFamily": "lucide",
+                      "fill": "#2A2D5B"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "gFDux",
+                  "name": "fr5text",
+                  "fill": "#2A2D5B",
+                  "content": "画像書き出し",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "rectangle",
+                  "id": "B3LjX",
+                  "name": "fr5spacer",
+                  "fill": "#00000000",
+                  "width": "fill_container",
+                  "height": 1
+                },
+                {
+                  "type": "frame",
+                  "id": "wATPy",
+                  "name": "fr5badge",
+                  "height": 24,
+                  "fill": "#E87A2E1A",
+                  "cornerRadius": 12,
+                  "padding": [
+                    0,
+                    10
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "QnyYV",
+                      "name": "fr5badgeText",
+                      "fill": "#E87A2E",
+                      "content": "ロゴなし",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "700"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "tY1dj",
+          "x": 24,
+          "y": 452,
+          "name": "PricingCard",
+          "width": 345,
+          "height": 120,
+          "fill": "#FFFEF8",
+          "cornerRadius": 16,
+          "stroke": {
+            "align": "outside",
+            "thickness": 2,
+            "fill": "#E87A2E"
+          },
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#E87A2E26",
+            "offset": {
+              "x": 0,
+              "y": 4
+            },
+            "blur": 12
+          },
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            24,
+            20
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "Y3QVOE",
+              "name": "discountBadge",
+              "height": 26,
+              "fill": "#E87A2E",
+              "cornerRadius": 13,
+              "padding": [
+                0,
+                12
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "cgzgM",
+                  "name": "discountText",
+                  "fill": "#FFFFFF",
+                  "content": "40% おトク",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "m6EQY1",
+              "name": "priceRow",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "oe8XI",
+                  "name": "priceMain",
+                  "fill": "#2A2D5B",
+                  "content": "¥1,200",
+                  "fontFamily": "Inter",
+                  "fontSize": 30,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "jNKzw",
+                  "name": "priceUnit",
+                  "fill": "#6B6D8E",
+                  "content": "/年",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "FKq2P",
+              "name": "priceMonthly",
+              "fill": "#6B6D8E",
+              "content": "月あたり ¥100",
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "pytBY",
+          "x": 24,
+          "y": 586,
+          "name": "CTABtn",
+          "width": 345,
+          "height": 50,
+          "fill": "#E87A2E",
+          "cornerRadius": 28,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#E87A2E66",
+            "offset": {
+              "x": 0,
+              "y": 6
+            },
+            "blur": 12
+          },
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "AFrgM",
+              "name": "ctaText",
+              "fill": "#FFFFFF",
+              "content": "Proではじめる（年額）",
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "700"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "KvuoY",
+          "x": 90,
+          "y": 648,
+          "name": "MonthlyBtn",
+          "fill": "#6B6D8E",
+          "content": "月額プランで始める ¥150/月",
+          "fontFamily": "Inter",
+          "fontSize": 13,
+          "fontWeight": "500"
+        },
+        {
+          "type": "text",
+          "id": "lQjfZ",
+          "x": 162,
+          "y": 676,
+          "name": "RestoreBtn",
+          "fill": "#A0A2B8",
+          "content": "購入を復元",
+          "fontFamily": "Inter",
+          "fontSize": 12,
+          "fontWeight": "500"
+        },
+        {
+          "type": "frame",
+          "id": "E19VQw",
+          "x": 118,
+          "y": 698,
+          "name": "FooterLinks",
+          "width": 157,
+          "height": 20,
+          "gap": 16,
+          "children": [
+            {
+              "type": "text",
+              "id": "M2YCuk",
+              "name": "termsLink",
+              "fill": "#A0A2B8",
+              "content": "利用規約",
+              "fontFamily": "Inter",
+              "fontSize": 11,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "OtnVF",
+              "name": "privacyLink",
+              "fill": "#A0A2B8",
+              "content": "プライバシーポリシー",
+              "fontFamily": "Inter",
+              "fontSize": 11,
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "WUREt",
+      "x": 0,
+      "y": 1100,
+      "name": "投稿1_推しシールボード公開",
+      "clip": true,
+      "width": 400,
+      "height": 500,
+      "fill": "#FAF0DE",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "DgU2c",
+          "name": "p1header",
+          "width": "fill_container",
+          "height": 56,
+          "fill": "#FAF0DE",
+          "gap": 10,
+          "padding": [
+            0,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "ellipse",
+              "id": "wmhPA",
+              "name": "p1avatar",
+              "fill": "#E87A2E",
+              "width": 36,
+              "height": 36
+            },
+            {
+              "type": "frame",
+              "id": "EZeJD",
+              "name": "p1userinfo",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "UBQZN",
+                  "name": "p1username",
+                  "fill": "#2A2D5B",
+                  "content": "stickerboard_life",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "HUqgm",
+                  "name": "p1subtitle",
+                  "opacity": 0.6,
+                  "fill": "#2A2D5B",
+                  "content": "シール沼の住人",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "NHBBB",
+          "name": "p1board",
+          "clip": true,
+          "width": "fill_container",
+          "height": 300,
+          "fill": "#2A2D5B",
+          "layout": "none",
+          "children": [
+            {
+              "type": "rectangle",
+              "cornerRadius": 12,
+              "id": "CQsMq",
+              "x": 20,
+              "y": 20,
+              "name": "p1boardInner",
+              "fill": "#1E2040",
+              "width": 360,
+              "height": 260
+            },
+            {
+              "type": "ellipse",
+              "id": "nLuGD",
+              "x": 50,
+              "y": 40,
+              "name": "p1s1",
+              "fill": "#E87A2E",
+              "width": 80,
+              "height": 80
+            },
+            {
+              "type": "text",
+              "id": "oPKNt",
+              "x": 72,
+              "y": 56,
+              "name": "p1s1txt",
+              "content": "⭐",
+              "fontFamily": "Inter",
+              "fontSize": 36,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "rectangle",
+              "cornerRadius": 16,
+              "id": "ib7eU",
+              "x": 160,
+              "y": 30,
+              "name": "p1s2",
+              "fill": "#FAF0DE",
+              "width": 90,
+              "height": 90
+            },
+            {
+              "type": "text",
+              "id": "knNJ0",
+              "x": 176,
+              "y": 44,
+              "name": "p1s2txt",
+              "content": "🌸",
+              "fontFamily": "Inter",
+              "fontSize": 40,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "ellipse",
+              "id": "mWo48",
+              "x": 280,
+              "y": 50,
+              "name": "p1s3",
+              "opacity": 0.8,
+              "fill": "#E87A2E",
+              "width": 70,
+              "height": 70
+            },
+            {
+              "type": "text",
+              "id": "AbZvX",
+              "x": 297,
+              "y": 62,
+              "name": "p1s3txt",
+              "content": "🎀",
+              "fontFamily": "Inter",
+              "fontSize": 30,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "rectangle",
+              "cornerRadius": 20,
+              "id": "mebta",
+              "x": 60,
+              "y": 150,
+              "name": "p1s4",
+              "opacity": 0.9,
+              "fill": "#FAF0DE",
+              "width": 85,
+              "height": 85
+            },
+            {
+              "type": "text",
+              "id": "gum29",
+              "x": 76,
+              "y": 163,
+              "name": "p1s4txt",
+              "content": "🦋",
+              "fontFamily": "Inter",
+              "fontSize": 38,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "ellipse",
+              "id": "Xigqw",
+              "x": 170,
+              "y": 155,
+              "name": "p1s5",
+              "fill": "#E87A2E",
+              "width": 75,
+              "height": 75
+            },
+            {
+              "type": "text",
+              "id": "T1mjNk",
+              "x": 190,
+              "y": 170,
+              "name": "p1s5txt",
+              "content": "💫",
+              "fontFamily": "Inter",
+              "fontSize": 34,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "rectangle",
+              "cornerRadius": 18,
+              "id": "v9AZy",
+              "x": 270,
+              "y": 148,
+              "name": "p1s6",
+              "opacity": 0.85,
+              "fill": "#FAF0DE",
+              "width": 80,
+              "height": 80
+            },
+            {
+              "type": "text",
+              "id": "fHtZh",
+              "x": 286,
+              "y": 162,
+              "name": "p1s6txt",
+              "content": "🌈",
+              "fontFamily": "Inter",
+              "fontSize": 36,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "B9FEX",
+          "name": "p1caption",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            12,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "uobob",
+              "name": "p1likes",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "f4xf4D",
+                  "name": "p1heartIcon",
+                  "content": "❤️",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "Q1bGs",
+                  "name": "p1likeCount",
+                  "fill": "#2A2D5B",
+                  "content": "いいね！ 247件",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "aDGru",
+              "name": "p1captionText",
+              "fill": "#2A2D5B",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "推しカラーだけで埋めたボード完成した🌸 ぜんぶデジタルだから剥がれる心配なし…最高すぎ",
+              "lineHeight": 1.5,
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "S25QsR",
+              "name": "p1tags",
+              "fill": "#E87A2E",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "#推しシールボード #シールコレクション #推し活 #シール沼の住人",
+              "fontFamily": "Inter",
+              "fontSize": 11,
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "ClLJF",
+      "x": 450,
+      "y": 1100,
+      "name": "投稿2_BeforeAfter",
+      "clip": true,
+      "width": 400,
+      "height": 500,
+      "fill": "#FAF0DE",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "ZsXhG",
+          "name": "p2header",
+          "width": "fill_container",
+          "height": 56,
+          "fill": "#FAF0DE",
+          "gap": 10,
+          "padding": [
+            0,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "ellipse",
+              "id": "pmbyK",
+              "name": "p2avatar",
+              "fill": "#2A2D5B",
+              "width": 36,
+              "height": 36
+            },
+            {
+              "type": "frame",
+              "id": "z9tzka",
+              "name": "p2userinfo",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "wc0IK",
+                  "name": "p2username",
+                  "fill": "#2A2D5B",
+                  "content": "stickerboard_life",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "Ixnq4",
+                  "name": "p2subtitle",
+                  "opacity": 0.6,
+                  "fill": "#2A2D5B",
+                  "content": "シール沼の住人",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "KNgTe",
+          "name": "p2slide",
+          "clip": true,
+          "width": "fill_container",
+          "height": 300,
+          "children": [
+            {
+              "type": "frame",
+              "id": "J6maqK",
+              "name": "p2before",
+              "width": "fill_container",
+              "height": 300,
+              "fill": "#FFF8EE",
+              "layout": "none",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 4,
+                  "id": "F6U94N",
+                  "x": 8,
+                  "y": 8,
+                  "name": "p2beforeLabel",
+                  "fill": "#2A2D5B",
+                  "width": 72,
+                  "height": 24
+                },
+                {
+                  "type": "text",
+                  "id": "WxtoB",
+                  "x": 16,
+                  "y": 14,
+                  "name": "p2beforeLabelTxt",
+                  "fill": "#FAF0DE",
+                  "content": "BEFORE",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "l4DAP0",
+                  "x": 20,
+                  "y": 60,
+                  "name": "p2b1",
+                  "rotation": -14.999999999999998,
+                  "content": "🏷️",
+                  "fontFamily": "Inter",
+                  "fontSize": 40,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "iktgX",
+                  "x": 80,
+                  "y": 45,
+                  "name": "p2b2",
+                  "rotation": 20,
+                  "content": "⭐",
+                  "fontFamily": "Inter",
+                  "fontSize": 32,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "vMKfC",
+                  "x": 40,
+                  "y": 130,
+                  "name": "p2b3",
+                  "rotation": -8,
+                  "content": "🌸",
+                  "fontFamily": "Inter",
+                  "fontSize": 36,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "dzWul",
+                  "x": 110,
+                  "y": 100,
+                  "name": "p2b4",
+                  "rotation": 25,
+                  "content": "🎀",
+                  "fontFamily": "Inter",
+                  "fontSize": 28,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "D2umnI",
+                  "x": 60,
+                  "y": 200,
+                  "name": "p2b5",
+                  "rotation": -20,
+                  "content": "🦋",
+                  "fontFamily": "Inter",
+                  "fontSize": 34,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "YyLKh",
+                  "x": 130,
+                  "y": 165,
+                  "name": "p2b6",
+                  "rotation": 10,
+                  "content": "💫",
+                  "fontFamily": "Inter",
+                  "fontSize": 30,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "IkiWa",
+              "name": "p2divider",
+              "fill": "#E87A2E",
+              "width": 2,
+              "height": 300
+            },
+            {
+              "type": "frame",
+              "id": "PPFup",
+              "name": "p2after",
+              "width": "fill_container",
+              "height": 300,
+              "fill": "#2A2D5B",
+              "layout": "none",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 4,
+                  "id": "UbVtf",
+                  "x": 8,
+                  "y": 8,
+                  "name": "p2afterLabel",
+                  "fill": "#E87A2E",
+                  "width": 64,
+                  "height": 24
+                },
+                {
+                  "type": "text",
+                  "id": "RG1c2",
+                  "x": 17,
+                  "y": 14,
+                  "name": "p2afterLabelTxt",
+                  "fill": "#FAF0DE",
+                  "content": "AFTER",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 12,
+                  "id": "P8knq",
+                  "x": 20,
+                  "y": 50,
+                  "name": "p2a1",
+                  "fill": "#E87A2E",
+                  "width": 60,
+                  "height": 60
+                },
+                {
+                  "type": "text",
+                  "id": "uKMKM",
+                  "x": 36,
+                  "y": 65,
+                  "name": "p2a1txt",
+                  "content": "⭐",
+                  "fontFamily": "Inter",
+                  "fontSize": 28,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 12,
+                  "id": "gKZ0h",
+                  "x": 100,
+                  "y": 50,
+                  "name": "p2a2",
+                  "fill": "#FAF0DE",
+                  "width": 60,
+                  "height": 60
+                },
+                {
+                  "type": "text",
+                  "id": "fdQv9",
+                  "x": 116,
+                  "y": 65,
+                  "name": "p2a2txt",
+                  "content": "🌸",
+                  "fontFamily": "Inter",
+                  "fontSize": 28,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 12,
+                  "id": "W5foJ",
+                  "x": 20,
+                  "y": 130,
+                  "name": "p2a3",
+                  "fill": "#FAF0DE",
+                  "width": 60,
+                  "height": 60
+                },
+                {
+                  "type": "text",
+                  "id": "U3yZwM",
+                  "x": 36,
+                  "y": 145,
+                  "name": "p2a3txt",
+                  "content": "🎀",
+                  "fontFamily": "Inter",
+                  "fontSize": 28,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 12,
+                  "id": "u24uY",
+                  "x": 100,
+                  "y": 130,
+                  "name": "p2a4",
+                  "fill": "#E87A2E",
+                  "width": 60,
+                  "height": 60
+                },
+                {
+                  "type": "text",
+                  "id": "LM2qv",
+                  "x": 116,
+                  "y": 145,
+                  "name": "p2a4txt",
+                  "content": "🦋",
+                  "fontFamily": "Inter",
+                  "fontSize": 28,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 12,
+                  "id": "G47p3g",
+                  "x": 20,
+                  "y": 210,
+                  "name": "p2a5",
+                  "opacity": 0.7,
+                  "fill": "#E87A2E",
+                  "width": 60,
+                  "height": 60
+                },
+                {
+                  "type": "text",
+                  "id": "kS7x8",
+                  "x": 36,
+                  "y": 225,
+                  "name": "p2a5txt",
+                  "content": "💫",
+                  "fontFamily": "Inter",
+                  "fontSize": 28,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 12,
+                  "id": "yFujG",
+                  "x": 100,
+                  "y": 210,
+                  "name": "p2a6",
+                  "fill": "#FAF0DE",
+                  "width": 60,
+                  "height": 60
+                },
+                {
+                  "type": "text",
+                  "id": "wtasb",
+                  "x": 116,
+                  "y": 225,
+                  "name": "p2a6txt",
+                  "content": "🌈",
+                  "fontFamily": "Inter",
+                  "fontSize": 28,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "WIsXh",
+          "name": "p2caption",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            12,
+            16
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "NQrKS",
+              "name": "p2captionText",
+              "fill": "#2A2D5B",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "箱の底に眠ってたシールたちをデジタル化したら気持ちよすぎた…これもう戻れない🫠",
+              "lineHeight": 1.5,
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "Qz19A",
+              "name": "p2tags",
+              "fill": "#E87A2E",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "#シール整理 #推し活 #シールコレクション #今日のひと貼り",
+              "fontFamily": "Inter",
+              "fontSize": 11,
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "PfIGE",
+      "x": 900,
+      "y": 1100,
+      "name": "投稿3_フィルター比較",
+      "clip": true,
+      "width": 400,
+      "height": 500,
+      "fill": "#1A1A2E",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "Zu6jP",
+          "name": "p3header",
+          "width": "fill_container",
+          "height": 56,
+          "fill": "#1A1A2E",
+          "gap": 10,
+          "padding": [
+            0,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "ellipse",
+              "id": "U5tEfr",
+              "name": "p3avatar",
+              "fill": "#E87A2E",
+              "width": 36,
+              "height": 36
+            },
+            {
+              "type": "frame",
+              "id": "fdZO1",
+              "name": "p3userinfo",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "k8Idb",
+                  "name": "p3username",
+                  "fill": "#FAF0DE",
+                  "content": "stickerboard_life",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "VkXEM",
+                  "name": "p3subtitle",
+                  "opacity": 0.6,
+                  "fill": "#FAF0DE",
+                  "content": "シール沼の住人",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Oi8rL",
+          "name": "p3imgArea",
+          "clip": true,
+          "width": "fill_container",
+          "height": 260,
+          "children": [
+            {
+              "type": "frame",
+              "id": "R9pBs",
+              "name": "p3left",
+              "width": "fill_container",
+              "height": 260,
+              "fill": "#2A2D5B",
+              "layout": "none",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 4,
+                  "id": "p111g8",
+                  "x": 8,
+                  "y": 8,
+                  "name": "p3leftLabel",
+                  "opacity": 0.2,
+                  "fill": "#FAF0DE",
+                  "width": 70,
+                  "height": 22
+                },
+                {
+                  "type": "text",
+                  "id": "NPZJ7",
+                  "x": 12,
+                  "y": 13,
+                  "name": "p3leftLabelTxt",
+                  "fill": "#FAF0DE",
+                  "content": "フィルターなし",
+                  "fontFamily": "Inter",
+                  "fontSize": 9,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 24,
+                  "id": "ldCKt",
+                  "x": 35,
+                  "y": 60,
+                  "name": "p3leftSticker",
+                  "fill": "#FAF0DE",
+                  "width": 120,
+                  "height": 120
+                },
+                {
+                  "type": "text",
+                  "id": "cy271",
+                  "x": 63,
+                  "y": 80,
+                  "name": "p3leftStickerTxt",
+                  "content": "🌸",
+                  "fontFamily": "Inter",
+                  "fontSize": 64,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "tkrzG",
+              "name": "p3right",
+              "width": "fill_container",
+              "height": 260,
+              "fill": "#0D0D1A",
+              "layout": "none",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 4,
+                  "id": "X8Z1rp",
+                  "x": 8,
+                  "y": 8,
+                  "name": "p3rightLabel",
+                  "fill": "#E87A2E",
+                  "width": 96,
+                  "height": 22
+                },
+                {
+                  "type": "text",
+                  "id": "zKMI5",
+                  "x": 12,
+                  "y": 13,
+                  "name": "p3rightLabelTxt",
+                  "fill": "#FAF0DE",
+                  "content": "✨ ホログラム",
+                  "fontFamily": "Inter",
+                  "fontSize": 9,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 28,
+                  "id": "XZpUa",
+                  "x": 20,
+                  "y": 45,
+                  "name": "p3rightBg",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "angular",
+                    "enabled": true,
+                    "rotation": 0,
+                    "size": {
+                      "width": 1,
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#FF6B9D",
+                        "position": 0
+                      },
+                      {
+                        "color": "#FFD700",
+                        "position": 0.25
+                      },
+                      {
+                        "color": "#00E5FF",
+                        "position": 0.5
+                      },
+                      {
+                        "color": "#FF6B9D",
+                        "position": 0.75
+                      },
+                      {
+                        "color": "#A855F7",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "width": 145,
+                  "height": 145
+                },
+                {
+                  "type": "text",
+                  "id": "e5n2L",
+                  "x": 48,
+                  "y": 68,
+                  "name": "p3rightStickerTxt",
+                  "content": "🌸",
+                  "fontFamily": "Inter",
+                  "fontSize": 64,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "AbXni",
+          "name": "p3caption",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            12,
+            16
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "E0oHm",
+              "name": "p3sparkles",
+              "content": "✨✨✨",
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "Yi2rI",
+              "name": "p3captionText",
+              "fill": "#FAF0DE",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "ホログラムフィルターかけたら次元が変わった件について🌈 同じシールなのに全然違うよ",
+              "lineHeight": 1.5,
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "Oa0Ae",
+              "name": "p3tags",
+              "fill": "#E87A2E",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "#ホログラム #キラキラ #シールコレクション #シール沼の住人",
+              "fontFamily": "Inter",
+              "fontSize": 11,
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "zLcqf",
+      "x": 1350,
+      "y": 1100,
+      "name": "投稿4_配色縛りボード",
+      "clip": true,
+      "width": 400,
+      "height": 500,
+      "fill": "#FAF0DE",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "WMfla",
+          "name": "p4header",
+          "width": "fill_container",
+          "height": 56,
+          "fill": "#FAF0DE",
+          "gap": 10,
+          "padding": [
+            0,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "ellipse",
+              "id": "WnXQA",
+              "name": "p4avatar",
+              "fill": "#E87A2E",
+              "width": 36,
+              "height": 36
+            },
+            {
+              "type": "frame",
+              "id": "lClUV",
+              "name": "p4userinfo",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "jMinb",
+                  "name": "p4username",
+                  "fill": "#2A2D5B",
+                  "content": "stickerboard_life",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "HhJ89",
+                  "name": "p4subtitle",
+                  "opacity": 0.6,
+                  "fill": "#2A2D5B",
+                  "content": "シール沼の住人",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "V8kH4",
+          "name": "p4board",
+          "clip": true,
+          "width": "fill_container",
+          "height": 300,
+          "fill": "#FFF0F5",
+          "layout": "none",
+          "children": [
+            {
+              "type": "rectangle",
+              "cornerRadius": 16,
+              "id": "UYS6t",
+              "x": 16,
+              "y": 16,
+              "name": "p4badge",
+              "fill": "#E87A2E",
+              "width": 140,
+              "height": 32
+            },
+            {
+              "type": "text",
+              "id": "gWW7e",
+              "x": 22,
+              "y": 24,
+              "name": "p4badgeTxt",
+              "fill": "#FAF0DE",
+              "content": "💗 推し色縛りボード",
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "700"
+            },
+            {
+              "type": "ellipse",
+              "id": "boPsr",
+              "x": 30,
+              "y": 70,
+              "name": "p4s1",
+              "fill": "#FFB7C5",
+              "width": 75,
+              "height": 75
+            },
+            {
+              "type": "text",
+              "id": "Y34ofH",
+              "x": 49,
+              "y": 87,
+              "name": "p4s1txt",
+              "content": "🌸",
+              "fontFamily": "Inter",
+              "fontSize": 36,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "rectangle",
+              "cornerRadius": 20,
+              "id": "bM3zA",
+              "x": 130,
+              "y": 65,
+              "name": "p4s2",
+              "fill": "#FF8FAB",
+              "width": 75,
+              "height": 75
+            },
+            {
+              "type": "text",
+              "id": "aceDu",
+              "x": 148,
+              "y": 82,
+              "name": "p4s2txt",
+              "content": "🎀",
+              "fontFamily": "Inter",
+              "fontSize": 36,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "ellipse",
+              "id": "Gqiyf",
+              "x": 240,
+              "y": 70,
+              "name": "p4s3",
+              "fill": "#FFB7C5",
+              "width": 75,
+              "height": 75
+            },
+            {
+              "type": "text",
+              "id": "FWcHO",
+              "x": 259,
+              "y": 87,
+              "name": "p4s3txt",
+              "content": "💕",
+              "fontFamily": "Inter",
+              "fontSize": 36,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "rectangle",
+              "cornerRadius": 20,
+              "id": "edjJ1",
+              "x": 60,
+              "y": 170,
+              "name": "p4s4",
+              "fill": "#FF8FAB",
+              "width": 75,
+              "height": 75
+            },
+            {
+              "type": "text",
+              "id": "Tqq7P",
+              "x": 78,
+              "y": 187,
+              "name": "p4s4txt",
+              "content": "🌷",
+              "fontFamily": "Inter",
+              "fontSize": 36,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "ellipse",
+              "id": "KkmvE",
+              "x": 170,
+              "y": 170,
+              "name": "p4s5",
+              "fill": "#FFB7C5",
+              "width": 75,
+              "height": 75
+            },
+            {
+              "type": "text",
+              "id": "Vs5nH",
+              "x": 189,
+              "y": 187,
+              "name": "p4s5txt",
+              "content": "🫶",
+              "fontFamily": "Inter",
+              "fontSize": 36,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "rectangle",
+              "cornerRadius": 20,
+              "id": "BwU48",
+              "x": 275,
+              "y": 168,
+              "name": "p4s6",
+              "fill": "#FF8FAB",
+              "width": 75,
+              "height": 75
+            },
+            {
+              "type": "text",
+              "id": "KQkS2",
+              "x": 293,
+              "y": 185,
+              "name": "p4s6txt",
+              "content": "🎵",
+              "fontFamily": "Inter",
+              "fontSize": 36,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "dcy5P",
+          "name": "p4caption",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            12,
+            16
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "SuT8Q",
+              "name": "p4captionText",
+              "fill": "#2A2D5B",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "推し色（ピンク）だけで埋めたボード完成💗 縛りプレイが一番楽しいって気づいてしまった",
+              "lineHeight": 1.5,
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "TRKS5",
+              "name": "p4tags",
+              "fill": "#E87A2E",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "#推し色縛り #推しシールボード #推し活 #シール沼の住人",
+              "fontFamily": "Inter",
+              "fontSize": 11,
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "aU6N7",
+      "x": 1800,
+      "y": 1100,
+      "name": "投稿5_今日のひと貼り",
+      "clip": true,
+      "width": 400,
+      "height": 500,
+      "fill": "#2A2D5B",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "thngw",
+          "name": "p5header",
+          "width": "fill_container",
+          "height": 56,
+          "fill": "#2A2D5B",
+          "gap": 10,
+          "padding": [
+            0,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "ellipse",
+              "id": "ktPLC",
+              "name": "p5avatar",
+              "fill": "#E87A2E",
+              "width": 36,
+              "height": 36
+            },
+            {
+              "type": "frame",
+              "id": "z70w7",
+              "name": "p5userinfo",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "NLXqr",
+                  "name": "p5username",
+                  "fill": "#FAF0DE",
+                  "content": "stickerboard_life",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "TZrqw",
+                  "name": "p5subtitle",
+                  "opacity": 0.6,
+                  "fill": "#FAF0DE",
+                  "content": "シール沼の住人",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "v2uWs",
+          "name": "p5board",
+          "clip": true,
+          "width": "fill_container",
+          "height": 300,
+          "fill": "#1E2040",
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "MxtVW",
+              "x": 130,
+              "y": 30,
+              "name": "p5dateTxt",
+              "fill": "#E87A2E",
+              "content": "Day 23",
+              "fontFamily": "Inter",
+              "fontSize": 32,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "CoMy8",
+              "x": 128,
+              "y": 72,
+              "name": "p5dayLabel",
+              "opacity": 0.7,
+              "fill": "#FAF0DE",
+              "content": "今日のひと貼り",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "rectangle",
+              "cornerRadius": 32,
+              "id": "sgPGv",
+              "x": 120,
+              "y": 110,
+              "name": "p5mainSticker",
+              "fill": "#E87A2E",
+              "width": 160,
+              "height": 160
+            },
+            {
+              "type": "text",
+              "id": "cd2Tu",
+              "x": 150,
+              "y": 130,
+              "name": "p5mainStickerTxt",
+              "content": "⭐",
+              "fontFamily": "Inter",
+              "fontSize": 90,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "ellipse",
+              "id": "z4w45",
+              "x": 40,
+              "y": 130,
+              "name": "p5dot1",
+              "opacity": 0.5,
+              "fill": "#E87A2E",
+              "width": 16,
+              "height": 16
+            },
+            {
+              "type": "ellipse",
+              "id": "KGu1Z",
+              "x": 340,
+              "y": 150,
+              "name": "p5dot2",
+              "opacity": 0.4,
+              "fill": "#FAF0DE",
+              "width": 12,
+              "height": 12
+            },
+            {
+              "type": "ellipse",
+              "id": "tBJdG",
+              "x": 60,
+              "y": 230,
+              "name": "p5dot3",
+              "opacity": 0.3,
+              "fill": "#E87A2E",
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "NHkpz",
+          "name": "p5caption",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            12,
+            16
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "HpfvF",
+              "name": "p5captionText",
+              "fill": "#FAF0DE",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "推しのシール、今日も1枚追加した⭐ 毎日続けて23日目…これが楽しすぎてやばい",
+              "lineHeight": 1.5,
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "o3Oai9",
+              "name": "p5tags",
+              "fill": "#E87A2E",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "#今日のひと貼り #シールコレクション #推し活 #シール沼の住人",
+              "fontFamily": "Inter",
+              "fontSize": 11,
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "Z2JpbE",
+      "x": 0,
+      "y": 1831,
+      "name": "bgLabel",
+      "fill": "#2A2D5B",
+      "content": "🖼️ Instagram背景素材（400×400px）",
+      "fontFamily": "Inter",
+      "fontSize": 20,
+      "fontWeight": "700"
+    },
+    {
+      "type": "frame",
+      "id": "agOkl",
+      "x": 0,
+      "y": 1881,
+      "name": "BG1_クラフト紙風",
+      "clip": true,
+      "width": 400,
+      "height": 400,
+      "fill": "#D4B48A",
+      "layout": "none",
+      "children": [
+        {
+          "type": "script",
+          "id": "nl54I",
+          "x": 0,
+          "y": 0,
+          "name": "bg1lines",
+          "width": 400,
+          "height": 400,
+          "scriptUri": "pen-scripts/h_lines.js",
+          "inputs": {
+            "gap": 28,
+            "lineColor": "#C8A882",
+            "opacity": 0.35,
+            "thickness": 1
+          }
+        },
+        {
+          "type": "script",
+          "id": "kOmeF",
+          "x": 0,
+          "y": 0,
+          "name": "bg1corner",
+          "width": 400,
+          "height": 400,
+          "scriptUri": "pen-scripts/corner_deco.js",
+          "inputs": {
+            "size": 32,
+            "color": "#E87A2E",
+            "opacity": 0.75
+          }
+        },
+        {
+          "type": "rectangle",
+          "id": "bJ30W",
+          "x": 0,
+          "y": 0,
+          "name": "bg1accent",
+          "opacity": 0.5,
+          "fill": "#C8A882",
+          "width": 6,
+          "height": 400
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "sehAu",
+      "x": 450,
+      "y": 1881,
+      "name": "BG2_ネイビードット",
+      "clip": true,
+      "width": 400,
+      "height": 400,
+      "fill": "#2A2D5B",
+      "layout": "none",
+      "children": [
+        {
+          "type": "script",
+          "id": "dfBSX",
+          "x": 0,
+          "y": 0,
+          "name": "bg2dots",
+          "width": 400,
+          "height": 400,
+          "scriptUri": "pen-scripts/dot_grid.js",
+          "inputs": {
+            "dotSize": 3,
+            "gap": 28,
+            "dotColor": "#FAF0DE",
+            "opacity": 0.2
+          }
+        },
+        {
+          "type": "script",
+          "id": "SHrsR",
+          "x": 0,
+          "y": 0,
+          "name": "bg2corner",
+          "width": 400,
+          "height": 400,
+          "scriptUri": "pen-scripts/corner_deco.js",
+          "inputs": {
+            "size": 36,
+            "color": "#E87A2E",
+            "opacity": 0.9
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "C554Wt",
+      "x": 900,
+      "y": 1881,
+      "name": "BG3_手帳グリッド",
+      "clip": true,
+      "width": 400,
+      "height": 400,
+      "fill": "#FAFAF6",
+      "layout": "none",
+      "children": [
+        {
+          "type": "script",
+          "id": "E1nDQ",
+          "x": 0,
+          "y": 0,
+          "name": "bg3hlines",
+          "width": 400,
+          "height": 400,
+          "scriptUri": "pen-scripts/h_lines.js",
+          "inputs": {
+            "gap": 24,
+            "lineColor": "#B8C8E0",
+            "opacity": 0.5,
+            "thickness": 1
+          }
+        },
+        {
+          "type": "rectangle",
+          "id": "m8vJgS",
+          "x": 56,
+          "y": 0,
+          "name": "bg3vline",
+          "opacity": 0.35,
+          "fill": "#E87A2E",
+          "width": 1,
+          "height": 400
+        },
+        {
+          "type": "script",
+          "id": "vYHI5",
+          "x": 0,
+          "y": 0,
+          "name": "bg3dots",
+          "width": 400,
+          "height": 400,
+          "scriptUri": "pen-scripts/dot_grid.js",
+          "inputs": {
+            "dotSize": 2,
+            "gap": 24,
+            "dotColor": "#8898AA",
+            "opacity": 0.2
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "VCJkC",
+      "x": 1350,
+      "y": 1881,
+      "name": "BG4_スクラップブック",
+      "clip": true,
+      "width": 400,
+      "height": 400,
+      "fill": "#FAF0DE",
+      "layout": "none",
+      "children": [
+        {
+          "type": "rectangle",
+          "id": "H6l2K",
+          "x": 12,
+          "y": 12,
+          "name": "bg4border",
+          "opacity": 0.5,
+          "fill": "#00000000",
+          "width": 376,
+          "height": 376,
+          "stroke": {
+            "align": "inside",
+            "thickness": 2,
+            "fill": "#E87A2E"
+          }
+        },
+        {
+          "type": "rectangle",
+          "id": "bIC6l",
+          "x": 20,
+          "y": 20,
+          "name": "bg4border2",
+          "opacity": 0.2,
+          "fill": "#00000000",
+          "width": 360,
+          "height": 360,
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "#2A2D5B"
+          }
+        },
+        {
+          "type": "rectangle",
+          "id": "x98hWb",
+          "x": 12,
+          "y": 12,
+          "name": "bg4ctTL1",
+          "opacity": 0.9,
+          "fill": "#E87A2E",
+          "width": 28,
+          "height": 3
+        },
+        {
+          "type": "rectangle",
+          "id": "fEvZS",
+          "x": 12,
+          "y": 12,
+          "name": "bg4ctTL2",
+          "opacity": 0.9,
+          "fill": "#E87A2E",
+          "width": 3,
+          "height": 28
+        },
+        {
+          "type": "rectangle",
+          "id": "pknOJ",
+          "x": 360,
+          "y": 12,
+          "name": "bg4ctTR1",
+          "opacity": 0.9,
+          "fill": "#E87A2E",
+          "width": 28,
+          "height": 3
+        },
+        {
+          "type": "rectangle",
+          "id": "h1SdG",
+          "x": 385,
+          "y": 12,
+          "name": "bg4ctTR2",
+          "opacity": 0.9,
+          "fill": "#E87A2E",
+          "width": 3,
+          "height": 28
+        },
+        {
+          "type": "rectangle",
+          "id": "q6nIU9",
+          "x": 12,
+          "y": 385,
+          "name": "bg4ctBL1",
+          "opacity": 0.9,
+          "fill": "#E87A2E",
+          "width": 28,
+          "height": 3
+        },
+        {
+          "type": "rectangle",
+          "id": "CtkEf",
+          "x": 12,
+          "y": 360,
+          "name": "bg4ctBL2",
+          "opacity": 0.9,
+          "fill": "#E87A2E",
+          "width": 3,
+          "height": 28
+        },
+        {
+          "type": "rectangle",
+          "id": "hL89T",
+          "x": 360,
+          "y": 385,
+          "name": "bg4ctBR1",
+          "opacity": 0.9,
+          "fill": "#E87A2E",
+          "width": 28,
+          "height": 3
+        },
+        {
+          "type": "rectangle",
+          "id": "sKQhS",
+          "x": 385,
+          "y": 360,
+          "name": "bg4ctBR2",
+          "opacity": 0.9,
+          "fill": "#E87A2E",
+          "width": 3,
+          "height": 28
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "z3jnQd",
+      "x": 1800,
+      "y": 1881,
+      "name": "BG5_ブラックボード風",
+      "clip": true,
+      "width": 400,
+      "height": 400,
+      "fill": "#161E2C",
+      "layout": "none",
+      "children": [
+        {
+          "type": "script",
+          "id": "R0fC0G",
+          "x": 0,
+          "y": 0,
+          "name": "bg5dots",
+          "width": 400,
+          "height": 400,
+          "scriptUri": "pen-scripts/dot_grid.js",
+          "inputs": {
+            "dotSize": 2,
+            "gap": 22,
+            "dotColor": "#FFFFFF",
+            "opacity": 0.08
+          }
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 2,
+          "id": "r5ILdY",
+          "x": 16,
+          "y": 16,
+          "name": "bg5border",
+          "opacity": 0.2,
+          "fill": "#00000000",
+          "width": 368,
+          "height": 368,
+          "stroke": {
+            "align": "inside",
+            "thickness": 2,
+            "fill": "#FFFFFF"
+          }
+        },
+        {
+          "type": "rectangle",
+          "cornerRadius": 2,
+          "id": "Z5SHoF",
+          "x": 22,
+          "y": 22,
+          "name": "bg5border2",
+          "opacity": 0.1,
+          "fill": "#00000000",
+          "width": 356,
+          "height": 356,
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "#FFFFFF"
+          }
+        },
+        {
+          "type": "rectangle",
+          "id": "NJxWO",
+          "x": 16,
+          "y": 16,
+          "name": "bg5accentTL",
+          "opacity": 0.9,
+          "fill": "#E87A2E",
+          "width": 40,
+          "height": 3
+        },
+        {
+          "type": "rectangle",
+          "id": "FOLLq",
+          "x": 16,
+          "y": 16,
+          "name": "bg5accentTL2",
+          "opacity": 0.9,
+          "fill": "#E87A2E",
+          "width": 3,
+          "height": 40
+        },
+        {
+          "type": "rectangle",
+          "id": "vOLhP",
+          "x": 344,
+          "y": 381,
+          "name": "bg5accentBR",
+          "opacity": 0.9,
+          "fill": "#E87A2E",
+          "width": 40,
+          "height": 3
+        },
+        {
+          "type": "rectangle",
+          "id": "m89c1",
+          "x": 381,
+          "y": 344,
+          "name": "bg5accentBR2",
+          "opacity": 0.9,
+          "fill": "#E87A2E",
+          "width": 3,
+          "height": 40
+        }
+      ]
+    }
+  ]
+}

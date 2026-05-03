@@ -14,6 +14,9 @@ options:
 packages:
   FirebaseiOSSDK:
     url: https://github.com/firebase/firebase-ios-sdk
+    from: "12.12.1"
+  GoogleMobileAds:
+    url: https://github.com/googleads/swift-package-manager-google-mobile-ads
     from: "11.0.0"
 
 settings:
@@ -47,6 +50,8 @@ targets:
         NSPhotoLibraryUsageDescription: "シールにする写真を選択するためにフォトライブラリへのアクセスが必要です"
         NSCameraUsageDescription: "シールにする写真を撮影するためにカメラへのアクセスが必要です"
         NSPhotoLibraryAddUsageDescription: "ボードを画像として写真に保存するためにフォトライブラリへのアクセスが必要です"
+        NSUserTrackingUsageDescription: "広告をあなたの興味に合わせてパーソナライズするために使用します"
+        GADApplicationIdentifier: "ca-app-pub-6267199278067658~4057899774"
         UILaunchScreen: {}
         ITSAppUsesNonExemptEncryption: false
         LSApplicationCategoryType: "public.app-category.lifestyle"
@@ -60,8 +65,8 @@ targets:
           - UIInterfaceOrientationLandscapeRight
     settings:
       base:
-        CURRENT_PROJECT_VERSION: "6"
-        MARKETING_VERSION: "1.8.0"
+        CURRENT_PROJECT_VERSION: "7"
+        MARKETING_VERSION: "1.9.0"
         PRODUCT_BUNDLE_IDENTIFIER: "com.tebasaki.StickerBoard"
         CODE_SIGN_STYLE: Automatic
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
@@ -73,6 +78,8 @@ targets:
         embed: true
       - package: FirebaseiOSSDK
         product: FirebaseCrashlytics
+      - package: GoogleMobileAds
+        product: GoogleMobileAds
     postBuildScripts:
       - script: |
           if [ -f "${SRCROOT}/StickerBoard/GoogleService-Info.plist" ]; then
@@ -99,8 +106,8 @@ targets:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
       base:
-        CURRENT_PROJECT_VERSION: "6"
-        MARKETING_VERSION: "1.8.0"
+        CURRENT_PROJECT_VERSION: "7"
+        MARKETING_VERSION: "1.9.0"
         PRODUCT_BUNDLE_IDENTIFIER: "com.tebasaki.StickerBoard.Widget"
         CODE_SIGN_STYLE: Automatic
         SWIFT_EMIT_LOC_STRINGS: YES
