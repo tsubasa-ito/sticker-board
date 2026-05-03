@@ -81,6 +81,23 @@
         }
       }
     },
+    "NSUserTrackingUsageDescription" : {
+      "comment" : "Privacy - Tracking Usage Description",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This helps us show you ads that are more relevant to your interests"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "広告をあなたの興味に合わせてパーソナライズするために使用します"
+          }
+        }
+      }
+    },
     "NSPhotoLibraryUsageDescription" : {
       "comment" : "Privacy - Photo Library Usage Description",
       "localizations" : {

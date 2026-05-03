@@ -10,6 +10,9 @@ struct StickerLibraryView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Query private var boards: [Board]
+    @ObservedObject private var subscriptionManager = SubscriptionManager.shared
+    // @Observable singleton は @State で保持することで変更時の再レンダリングを保証する
+    @State private var adManager = AdManager.shared
     @State private var displayedStickers: [Sticker] = []
     @State private var totalCount: Int = 0
     @State private var hasMorePages = true
@@ -92,6 +95,11 @@ struct StickerLibraryView: View {
                 if !saveToPhotosSuccess {
                     Text("フォトライブラリへの保存中にエラーが発生しました。アクセス許可を確認してください。")
                 }
+            }
+            // 写真保存アラートが閉じた後にインタースティシャル広告を表示（#261）
+            .onChange(of: showSaveToPhotosResult) { oldValue, newValue in
+                guard oldValue, !newValue, saveToPhotosSuccess else { return }
+                AdManager.shared.recordExportAndShowIfNeeded()
             }
     }
 
@@ -254,6 +262,41 @@ struct StickerLibraryView: View {
 
     // MARK: - グリッド
 
+    /// ネイティブ広告を 12 枚ごとに挿入したグリッドコンテンツ。
+    /// ピッカーモード・Pro ユーザーでは広告を非表示。ロード失敗時もレイアウト崩れなし。
+    @ViewBuilder
+    private var stickerGridContent: some View {
+        if displayedStickers.isEmpty {
+            LazyVGrid(columns: columns, spacing: 14) {
+                if !isPicking { addStickerCard }
+            }
+        } else {
+            let adPerChunk = 12
+            let chunks: [[Sticker]] = stride(from: 0, to: displayedStickers.count, by: adPerChunk).map {
+                Array(displayedStickers[$0..<min($0 + adPerChunk, displayedStickers.count)])
+            }
+            let showAds = !isPicking && !subscriptionManager.isProUser
+            // LazyVStack/ForEach 内の closure では @Observable の変更が SwiftUI に伝播しない場合があるため、
+            // LazyVStack の外側（@ViewBuilder の評価時）で adManager.nativeAd を参照してオブザベーションを登録する
+            let loadedNativeAd = adManager.nativeAd
+
+            LazyVStack(spacing: 0) {
+                ForEach(Array(chunks.enumerated()), id: \.offset) { chunkIndex, chunk in
+                    LazyVGrid(columns: columns, spacing: 14) {
+                        if chunkIndex == 0 && !isPicking { addStickerCard }
+                        ForEach(chunk) { sticker in stickerCell(for: sticker) }
+                    }
+                    .padding(.top, chunkIndex > 0 ? 14 : 0)
+
+                    // 最初のチャンク後のみ広告を表示（同一広告の重複インプレッション防止）
+                    if showAds, chunkIndex == 0, let nativeAd = loadedNativeAd {
+                        NativeAdCard(nativeAd: nativeAd).padding(.top, 14)
+                    }
+                }
+            }
+        }
+    }
+
     private var stickerGrid: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
@@ -273,15 +316,7 @@ struct StickerLibraryView: View {
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel("全\(totalCount)枚のシール")
 
-                LazyVGrid(columns: columns, spacing: 14) {
-                    if !isPicking {
-                        addStickerCard
-                    }
-
-                    ForEach(displayedStickers) { sticker in
-                        stickerCell(for: sticker)
-                    }
-                }
+                stickerGridContent
 
                 if hasMorePages && !displayedStickers.isEmpty {
                     HStack {

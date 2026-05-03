@@ -10,6 +10,16 @@
       "env": {
         "FIREBASE_PROJECT_ID": "stickerboard-5987a"
       }
+    },
+    "pencil": {
+      "name": "pencil",
+      "transport": "stdio",
+      "command": "/Users/tebasakin/.pencil/mcp/visual_studio_code/out/mcp-server-darwin-arm64",
+      "args": [
+        "--app",
+        "visual_studio_code"
+      ],
+      "env": {}
     }
   }
 }

@@ -267,6 +267,11 @@ struct BoardEditorView: View {
                  ? "ボードを写真に保存しました"
                  : "写真の保存に失敗しました。設定から写真へのアクセスを許可してください。")
         }
+        // 写真保存アラートが閉じた後にインタースティシャル広告を表示（#260）
+        .onChange(of: showingSaveResult) { oldValue, newValue in
+            guard oldValue, !newValue, saveResultSuccess else { return }
+            AdManager.shared.recordExportAndShowIfNeeded()
+        }
         .onAppear {
             placements = board.placements
             backgroundConfig = board.backgroundPattern
