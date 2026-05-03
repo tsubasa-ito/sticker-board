@@ -4,18 +4,20 @@ import SwiftUI
 // MARK: - NativeAdCard
 
 /// グリッドに挿入するネイティブ広告カード。
-/// AdManager.shared.nativeAd が nil のときは非表示になる（グリッドが詰まる）。
+/// nativeAd は呼び出し元（StickerLibraryView）から渡す。
+/// @Observable singleton を直接参照すると SwiftUI の再レンダリングが発火しないため、
+/// 呼び出し元で @State として保持した adManager.nativeAd を引数経由で受け取る設計。
 struct NativeAdCard: View {
+    let nativeAd: GADNativeAd
+
     var body: some View {
-        if let nativeAd = AdManager.shared.nativeAd {
-            NativeAdViewRepresentable(nativeAd: nativeAd)
-                .frame(maxWidth: .infinity)
-                .frame(height: 76)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-                .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
-                .accessibilityLabel("広告")
-                .accessibilityAddTraits(.isStaticText)
-        }
+        NativeAdViewRepresentable(nativeAd: nativeAd)
+            .frame(maxWidth: .infinity)
+            .frame(height: 76)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
+            .accessibilityLabel("広告")
+            .accessibilityAddTraits(.isStaticText)
     }
 }
 

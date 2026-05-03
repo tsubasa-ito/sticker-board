@@ -11,6 +11,8 @@ struct StickerLibraryView: View {
     @Environment(\.dismiss) private var dismiss
     @Query private var boards: [Board]
     @ObservedObject private var subscriptionManager = SubscriptionManager.shared
+    // @Observable singleton は @State で保持することで変更時の再レンダリングを保証する
+    @State private var adManager = AdManager.shared
     @State private var displayedStickers: [Sticker] = []
     @State private var totalCount: Int = 0
     @State private var hasMorePages = true
@@ -283,9 +285,10 @@ struct StickerLibraryView: View {
                     }
                     .padding(.top, chunkIndex > 0 ? 14 : 0)
 
-                    // 最初の 12 枚チャンクの後のみ広告を表示（同一広告の重複インプレッション防止）
-                    if showAds && chunk.count == adPerChunk && chunkIndex == 0 {
-                        NativeAdCard().padding(.top, 14)
+                    // 最初のチャンク後のみ広告を表示（同一広告の重複インプレッション防止）
+                    // adManager を @State で保持することで nativeAd 変更時に自動再レンダリング
+                    if showAds, chunkIndex == 0, let nativeAd = adManager.nativeAd {
+                        NativeAdCard(nativeAd: nativeAd).padding(.top, 14)
                     }
                 }
             }

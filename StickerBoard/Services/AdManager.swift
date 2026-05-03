@@ -33,9 +33,14 @@ final class AdManager {
         interstitialDelegate = AdInterstitialDelegate { [weak self] in
             self?.preloadInterstitial()
         }
-        nativeAdDelegate = AdNativeDelegate { [weak self] ad in
-            self?.nativeAd = ad
-        }
+        nativeAdDelegate = AdNativeDelegate(
+            onReceive: { [weak self] ad in
+                self?.nativeAd = ad
+            },
+            onError: { [weak self] error in
+                self?.logger.error("Native ad load failed: \(error)")
+            }
+        )
     }
 
     // MARK: - Public API
@@ -134,11 +139,18 @@ private final class AdInterstitialDelegate: NSObject, GADFullScreenContentDelega
 
 private final class AdNativeDelegate: NSObject, GADNativeAdLoaderDelegate, @unchecked Sendable {
     private let onReceive: (GADNativeAd) -> Void
-    init(onReceive: @escaping (GADNativeAd) -> Void) { self.onReceive = onReceive }
+    private let onError: (Error) -> Void
+
+    init(onReceive: @escaping (GADNativeAd) -> Void, onError: @escaping (Error) -> Void) {
+        self.onReceive = onReceive
+        self.onError = onError
+    }
 
     func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADNativeAd) {
         Task { @MainActor in self.onReceive(nativeAd) }
     }
 
-    func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: Error) {}
+    func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: Error) {
+        Task { @MainActor in self.onError(error) }
+    }
 }
