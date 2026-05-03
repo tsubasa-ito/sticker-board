@@ -35,7 +35,6 @@ final class AdManager {
         }
         nativeAdDelegate = AdNativeDelegate(
             onReceive: { [weak self] ad in
-                self?.logger.info("Native ad received: \(ad.headline ?? "-")")
                 self?.nativeAd = ad
             },
             onError: { [weak self] error in
@@ -47,12 +46,7 @@ final class AdManager {
     // MARK: - Public API
 
     func preloadAll() {
-        let isPro = SubscriptionManager.shared.isProUser
-        logger.info("preloadAll: called, isProUser=\(isPro)")
-        guard !isPro else {
-            logger.info("preloadAll: skipped (Pro user)")
-            return
-        }
+        guard !SubscriptionManager.shared.isProUser else { return }
         // ATT 許可が確定してから SDK を初期化することで IDFA を適切に取得する
         GADMobileAds.sharedInstance().start()
         preloadInterstitial()
@@ -97,7 +91,6 @@ final class AdManager {
 
     func preloadNativeAd() {
         guard !SubscriptionManager.shared.isProUser else { return }
-        logger.info("preloadNativeAd called")
         adLoader = GADAdLoader(
             adUnitID: AdUnitID.native,
             rootViewController: nil,
