@@ -17,12 +17,12 @@
 StickerBoard/
 ├── App/          # エントリーポイント（MainTabView）、カラーテーマ、外部URL定数
 ├── Models/       # SwiftData モデル（Sticker, Board, StickerPlacement, BackgroundPattern, StickerFilter, StickerBorder, SubscriptionProduct）+ ExchangeMessage（MultipeerConnectivity転送用Codableモデル）
-├── Services/     # BackgroundRemover, MaskCompositor, ImageStorage, BackgroundImageStorage, ImageCacheManager, StickerFilterService, StickerBorderService, SubscriptionManager, MotionManager, AppUpdateChecker, WidgetDataSyncService, ReviewRequestManager, MultipeerConnectivityManager, BoardShareService
+├── Services/     # BackgroundRemover, MaskCompositor, ImageStorage, BackgroundImageStorage, ImageCacheManager, StickerFilterService, StickerBorderService, SubscriptionManager, MotionManager, AppUpdateChecker, WidgetDataSyncService, ReviewRequestManager, MultipeerConnectivityManager, BoardShareService, AdManager
 └── Views/        # SwiftUI画面
     ├── Home/     # MainTabView（タブナビゲーション）、HomeView（ボード一覧カルーセル）
     ├── Onboarding/ # 初回起動オンボーディング（3ページガイド）
     ├── Capture/  # シール撮影・切り抜きフロー・マスク手動編集
-    ├── Library/  # シールライブラリ
+    ├── Library/  # シールライブラリ（StickerLibraryView, NativeAdCard）
     ├── Paywall/  # ペイウォール（Pro課金導線）
     ├── Settings/ # 設定画面（サブスクリプション管理）
     ├── Exchange/ # β版シール交換（MultipeerConnectivity P2P）
@@ -124,4 +124,5 @@ open StickerBoard.xcodeproj
 - Firebase Crashlytics: `StickerBoardApp.init()` の先頭で `FirebaseApp.configure()` を呼び出してクラッシュ検知を初期化。`GoogleService-Info.plist` はFirebaseコンソールからダウンロードして `StickerBoard/` 直下に配置する（.gitignore で除外）。Privacy Manifest（`StickerBoard/PrivacyInfo.xcprivacy`）にクラッシュデータ・パフォーマンスデータ・デバイスIDの申告を記載済み。Claude Code から MCP 経由でクラッシュ分析する方法は `docs/MCP_CRASHLYTICS.md` を参照
 - BoardShareService（`@MainActor enum`）はボードのSNSシェア機能を提供。`presentShareSheet()` は `async` で、`Task.detached { await MainActor.run { ImageRenderer(...); renderer.scale = ...; return renderer.uiImage } }` パターンでレンダリングをメインスレッドのブロックなしに実行する。`saveBoardAsImage()` も同パターン。呼び出し元（`share()` メソッド）は同期のままで内部で `Task { await presentShareSheet() }` を起動する設計
 - MultipeerConnectivity（β版シール交換）: `MultipeerConnectivityManager` が `@MainActor @Observable` シングルトンで MCSession / MCNearbyServiceAdvertiser / MCNearbyServiceBrowser を管理。`ExchangeMessage`（Codable）で画像データを転送し、受信後に `ImageStorage.save()` → SwiftData insert でライブラリに追加。`project.yml` に `NSLocalNetworkUsageDescription` と `NSBonjourServices`（`_stickerboard._tcp`, `_stickerboard._udp`）を追加済み。受信データのバリデーション: JSONペイロード上限 = maxImageDataSize×2（base64オーバーヘッド考慮）、展開後画像サイズ上限 = 10MB の二段階。Settings画面の「β機能」セクションからアクセス可能
+- AdManager（`@Observable @MainActor` シングルトン）が広告表示を一元管理。Pro ユーザーには一切広告を表示しない。`preloadAll()` は ATT 許可確定後に `GADMobileAds.sharedInstance().start()` を呼び出してから広告をプリロードする（StickerBoardApp の `.task` とオンボーディング完了コールバックから呼び出し）。ネイティブ広告（`GADNativeAd`）はシールライブラリグリッドの先頭チャンク後に `NativeAdCard` として挿入。インタースティシャルはエクスポート・写真保存の累計3回ごとに `recordExportAndShowIfNeeded()` で表示。`StickerLibraryView` では `@State private var adManager = AdManager.shared` で保持し（`@Observable` singleton 直接参照は SwiftUI 再レンダリングが発火しない）、`let loadedNativeAd = adManager.nativeAd` を `LazyVStack` 外で参照してオブザベーションを登録する設計。広告ユニット ID は `AdManager.AdUnitID` enum で管理（本番 ID は AdMob コンソールから取得済み）
 - UnplacedStickerReminderService（Sendable シングルトン）が未配置シールのリマインダー通知を管理。未配置シール検出は `detectUnplaced(stickers:boards:)` の純粋ロジック（全 Board の placements.imageFileName に含まれない Sticker を抽出）。毎週土曜 10:00 に `UNCalendarNotificationTrigger(repeats: true)` でスケジュール。通知には `UNNotificationAttachment` でサムネイル画像を添付。通知デリゲートは `NotificationDelegate`（`UIApplicationDelegateAdaptor` 経由）が担い、タップ時に `Notification.Name.openStickerDeepLink` を投稿して `deepLinkStickerId` をセット。Settings画面の「通知」セクションのトグルで ON/OFF 可能。リスケジュールのタイミング: アプリ起動時（StickerBoardApp.body.task）、シール保存後（MainTabView.onStickerSaved）、ボードエディタ内シール保存後（BoardEditorView.onStickerSaved）。`rescheduleIfNeeded(context:defaults:)` は `isEnabled = false` の場合 `cancelNotification()` を呼んで保留通知を削除してから早期リターンする（起動時の残存通知を確実にクリア）。SwiftData フェッチ失敗・通知登録失敗は `Logger(category: "ReminderService")` で `error` レベルログを出力（OSLog）。StickerLibraryView の `highlightStickerId: Binding<UUID?>` でプレビュー表示後に自動 nil リセット
