@@ -276,6 +276,9 @@ struct StickerLibraryView: View {
                 Array(displayedStickers[$0..<min($0 + adPerChunk, displayedStickers.count)])
             }
             let showAds = !isPicking && !subscriptionManager.isProUser
+            // LazyVStack/ForEach 内の closure では @Observable の変更が SwiftUI に伝播しない場合があるため、
+            // LazyVStack の外側（@ViewBuilder の評価時）で adManager.nativeAd を参照してオブザベーションを登録する
+            let loadedNativeAd = adManager.nativeAd
 
             LazyVStack(spacing: 0) {
                 ForEach(Array(chunks.enumerated()), id: \.offset) { chunkIndex, chunk in
@@ -286,8 +289,7 @@ struct StickerLibraryView: View {
                     .padding(.top, chunkIndex > 0 ? 14 : 0)
 
                     // 最初のチャンク後のみ広告を表示（同一広告の重複インプレッション防止）
-                    // adManager を @State で保持することで nativeAd 変更時に自動再レンダリング
-                    if showAds, chunkIndex == 0, let nativeAd = adManager.nativeAd {
+                    if showAds, chunkIndex == 0, let nativeAd = loadedNativeAd {
                         NativeAdCard(nativeAd: nativeAd).padding(.top, 14)
                     }
                 }

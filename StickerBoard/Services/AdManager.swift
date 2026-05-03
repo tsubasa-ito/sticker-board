@@ -35,6 +35,7 @@ final class AdManager {
         }
         nativeAdDelegate = AdNativeDelegate(
             onReceive: { [weak self] ad in
+                self?.logger.info("Native ad received: \(ad.headline ?? "-")")
                 self?.nativeAd = ad
             },
             onError: { [weak self] error in
@@ -91,6 +92,7 @@ final class AdManager {
 
     func preloadNativeAd() {
         guard !SubscriptionManager.shared.isProUser else { return }
+        logger.info("preloadNativeAd called")
         adLoader = GADAdLoader(
             adUnitID: AdUnitID.native,
             rootViewController: nil,
