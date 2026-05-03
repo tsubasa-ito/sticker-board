@@ -42,6 +42,8 @@ final class AdManager {
 
     func preloadAll() {
         guard !SubscriptionManager.shared.isProUser else { return }
+        // ATT 許可が確定してから SDK を初期化することで IDFA を適切に取得する
+        GADMobileAds.sharedInstance().start()
         preloadInterstitial()
         preloadNativeAd()
     }

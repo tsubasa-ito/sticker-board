@@ -10,6 +10,7 @@ struct StickerLibraryView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Query private var boards: [Board]
+    @ObservedObject private var subscriptionManager = SubscriptionManager.shared
     @State private var displayedStickers: [Sticker] = []
     @State private var totalCount: Int = 0
     @State private var hasMorePages = true
@@ -272,7 +273,7 @@ struct StickerLibraryView: View {
             let chunks: [[Sticker]] = stride(from: 0, to: displayedStickers.count, by: adPerChunk).map {
                 Array(displayedStickers[$0..<min($0 + adPerChunk, displayedStickers.count)])
             }
-            let showAds = !isPicking && !SubscriptionManager.shared.isProUser
+            let showAds = !isPicking && !subscriptionManager.isProUser
 
             LazyVStack(spacing: 0) {
                 ForEach(Array(chunks.enumerated()), id: \.offset) { chunkIndex, chunk in
@@ -282,8 +283,8 @@ struct StickerLibraryView: View {
                     }
                     .padding(.top, chunkIndex > 0 ? 14 : 0)
 
-                    // 12 枚ちょうどのチャンクの後のみ広告を表示（最後の不完全チャンクには出さない）
-                    if showAds && chunk.count == adPerChunk {
+                    // 最初の 12 枚チャンクの後のみ広告を表示（同一広告の重複インプレッション防止）
+                    if showAds && chunk.count == adPerChunk && chunkIndex == 0 {
                         NativeAdCard().padding(.top, 14)
                     }
                 }

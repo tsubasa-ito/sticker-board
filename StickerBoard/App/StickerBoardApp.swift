@@ -46,8 +46,7 @@ struct StickerBoardApp: App {
             #endif
         }
 
-        // Google Mobile Ads SDK 初期化
-        GADMobileAds.sharedInstance().start()
+        // Google Mobile Ads SDK 初期化は ATT 許可後に AdManager.preloadAll() から呼ぶ
 
         let container: ModelContainer
         do {
