@@ -82,6 +82,11 @@ enum BoardShareService {
             popover.permittedArrowDirections = []
         }
 
+        // 共有完了後にインタースティシャル広告を表示（#260）
+        activityVC.completionWithItemsHandler = { _, completed, _, _ in
+            guard completed else { return }
+            Task { @MainActor in AdManager.shared.recordExportAndShowIfNeeded() }
+        }
         topVC.present(activityVC, animated: true)
     }
 

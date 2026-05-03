@@ -15,6 +15,9 @@ packages:
   FirebaseiOSSDK:
     url: https://github.com/firebase/firebase-ios-sdk
     from: "12.12.1"
+  GoogleMobileAds:
+    url: https://github.com/googleads/swift-package-manager-google-mobile-ads
+    from: "11.0.0"
 
 settings:
   base:
@@ -47,6 +50,8 @@ targets:
         NSPhotoLibraryUsageDescription: "シールにする写真を選択するためにフォトライブラリへのアクセスが必要です"
         NSCameraUsageDescription: "シールにする写真を撮影するためにカメラへのアクセスが必要です"
         NSPhotoLibraryAddUsageDescription: "ボードを画像として写真に保存するためにフォトライブラリへのアクセスが必要です"
+        NSUserTrackingUsageDescription: "広告をあなたの興味に合わせてパーソナライズするために使用します"
+        GADApplicationIdentifier: "ca-app-pub-3940256099942544~1458002511"
         UILaunchScreen: {}
         ITSAppUsesNonExemptEncryption: false
         LSApplicationCategoryType: "public.app-category.lifestyle"
@@ -73,6 +78,8 @@ targets:
         embed: true
       - package: FirebaseiOSSDK
         product: FirebaseCrashlytics
+      - package: GoogleMobileAds
+        product: GoogleMobileAds
     postBuildScripts:
       - script: |
           if [ -f "${SRCROOT}/StickerBoard/GoogleService-Info.plist" ]; then

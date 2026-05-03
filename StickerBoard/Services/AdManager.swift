@@ -1,0 +1,142 @@
+import AppTrackingTransparency
+import GoogleMobileAds
+import OSLog
+import UIKit
+
+// MARK: - AdManager
+
+/// 広告表示を一元管理するシングルトン。Pro ユーザーには一切広告を表示しない。
+@Observable
+@MainActor
+final class AdManager {
+    static let shared: AdManager = {
+        let manager = AdManager()
+        manager.setupDelegates()
+        return manager
+    }()
+
+    /// グリッドに挿入するネイティブ広告（ロード完了後に非 nil になる）
+    private(set) var nativeAd: GADNativeAd?
+
+    @ObservationIgnored private var interstitialAd: GADInterstitialAd?
+    @ObservationIgnored private var adLoader: GADAdLoader?
+    @ObservationIgnored private var exportActionCount = 0
+    @ObservationIgnored private var interstitialDelegate: AdInterstitialDelegate!
+    @ObservationIgnored private var nativeAdDelegate: AdNativeDelegate!
+
+    private static let showInterval = 3
+    private let logger = Logger(subsystem: "com.tebasaki.StickerBoard", category: "AdManager")
+
+    private init() {}
+
+    private func setupDelegates() {
+        interstitialDelegate = AdInterstitialDelegate { [weak self] in
+            self?.preloadInterstitial()
+        }
+        nativeAdDelegate = AdNativeDelegate { [weak self] ad in
+            self?.nativeAd = ad
+        }
+    }
+
+    // MARK: - Public API
+
+    func preloadAll() {
+        guard !SubscriptionManager.shared.isProUser else { return }
+        preloadInterstitial()
+        preloadNativeAd()
+    }
+
+    /// ATT 許可ダイアログを初回のみ表示する（オンボーディング完了後に呼ぶ）
+    func requestTrackingPermissionIfNeeded() async {
+        let key = "hasRequestedATT"
+        guard !UserDefaults.standard.bool(forKey: key) else { return }
+        UserDefaults.standard.set(true, forKey: key)
+        _ = await ATTrackingManager.requestTrackingAuthorization()
+    }
+
+    /// エクスポート or 写真保存が 1 回完了するたびに呼ぶ。
+    /// 累計 showInterval 回ごとにインタースティシャルを表示する。
+    func recordExportAndShowIfNeeded() {
+        guard !SubscriptionManager.shared.isProUser else { return }
+        exportActionCount += 1
+        guard exportActionCount % Self.showInterval == 0 else { return }
+        showInterstitial()
+    }
+
+    // MARK: - Preload
+
+    func preloadInterstitial() {
+        guard !SubscriptionManager.shared.isProUser else { return }
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            do {
+                let ad = try await GADInterstitialAd.load(
+                    withAdUnitID: AdUnitID.interstitial,
+                    request: GADRequest()
+                )
+                ad.fullScreenContentDelegate = self.interstitialDelegate
+                self.interstitialAd = ad
+            } catch {
+                self.logger.error("Interstitial load failed: \(error)")
+            }
+        }
+    }
+
+    func preloadNativeAd() {
+        guard !SubscriptionManager.shared.isProUser else { return }
+        adLoader = GADAdLoader(
+            adUnitID: AdUnitID.native,
+            rootViewController: nil,
+            adTypes: [.native],
+            options: nil
+        )
+        adLoader?.delegate = nativeAdDelegate
+        adLoader?.load(GADRequest())
+    }
+
+    // MARK: - Private
+
+    private func showInterstitial() {
+        guard let ad = interstitialAd,
+              let scene = UIApplication.shared.connectedScenes
+                  .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
+              let rootVC = scene.windows.first(where: \.isKeyWindow)?.rootViewController
+        else { return }
+        var topVC = rootVC
+        while let presented = topVC.presentedViewController { topVC = presented }
+        ad.present(fromRootViewController: topVC)
+        interstitialAd = nil
+    }
+}
+
+// MARK: - Ad Unit IDs
+
+private extension AdManager {
+    enum AdUnitID {
+        // TODO: App Store 提出前に AdMob コンソールの本番 ID に差し替えること
+        static let interstitial = "ca-app-pub-3940256099942544/4411468910"
+        static let native = "ca-app-pub-3940256099942544/3986624511"
+    }
+}
+
+// MARK: - Delegate Helpers
+
+private final class AdInterstitialDelegate: NSObject, GADFullScreenContentDelegate, @unchecked Sendable {
+    private let onDismiss: () -> Void
+    init(onDismiss: @escaping () -> Void) { self.onDismiss = onDismiss }
+
+    func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+        Task { @MainActor in self.onDismiss() }
+    }
+}
+
+private final class AdNativeDelegate: NSObject, GADNativeAdLoaderDelegate, @unchecked Sendable {
+    private let onReceive: (GADNativeAd) -> Void
+    init(onReceive: @escaping (GADNativeAd) -> Void) { self.onReceive = onReceive }
+
+    func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADNativeAd) {
+        Task { @MainActor in self.onReceive(nativeAd) }
+    }
+
+    func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: Error) {}
+}

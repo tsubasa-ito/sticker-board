@@ -12,9 +12,11 @@
 		08ADD0896E6540848CAB00C7 /* AppURLs.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8B7F0F5A52456C43D5F45E /* AppURLs.swift */; };
 		0AB95DB882B4D5509D6E229E /* OnboardingAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C772005BADEC8B242A0A39E8 /* OnboardingAccessibilityTests.swift */; };
 		10EB9C33B64B186C1DA9B7AC /* StickerFilterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44F094F53D9CC5028477F0F /* StickerFilterService.swift */; };
+		177F476944E741FA5581B3F5 /* AdManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD283257FAE24DB47C1A31B0 /* AdManager.swift */; };
 		17F2CCB19526F58F4BCC6D04 /* OnboardingPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24DB2CADF1571137158B612F /* OnboardingPageView.swift */; };
 		1A6D5B570ED5466E73AD8176 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32104833845A2ADD7C14A5F8 /* Board.swift */; };
 		1B9FD0643BE0A4621A5CFEEF /* SharedBoardMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27912520AF159D0D12135A2C /* SharedBoardMetadata.swift */; };
+		1D6DC7533997985BBF4CB76D /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = F10C42E0E6C50CAB03CC893B /* GoogleMobileAds */; };
 		1E97A5A5CAE9D4FBC8421696 /* BoardEditorUndoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC4DAF0371E295F74BAD946 /* BoardEditorUndoTests.swift */; };
 		1EA00AE13C24C07F0760CC5B /* StickerFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3FC7C093763688E6344217F /* StickerFilter.swift */; };
 		239BFA049BCEBDA3E5B04875 /* WidgetModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C89501ABCC774418176436 /* WidgetModelsTests.swift */; };
@@ -94,6 +96,7 @@
 		C4460E2AC4B0A01446BD3666 /* StickerLibraryAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6E414C38C81FDD95EBC2EE /* StickerLibraryAccessibilityTests.swift */; };
 		C872359F958D4BC34AB71FDB /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = D88D0DB2BBA3A6003D7B42C5 /* Localizable.xcstrings */; };
 		C98D76F680578FBA369FBE52 /* AccessibilityRuleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDF2A8C549FCAF35D5DD828 /* AccessibilityRuleTests.swift */; };
+		C9BD7806252FFA6680B10E56 /* NativeAdCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91427A0F32409B0DFC58A10F /* NativeAdCard.swift */; };
 		CB5CDB350C326919C148B630 /* SubscriptionProduct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285EEB7B80609E9E695A678B /* SubscriptionProduct.swift */; };
 		CD7F900D42AEFF5E5C1C652F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F297348DD96E3A76B8648C82 /* SettingsView.swift */; };
 		CEE293526AD847B540BF5EC7 /* BoardListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C5DFE900836F1D943C5CFB /* BoardListView.swift */; };
@@ -222,6 +225,7 @@
 		8391189EB4CBD1967797D83E /* BoardEditorZoomTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEditorZoomTests.swift; sourceTree = "<group>"; };
 		89EABB485711FDF3057EB771 /* BoardEditorInlineLibraryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEditorInlineLibraryTests.swift; sourceTree = "<group>"; };
 		8CA42CC44A656C4DE5FDD444 /* BackgroundImageStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundImageStorage.swift; sourceTree = "<group>"; };
+		91427A0F32409B0DFC58A10F /* NativeAdCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeAdCard.swift; sourceTree = "<group>"; };
 		97AF12BF2EFB04266319388A /* FirebaseCrashlyticsSetupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseCrashlyticsSetupTests.swift; sourceTree = "<group>"; };
 		98F3C1F87DFC6BE33492062C /* StickerBoard.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = StickerBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B695157C87669CCB70690F4 /* StickerBoardTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = StickerBoardTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -232,6 +236,7 @@
 		A3FC7C093763688E6344217F /* StickerFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerFilter.swift; sourceTree = "<group>"; };
 		A79F18B6EE07305097CF4B9E /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		ABCD1438794D34A642F45B93 /* StickerBorderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerBorderService.swift; sourceTree = "<group>"; };
+		AD283257FAE24DB47C1A31B0 /* AdManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdManager.swift; sourceTree = "<group>"; };
 		AFDF2A8C549FCAF35D5DD828 /* AccessibilityRuleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityRuleTests.swift; sourceTree = "<group>"; };
 		B03A91B141329E13EDBEAE9A /* StickerPlacementTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerPlacementTests.swift; sourceTree = "<group>"; };
 		B201CDCE2F666FBBD15D4F72 /* CaptureGuideTipsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureGuideTipsView.swift; sourceTree = "<group>"; };
@@ -283,6 +288,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3730FADF312F90DA57192388 /* FirebaseCrashlytics in Frameworks */,
+				1D6DC7533997985BBF4CB76D /* GoogleMobileAds in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -293,6 +299,7 @@
 			isa = PBXGroup;
 			children = (
 				3834BB169411132599770224 /* HolographicEffectModifier.swift */,
+				91427A0F32409B0DFC58A10F /* NativeAdCard.swift */,
 				DF89F309D9AC84739E116281 /* StickerLibraryView.swift */,
 			);
 			path = Library;
@@ -410,6 +417,7 @@
 		9942628F63D59859340644CA /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				AD283257FAE24DB47C1A31B0 /* AdManager.swift */,
 				BCBDA121148C553378F3C860 /* AppUpdateChecker.swift */,
 				8CA42CC44A656C4DE5FDD444 /* BackgroundImageStorage.swift */,
 				E5D9FFAB2F480D8D2327E386 /* BackgroundRemover.swift */,
@@ -587,6 +595,7 @@
 			name = StickerBoard;
 			packageProductDependencies = (
 				A31113F8EC8EE2854EDFEF78 /* FirebaseCrashlytics */,
+				F10C42E0E6C50CAB03CC893B /* GoogleMobileAds */,
 			);
 			productName = StickerBoard;
 			productReference = 98F3C1F87DFC6BE33492062C /* StickerBoard.app */;
@@ -656,6 +665,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				71552BC30DDD3B76097B0A3C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				594F95C96FD81352EB4ED9F6 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 82217834547736AB42A4F71C /* Products */;
@@ -711,6 +721,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				177F476944E741FA5581B3F5 /* AdManager.swift in Sources */,
 				E2D14D4429193D3C436BA5D2 /* AppTheme.swift in Sources */,
 				08ADD0896E6540848CAB00C7 /* AppURLs.swift in Sources */,
 				25745C4F441381F490112536 /* AppUpdateChecker.swift in Sources */,
@@ -739,6 +750,7 @@
 				73FA13E3158C1F1BDACB6C08 /* MotionManager.swift in Sources */,
 				8834A7A836ECA4320FA81370 /* MultiStickerSelectionView.swift in Sources */,
 				C15AD91380FD7AF94B202969 /* MultipeerConnectivityManager.swift in Sources */,
+				C9BD7806252FFA6680B10E56 /* NativeAdCard.swift in Sources */,
 				62899C4D692BD195F7F0A16B /* OnboardingPageIndicator.swift in Sources */,
 				17F2CCB19526F58F4BCC6D04 /* OnboardingPageView.swift in Sources */,
 				EC5591236152676EACAFE16E /* OnboardingView.swift in Sources */,
@@ -1134,6 +1146,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		594F95C96FD81352EB4ED9F6 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.0.0;
+			};
+		};
 		71552BC30DDD3B76097B0A3C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -1149,6 +1169,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 71552BC30DDD3B76097B0A3C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseCrashlytics;
+		};
+		F10C42E0E6C50CAB03CC893B /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 594F95C96FD81352EB4ED9F6 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
