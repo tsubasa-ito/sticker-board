@@ -47,7 +47,12 @@ final class AdManager {
     // MARK: - Public API
 
     func preloadAll() {
-        guard !SubscriptionManager.shared.isProUser else { return }
+        let isPro = SubscriptionManager.shared.isProUser
+        logger.info("preloadAll: called, isProUser=\(isPro)")
+        guard !isPro else {
+            logger.info("preloadAll: skipped (Pro user)")
+            return
+        }
         // ATT 許可が確定してから SDK を初期化することで IDFA を適切に取得する
         GADMobileAds.sharedInstance().start()
         preloadInterstitial()
