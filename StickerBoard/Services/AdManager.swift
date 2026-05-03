@@ -127,7 +127,7 @@ final class AdManager {
 
 private extension AdManager {
     enum AdUnitID {
-        static let interstitial = "ca-app-pub-3940256099942544/4411468910"  // TODO: 本番インタースティシャルIDに差し替えること
+        static let interstitial = "ca-app-pub-6267199278067658/5226451726"
         static let native = "ca-app-pub-6267199278067658/3000803125"
     }
 }
