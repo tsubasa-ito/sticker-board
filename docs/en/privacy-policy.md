@@ -1,6 +1,6 @@
 # StickerBoard Privacy Policy
 
-Last updated: April 27, 2026
+Last updated: May 3, 2026
 
 ## Introduction
 
@@ -10,7 +10,10 @@ StickerBoard (hereinafter "the App") respects user privacy to the fullest extent
 
 **The App does not collect or transmit users' personal information.**
 
-All data such as stickers and boards created by users is stored solely on the device. However, crash reports (error logs generated when a crash occurs) may be automatically transmitted for the purpose of improving app quality (see the "Crash Reports" section for details).
+All data such as stickers and boards created by users is stored solely on the device. However, data may be transmitted externally for the following purposes:
+
+- **Crash reporting**: Crash reports (error logs generated when a crash occurs) may be automatically transmitted to improve app quality (see the "Crash Reports" section for details)
+- **Advertising**: If you are using the free plan, advertising identifiers and related data may be collected for ad delivery (see the "Advertising" section for details)
 
 ## Information We Do Not Collect
 
@@ -18,9 +21,9 @@ The App does **not** collect the following information:
 
 - Personal information such as name or email address
 - Location information
-- Device identifiers (e.g., IDFA)
 - Usage analytics data
-- Advertising-related data
+
+Note: Third-party services (Google AdMob) may collect device identifiers and advertising-related data for ad delivery purposes (see the "Advertising" section for details).
 
 ## Data Stored on Device
 
@@ -87,6 +90,19 @@ The App's sticker exchange feature (beta) requests access to the local network t
 - **When used**: Only when the sticker exchange screen is opened from "Beta Features" in Settings
 - **Revoking permission**: Local network access can be disabled at any time in iOS Settings > StickerBoard
 
+## Advertising
+
+The App uses Google AdMob to display ads to users on the free plan.
+
+- **Who sees ads**: Free plan users only. Upgrading to the Pro plan removes all ads
+- **Service used**: Google AdMob (Google LLC)
+- **Information collected**: Device information, advertising identifier (IDFA), and app usage data may be collected for ad delivery and optimization
+- **Tracking consent**: An App Tracking Transparency (ATT) permission dialog is displayed on first launch. If you decline, non-personalized ads will be shown instead
+- **Data destination**: Servers operated by Google LLC (United States)
+- **Opt-out**: You can disable ad tracking by going to iOS Settings > Privacy & Security > Tracking > turning off "StickerBoard"
+
+For Google AdMob's privacy policy, please see [Google Privacy Policy](https://policies.google.com/privacy).
+
 ## Subscriptions (In-App Purchases)
 
 Pro Plan subscription purchases are processed through Apple's App Store.
@@ -114,8 +130,9 @@ The App uses the following third-party services:
 
 - **Apple StoreKit**: Used for subscription management. Apple's privacy policy applies.
 - **Google Firebase Crashlytics**: Used for crash reporting. Google's privacy policy applies.
+- **Google AdMob**: Used for ad delivery to free plan users. Google's privacy policy applies.
 
-The App does **not** use advertising SDKs or analytics tools.
+The App does **not** use analytics tools.
 
 ## Data Sharing with Widget
 
