@@ -102,7 +102,7 @@ final class AdManager {
         guard let ad = interstitialAd,
               let scene = UIApplication.shared.connectedScenes
                   .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
-              let rootVC = scene.windows.first(where: \.isKeyWindow)?.rootViewController
+              let rootVC = scene.keyWindow?.rootViewController
         else { return }
         var topVC = rootVC
         while let presented = topVC.presentedViewController { topVC = presented }
