@@ -575,7 +575,26 @@ struct StickerLibraryView: View {
         selectedStickerIds = []
         isSelectionMode = false
 
-        WidgetDataSyncService.reloadWidgetTimelines()
+        // 影響ボードの stickerCount を更新してウィジェットメタデータ JSON を書き換える
+        if let metaURL = WidgetDataSyncService.metadataURL,
+           var allMetadata = try? WidgetDataSyncService.readMetadataJSON(from: metaURL) {
+            for i in allMetadata.indices {
+                if let board = boards.first(where: { $0.id.uuidString == allMetadata[i].id }) {
+                    allMetadata[i] = SharedBoardMetadata(
+                        id: allMetadata[i].id,
+                        title: allMetadata[i].title,
+                        stickerCount: board.placements.count,
+                        updatedAt: board.updatedAt,
+                        snapshotFileName: allMetadata[i].snapshotFileName,
+                        largeSnapshotFileName: allMetadata[i].largeSnapshotFileName,
+                        smallSnapshotFileName: allMetadata[i].smallSnapshotFileName
+                    )
+                }
+            }
+            WidgetDataSyncService.syncAllMetadata(allMetadata)
+        } else {
+            WidgetDataSyncService.reloadWidgetTimelines()
+        }
 
         if hasError { showDeleteError = true }
     }
