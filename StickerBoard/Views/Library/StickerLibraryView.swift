@@ -40,6 +40,8 @@ struct StickerLibraryView: View {
     var onStickerPicked: ((Sticker) -> Void)? = nil
     /// 通知ディープリンク経由で開いた際にプレビュー表示するシールID（消費後に nil リセットされる）
     var highlightStickerId: Binding<UUID?> = .constant(nil)
+    /// 選択モード中にカスタムタブバーを非表示にするバインディング
+    var hideTabBar: Binding<Bool> = .constant(false)
 
     private var isPicking: Bool { onStickerPicked != nil }
 
@@ -133,7 +135,11 @@ struct StickerLibraryView: View {
             }
             .navigationTitle(isPicking ? "シールを選択" : "ライブラリ")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar(isSelectionMode ? .hidden : .visible, for: .tabBar)
+            .onChange(of: isSelectionMode) { _, newValue in
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    hideTabBar.wrappedValue = newValue
+                }
+            }
             .toolbar {
                 if isPicking {
                     ToolbarItem(placement: .cancellationAction) {
@@ -169,33 +175,6 @@ struct StickerLibraryView: View {
                             selectedStickerIds = []
                         }
                         .accessibilityLabel("複数選択モードを開始")
-                    }
-                }
-                if isSelectionMode {
-                    ToolbarItemGroup(placement: .bottomBar) {
-                        Button {
-                            if selectedStickerIds.count == displayedStickers.count {
-                                selectedStickerIds = []
-                            } else {
-                                selectedStickerIds = Set(displayedStickers.map { $0.id })
-                            }
-                        } label: {
-                            Text(selectedStickerIds.count == displayedStickers.count ? "選択解除" : "すべて選択")
-                                .foregroundStyle(AppTheme.accent)
-                        }
-                        .accessibilityLabel(selectedStickerIds.count == displayedStickers.count ? "すべて選択解除" : "すべてのシールを選択")
-
-                        Spacer()
-
-                        Button {
-                            guard !selectedStickerIds.isEmpty else { return }
-                            showBulkDeleteConfirm = true
-                        } label: {
-                            Text(selectedStickerIds.isEmpty ? "削除" : "\(selectedStickerIds.count)枚を削除")
-                                .foregroundStyle(selectedStickerIds.isEmpty ? AppTheme.textSecondary : Color.red)
-                        }
-                        .disabled(selectedStickerIds.isEmpty)
-                        .accessibilityLabel(selectedStickerIds.isEmpty ? "削除（未選択）" : "\(selectedStickerIds.count)枚のシールを削除")
                     }
                 }
             }
@@ -386,7 +365,46 @@ struct StickerLibraryView: View {
             }
             .padding(20)
         }
-        .safeAreaPadding(.bottom, 80)
+        .safeAreaPadding(.bottom, isSelectionMode ? 0 : 80)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if isSelectionMode { selectionModeToolbar }
+        }
+    }
+
+    // MARK: - 選択モードツールバー
+
+    private var selectionModeToolbar: some View {
+        HStack {
+            Button {
+                if selectedStickerIds.count == displayedStickers.count {
+                    selectedStickerIds = []
+                } else {
+                    selectedStickerIds = Set(displayedStickers.map { $0.id })
+                }
+            } label: {
+                Text(selectedStickerIds.count == displayedStickers.count ? "選択解除" : "すべて選択")
+                    .font(.system(size: 15, weight: .medium, design: .rounded))
+                    .foregroundStyle(AppTheme.accent)
+            }
+            .accessibilityLabel(selectedStickerIds.count == displayedStickers.count ? "すべて選択解除" : "すべてのシールを選択")
+
+            Spacer()
+
+            Button {
+                guard !selectedStickerIds.isEmpty else { return }
+                showBulkDeleteConfirm = true
+            } label: {
+                Text(selectedStickerIds.isEmpty ? "削除" : "\(selectedStickerIds.count)枚を削除")
+                    .font(.system(size: 15, weight: .medium, design: .rounded))
+                    .foregroundStyle(selectedStickerIds.isEmpty ? AppTheme.textSecondary : Color.red)
+            }
+            .disabled(selectedStickerIds.isEmpty)
+            .accessibilityLabel(selectedStickerIds.isEmpty ? "削除（未選択）" : "\(selectedStickerIds.count)枚のシールを削除")
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 14)
+        .background(.ultraThinMaterial)
+        .overlay(alignment: .top) { Divider() }
     }
 
     // MARK: - シールセル（ピッカーモード対応）
