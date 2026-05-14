@@ -76,6 +76,7 @@ open StickerBoard.xcodeproj
 - StickerPlacement に imageFileName を直接保持する設計（SwiftDataのID問題回避のため）
 - Board の backgroundPatternData も placements と同様に Codable struct を JSON シリアライズして Data? に格納する設計
 - BackgroundRemover は入力画像の EXIF 向きを正規化し、長辺2048pxにリサイズする（cgImage とマスクの整合性確保 + メモリ最適化）
+- StickerCaptureView の `loadImage(from:)` は `PhotosPickerItem.loadTransferable(type: Data.self)` を `do/catch` で呼び出し、読み込み失敗時にユーザー向けエラーメッセージを表示する（`try?` による無音失敗は禁止。HEIF/JPEG 等の一部フォーマットで loadTransferable が nil を返す場合があるため Data 型で受け取り UIImage に変換する）
 - BackgroundRemover.processForCapture(from:) はキャプチャフロー専用の統合API。Vision を1回だけ呼び出し、被写体数に応じて `.singleSticker(BackgroundRemovalResult)` または `.multipleStickers([UIImage])` を返す `CaptureProcessingResult` enum に分岐する。StickerCaptureView.processImage() から呼び出す（旧 extractIndividualStickers + removeBackgroundWithMask の二段階呼び出しを廃止）
 - BackgroundRemover.removeBackgroundAtPoint(from:normalizedPoint:) は、VNInstanceMaskObservation の instanceMask ピクセルバッファからタップ位置のインスタンスIDを特定し、その被写体のみを切り抜く。StickerCaptureView で写真プレビューの長押しジェスチャーから呼び出される
 - フィルター（キラキラ・レトロ・パステル・ネオン・ぷっくり・ワッペン）は StickerPlacement の filterType に保存し、ボード配置単位で適用する設計（シール自体ではなく配置ごとにフィルターが異なる）
@@ -86,7 +87,7 @@ open StickerBoard.xcodeproj
 - ImageStorageError には encodingFailed / deletionFailed / loadFailed の3ケースあり。loadFailed は rotateAndOverwrite で対象ファイルが見つからない場合に投げる
 - StickerLibraryView は @Query ではなく FetchDescriptor + fetchLimit/fetchOffset によるページネーション（30枚ずつ無限スクロール）でシールを取得する設計（大量シール時のメモリ最適化）
 - StickerLibraryView はピッカーモード対応（`onStickerPicked: ((Sticker) -> Void)? = nil`）。nil 以外のとき、シールタップでコールバックを呼び出しプレビュー/コンテキストメニュー/グリッド先頭の「さらに追加」カードを非表示にする。空の状態で表示される「シールを追加する」ボタンは `onAddSticker` コールバックで制御（ピッカーモードでも有効）。BoardEditorView の「追加」ボタン → `.sheet(isPresented: $showingInlineLibrary)` でピッカーモードのライブラリをボトムシート表示し、選択後にシールをボード中央に配置して自動クローズする。シール0枚時に「シールを追加する」をタップするとライブラリを閉じて `StickerCaptureView` を表示し、保存後に `showingInlineLibrary = true` でライブラリを再表示する（`pendingOpenCapture` / `stickerSavedInCapture` フラグで SwiftUI の同一階層シート制約を回避）
-- StickerLibraryView は一括削除対応（`isSelectionMode: Bool`, `selectedStickerIds: Set<UUID>`）。ナビバー「選択」ボタンで選択モードに入り、各セルにチェックインジケーターを表示。フッターツールバーの「すべて選択/解除」「N枚を削除」で複数シールを一括削除できる。削除確認アラート後に `bulkDeleteStickers()` が ImageStorage + SwiftData を一括削除し `syncAllMetadata` でウィジェットのメタデータを更新する。ピッカーモード時（`isPicking == true`）は選択モードに入れない
+- StickerLibraryView は一括削除対応（`isSelectionMode: Bool`, `selectedStickerIds: Set<UUID>`）。ナビバー「選択」ボタンで選択モードに入り、各セルにチェックインジケーターを表示。フッターツールバー（`safeAreaInset(edge: .bottom)`）の「すべて選択/解除」「N枚を削除」で複数シールを一括削除できる。削除確認アラート後に `bulkDeleteStickers()` が ImageStorage + SwiftData を一括削除し `syncAllMetadata` でウィジェットのメタデータを更新する。ピッカーモード時（`isPicking == true`）は選択モードに入れない。選択モード中はカスタムフローティングタブバー（`MainTabView.floatingTabBar`）が `hideTabBar: Binding<Bool>` 経由で非表示になり、フッターツールバーが画面下部に正しく表示される（`onChange(of: isSelectionMode)` でバインディングを更新）
 - サムネイル表示（StickerThumbnailView, BoardStickerPreviewView）は ImageStorage.loadThumbnail() 経由で縮小画像を使用
 - 枠線（ボーダー）は StickerPlacement の borderWidthType / borderColorHex に保存し、フィルターと同様に配置単位で管理する設計
 - シールロックは StickerPlacement の isLocked: Bool = false に保存（旧データとの後方互換性: decodeIfPresent でデフォルト false）。ロック中はドラッグ・ピンチ・回転ジェスチャーおよび効果・枠線・前面・背面・削除ボタンを無効化。VoiceOver はロック/解除アクション + UIAccessibility.post アナウンス対応
