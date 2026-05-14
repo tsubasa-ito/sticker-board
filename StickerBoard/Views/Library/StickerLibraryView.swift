@@ -140,6 +140,9 @@ struct StickerLibraryView: View {
                     hideTabBar.wrappedValue = newValue
                 }
             }
+            .onChange(of: subscriptionManager.isProUser) { _, isProUser in
+                if isProUser { adManager.clearNativeAd() }
+            }
             .toolbar {
                 if isPicking {
                     ToolbarItem(placement: .cancellationAction) {
@@ -311,8 +314,9 @@ struct StickerLibraryView: View {
             }
             let showAds = !isPicking && !subscriptionManager.isProUser
             // LazyVStack/ForEach 内の closure では @Observable の変更が SwiftUI に伝播しない場合があるため、
-            // LazyVStack の外側（@ViewBuilder の評価時）で adManager.nativeAd を参照してオブザベーションを登録する
-            let loadedNativeAd = adManager.nativeAd
+            // LazyVStack の外側（@ViewBuilder の評価時）で adManager.nativeAd を参照してオブザベーションを登録する。
+            // Pro ユーザーは showAds=false なので nil を返してレイアウトスペースを確保しない
+            let loadedNativeAd = showAds ? adManager.nativeAd : nil
 
             LazyVStack(spacing: 0) {
                 ForEach(Array(chunks.enumerated()), id: \.offset) { chunkIndex, chunk in

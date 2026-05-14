@@ -89,6 +89,12 @@ final class AdManager {
         }
     }
 
+    /// Pro ユーザーになった際に保持中のネイティブ広告をクリアする
+    func clearNativeAd() {
+        guard SubscriptionManager.shared.isProUser else { return }
+        nativeAd = nil
+    }
+
     func preloadNativeAd() {
         guard !SubscriptionManager.shared.isProUser else { return }
         adLoader = GADAdLoader(

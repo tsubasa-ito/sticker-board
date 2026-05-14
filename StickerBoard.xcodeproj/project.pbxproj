@@ -78,6 +78,7 @@
 		A282C9579FE88F9AAA4AAB8E /* MultiStickerSelectionAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8707E62DE974CFCF4EBA7F /* MultiStickerSelectionAccessibilityTests.swift */; };
 		A2C99DBAA8B716918E186B09 /* WidgetDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B705C9966BB0F482903B62FE /* WidgetDataManager.swift */; };
 		A9092067911344E168B48A45 /* BoardShareService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C7D9DE578356B33FB1A231 /* BoardShareService.swift */; };
+		A9AD4A8F40E3B9FE76C55440 /* AdManagerProUserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8731E1ED0238650F97A2B017 /* AdManagerProUserTests.swift */; };
 		A9E174752B496F13389C1181 /* StickerPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6364161BD5EB2AA06CF6AE7D /* StickerPreviewView.swift */; };
 		AB29650858E35E4BAF42854B /* StickerLibraryBulkDeleteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309B59FE9E723D0987BA0EB7 /* StickerLibraryBulkDeleteTests.swift */; };
 		AF1C7EC7EF7362CD7ABA273B /* WidgetDataSyncServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 827CF4CCF758CF7D72CCC423 /* WidgetDataSyncServiceTests.swift */; };
@@ -225,6 +226,7 @@
 		827CF4CCF758CF7D72CCC423 /* WidgetDataSyncServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataSyncServiceTests.swift; sourceTree = "<group>"; };
 		829436B4B4B3D87B24B6F5D4 /* ReviewRequestManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewRequestManager.swift; sourceTree = "<group>"; };
 		8391189EB4CBD1967797D83E /* BoardEditorZoomTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEditorZoomTests.swift; sourceTree = "<group>"; };
+		8731E1ED0238650F97A2B017 /* AdManagerProUserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdManagerProUserTests.swift; sourceTree = "<group>"; };
 		89EABB485711FDF3057EB771 /* BoardEditorInlineLibraryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEditorInlineLibraryTests.swift; sourceTree = "<group>"; };
 		8CA42CC44A656C4DE5FDD444 /* BackgroundImageStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundImageStorage.swift; sourceTree = "<group>"; };
 		91427A0F32409B0DFC58A10F /* NativeAdCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeAdCard.swift; sourceTree = "<group>"; };
@@ -527,6 +529,7 @@
 			isa = PBXGroup;
 			children = (
 				AFDF2A8C549FCAF35D5DD828 /* AccessibilityRuleTests.swift */,
+				8731E1ED0238650F97A2B017 /* AdManagerProUserTests.swift */,
 				2BAF06066174FD79C8F5DAD8 /* AppUpdateCheckerTests.swift */,
 				795F7B5B94087F04001DE523 /* BackgroundImageStorageTests.swift */,
 				54C1D00261EB4F86866F685A /* BackgroundPatternTests.swift */,
@@ -790,6 +793,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C98D76F680578FBA369FBE52 /* AccessibilityRuleTests.swift in Sources */,
+				A9AD4A8F40E3B9FE76C55440 /* AdManagerProUserTests.swift in Sources */,
 				BD758AE1F44F9E566222251D /* AppUpdateCheckerTests.swift in Sources */,
 				54189D617D853C9D06F172AE /* BackgroundImageStorageTests.swift in Sources */,
 				2CB06ED23EB4FB1EA6B7C7CD /* BackgroundPatternTests.swift in Sources */,
