@@ -30,6 +30,9 @@ struct StickerLibraryView: View {
     @State private var sortNewest = true
     @State private var showSaveToPhotosResult = false
     @State private var saveToPhotosSuccess = false
+    @State private var isSelectionMode: Bool = false
+    @State private var selectedStickerIds: Set<UUID> = []
+    @State private var showBulkDeleteConfirm = false
     @Namespace private var previewNamespace
     let refreshTrigger: UUID
     var onAddSticker: () -> Void = {}
@@ -37,6 +40,8 @@ struct StickerLibraryView: View {
     var onStickerPicked: ((Sticker) -> Void)? = nil
     /// 通知ディープリンク経由で開いた際にプレビュー表示するシールID（消費後に nil リセットされる）
     var highlightStickerId: Binding<UUID?> = .constant(nil)
+    /// 選択モード中にカスタムタブバーを非表示にするバインディング
+    var hideTabBar: Binding<Bool> = .constant(false)
 
     private var isPicking: Bool { onStickerPicked != nil }
 
@@ -130,24 +135,47 @@ struct StickerLibraryView: View {
             }
             .navigationTitle(isPicking ? "シールを選択" : "ライブラリ")
             .navigationBarTitleDisplayMode(.inline)
+            .onChange(of: isSelectionMode) { _, newValue in
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    hideTabBar.wrappedValue = newValue
+                }
+            }
             .toolbar {
                 if isPicking {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("閉じる") { dismiss() }
                     }
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        Picker("並び替え", selection: sortBinding) {
-                            Text("新着順").tag(true)
-                            Text("古い順").tag(false)
+                } else if isSelectionMode {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("キャンセル") {
+                            isSelectionMode = false
+                            selectedStickerIds = []
                         }
-                    } label: {
-                        Image(systemName: "arrow.up.arrow.down")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundStyle(sortNewest ? AppTheme.textSecondary : AppTheme.accent)
                     }
-                    .accessibilityLabel("並び替え")
+                }
+                if !isSelectionMode {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Menu {
+                            Picker("並び替え", selection: sortBinding) {
+                                Text("新着順").tag(true)
+                                Text("古い順").tag(false)
+                            }
+                        } label: {
+                            Image(systemName: "arrow.up.arrow.down")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundStyle(sortNewest ? AppTheme.textSecondary : AppTheme.accent)
+                        }
+                        .accessibilityLabel("並び替え")
+                    }
+                }
+                if !isPicking && !isSelectionMode {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("選択") {
+                            isSelectionMode = true
+                            selectedStickerIds = []
+                        }
+                        .accessibilityLabel("複数選択モードを開始")
+                    }
                 }
             }
             .alert("シールを削除", isPresented: deleteAlertBinding, presenting: deleteInfo) { info in
@@ -159,6 +187,12 @@ struct StickerLibraryView: View {
                 } else {
                     Text("このシールは\(info.boards.count)個のボードで使用されています。削除するとボードからも取り除かれます。")
                 }
+            }
+            .alert("シールを削除", isPresented: $showBulkDeleteConfirm) {
+                Button("削除", role: .destructive) { bulkDeleteStickers() }
+                Button("キャンセル", role: .cancel) {}
+            } message: {
+                Text("\(selectedStickerIds.count)枚のシールをコレクションから削除しますか？ボードで使用中のシールも取り除かれます。")
             }
             .fullScreenCover(isPresented: maskEditBinding, onDismiss: {
                 if maskEditSaved {
@@ -331,16 +365,63 @@ struct StickerLibraryView: View {
             }
             .padding(20)
         }
-        .safeAreaPadding(.bottom, 80)
+        .safeAreaPadding(.bottom, isSelectionMode ? 0 : 80)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if isSelectionMode { selectionModeToolbar }
+        }
+    }
+
+    // MARK: - 選択モードツールバー
+
+    private var selectionModeToolbar: some View {
+        HStack {
+            Button {
+                if selectedStickerIds.count == displayedStickers.count {
+                    selectedStickerIds = []
+                } else {
+                    selectedStickerIds = Set(displayedStickers.map { $0.id })
+                }
+            } label: {
+                Text(selectedStickerIds.count == displayedStickers.count ? "選択解除" : "すべて選択")
+                    .font(.system(size: 15, weight: .medium, design: .rounded))
+                    .foregroundStyle(AppTheme.accent)
+            }
+            .accessibilityLabel(selectedStickerIds.count == displayedStickers.count ? "すべて選択解除" : "すべてのシールを選択")
+
+            Spacer()
+
+            Button {
+                guard !selectedStickerIds.isEmpty else { return }
+                showBulkDeleteConfirm = true
+            } label: {
+                Text(selectedStickerIds.isEmpty ? "削除" : "\(selectedStickerIds.count)枚を削除")
+                    .font(.system(size: 15, weight: .medium, design: .rounded))
+                    .foregroundStyle(selectedStickerIds.isEmpty ? AppTheme.textSecondary : Color.red)
+            }
+            .disabled(selectedStickerIds.isEmpty)
+            .accessibilityLabel(selectedStickerIds.isEmpty ? "削除（未選択）" : "\(selectedStickerIds.count)枚のシールを削除")
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 14)
+        .background(.ultraThinMaterial)
+        .overlay(alignment: .top) { Divider() }
     }
 
     // MARK: - シールセル（ピッカーモード対応）
 
     /// ピッカーモード（isPicking == true）では contextMenu を付与せず、ロングプレスのプレビュー動作を防ぐ
+    /// 選択モード（isSelectionMode == true）では contextMenu を付与せず、タップで選択トグル
     @ViewBuilder
     private func stickerCell(for sticker: Sticker) -> some View {
+        let isSelected = selectedStickerIds.contains(sticker.id)
         let base = Button {
-            if isPicking {
+            if isSelectionMode {
+                if isSelected {
+                    selectedStickerIds.remove(sticker.id)
+                } else {
+                    selectedStickerIds.insert(sticker.id)
+                }
+            } else if isPicking {
                 onStickerPicked?(sticker)
             } else {
                 withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
@@ -348,19 +429,45 @@ struct StickerLibraryView: View {
                 }
             }
         } label: {
-            StickerThumbnailView(sticker: sticker, refreshTrigger: thumbnailRefreshID)
-                .matchedGeometryEffect(id: sticker.id, in: previewNamespace)
-                .opacity(previewSticker?.id == sticker.id ? 0 : 1)
+            ZStack(alignment: .bottomTrailing) {
+                StickerThumbnailView(sticker: sticker, refreshTrigger: thumbnailRefreshID)
+                    .matchedGeometryEffect(id: sticker.id, in: previewNamespace)
+                    .opacity(previewSticker?.id == sticker.id ? 0 : 1)
+
+                if isSelectionMode {
+                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                        .font(.system(size: 22, weight: .semibold))
+                        .foregroundStyle(isSelected ? AppTheme.accent : AppTheme.textTertiary)
+                        .background(
+                            Circle()
+                                .fill(isSelected ? AppTheme.accent.opacity(0.15) : .white.opacity(0.75))
+                                .padding(-3)
+                        )
+                        .padding(6)
+                        .accessibilityHidden(true)
+                }
+            }
+            .overlay {
+                if isSelectionMode && isSelected {
+                    RoundedRectangle(cornerRadius: 14)
+                        .strokeBorder(AppTheme.accent, lineWidth: 2.5)
+                }
+            }
         }
         .buttonStyle(.plain)
-        .accessibilityHint(isPicking ? String(localized: "タップしてボードに追加") : String(localized: "タップしてプレビューを表示"))
+        .accessibilityHint(
+            isSelectionMode
+                ? (isSelected ? String(localized: "タップして選択解除") : String(localized: "タップして選択"))
+                : isPicking ? String(localized: "タップしてボードに追加") : String(localized: "タップしてプレビューを表示")
+        )
+        .accessibilityAddTraits(isSelectionMode && isSelected ? .isSelected : [])
         .onAppear {
             if sticker.id == displayedStickers.last?.id {
                 loadNextPage()
             }
         }
 
-        if isPicking {
+        if isPicking || isSelectionMode {
             base
         } else {
             base
@@ -448,6 +555,72 @@ struct StickerLibraryView: View {
             saveToPhotosSuccess = success
             showSaveToPhotosResult = true
         }
+    }
+
+    private func bulkDeleteStickers(now: Date = .now) {
+        let idsToDelete = selectedStickerIds
+        var hasError = false
+        var actuallyDeletedIds = Set<UUID>()
+
+        // 1. ファイル削除と SwiftData レコード削除
+        for sticker in displayedStickers where idsToDelete.contains(sticker.id) {
+            do {
+                try ImageStorage.delete(fileName: sticker.imageFileName)
+                modelContext.delete(sticker)
+                actuallyDeletedIds.insert(sticker.id)
+            } catch {
+                if (error as? CocoaError)?.code == .fileNoSuchFile {
+                    // ファイルが既にない場合は成功として扱う
+                    modelContext.delete(sticker)
+                    actuallyDeletedIds.insert(sticker.id)
+                } else {
+                    hasError = true
+                }
+            }
+        }
+
+        guard !actuallyDeletedIds.isEmpty else {
+            if hasError { showDeleteError = true }
+            return
+        }
+
+        // 2. 影響を受けるボードの配置を一括更新
+        for board in boards {
+            let originalCount = board.placements.count
+            board.placements.removeAll { actuallyDeletedIds.contains($0.stickerId) }
+            if board.placements.count != originalCount {
+                board.updatedAt = now
+            }
+        }
+
+        displayedStickers.removeAll { actuallyDeletedIds.contains($0.id) }
+        totalCount = max(totalCount - actuallyDeletedIds.count, 0)
+        selectedStickerIds = []
+        isSelectionMode = false
+
+        // 3. 影響ボードのウィジェットメタデータ JSON を更新
+        if let metaURL = WidgetDataSyncService.metadataURL,
+           var allMetadata = try? WidgetDataSyncService.readMetadataJSON(from: metaURL) {
+            let boardsById = Dictionary(uniqueKeysWithValues: boards.map { ($0.id.uuidString, $0) })
+            for i in allMetadata.indices {
+                if let board = boardsById[allMetadata[i].id] {
+                    allMetadata[i] = SharedBoardMetadata(
+                        id: allMetadata[i].id,
+                        title: allMetadata[i].title,
+                        stickerCount: board.placements.count,
+                        updatedAt: board.updatedAt,
+                        snapshotFileName: allMetadata[i].snapshotFileName,
+                        largeSnapshotFileName: allMetadata[i].largeSnapshotFileName,
+                        smallSnapshotFileName: allMetadata[i].smallSnapshotFileName
+                    )
+                }
+            }
+            WidgetDataSyncService.syncAllMetadata(allMetadata)
+        } else {
+            WidgetDataSyncService.reloadWidgetTimelines()
+        }
+
+        if hasError { showDeleteError = true }
     }
 
     private func deleteSticker(_ sticker: Sticker, from usedBoards: [Board]) {

@@ -79,6 +79,7 @@
 		A2C99DBAA8B716918E186B09 /* WidgetDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B705C9966BB0F482903B62FE /* WidgetDataManager.swift */; };
 		A9092067911344E168B48A45 /* BoardShareService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C7D9DE578356B33FB1A231 /* BoardShareService.swift */; };
 		A9E174752B496F13389C1181 /* StickerPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6364161BD5EB2AA06CF6AE7D /* StickerPreviewView.swift */; };
+		AB29650858E35E4BAF42854B /* StickerLibraryBulkDeleteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309B59FE9E723D0987BA0EB7 /* StickerLibraryBulkDeleteTests.swift */; };
 		AF1C7EC7EF7362CD7ABA273B /* WidgetDataSyncServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 827CF4CCF758CF7D72CCC423 /* WidgetDataSyncServiceTests.swift */; };
 		B361D0D57A3AB393E69DA39C /* StickerBorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E5D6F908EE947CC125BAC4 /* StickerBorder.swift */; };
 		B4AA40A530C03F83FF775E31 /* BackgroundPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC1436F39A4162AD412D53A /* BackgroundPattern.swift */; };
@@ -183,6 +184,7 @@
 		2BAF06066174FD79C8F5DAD8 /* AppUpdateCheckerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdateCheckerTests.swift; sourceTree = "<group>"; };
 		2C2647DE31B6EC1A661584CC /* PaywallAccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallAccessibilityTests.swift; sourceTree = "<group>"; };
 		2C9A3FC5FB8145015E1952AD /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		309B59FE9E723D0987BA0EB7 /* StickerLibraryBulkDeleteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerLibraryBulkDeleteTests.swift; sourceTree = "<group>"; };
 		32104833845A2ADD7C14A5F8 /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
 		33A9760F22EDD717B2205202 /* SharedWidgetConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedWidgetConstants.swift; sourceTree = "<group>"; };
 		351900E2F8D31C115B9F755A /* UIImageExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtensionTests.swift; sourceTree = "<group>"; };
@@ -562,6 +564,7 @@
 				D6B0FF96EE3690AFD3B800B6 /* StickerFilterServiceTests.swift */,
 				A215C34AD5CB548459350358 /* StickerFilterTests.swift */,
 				0B6E414C38C81FDD95EBC2EE /* StickerLibraryAccessibilityTests.swift */,
+				309B59FE9E723D0987BA0EB7 /* StickerLibraryBulkDeleteTests.swift */,
 				1BB45ACA64468F81FAB2298E /* StickerLibraryPickerModeTests.swift */,
 				B03A91B141329E13EDBEAE9A /* StickerPlacementTests.swift */,
 				3F8EB1C52BF7B32985F173FC /* StickerShareServiceTests.swift */,
@@ -824,6 +827,7 @@
 				23C844417020B51ED20D42AF /* StickerFilterServiceTests.swift in Sources */,
 				D8FB4DBA0430E40FCFD3F87F /* StickerFilterTests.swift in Sources */,
 				C4460E2AC4B0A01446BD3666 /* StickerLibraryAccessibilityTests.swift in Sources */,
+				AB29650858E35E4BAF42854B /* StickerLibraryBulkDeleteTests.swift in Sources */,
 				36334B18627D43E89D04B5E1 /* StickerLibraryPickerModeTests.swift in Sources */,
 				E0546E3252F1E756FEC85DA1 /* StickerPlacementTests.swift in Sources */,
 				D9F5D0B1D91568E3331B22EE /* StickerShareServiceTests.swift in Sources */,
@@ -873,13 +877,13 @@
 				CODE_SIGN_ENTITLEMENTS = StickerBoard/StickerBoard.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				INFOPLIST_FILE = StickerBoard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.8.0;
+				MARKETING_VERSION = 1.9.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tebasaki.StickerBoard;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1016,13 +1020,13 @@
 				CODE_SIGN_ENTITLEMENTS = StickerBoard/StickerBoard.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				INFOPLIST_FILE = StickerBoard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.8.0;
+				MARKETING_VERSION = 1.9.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tebasaki.StickerBoard;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1069,14 +1073,14 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = StickerBoardWidget/StickerBoardWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				INFOPLIST_FILE = StickerBoardWidget/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.8.0;
+				MARKETING_VERSION = 1.9.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tebasaki.StickerBoard.Widget;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1089,14 +1093,14 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = StickerBoardWidget/StickerBoardWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				INFOPLIST_FILE = StickerBoardWidget/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.8.0;
+				MARKETING_VERSION = 1.9.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tebasaki.StickerBoard.Widget;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
