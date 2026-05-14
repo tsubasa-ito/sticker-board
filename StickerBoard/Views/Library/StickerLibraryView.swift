@@ -550,36 +550,53 @@ struct StickerLibraryView: View {
         }
     }
 
-    private func bulkDeleteStickers() {
+    private func bulkDeleteStickers(now: Date = .now) {
         let idsToDelete = selectedStickerIds
         var hasError = false
-        var deletedCount = 0
+        var actuallyDeletedIds = Set<UUID>()
 
+        // 1. ファイル削除と SwiftData レコード削除
         for sticker in displayedStickers where idsToDelete.contains(sticker.id) {
             do {
                 try ImageStorage.delete(fileName: sticker.imageFileName)
+                modelContext.delete(sticker)
+                actuallyDeletedIds.insert(sticker.id)
             } catch {
-                hasError = true
-                continue
+                if (error as? CocoaError)?.code == .fileNoSuchFile {
+                    // ファイルが既にない場合は成功として扱う
+                    modelContext.delete(sticker)
+                    actuallyDeletedIds.insert(sticker.id)
+                } else {
+                    hasError = true
+                }
             }
-            for board in boards where board.placements.contains(where: { $0.stickerId == sticker.id }) {
-                board.placements = board.placements.filter { $0.stickerId != sticker.id }
-                board.updatedAt = Date()
-            }
-            modelContext.delete(sticker)
-            deletedCount += 1
         }
 
-        displayedStickers.removeAll { idsToDelete.contains($0.id) }
-        totalCount = max(totalCount - deletedCount, 0)
+        guard !actuallyDeletedIds.isEmpty else {
+            if hasError { showDeleteError = true }
+            return
+        }
+
+        // 2. 影響を受けるボードの配置を一括更新
+        for board in boards {
+            let originalCount = board.placements.count
+            board.placements.removeAll { actuallyDeletedIds.contains($0.stickerId) }
+            if board.placements.count != originalCount {
+                board.updatedAt = now
+            }
+        }
+
+        displayedStickers.removeAll { actuallyDeletedIds.contains($0.id) }
+        totalCount = max(totalCount - actuallyDeletedIds.count, 0)
         selectedStickerIds = []
         isSelectionMode = false
 
-        // 影響ボードの stickerCount を更新してウィジェットメタデータ JSON を書き換える
+        // 3. 影響ボードのウィジェットメタデータ JSON を更新
         if let metaURL = WidgetDataSyncService.metadataURL,
            var allMetadata = try? WidgetDataSyncService.readMetadataJSON(from: metaURL) {
+            let boardsById = Dictionary(uniqueKeysWithValues: boards.map { ($0.id.uuidString, $0) })
             for i in allMetadata.indices {
-                if let board = boards.first(where: { $0.id.uuidString == allMetadata[i].id }) {
+                if let board = boardsById[allMetadata[i].id] {
                     allMetadata[i] = SharedBoardMetadata(
                         id: allMetadata[i].id,
                         title: allMetadata[i].title,
