@@ -133,6 +133,7 @@ struct StickerLibraryView: View {
             }
             .navigationTitle(isPicking ? "シールを選択" : "ライブラリ")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar(isSelectionMode ? .hidden : .visible, for: .tabBar)
             .toolbar {
                 if isPicking {
                     ToolbarItem(placement: .cancellationAction) {
