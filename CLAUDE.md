@@ -86,6 +86,7 @@ open StickerBoard.xcodeproj
 - ImageStorageError には encodingFailed / deletionFailed / loadFailed の3ケースあり。loadFailed は rotateAndOverwrite で対象ファイルが見つからない場合に投げる
 - StickerLibraryView は @Query ではなく FetchDescriptor + fetchLimit/fetchOffset によるページネーション（30枚ずつ無限スクロール）でシールを取得する設計（大量シール時のメモリ最適化）
 - StickerLibraryView はピッカーモード対応（`onStickerPicked: ((Sticker) -> Void)? = nil`）。nil 以外のとき、シールタップでコールバックを呼び出しプレビュー/コンテキストメニュー/グリッド先頭の「さらに追加」カードを非表示にする。空の状態で表示される「シールを追加する」ボタンは `onAddSticker` コールバックで制御（ピッカーモードでも有効）。BoardEditorView の「追加」ボタン → `.sheet(isPresented: $showingInlineLibrary)` でピッカーモードのライブラリをボトムシート表示し、選択後にシールをボード中央に配置して自動クローズする。シール0枚時に「シールを追加する」をタップするとライブラリを閉じて `StickerCaptureView` を表示し、保存後に `showingInlineLibrary = true` でライブラリを再表示する（`pendingOpenCapture` / `stickerSavedInCapture` フラグで SwiftUI の同一階層シート制約を回避）
+- StickerLibraryView は一括削除対応（`isSelectionMode: Bool`, `selectedStickerIds: Set<UUID>`）。ナビバー「選択」ボタンで選択モードに入り、各セルにチェックインジケーターを表示。フッターツールバーの「すべて選択/解除」「N枚を削除」で複数シールを一括削除できる。削除確認アラート後に `bulkDeleteStickers()` が ImageStorage + SwiftData を一括削除し `syncAllMetadata` でウィジェットのメタデータを更新する。ピッカーモード時（`isPicking == true`）は選択モードに入れない
 - サムネイル表示（StickerThumbnailView, BoardStickerPreviewView）は ImageStorage.loadThumbnail() 経由で縮小画像を使用
 - 枠線（ボーダー）は StickerPlacement の borderWidthType / borderColorHex に保存し、フィルターと同様に配置単位で管理する設計
 - シールロックは StickerPlacement の isLocked: Bool = false に保存（旧データとの後方互換性: decodeIfPresent でデフォルト false）。ロック中はドラッグ・ピンチ・回転ジェスチャーおよび効果・枠線・前面・背面・削除ボタンを無効化。VoiceOver はロック/解除アクション + UIAccessibility.post アナウンス対応
@@ -114,7 +115,7 @@ open StickerBoard.xcodeproj
 - 画面の向き: iPhone はポートレートのみ、iPad は全方向（iPad互換モードのマルチタスク対応に必要）
 - Xcode Cloud: mainブランチへのpushで自動ビルド→TestFlight配信。ci_scripts/ci_post_clone.sh で XcodeGen インストール＆プロジェクト生成を自動化
 - GitHub Actions: develop→mainのRelease PR自動作成（.github/workflows/auto-release-pr.yml）、mainマージ時にバージョンタグ＆GitHub Release自動作成（.github/workflows/auto-tag-release.yml）
-- WidgetKit: App Group（`group.com.tebasaki.StickerBoard`）でメインアプリ⇔ウィジェット間のデータ共有。スナップショット画像（JPEG）とメタデータJSON（`boards_meta.json`）を `AppGroup/WidgetData/` に保存。ボード保存時に `WidgetDataSyncService.syncBoard()` → `WidgetCenter.reloadTimelines()` で自動更新
+- WidgetKit: App Group（`group.com.tebasaki.StickerBoard`）でメインアプリ⇔ウィジェット間のデータ共有。スナップショット画像（JPEG）とメタデータJSON（`boards_meta.json`）を `AppGroup/WidgetData/` に保存。ボード保存時に `WidgetDataSyncService.syncBoard()` → `WidgetCenter.reloadTimelines()` で自動更新。スナップショット更新なしでタイムラインだけリロードしたい場合は `WidgetDataSyncService.reloadWidgetTimelines()` を使用する
 - ディープリンク: `stickerboard://board/{boardId}` でウィジェットタップ → ボード編集画面に直接遷移。`stickerboard://library?stickerId={uuid}` でリマインダー通知タップ → ライブラリの該当シールプレビューに遷移。StickerBoardApp の `.onOpenURL`（URLスキーム）と `NotificationDelegate.userNotificationCenter(_:didReceive:)` 経由の `Notification.Name.openStickerDeepLink` でハンドリング
 - `Shared/` ディレクトリのファイルはメインアプリ・ウィジェット両ターゲットに含まれる（project.yml の sources で指定）。共有型や定数はここに配置する
 - Widget Extension（`StickerBoardWidgetExtension`）は `AppIntentConfiguration` でボード選択。`BoardEntity` が `AppEntity` として機能する
