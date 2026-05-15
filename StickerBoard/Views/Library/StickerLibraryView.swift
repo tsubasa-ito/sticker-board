@@ -140,6 +140,9 @@ struct StickerLibraryView: View {
                     hideTabBar.wrappedValue = newValue
                 }
             }
+            .onChange(of: subscriptionManager.isProUser) { _, isProUser in
+                if isProUser { adManager.clearNativeAd() }
+            }
             .toolbar {
                 if isPicking {
                     ToolbarItem(placement: .cancellationAction) {
@@ -296,37 +299,53 @@ struct StickerLibraryView: View {
 
     // MARK: - グリッド
 
-    /// ネイティブ広告を 12 枚ごとに挿入したグリッドコンテンツ。
-    /// ピッカーモード・Pro ユーザーでは広告を非表示。ロード失敗時もレイアウト崩れなし。
+    /// Pro ユーザー・ピッカーモードはシンプルグリッド、無料ユーザーは広告挿入グリッドへ完全分岐。
+    /// 同一 View ツリー内で NativeAdCard を条件表示する構造だと LazyVStack / VStack を問わず
+    /// isProUser 変化後もレイアウトスペースが残ることがあるため、ツリー自体を切り替える設計にした。
     @ViewBuilder
     private var stickerGridContent: some View {
         if displayedStickers.isEmpty {
             LazyVGrid(columns: columns, spacing: 14) {
                 if !isPicking { addStickerCard }
             }
+        } else if !isPicking && !subscriptionManager.isProUser {
+            adChunkedGrid
         } else {
-            let adPerChunk = 12
-            let chunks: [[Sticker]] = stride(from: 0, to: displayedStickers.count, by: adPerChunk).map {
-                Array(displayedStickers[$0..<min($0 + adPerChunk, displayedStickers.count)])
+            // Pro ユーザー・ピッカーモード: チャンク分割なし・広告なし
+            LazyVGrid(columns: columns, spacing: 14) {
+                if !isPicking { addStickerCard }
+                ForEach(displayedStickers) { sticker in stickerCell(for: sticker) }
             }
-            let showAds = !isPicking && !subscriptionManager.isProUser
-            // LazyVStack/ForEach 内の closure では @Observable の変更が SwiftUI に伝播しない場合があるため、
-            // LazyVStack の外側（@ViewBuilder の評価時）で adManager.nativeAd を参照してオブザベーションを登録する
-            let loadedNativeAd = adManager.nativeAd
+        }
+    }
 
-            LazyVStack(spacing: 0) {
-                ForEach(Array(chunks.enumerated()), id: \.offset) { chunkIndex, chunk in
-                    LazyVGrid(columns: columns, spacing: 14) {
-                        if chunkIndex == 0 && !isPicking { addStickerCard }
-                        ForEach(chunk) { sticker in stickerCell(for: sticker) }
-                    }
-                    .padding(.top, chunkIndex > 0 ? 14 : 0)
+    /// 無料ユーザー向け: 12 枚ごとにチャンク分割し最初のチャンク後に広告を挿入する。
+    @ViewBuilder
+    private var adChunkedGrid: some View {
+        let adPerChunk = 12
+        let firstChunk = Array(displayedStickers.prefix(adPerChunk))
+        let remainingStickers = Array(displayedStickers.dropFirst(adPerChunk))
+        let remainingChunks: [[Sticker]] = stride(from: 0, to: remainingStickers.count, by: adPerChunk).map {
+            Array(remainingStickers[$0..<min($0 + adPerChunk, remainingStickers.count)])
+        }
+        // @Observable の変更を ViewBuilder 評価時に登録する
+        let loadedNativeAd = adManager.nativeAd
 
-                    // 最初のチャンク後のみ広告を表示（同一広告の重複インプレッション防止）
-                    if showAds, chunkIndex == 0, let nativeAd = loadedNativeAd {
-                        NativeAdCard(nativeAd: nativeAd).padding(.top, 14)
-                    }
+        VStack(spacing: 0) {
+            LazyVGrid(columns: columns, spacing: 14) {
+                addStickerCard
+                ForEach(firstChunk) { sticker in stickerCell(for: sticker) }
+            }
+
+            if let nativeAd = loadedNativeAd {
+                NativeAdCard(nativeAd: nativeAd).padding(.top, 14)
+            }
+
+            ForEach(Array(remainingChunks.enumerated()), id: \.offset) { _, chunk in
+                LazyVGrid(columns: columns, spacing: 14) {
+                    ForEach(chunk) { sticker in stickerCell(for: sticker) }
                 }
+                .padding(.top, 14)
             }
         }
     }
