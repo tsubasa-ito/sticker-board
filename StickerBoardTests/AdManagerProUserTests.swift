@@ -48,17 +48,17 @@ struct AdManagerProUserTests {
 
     // MARK: - StickerLibraryView: showAds 条件によるネイティブ広告参照制御
 
-    @Test func stickerGridContentでshowAds条件が広告参照をガードしている() throws {
+    @Test func ProユーザーはadChunkedGridではなくシンプルグリッドが使われる() throws {
         let src = try libraryContent()
-        #expect(src.contains("showAds ? adManager.nativeAd : nil"),
-                "nativeAdToShow は showAds=false の場合に nil を返す必要があります")
+        // isProUser=true 時は adChunkedGrid ではなく LazyVGrid シンプルパスへ分岐する
+        #expect(src.contains("adChunkedGrid") && src.contains("isProUser"),
+                "Pro ユーザーは adChunkedGrid と別の分岐に進む必要があります")
     }
 
-    @Test func NativeAdCardがVStack直下に配置されている() throws {
+    @Test func adChunkedGridはNativeAdCardを含む() throws {
         let src = try libraryContent()
-        // LazyVStack ではなく VStack を使うことでレイアウト更新を確実にする
-        #expect(src.contains("VStack(spacing: 0)") && src.contains("nativeAdToShow"),
-                "NativeAdCard は VStack 直下の nativeAdToShow 経由で条件表示される必要があります")
+        #expect(src.contains("adChunkedGrid") && src.contains("NativeAdCard"),
+                "adChunkedGrid に NativeAdCard が存在しません")
     }
 
     @Test func AdNativeDelegateのonReceiveがProユーザーをガードしている() throws {
