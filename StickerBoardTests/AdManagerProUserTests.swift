@@ -54,11 +54,17 @@ struct AdManagerProUserTests {
                 "nativeAdToShow は showAds=false の場合に nil を返す必要があります")
     }
 
-    @Test func NativeAdCardがForEach外に配置されている() throws {
+    @Test func NativeAdCardがVStack直下に配置されている() throws {
         let src = try libraryContent()
-        // ForEach クロージャ内ではなく LazyVStack 直下に NativeAdCard を配置する（スペース解放のため）
-        #expect(src.contains("nativeAdToShow") && src.contains("NativeAdCard"),
-                "NativeAdCard は nativeAdToShow 経由で条件表示される必要があります")
+        // LazyVStack ではなく VStack を使うことでレイアウト更新を確実にする
+        #expect(src.contains("VStack(spacing: 0)") && src.contains("nativeAdToShow"),
+                "NativeAdCard は VStack 直下の nativeAdToShow 経由で条件表示される必要があります")
+    }
+
+    @Test func AdNativeDelegateのonReceiveがProユーザーをガードしている() throws {
+        let src = try adManagerContent()
+        #expect(src.contains("onReceive") && src.contains("isProUser"),
+                "onReceive コールバックに isProUser ガードが存在しません")
     }
 
     // MARK: - StickerLibraryView: isProUser 変化時のクリア

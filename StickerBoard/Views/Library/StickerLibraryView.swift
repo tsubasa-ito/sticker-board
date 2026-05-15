@@ -320,14 +320,17 @@ struct StickerLibraryView: View {
             // LazyVStack の外側（@ViewBuilder の評価時）で adManager.nativeAd を参照してオブザベーションを登録する
             let nativeAdToShow = showAds ? adManager.nativeAd : nil
 
-            LazyVStack(spacing: 0) {
+            // LazyVStack ではなく VStack を使うことで、isProUser 変化時の条件付き子ビューの
+            // レイアウト更新を確実にする（LazyVStack は条件変更後のスペース解放が不安定）。
+            // LazyVGrid 自体は ScrollView 内で遅延レンダリングされるためパフォーマンスに影響しない
+            VStack(spacing: 0) {
                 // 最初のチャンク（add ボタン含む）
                 LazyVGrid(columns: columns, spacing: 14) {
                     if !isPicking { addStickerCard }
                     ForEach(firstChunk) { sticker in stickerCell(for: sticker) }
                 }
 
-                // ForEach の外に配置することで LazyVStack が条件変更時にスペースを正確に管理できる
+                // Pro ユーザーは nativeAdToShow=nil のためこのブロックは評価されない
                 if let nativeAd = nativeAdToShow {
                     NativeAdCard(nativeAd: nativeAd).padding(.top, 14)
                 }
