@@ -309,27 +309,35 @@ struct StickerLibraryView: View {
             }
         } else {
             let adPerChunk = 12
-            let chunks: [[Sticker]] = stride(from: 0, to: displayedStickers.count, by: adPerChunk).map {
-                Array(displayedStickers[$0..<min($0 + adPerChunk, displayedStickers.count)])
+            let firstChunk = Array(displayedStickers.prefix(adPerChunk))
+            let remainingStickers = Array(displayedStickers.dropFirst(adPerChunk))
+            let remainingChunks: [[Sticker]] = stride(from: 0, to: remainingStickers.count, by: adPerChunk).map {
+                Array(remainingStickers[$0..<min($0 + adPerChunk, remainingStickers.count)])
             }
+            // Pro ユーザーは showAds=false なので nil を返してレイアウトスペースを確保しない
             let showAds = !isPicking && !subscriptionManager.isProUser
             // LazyVStack/ForEach 内の closure では @Observable の変更が SwiftUI に伝播しない場合があるため、
-            // LazyVStack の外側（@ViewBuilder の評価時）で adManager.nativeAd を参照してオブザベーションを登録する。
-            // Pro ユーザーは showAds=false なので nil を返してレイアウトスペースを確保しない
-            let loadedNativeAd = showAds ? adManager.nativeAd : nil
+            // LazyVStack の外側（@ViewBuilder の評価時）で adManager.nativeAd を参照してオブザベーションを登録する
+            let nativeAdToShow = showAds ? adManager.nativeAd : nil
 
             LazyVStack(spacing: 0) {
-                ForEach(Array(chunks.enumerated()), id: \.offset) { chunkIndex, chunk in
+                // 最初のチャンク（add ボタン含む）
+                LazyVGrid(columns: columns, spacing: 14) {
+                    if !isPicking { addStickerCard }
+                    ForEach(firstChunk) { sticker in stickerCell(for: sticker) }
+                }
+
+                // ForEach の外に配置することで LazyVStack が条件変更時にスペースを正確に管理できる
+                if let nativeAd = nativeAdToShow {
+                    NativeAdCard(nativeAd: nativeAd).padding(.top, 14)
+                }
+
+                // 残りのチャンク（12 枚ごとにページネーション）
+                ForEach(Array(remainingChunks.enumerated()), id: \.offset) { _, chunk in
                     LazyVGrid(columns: columns, spacing: 14) {
-                        if chunkIndex == 0 && !isPicking { addStickerCard }
                         ForEach(chunk) { sticker in stickerCell(for: sticker) }
                     }
-                    .padding(.top, chunkIndex > 0 ? 14 : 0)
-
-                    // 最初のチャンク後のみ広告を表示（同一広告の重複インプレッション防止）
-                    if showAds, chunkIndex == 0, let nativeAd = loadedNativeAd {
-                        NativeAdCard(nativeAd: nativeAd).padding(.top, 14)
-                    }
+                    .padding(.top, 14)
                 }
             }
         }

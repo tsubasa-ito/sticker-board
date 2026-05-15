@@ -51,7 +51,14 @@ struct AdManagerProUserTests {
     @Test func stickerGridContentでshowAds条件が広告参照をガードしている() throws {
         let src = try libraryContent()
         #expect(src.contains("showAds ? adManager.nativeAd : nil"),
-                "loadedNativeAd は showAds=false の場合に nil を返す必要があります")
+                "nativeAdToShow は showAds=false の場合に nil を返す必要があります")
+    }
+
+    @Test func NativeAdCardがForEach外に配置されている() throws {
+        let src = try libraryContent()
+        // ForEach クロージャ内ではなく LazyVStack 直下に NativeAdCard を配置する（スペース解放のため）
+        #expect(src.contains("nativeAdToShow") && src.contains("NativeAdCard"),
+                "NativeAdCard は nativeAdToShow 経由で条件表示される必要があります")
     }
 
     // MARK: - StickerLibraryView: isProUser 変化時のクリア
