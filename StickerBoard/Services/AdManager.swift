@@ -35,6 +35,8 @@ final class AdManager {
         }
         nativeAdDelegate = AdNativeDelegate(
             onReceive: { [weak self] ad in
+                // 非同期ロード完了時点で Pro 確定済みの場合はセットしない
+                guard !SubscriptionManager.shared.isProUser else { return }
                 self?.nativeAd = ad
             },
             onError: { [weak self] error in
@@ -87,6 +89,12 @@ final class AdManager {
                 self.logger.error("Interstitial load failed: \(error)")
             }
         }
+    }
+
+    /// Pro ユーザーになった際に保持中のネイティブ広告をクリアする
+    func clearNativeAd() {
+        guard SubscriptionManager.shared.isProUser else { return }
+        nativeAd = nil
     }
 
     func preloadNativeAd() {

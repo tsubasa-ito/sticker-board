@@ -190,6 +190,11 @@ enum WidgetDataSyncService {
         }
     }
 
+    /// スナップショット更新なしでウィジェットタイムラインのみリロードする
+    static func reloadWidgetTimelines() {
+        WidgetCenter.shared.reloadTimelines(ofKind: SharedWidgetConstants.widgetKind)
+    }
+
     // MARK: - ディープリンク
 
     /// ボードへのディープリンクURLを生成する

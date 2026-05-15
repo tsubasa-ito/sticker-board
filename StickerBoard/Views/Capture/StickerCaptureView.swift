@@ -500,12 +500,35 @@ struct StickerCaptureView: View {
         guard let item else { return }
         processingTask?.cancel()
         processingTask = Task {
-            if let data = try? await item.loadTransferable(type: Data.self),
-               let image = UIImage(data: data) {
+            guard !Task.isCancelled else { return }
+
+            do {
+                guard let data = try await item.loadTransferable(type: Data.self) else {
+                    guard !Task.isCancelled else { return }
+                    withAnimation {
+                        errorMessage = String(localized: "この画像を読み込めませんでした。別の写真をお試しください。")
+                    }
+                    return
+                }
+
+                // HEIC・JPEG・PNG など UIImage がサポートする全形式を処理
+                guard let image = UIImage(data: data) else {
+                    guard !Task.isCancelled else { return }
+                    withAnimation {
+                        errorMessage = String(localized: "この画像形式には対応していません。別の写真をお試しください。")
+                    }
+                    return
+                }
+
                 guard !Task.isCancelled else { return }
                 withAnimation(.spring(duration: 0.4)) {
                     originalImage = image
                     errorMessage = nil
+                }
+            } catch {
+                guard !Task.isCancelled else { return }
+                withAnimation {
+                    errorMessage = String(localized: "画像の読み込みに失敗しました。別の写真をお試しください。")
                 }
             }
         }

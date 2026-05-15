@@ -67,7 +67,8 @@ struct MainTabView: View {
                     StickerLibraryView(
                         refreshTrigger: libraryRefreshID,
                         onAddSticker: { showCapture = true },
-                        highlightStickerId: $deepLinkStickerId
+                        highlightStickerId: $deepLinkStickerId,
+                        hideTabBar: $hideTabBar
                     )
                 }
                 .opacity(selectedTab == .library ? 1 : 0)

@@ -78,7 +78,9 @@
 		A282C9579FE88F9AAA4AAB8E /* MultiStickerSelectionAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8707E62DE974CFCF4EBA7F /* MultiStickerSelectionAccessibilityTests.swift */; };
 		A2C99DBAA8B716918E186B09 /* WidgetDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B705C9966BB0F482903B62FE /* WidgetDataManager.swift */; };
 		A9092067911344E168B48A45 /* BoardShareService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C7D9DE578356B33FB1A231 /* BoardShareService.swift */; };
+		A9AD4A8F40E3B9FE76C55440 /* AdManagerProUserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8731E1ED0238650F97A2B017 /* AdManagerProUserTests.swift */; };
 		A9E174752B496F13389C1181 /* StickerPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6364161BD5EB2AA06CF6AE7D /* StickerPreviewView.swift */; };
+		AB29650858E35E4BAF42854B /* StickerLibraryBulkDeleteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309B59FE9E723D0987BA0EB7 /* StickerLibraryBulkDeleteTests.swift */; };
 		AF1C7EC7EF7362CD7ABA273B /* WidgetDataSyncServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 827CF4CCF758CF7D72CCC423 /* WidgetDataSyncServiceTests.swift */; };
 		B361D0D57A3AB393E69DA39C /* StickerBorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E5D6F908EE947CC125BAC4 /* StickerBorder.swift */; };
 		B4AA40A530C03F83FF775E31 /* BackgroundPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC1436F39A4162AD412D53A /* BackgroundPattern.swift */; };
@@ -175,7 +177,7 @@
 		1CE8160539FD33AFF7809C92 /* BackgroundPatternPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundPatternPickerView.swift; sourceTree = "<group>"; };
 		1D878D128C4599B9F13AD702 /* StickerCaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerCaptureView.swift; sourceTree = "<group>"; };
 		24DB2CADF1571137158B612F /* OnboardingPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageView.swift; sourceTree = "<group>"; };
-		25715A103AD977A60A5C825C /* Products.storekit */ = {isa = PBXFileReference; path = Products.storekit; sourceTree = "<group>"; };
+		25715A103AD977A60A5C825C /* Products.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Products.storekit; sourceTree = "<group>"; };
 		259987BEAF660FD74A7333A2 /* BoardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardTests.swift; sourceTree = "<group>"; };
 		276A77B1063731059420BB58 /* StickerBorderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerBorderTests.swift; sourceTree = "<group>"; };
 		27912520AF159D0D12135A2C /* SharedBoardMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedBoardMetadata.swift; sourceTree = "<group>"; };
@@ -183,6 +185,7 @@
 		2BAF06066174FD79C8F5DAD8 /* AppUpdateCheckerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdateCheckerTests.swift; sourceTree = "<group>"; };
 		2C2647DE31B6EC1A661584CC /* PaywallAccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallAccessibilityTests.swift; sourceTree = "<group>"; };
 		2C9A3FC5FB8145015E1952AD /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		309B59FE9E723D0987BA0EB7 /* StickerLibraryBulkDeleteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerLibraryBulkDeleteTests.swift; sourceTree = "<group>"; };
 		32104833845A2ADD7C14A5F8 /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
 		33A9760F22EDD717B2205202 /* SharedWidgetConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedWidgetConstants.swift; sourceTree = "<group>"; };
 		351900E2F8D31C115B9F755A /* UIImageExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtensionTests.swift; sourceTree = "<group>"; };
@@ -195,7 +198,7 @@
 		3E3E385C3511299350E1EDC0 /* HolographicAccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HolographicAccessibilityTests.swift; sourceTree = "<group>"; };
 		3F8EB1C52BF7B32985F173FC /* StickerShareServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerShareServiceTests.swift; sourceTree = "<group>"; };
 		453EB379EB98A3F0EDA2660F /* BoardAccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardAccessibilityTests.swift; sourceTree = "<group>"; };
-		481D3899B8F8B2A414930953 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		481D3899B8F8B2A414930953 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		4939209FC57BA497E419A77C /* LocalizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationTests.swift; sourceTree = "<group>"; };
 		4C642A18BD372D652AF5FF3B /* BoardDeleteConfirmationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardDeleteConfirmationTests.swift; sourceTree = "<group>"; };
 		4E07374D0724CABB84AC640D /* StickerFilterPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerFilterPickerView.swift; sourceTree = "<group>"; };
@@ -204,7 +207,7 @@
 		54C1D00261EB4F86866F685A /* BackgroundPatternTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundPatternTests.swift; sourceTree = "<group>"; };
 		5E4850F2EEA934F5007C5453 /* BoardShowcaseWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardShowcaseWidget.swift; sourceTree = "<group>"; };
 		5FC4DAF0371E295F74BAD946 /* BoardEditorUndoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEditorUndoTests.swift; sourceTree = "<group>"; };
-		5FF690E061C9B4C41740689C /* StickerBoardWidgetExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = StickerBoardWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		5FF690E061C9B4C41740689C /* StickerBoardWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = StickerBoardWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		604CC75026AD20187DC30B3F /* ImageStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStorageTests.swift; sourceTree = "<group>"; };
 		6364161BD5EB2AA06CF6AE7D /* StickerPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerPreviewView.swift; sourceTree = "<group>"; };
 		63A5D91A35FA8C43BD1C0C8A /* StickerBoardWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerBoardWidgetBundle.swift; sourceTree = "<group>"; };
@@ -223,11 +226,12 @@
 		827CF4CCF758CF7D72CCC423 /* WidgetDataSyncServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataSyncServiceTests.swift; sourceTree = "<group>"; };
 		829436B4B4B3D87B24B6F5D4 /* ReviewRequestManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewRequestManager.swift; sourceTree = "<group>"; };
 		8391189EB4CBD1967797D83E /* BoardEditorZoomTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEditorZoomTests.swift; sourceTree = "<group>"; };
+		8731E1ED0238650F97A2B017 /* AdManagerProUserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdManagerProUserTests.swift; sourceTree = "<group>"; };
 		89EABB485711FDF3057EB771 /* BoardEditorInlineLibraryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEditorInlineLibraryTests.swift; sourceTree = "<group>"; };
 		8CA42CC44A656C4DE5FDD444 /* BackgroundImageStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundImageStorage.swift; sourceTree = "<group>"; };
 		91427A0F32409B0DFC58A10F /* NativeAdCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeAdCard.swift; sourceTree = "<group>"; };
 		97AF12BF2EFB04266319388A /* FirebaseCrashlyticsSetupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseCrashlyticsSetupTests.swift; sourceTree = "<group>"; };
-		98F3C1F87DFC6BE33492062C /* StickerBoard.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = StickerBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		98F3C1F87DFC6BE33492062C /* StickerBoard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StickerBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B695157C87669CCB70690F4 /* StickerBoardTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = StickerBoardTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F51DD1916FC4B3337ADA86F /* MaskEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaskEditorView.swift; sourceTree = "<group>"; };
 		9FFB83566A2BC0906338F77F /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
@@ -525,6 +529,7 @@
 			isa = PBXGroup;
 			children = (
 				AFDF2A8C549FCAF35D5DD828 /* AccessibilityRuleTests.swift */,
+				8731E1ED0238650F97A2B017 /* AdManagerProUserTests.swift */,
 				2BAF06066174FD79C8F5DAD8 /* AppUpdateCheckerTests.swift */,
 				795F7B5B94087F04001DE523 /* BackgroundImageStorageTests.swift */,
 				54C1D00261EB4F86866F685A /* BackgroundPatternTests.swift */,
@@ -562,6 +567,7 @@
 				D6B0FF96EE3690AFD3B800B6 /* StickerFilterServiceTests.swift */,
 				A215C34AD5CB548459350358 /* StickerFilterTests.swift */,
 				0B6E414C38C81FDD95EBC2EE /* StickerLibraryAccessibilityTests.swift */,
+				309B59FE9E723D0987BA0EB7 /* StickerLibraryBulkDeleteTests.swift */,
 				1BB45ACA64468F81FAB2298E /* StickerLibraryPickerModeTests.swift */,
 				B03A91B141329E13EDBEAE9A /* StickerPlacementTests.swift */,
 				3F8EB1C52BF7B32985F173FC /* StickerShareServiceTests.swift */,
@@ -787,6 +793,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C98D76F680578FBA369FBE52 /* AccessibilityRuleTests.swift in Sources */,
+				A9AD4A8F40E3B9FE76C55440 /* AdManagerProUserTests.swift in Sources */,
 				BD758AE1F44F9E566222251D /* AppUpdateCheckerTests.swift in Sources */,
 				54189D617D853C9D06F172AE /* BackgroundImageStorageTests.swift in Sources */,
 				2CB06ED23EB4FB1EA6B7C7CD /* BackgroundPatternTests.swift in Sources */,
@@ -824,6 +831,7 @@
 				23C844417020B51ED20D42AF /* StickerFilterServiceTests.swift in Sources */,
 				D8FB4DBA0430E40FCFD3F87F /* StickerFilterTests.swift in Sources */,
 				C4460E2AC4B0A01446BD3666 /* StickerLibraryAccessibilityTests.swift in Sources */,
+				AB29650858E35E4BAF42854B /* StickerLibraryBulkDeleteTests.swift in Sources */,
 				36334B18627D43E89D04B5E1 /* StickerLibraryPickerModeTests.swift in Sources */,
 				E0546E3252F1E756FEC85DA1 /* StickerPlacementTests.swift in Sources */,
 				D9F5D0B1D91568E3331B22EE /* StickerShareServiceTests.swift in Sources */,
@@ -873,13 +881,14 @@
 				CODE_SIGN_ENTITLEMENTS = StickerBoard/StickerBoard.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
+				DEVELOPMENT_TEAM = 6CGGS6SX69;
 				INFOPLIST_FILE = StickerBoard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.8.0;
+				MARKETING_VERSION = 1.9.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tebasaki.StickerBoard;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1016,13 +1025,14 @@
 				CODE_SIGN_ENTITLEMENTS = StickerBoard/StickerBoard.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
+				DEVELOPMENT_TEAM = 6CGGS6SX69;
 				INFOPLIST_FILE = StickerBoard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.8.0;
+				MARKETING_VERSION = 1.9.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tebasaki.StickerBoard;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1069,14 +1079,15 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = StickerBoardWidget/StickerBoardWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
+				DEVELOPMENT_TEAM = 6CGGS6SX69;
 				INFOPLIST_FILE = StickerBoardWidget/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.8.0;
+				MARKETING_VERSION = 1.9.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tebasaki.StickerBoard.Widget;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1089,14 +1100,15 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = StickerBoardWidget/StickerBoardWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
+				DEVELOPMENT_TEAM = 6CGGS6SX69;
 				INFOPLIST_FILE = StickerBoardWidget/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.8.0;
+				MARKETING_VERSION = 1.9.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tebasaki.StickerBoard.Widget;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1159,7 +1171,7 @@
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 12.12.1;
+				minimumVersion = 12.13.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
