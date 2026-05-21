@@ -1163,7 +1163,7 @@
 			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 11.0.0;
+				minimumVersion = 13.4.0;
 			};
 		};
 		71552BC30DDD3B76097B0A3C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
