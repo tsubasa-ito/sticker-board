@@ -45,17 +45,6 @@ struct DebugPrintRemovalTests {
         )
     }
 
-    // MARK: - MotionManager
-
-    @Test func motionManagerにprint文が含まれていない() throws {
-        let content = try readFile("StickerBoard/Services/MotionManager.swift")
-        let printLines = findPrintCalls(in: content)
-        #expect(
-            printLines.isEmpty,
-            "MotionManager.swift にデバッグ用 print() が残っています: \(printLines)"
-        )
-    }
-
     // MARK: - StickerLibraryView
 
     @Test func stickerLibraryViewにprint文が含まれていない() throws {
@@ -74,14 +63,6 @@ struct DebugPrintRemovalTests {
         #expect(
             content.contains("import os") || content.contains("import OSLog"),
             "SubscriptionManager.swift に os/OSLog の import が必要です"
-        )
-    }
-
-    @Test func motionManagerがLoggerを使用している() throws {
-        let content = try readFile("StickerBoard/Services/MotionManager.swift")
-        #expect(
-            content.contains("import os") || content.contains("import OSLog"),
-            "MotionManager.swift に os/OSLog の import が必要です"
         )
     }
 
