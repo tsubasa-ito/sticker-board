@@ -250,7 +250,6 @@ StickerBoardTests/                           # Swift Testing ユニットテス�
     ├── PaywallAccessibilityTests.swift              # ペイウォール画面のVoiceOverアクセシビリティ
     ├── MultiStickerSelectionAccessibilityTests.swift # 複数シール選択画面のVoiceOverアクセシビリティ
     ├── OnboardingAccessibilityTests.swift           # オンボーディング・プレビュー画面のVoiceOverアクセシビリティ
-    ├── HolographicAccessibilityTests.swift          # ホログラフィック効果のReduce Motion対応
     ├── StickerLibraryAccessibilityTests.swift       # シールライブラリのVoiceOverアクセシビリティ
     ├── AppUpdateCheckerTests.swift                  # バージョン比較・スキップ管理・チェック間隔
     ├── ReviewRequestManagerTests.swift              # レビュー訴求の表示判定・ローリングウィンドウ・マイルストーン
