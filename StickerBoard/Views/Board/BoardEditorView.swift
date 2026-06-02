@@ -754,6 +754,10 @@ struct BoardEditorView: View {
                     }
                 }
                 for await entry in group {
+                    if Task.isCancelled {
+                        group.cancelAll()
+                        return
+                    }
                     if let (id, image) = entry {
                         result[id] = image
                     }
@@ -761,9 +765,11 @@ struct BoardEditorView: View {
             }
             guard !Task.isCancelled else { return }
             await MainActor.run {
-                result.merge(loadedImages) { _, existing in existing }
+                // loadedImages をベースに result の新鮮な値で上書きする（キャッシュミス分は loadedImages でフォールバック）
+                var merged = loadedImages
+                merged.merge(result) { _, fresh in fresh }
                 let currentIds = Set(placements.map(\.id))
-                loadedImages = result.filter { currentIds.contains($0.key) }
+                loadedImages = merged.filter { currentIds.contains($0.key) }
             }
         }
     }

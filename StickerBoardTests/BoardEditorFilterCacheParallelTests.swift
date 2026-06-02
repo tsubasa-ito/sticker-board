@@ -67,17 +67,25 @@ struct BoardEditorFilterCacheParallelTests {
                 "Task.isCancelledによるキャンセルチェックが実装されていません")
     }
 
+    // MARK: - キャンセル伝播の確認
+
+    @Test func 集約ループでキャンセル時にgroupCancelAllが呼ばれる() throws {
+        let content = try editorContent
+        #expect(content.contains("group.cancelAll()"),
+                "集約ループ内でgroup.cancelAll()によるキャンセル伝播が実装されていません")
+    }
+
     // MARK: - キャッシュマージとクリーンアップの確認
 
     @Test func 既存キャッシュとのマージが実装されている() throws {
         let content = try editorContent
-        #expect(content.contains("result.merge(loadedImages)"),
-                "既存キャッシュとのマージ処理が実装されていません")
+        #expect(content.contains("merged.merge(result)"),
+                "loadedImagesをベースにresultで上書きするマージが実装されていません")
     }
 
     @Test func 不要キャッシュの除去が実装されている() throws {
         let content = try editorContent
-        #expect(content.contains("currentIds"),
-                "currentIdsによる不要キャッシュ除去が実装されていません")
+        #expect(content.contains("let currentIds = Set(placements.map"),
+                "let currentIds = Set(placements.map による不要キャッシュ除去が実装されていません")
     }
 }
