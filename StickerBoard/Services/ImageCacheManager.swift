@@ -305,6 +305,7 @@ actor ThumbnailLoadQueue {
     }
 
     private func acquire() async -> Bool {
+        guard !Task.isCancelled else { return false }
         if running < maxConcurrent {
             running += 1
             return true
