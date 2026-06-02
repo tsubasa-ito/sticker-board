@@ -939,6 +939,11 @@ struct StickerThumbnailView: View {
         .scaleEffect(appeared ? 1 : 0.7)
         .opacity(appeared ? 1 : 0)
         .task(id: refreshTrigger) {
+            // NSCache ヒット時はスロット不要（ディスクI/Oなし）
+            if let cached = ImageCacheManager.shared.thumbnailIfCached(for: sticker.imageFileName, size: 200) {
+                thumbnailImage = cached
+                return
+            }
             thumbnailImage = await ThumbnailLoadQueue.shared.withSlot {
                 await Task.detached {
                     ImageStorage.loadThumbnail(fileName: sticker.imageFileName, size: 200)

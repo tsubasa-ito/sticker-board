@@ -125,6 +125,12 @@ final class ImageCacheManager: @unchecked Sendable {
         return thumbnail
     }
 
+    /// NSCache のみを参照してサムネイルを返す（ディスクアクセスなし）。
+    /// メインスレッドから呼び出しても安全。キャッシュミス時は nil。
+    func thumbnailIfCached(for fileName: String, size: CGFloat) -> UIImage? {
+        thumbnailCache.object(forKey: thumbnailKey(fileName: fileName, size: size))
+    }
+
     // MARK: - 加工済みサムネイル（フィルター＋枠線）
 
     func processedThumbnail(for fileName: String, size: CGFloat, filter: StickerFilter, borderWidth: StickerBorderWidth, borderColorHex: String) -> UIImage? {
@@ -289,11 +295,12 @@ actor ThumbnailLoadQueue {
     }
 
     /// スロットを取得してクロージャを実行し、完了後にスロットを解放する。
-    /// 待機中にキャンセルされた場合は `nil` を返す。
+    /// 待機中またはスロット取得直後にキャンセルされた場合は `nil` を返す。
     func withSlot<T: Sendable>(_ operation: @Sendable () async -> T?) async -> T? {
         let acquired = await acquire()
         guard acquired else { return nil }
         defer { release() }
+        guard !Task.isCancelled else { return nil }
         return await operation()
     }
 
