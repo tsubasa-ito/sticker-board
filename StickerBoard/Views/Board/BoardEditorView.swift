@@ -740,15 +740,23 @@ struct BoardEditorView: View {
         let currentPlacements = placements
         rebuildTask = Task.detached {
             var result: [UUID: UIImage] = [:]
-            for placement in currentPlacements {
-                guard !Task.isCancelled else { return }
-                if let image = cache.processed(
-                    for: placement.imageFileName,
-                    filter: placement.filter,
-                    borderWidth: placement.borderWidth,
-                    borderColorHex: placement.borderColorHex
-                ) {
-                    result[placement.id] = image
+            await withTaskGroup(of: (UUID, UIImage)?.self) { group in
+                for placement in currentPlacements {
+                    group.addTask {
+                        guard !Task.isCancelled else { return nil }
+                        guard let image = cache.processed(
+                            for: placement.imageFileName,
+                            filter: placement.filter,
+                            borderWidth: placement.borderWidth,
+                            borderColorHex: placement.borderColorHex
+                        ) else { return nil }
+                        return (placement.id, image)
+                    }
+                }
+                for await entry in group {
+                    if let (id, image) = entry {
+                        result[id] = image
+                    }
                 }
             }
             guard !Task.isCancelled else { return }
