@@ -81,7 +81,8 @@ open StickerBoard.xcodeproj
 - BackgroundRemover.removeBackgroundAtPoint(from:normalizedPoint:) は、VNInstanceMaskObservation の instanceMask ピクセルバッファからタップ位置のインスタンスIDを特定し、その被写体のみを切り抜く。StickerCaptureView で写真プレビューの長押しジェスチャーから呼び出される
 - フィルター（キラキラ・レトロ・パステル・ネオン・ぷっくり・ワッペン）は StickerPlacement の filterType に保存し、ボード配置単位で適用する設計（シール自体ではなく配置ごとにフィルターが異なる）
 - StickerFilterService は CIFilter ベースでオンザフライ処理。BoardEditorView ではフィルター適用画像をキャッシュして body 再評価時の再計算を回避
-- ImageCacheManager（NSCache ベース）がフル解像度・サムネイル・フィルター適用済みの3層キャッシュを管理。メモリ警告時に自動パージ
+- ImageCacheManager（NSCache ベース）がフル解像度・サムネイル・フィルター適用済みの3層キャッシュを管理。メモリ警告時に自動パージ。`thumbnailIfCached(for:size:)` はディスクI/Oなしで NSCache のみを参照するキャッシュ確認API（メインスレッド安全）
+- ThumbnailLoadQueue（`actor`、`ImageCacheManager.swift` に定義）がサムネイルロードの同時実行数を最大4に制限する。`withSlot { }` クロージャAPIで使用し、スロット取得待機中のキャンセル時は `nil` を即返却しスロットを消費しない。`StickerThumbnailView` の `.task(id:)` では NSCache ヒット時はキューをバイパスして即返却する設計（2回目以降のスクロールではスロット待ちが不要）
 - ImageStorage.save() は保存時にアルファトリミング（透明余白の除去）→ 長辺1024pxリサイズの順で処理する（バウンディングボックスの最適化 + ステッカー用途のサイズ最適化）
 - ImageStorage.rotateAndOverwrite(fileName:clockwise:) はディスクからの読み込み → UIImage.rotatedBy90Degrees(clockwise:) で90度回転 → overwrite() の順で処理する。回転メソッドは ImageCacheManager.swift の UIImage 拡張に定義。UIGraphicsImageRendererFormat.scale に元画像のスケールを引き継がないとピクセル寸法が変わるため注意
 - ImageStorageError には encodingFailed / deletionFailed / loadFailed の3ケースあり。loadFailed は rotateAndOverwrite で対象ファイルが見つからない場合に投げる

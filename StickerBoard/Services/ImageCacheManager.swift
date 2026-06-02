@@ -125,6 +125,12 @@ final class ImageCacheManager: @unchecked Sendable {
         return thumbnail
     }
 
+    /// NSCache のみを参照してサムネイルを返す（ディスクアクセスなし）。
+    /// メインスレッドから呼び出しても安全。キャッシュミス時は nil。
+    func thumbnailIfCached(for fileName: String, size: CGFloat) -> UIImage? {
+        thumbnailCache.object(forKey: thumbnailKey(fileName: fileName, size: size))
+    }
+
     // MARK: - 加工済みサムネイル（フィルター＋枠線）
 
     func processedThumbnail(for fileName: String, size: CGFloat, filter: StickerFilter, borderWidth: StickerBorderWidth, borderColorHex: String) -> UIImage? {
@@ -267,6 +273,68 @@ final class ImageCacheManager: @unchecked Sendable {
 
     private func processedKey(fileName: String, filter: StickerFilter, borderWidth: StickerBorderWidth, borderColorHex: String) -> NSString {
         "\(fileName)_\(filter.rawValue)_\(borderWidth.rawValue)_\(borderColorHex)" as NSString
+    }
+}
+
+// MARK: - ThumbnailLoadQueue
+
+/// サムネイルロードの同時実行数を制限する actor。
+/// 大量セルの初回表示時にディスク I/O が集中するのを防ぐ。
+/// スロット取得待ち中にタスクがキャンセルされた場合は `nil` を即返却し、
+/// スロットを消費しない（`defer { release() }` による二重解放も発生しない）。
+actor ThumbnailLoadQueue {
+
+    static let shared = ThumbnailLoadQueue()
+
+    private let maxConcurrent: Int
+    private var running = 0
+    private var waiters: [(id: UUID, cont: CheckedContinuation<Bool, Never>)] = []
+
+    init(maxConcurrent: Int = 4) {
+        self.maxConcurrent = maxConcurrent
+    }
+
+    /// スロットを取得してクロージャを実行し、完了後にスロットを解放する。
+    /// 待機中またはスロット取得直後にキャンセルされた場合は `nil` を返す。
+    func withSlot<T: Sendable>(_ operation: @Sendable () async -> T?) async -> T? {
+        let acquired = await acquire()
+        guard acquired else { return nil }
+        defer { release() }
+        guard !Task.isCancelled else { return nil }
+        return await operation()
+    }
+
+    private func acquire() async -> Bool {
+        guard !Task.isCancelled else { return false }
+        if running < maxConcurrent {
+            running += 1
+            return true
+        }
+        let id = UUID()
+        return await withTaskCancellationHandler {
+            await withCheckedContinuation { (cont: CheckedContinuation<Bool, Never>) in
+                waiters.append((id: id, cont: cont))
+            }
+        } onCancel: {
+            Task { await self.cancelWaiter(id: id) }
+        }
+    }
+
+    private func cancelWaiter(id: UUID) {
+        if let index = waiters.firstIndex(where: { $0.id == id }) {
+            let cont = waiters[index].cont
+            waiters.remove(at: index)
+            cont.resume(returning: false)
+        }
+    }
+
+    private func release() {
+        if let first = waiters.first {
+            waiters.removeFirst()
+            first.cont.resume(returning: true)
+        } else {
+            running = max(0, running - 1)
+        }
     }
 }
 
