@@ -11,9 +11,16 @@ import Foundation
 /// ## 修正方針
 /// withTaskGroup を使った並列処理への置き換えで処理時間を大幅に短縮する。
 ///
-/// 注意: このテストはソースコードを文字列として読み込み、パターンマッチで構造を検証します。
-/// BoardEditorView.swift のメソッド名・構造が変更された場合、
-/// テストのパターンマッチを実態に合わせて更新してください。
+/// ## テストの注意事項（脆弱性について）
+/// このテストはソースコードを文字列として読み込み、パターンマッチで構造を検証します。
+/// SwiftUI View を直接インスタンス化できないため、このアプローチを採用しています。
+///
+/// **リファクタリング時の対処法:**
+/// - BoardEditorView.swift のメソッド名・変数名・構造が変更された場合は、
+///   テストのパターン文字列を実態に合わせて更新してください。
+/// - テストが予期せず失敗した場合は、まず BoardEditorView.swift の該当箇所を確認し、
+///   パターン文字列が実際のコードと一致しているかを検証してください。
+/// - パターンが他の箇所にも存在する可能性があるため、文字列は可能な限り具体的に記述します。
 struct BoardEditorFilterCacheParallelTests {
 
     // MARK: - ファイル読み込みヘルパー
@@ -41,16 +48,19 @@ struct BoardEditorFilterCacheParallelTests {
                 "rebuildFilterCache()がwithTaskGroupを使用していません")
     }
 
-    @Test func rebuildFilterCacheがTask_detachedで起動されている() throws {
+    @Test func rebuildFilterCacheがTaskでMainActor隔離を継承して起動される() throws {
         let content = try editorContent
-        #expect(content.contains("Task.detached"),
-                "rebuildFilterCache()がTask.detachedで起動されていません")
+        // Task {} は @MainActor 隔離を継承するため Task.detached ではなく Task を使用する。
+        // group.addTask クロージャは非隔離で並列実行されるため CPU 集約処理はバックグラウンドで動く。
+        #expect(content.contains("rebuildTask = Task {"),
+                "rebuildFilterCache()がMainActor隔離を継承するTask{}で起動されていません")
     }
 
-    @Test func rebuildFilterCacheがMainActorRunでUI反映している() throws {
+    @Test func rebuildFilterCacheがMainActor上でloadedImagesを直接更新する() throws {
         let content = try editorContent
-        #expect(content.contains("MainActor.run"),
-                "rebuildFilterCache()がMainActor.runでUI反映していません")
+        // Task {} が @MainActor 隔離を継承するため MainActor.run 不要で直接 @State を更新できる
+        #expect(content.contains("loadedImages = merged.filter"),
+                "rebuildFilterCache()がMainActor上でloadedImagesを直接更新していません")
     }
 
     // MARK: - キャンセル機構の維持確認

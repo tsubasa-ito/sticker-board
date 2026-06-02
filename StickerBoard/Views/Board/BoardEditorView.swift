@@ -738,7 +738,7 @@ struct BoardEditorView: View {
         rebuildTask?.cancel()
         let cache = ImageCacheManager.shared
         let currentPlacements = placements
-        rebuildTask = Task.detached {
+        rebuildTask = Task {
             var result: [UUID: UIImage] = [:]
             await withTaskGroup(of: (UUID, UIImage)?.self) { group in
                 for placement in currentPlacements {
@@ -764,13 +764,12 @@ struct BoardEditorView: View {
                 }
             }
             guard !Task.isCancelled else { return }
-            await MainActor.run {
-                // loadedImages をベースに result の新鮮な値で上書きする（キャッシュミス分は loadedImages でフォールバック）
-                var merged = loadedImages
-                merged.merge(result) { _, fresh in fresh }
-                let currentIds = Set(placements.map(\.id))
-                loadedImages = merged.filter { currentIds.contains($0.key) }
-            }
+            // Task {} は @MainActor 隔離を継承するため MainActor.run 不要
+            // loadedImages をベースに result の新鮮な値で上書きする（キャッシュミス分は loadedImages でフォールバック）
+            var merged = loadedImages
+            merged.merge(result) { _, fresh in fresh }
+            let currentIds = Set(placements.map(\.id))
+            loadedImages = merged.filter { currentIds.contains($0.key) }
         }
     }
 
