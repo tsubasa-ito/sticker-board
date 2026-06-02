@@ -289,7 +289,14 @@
       }
     },
     "%lld枚のシールをコレクションから削除しますか？ボードで使用中のシールも取り除かれます。" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you sure you want to delete %lld stickers from your collection? They will also be removed from any boards."
+          }
+        }
+      }
     },
     "%lld枚のシールをコレクションに追加しました" : {
       "localizations" : {
@@ -314,7 +321,14 @@
       }
     },
     "%lld枚のシールを削除" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete %lld Stickers"
+          }
+        }
+      }
     },
     "%lld枚をコレクションに追加" : {
       "localizations" : {
@@ -327,7 +341,14 @@
       }
     },
     "%lld枚を削除" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete %lld"
+          }
+        }
+      }
     },
     "AIが自動で背景を除去。\nキレイに切り抜かれたシールがコレクションに" : {
       "localizations" : {
@@ -874,10 +895,24 @@
       }
     },
     "この画像を読み込めませんでした。別の写真をお試しください。" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not load this image. Please try a different photo."
+          }
+        }
+      }
     },
     "この画像形式には対応していません。別の写真をお試しください。" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This image format is not supported. Please try a different photo."
+          }
+        }
+      }
     },
     "コレクションに追加" : {
       "localizations" : {
@@ -1451,7 +1486,14 @@
       }
     },
     "すべてのシールを選択" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select All Stickers"
+          }
+        }
+      }
     },
     "すべての機能をアンロック" : {
       "localizations" : {
@@ -1494,7 +1536,14 @@
       }
     },
     "すべて選択解除" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deselect All"
+          }
+        }
+      }
     },
     "スワイプで背景画像の表示位置を調整できます" : {
       "localizations" : {
@@ -1558,10 +1607,24 @@
       }
     },
     "タップして選択" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap to select"
+          }
+        }
+      }
     },
     "タップして選択解除" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap to deselect"
+          }
+        }
+      }
     },
     "ツールバーを展開" : {
       "localizations" : {
@@ -2771,7 +2834,14 @@
       }
     },
     "削除（未選択）" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete (None Selected)"
+          }
+        }
+      }
     },
     "削除に失敗しました" : {
       "localizations" : {
@@ -3106,7 +3176,14 @@
       }
     },
     "広告" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ad"
+          }
+        }
+      }
     },
     "復元モード" : {
       "localizations" : {
@@ -3668,7 +3745,14 @@
       }
     },
     "画像の読み込みに失敗しました。別の写真をお試しください。" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to load image. Please try a different photo."
+          }
+        }
+      }
     },
     "画像書き出し" : {
       "localizations" : {
@@ -3882,7 +3966,14 @@
       }
     },
     "複数選択モードを開始" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter multi-select mode"
+          }
+        }
+      }
     },
     "解除" : {
       "localizations" : {
@@ -4146,7 +4237,14 @@
       }
     },
     "選択解除" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deselect"
+          }
+        }
+      }
     },
     "重要なアップデート(%@)が利用可能です。\n最新機能と改善をお楽しみください。" : {
       "localizations" : {
