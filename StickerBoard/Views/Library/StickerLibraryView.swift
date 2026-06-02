@@ -939,9 +939,11 @@ struct StickerThumbnailView: View {
         .scaleEffect(appeared ? 1 : 0.7)
         .opacity(appeared ? 1 : 0)
         .task(id: refreshTrigger) {
-            thumbnailImage = await Task.detached {
-                ImageStorage.loadThumbnail(fileName: sticker.imageFileName, size: 200)
-            }.value
+            thumbnailImage = await ThumbnailLoadQueue.shared.withSlot {
+                await Task.detached {
+                    ImageStorage.loadThumbnail(fileName: sticker.imageFileName, size: 200)
+                }.value
+            }
         }
         .onAppear {
             withAnimation(.spring(duration: 0.4, bounce: 0.3).delay(Double.random(in: 0...0.15))) {

@@ -124,6 +124,7 @@
 		F24EB63262D42F1F0D61D1A9 /* ReviewRequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829436B4B4B3D87B24B6F5D4 /* ReviewRequestManager.swift */; };
 		F675B7EB9755F383AB8E0FA9 /* BoardShowcaseWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4850F2EEA934F5007C5453 /* BoardShowcaseWidget.swift */; };
 		F890DFFA9DE2648E4FAB3C3D /* MultipeerConnectivityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0CBD991C7FF69642BB7A6AE /* MultipeerConnectivityTests.swift */; };
+		F93A2A8B1B8D016092D0C778 /* ThumbnailLoadQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C271C03A4A6EB45E3FF2255F /* ThumbnailLoadQueueTests.swift */; };
 		FFE2EA3515CC894BED8FEE78 /* MaskCompositor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D6802D6762B69A0CA2A7336 /* MaskCompositor.swift */; };
 /* End PBXBuildFile section */
 
@@ -249,6 +250,7 @@
 		BCDBB451BECC869CD24CAF7B /* SubscriptionProductTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionProductTests.swift; sourceTree = "<group>"; };
 		BFB6A08C090537657BB85CAD /* BoardEditorToolbarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEditorToolbarTests.swift; sourceTree = "<group>"; };
 		C1211D3F280555E23A6562B3 /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
+		C271C03A4A6EB45E3FF2255F /* ThumbnailLoadQueueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailLoadQueueTests.swift; sourceTree = "<group>"; };
 		C58E47F415F6E26FF25C87BD /* BoardEditorFilterCacheParallelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEditorFilterCacheParallelTests.swift; sourceTree = "<group>"; };
 		C592ED5BC9F9E05F81F080EB /* ReviewRequestManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewRequestManagerTests.swift; sourceTree = "<group>"; };
 		C75326EBD9D2597D4ABB590F /* BoardEditorPinchPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEditorPinchPerformanceTests.swift; sourceTree = "<group>"; };
@@ -566,6 +568,7 @@
 				B03A91B141329E13EDBEAE9A /* StickerPlacementTests.swift */,
 				3F8EB1C52BF7B32985F173FC /* StickerShareServiceTests.swift */,
 				BCDBB451BECC869CD24CAF7B /* SubscriptionProductTests.swift */,
+				C271C03A4A6EB45E3FF2255F /* ThumbnailLoadQueueTests.swift */,
 				351900E2F8D31C115B9F755A /* UIImageExtensionTests.swift */,
 				B5C338D21810E525E53BDD2B /* UnplacedStickerReminderServiceTests.swift */,
 				827CF4CCF758CF7D72CCC423 /* WidgetDataSyncServiceTests.swift */,
@@ -828,6 +831,7 @@
 				E0546E3252F1E756FEC85DA1 /* StickerPlacementTests.swift in Sources */,
 				D9F5D0B1D91568E3331B22EE /* StickerShareServiceTests.swift in Sources */,
 				55E9EE6723FF659967D5B49F /* SubscriptionProductTests.swift in Sources */,
+				F93A2A8B1B8D016092D0C778 /* ThumbnailLoadQueueTests.swift in Sources */,
 				33D1A0E16223FCAC8B67B99B /* UIImageExtensionTests.swift in Sources */,
 				5FC3719147861C14AC8E9DAF /* UnplacedStickerReminderServiceTests.swift in Sources */,
 				AF1C7EC7EF7362CD7ABA273B /* WidgetDataSyncServiceTests.swift in Sources */,
