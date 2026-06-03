@@ -767,14 +767,6 @@ struct StickerPreviewOverlay: View {
                         Image(uiImage: image)
                             .resizable()
                             .scaledToFit()
-                            .holographicSticker(
-                                image: image,
-                                intensity: 0.8,
-                                maxRotation: 15,
-                                perspective: 0.4,
-                                dynamicShadow: true,
-                                parallaxOffset: 20
-                            )
                             .accessibilityLabel("シールのプレビュー")
                     } else {
                         ProgressView()
@@ -943,14 +935,20 @@ struct StickerThumbnailView: View {
             RoundedRectangle(cornerRadius: 14)
                 .strokeBorder(AppTheme.accent.opacity(0.08), lineWidth: 1)
         }
-        .holographicCard()
         .shadow(color: .black.opacity(0.06), radius: 6, y: 3)
         .scaleEffect(appeared ? 1 : 0.7)
         .opacity(appeared ? 1 : 0)
         .task(id: refreshTrigger) {
-            thumbnailImage = await Task.detached {
-                ImageStorage.loadThumbnail(fileName: sticker.imageFileName, size: 200)
-            }.value
+            // NSCache ヒット時はスロット不要（ディスクI/Oなし）
+            if let cached = ImageCacheManager.shared.thumbnailIfCached(for: sticker.imageFileName, size: 200) {
+                thumbnailImage = cached
+                return
+            }
+            thumbnailImage = await ThumbnailLoadQueue.shared.withSlot {
+                await Task.detached {
+                    ImageStorage.loadThumbnail(fileName: sticker.imageFileName, size: 200)
+                }.value
+            }
         }
         .onAppear {
             withAnimation(.spring(duration: 0.4, bounce: 0.3).delay(Double.random(in: 0...0.15))) {
