@@ -1,0 +1,112 @@
+/* アプリのカラーパレット（ネイビー × オレンジ × クリーム）に合わせる */
+:root {
+  color-scheme: light dark;
+  --background: #FAF0DE;
+  --surface: #FFFFFF;
+  --text-primary: #2A2D5B;
+  --text-secondary: #5C5F85;
+  --accent: #E87A2E;
+  --border: rgba(42, 45, 91, 0.12);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #16172E;
+    --surface: #202244;
+    --text-primary: #F3EEE4;
+    --text-secondary: #B9BAD3;
+    --accent: #F29A5B;
+    --border: rgba(243, 238, 228, 0.14);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+  line-height: 1.8;
+  -webkit-text-size-adjust: 100%;
+}
+
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.app-name {
+  color: var(--accent);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.lang-switch {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+main {
+  max-width: 760px;
+  margin: 0 auto 48px;
+  padding: 24px 16px;
+  background: var(--surface);
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+@media (min-width: 792px) {
+  main {
+    padding: 32px 40px;
+  }
+}
+
+h1 {
+  font-size: 1.6rem;
+  line-height: 1.4;
+  margin-top: 0;
+}
+
+h2 {
+  font-size: 1.2rem;
+  margin-top: 2em;
+  padding-bottom: 4px;
+  border-bottom: 2px solid var(--accent);
+}
+
+h3 {
+  font-size: 1.05rem;
+  margin-top: 1.5em;
+}
+
+a {
+  color: var(--accent);
+  overflow-wrap: anywhere;
+}
+
+table {
+  display: block;
+  overflow-x: auto;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.index-links {
+  padding-left: 1.2em;
+  font-size: 1.1rem;
+}
