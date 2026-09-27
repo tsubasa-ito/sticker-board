@@ -143,6 +143,7 @@
 | 課金 | StoreKit 2（自動更新サブスクリプション） |
 | ウィジェット | WidgetKit + AppIntentConfiguration |
 | クラッシュ検知 | Firebase Crashlytics |
+| プロダクト分析・セッションリプレイ | PostHog |
 | β版P2P通信 | MultipeerConnectivity（近距離シール交換） |
 | プロジェクト管理 | XcodeGen |
 | 対応OS | iOS 18+ |

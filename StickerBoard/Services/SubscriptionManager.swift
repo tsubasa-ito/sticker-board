@@ -10,7 +10,12 @@ final class SubscriptionManager: ObservableObject {
         category: "SubscriptionManager"
     )
 
-    @Published private(set) var isProUser: Bool = false
+    @Published private(set) var isProUser: Bool = false {
+        didSet {
+            guard oldValue != isProUser else { return }
+            AnalyticsService.updateProStatus(isProUser)
+        }
+    }
     @Published private(set) var products: [Product] = []
     @Published private(set) var purchasedProductIDs: Set<String> = []
     @Published private(set) var currentSubscriptionExpirationDate: Date?
@@ -115,6 +120,12 @@ final class SubscriptionManager: ObservableObject {
     }
 
     func purchase(_ product: Product) async -> PurchaseResult {
+        let analyticsProperties: [String: Any] = [
+            "product_id": product.id,
+            "price": NSDecimalNumber(decimal: product.price).doubleValue,
+            "currency": product.priceFormatStyle.currencyCode
+        ]
+        AnalyticsService.capture(.purchaseStarted, properties: analyticsProperties)
         do {
             let result = try await product.purchase()
             switch result {
@@ -122,15 +133,22 @@ final class SubscriptionManager: ObservableObject {
                 let transaction = try checkVerified(verification)
                 await transaction.finish()
                 await updatePurchasedProducts()
+                AnalyticsService.capture(.purchaseCompleted, properties: analyticsProperties)
                 return .success
             case .userCancelled:
+                AnalyticsService.capture(.purchaseCancelled, properties: analyticsProperties)
                 return .cancelled
             case .pending:
+                AnalyticsService.capture(.purchasePending, properties: analyticsProperties)
                 return .pending
             @unknown default:
+                AnalyticsService.capture(.purchaseCancelled, properties: analyticsProperties)
                 return .cancelled
             }
         } catch {
+            var failedProperties = analyticsProperties
+            failedProperties["error"] = String(describing: error)
+            AnalyticsService.capture(.purchaseFailed, properties: failedProperties)
             return .failed(error)
         }
     }

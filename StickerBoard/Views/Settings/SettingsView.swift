@@ -1,3 +1,4 @@
+import PostHog
 import SwiftUI
 import StoreKit
 
@@ -12,6 +13,7 @@ struct SettingsView: View {
     @State private var errorMessage: String?
     @State private var isLoadingProducts = false
     @State private var reminderEnabled = UnplacedStickerReminderService.shared.isEnabled
+    @State private var analyticsEnabled = AnalyticsService.isEnabled()
     @Environment(\.modelContext) private var modelContext
 
 
@@ -32,6 +34,7 @@ struct SettingsView: View {
 
                     noticesSection
                     notificationsSection
+                    privacySection
                     betaSection
                     relatedLinksSection
                 }
@@ -41,6 +44,7 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("設定")
+        .postHogScreenView("Settings")
         .navigationBarTitleDisplayMode(.inline)
         .manageSubscriptionsSheet(
             isPresented: $showingManageSubscription,
@@ -622,6 +626,45 @@ struct SettingsView: View {
         } else {
             service.cancelNotification()
         }
+    }
+
+    // MARK: - プライバシーセクション
+
+    private var privacySection: some View {
+        VStack(spacing: 0) {
+            sectionHeader(title: "プライバシー", icon: "hand.raised")
+
+            HStack(spacing: 12) {
+                Image(systemName: "chart.bar.xaxis")
+                    .font(.system(size: 14))
+                    .foregroundStyle(AppTheme.accent)
+                    .frame(width: 28)
+                    .accessibilityHidden(true)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("利用状況データの送信")
+                        .font(.system(size: 15, design: .rounded))
+                        .foregroundStyle(AppTheme.textPrimary)
+                    Text("アプリ改善のため、匿名の操作履歴と画面の記録を送信します")
+                        .font(.system(size: 12, design: .rounded))
+                        .foregroundStyle(AppTheme.textSecondary)
+                }
+
+                Spacer()
+
+                Toggle("", isOn: $analyticsEnabled)
+                    .labelsHidden()
+                    .tint(AppTheme.accent)
+                    .accessibilityLabel("利用状況データの送信")
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .stickerCard()
+            .onChange(of: analyticsEnabled) { _, newValue in
+                AnalyticsService.setEnabled(newValue)
+            }
+        }
+        .accessibilityElement(children: .contain)
     }
 
     // MARK: - 注意事項セクション

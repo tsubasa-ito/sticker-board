@@ -34,6 +34,7 @@
 		36E53A08C4668D5590BE46A1 /* SharedBoardMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27912520AF159D0D12135A2C /* SharedBoardMetadata.swift */; };
 		3730FADF312F90DA57192388 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = A31113F8EC8EE2854EDFEF78 /* FirebaseCrashlytics */; };
 		39D882D756B491224A0C519C /* BoardDeleteConfirmationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C642A18BD372D652AF5FF3B /* BoardDeleteConfirmationTests.swift */; };
+		3BEB1E2F9CCBBE7F357DFC56 /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D5FC36BE9F2C322BBAB5E3 /* AnalyticsService.swift */; };
 		3C58A5E81DEC383139F9311A /* StickerFilterPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E07374D0724CABB84AC640D /* StickerFilterPickerView.swift */; };
 		3E7AC02052003DA43D669B47 /* MaskEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F51DD1916FC4B3337ADA86F /* MaskEditorView.swift */; };
 		416D0E1EC917ED9CBCFAACE4 /* BoardBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73436443E84517F0AAC3C265 /* BoardBackgroundView.swift */; };
@@ -79,6 +80,7 @@
 		A9AD4A8F40E3B9FE76C55440 /* AdManagerProUserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8731E1ED0238650F97A2B017 /* AdManagerProUserTests.swift */; };
 		A9E174752B496F13389C1181 /* StickerPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6364161BD5EB2AA06CF6AE7D /* StickerPreviewView.swift */; };
 		AB29650858E35E4BAF42854B /* StickerLibraryBulkDeleteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309B59FE9E723D0987BA0EB7 /* StickerLibraryBulkDeleteTests.swift */; };
+		AC8E7BB5B2401B9384D73E00 /* PostHog in Frameworks */ = {isa = PBXBuildFile; productRef = 9F1EC4ABC78E69EAF7F62CE5 /* PostHog */; };
 		AF1C7EC7EF7362CD7ABA273B /* WidgetDataSyncServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 827CF4CCF758CF7D72CCC423 /* WidgetDataSyncServiceTests.swift */; };
 		B361D0D57A3AB393E69DA39C /* StickerBorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E5D6F908EE947CC125BAC4 /* StickerBorder.swift */; };
 		B4AA40A530C03F83FF775E31 /* BackgroundPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC1436F39A4162AD412D53A /* BackgroundPattern.swift */; };
@@ -95,6 +97,7 @@
 		C2AF5B0E2BFAC184CC8279FA /* StickerBorderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276A77B1063731059420BB58 /* StickerBorderTests.swift */; };
 		C4460E2AC4B0A01446BD3666 /* StickerLibraryAccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B6E414C38C81FDD95EBC2EE /* StickerLibraryAccessibilityTests.swift */; };
 		C872359F958D4BC34AB71FDB /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = D88D0DB2BBA3A6003D7B42C5 /* Localizable.xcstrings */; };
+		C973D530C45747D236BBB91D /* AnalyticsServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 572A805180EA63A29903B597 /* AnalyticsServiceTests.swift */; };
 		C98D76F680578FBA369FBE52 /* AccessibilityRuleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDF2A8C549FCAF35D5DD828 /* AccessibilityRuleTests.swift */; };
 		C9BD7806252FFA6680B10E56 /* NativeAdCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91427A0F32409B0DFC58A10F /* NativeAdCard.swift */; };
 		CB5CDB350C326919C148B630 /* SubscriptionProduct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285EEB7B80609E9E695A678B /* SubscriptionProduct.swift */; };
@@ -202,6 +205,7 @@
 		504A7665F90173671AD3B76A /* StickerBorderServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerBorderServiceTests.swift; sourceTree = "<group>"; };
 		530CD661BF00498FE8299E3E /* CaptureAccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureAccessibilityTests.swift; sourceTree = "<group>"; };
 		54C1D00261EB4F86866F685A /* BackgroundPatternTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundPatternTests.swift; sourceTree = "<group>"; };
+		572A805180EA63A29903B597 /* AnalyticsServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsServiceTests.swift; sourceTree = "<group>"; };
 		5E4850F2EEA934F5007C5453 /* BoardShowcaseWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardShowcaseWidget.swift; sourceTree = "<group>"; };
 		5FC4DAF0371E295F74BAD946 /* BoardEditorUndoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEditorUndoTests.swift; sourceTree = "<group>"; };
 		5FF690E061C9B4C41740689C /* StickerBoardWidgetExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = StickerBoardWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -275,6 +279,7 @@
 		EF3C9D7666FCCC1875EBD61B /* FilterBorderAccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterBorderAccessibilityTests.swift; sourceTree = "<group>"; };
 		EF8707E62DE974CFCF4EBA7F /* MultiStickerSelectionAccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiStickerSelectionAccessibilityTests.swift; sourceTree = "<group>"; };
 		EFB2EBD86DD5578CEFDD4E1F /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		F1D5FC36BE9F2C322BBAB5E3 /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
 		F297348DD96E3A76B8648C82 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		F6B638736BE2DE98C1C08D4B /* Sticker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sticker.swift; sourceTree = "<group>"; };
 		F870EE68E060BE5480814A21 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -291,6 +296,7 @@
 			files = (
 				3730FADF312F90DA57192388 /* FirebaseCrashlytics in Frameworks */,
 				1D6DC7533997985BBF4CB76D /* GoogleMobileAds in Frameworks */,
+				AC8E7BB5B2401B9384D73E00 /* PostHog in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -419,6 +425,7 @@
 			isa = PBXGroup;
 			children = (
 				AD283257FAE24DB47C1A31B0 /* AdManager.swift */,
+				F1D5FC36BE9F2C322BBAB5E3 /* AnalyticsService.swift */,
 				BCBDA121148C553378F3C860 /* AppUpdateChecker.swift */,
 				8CA42CC44A656C4DE5FDD444 /* BackgroundImageStorage.swift */,
 				E5D9FFAB2F480D8D2327E386 /* BackgroundRemover.swift */,
@@ -526,6 +533,7 @@
 			children = (
 				AFDF2A8C549FCAF35D5DD828 /* AccessibilityRuleTests.swift */,
 				8731E1ED0238650F97A2B017 /* AdManagerProUserTests.swift */,
+				572A805180EA63A29903B597 /* AnalyticsServiceTests.swift */,
 				2BAF06066174FD79C8F5DAD8 /* AppUpdateCheckerTests.swift */,
 				795F7B5B94087F04001DE523 /* BackgroundImageStorageTests.swift */,
 				54C1D00261EB4F86866F685A /* BackgroundPatternTests.swift */,
@@ -599,6 +607,7 @@
 			packageProductDependencies = (
 				A31113F8EC8EE2854EDFEF78 /* FirebaseCrashlytics */,
 				F10C42E0E6C50CAB03CC893B /* GoogleMobileAds */,
+				9F1EC4ABC78E69EAF7F62CE5 /* PostHog */,
 			);
 			productName = StickerBoard;
 			productReference = 98F3C1F87DFC6BE33492062C /* StickerBoard.app */;
@@ -669,6 +678,7 @@
 			packageReferences = (
 				71552BC30DDD3B76097B0A3C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				594F95C96FD81352EB4ED9F6 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
+				F7E890005CF45DE82A63AEF5 /* XCRemoteSwiftPackageReference "posthog-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 82217834547736AB42A4F71C /* Products */;
@@ -725,6 +735,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				177F476944E741FA5581B3F5 /* AdManager.swift in Sources */,
+				3BEB1E2F9CCBBE7F357DFC56 /* AnalyticsService.swift in Sources */,
 				E2D14D4429193D3C436BA5D2 /* AppTheme.swift in Sources */,
 				08ADD0896E6540848CAB00C7 /* AppURLs.swift in Sources */,
 				25745C4F441381F490112536 /* AppUpdateChecker.swift in Sources */,
@@ -789,6 +800,7 @@
 			files = (
 				C98D76F680578FBA369FBE52 /* AccessibilityRuleTests.swift in Sources */,
 				A9AD4A8F40E3B9FE76C55440 /* AdManagerProUserTests.swift in Sources */,
+				C973D530C45747D236BBB91D /* AnalyticsServiceTests.swift in Sources */,
 				BD758AE1F44F9E566222251D /* AppUpdateCheckerTests.swift in Sources */,
 				54189D617D853C9D06F172AE /* BackgroundImageStorageTests.swift in Sources */,
 				2CB06ED23EB4FB1EA6B7C7CD /* BackgroundPatternTests.swift in Sources */,
@@ -877,13 +889,13 @@
 				CODE_SIGN_ENTITLEMENTS = StickerBoard/StickerBoard.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				INFOPLIST_FILE = StickerBoard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.10.0;
+				MARKETING_VERSION = 1.10.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tebasaki.StickerBoard;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1020,13 +1032,13 @@
 				CODE_SIGN_ENTITLEMENTS = StickerBoard/StickerBoard.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				INFOPLIST_FILE = StickerBoard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.10.0;
+				MARKETING_VERSION = 1.10.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tebasaki.StickerBoard;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1073,14 +1085,14 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = StickerBoardWidget/StickerBoardWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				INFOPLIST_FILE = StickerBoardWidget/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.10.0;
+				MARKETING_VERSION = 1.10.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tebasaki.StickerBoard.Widget;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1093,14 +1105,14 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = StickerBoardWidget/StickerBoardWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				INFOPLIST_FILE = StickerBoardWidget/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.10.0;
+				MARKETING_VERSION = 1.10.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tebasaki.StickerBoard.Widget;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1166,9 +1178,22 @@
 				minimumVersion = 12.12.1;
 			};
 		};
+		F7E890005CF45DE82A63AEF5 /* XCRemoteSwiftPackageReference "posthog-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/PostHog/posthog-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.85.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		9F1EC4ABC78E69EAF7F62CE5 /* PostHog */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F7E890005CF45DE82A63AEF5 /* XCRemoteSwiftPackageReference "posthog-ios" */;
+			productName = PostHog;
+		};
 		A31113F8EC8EE2854EDFEF78 /* FirebaseCrashlytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 71552BC30DDD3B76097B0A3C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

@@ -65,6 +65,7 @@
 | ウィジェット | WidgetKit + AppIntentConfiguration |
 | 広告 | Google Mobile Ads SDK（AdMob） |
 | クラッシュ検知 | Firebase Crashlytics |
+| プロダクト分析・セッションリプレイ | PostHog |
 | プロジェクト管理 | XcodeGen |
 | 対応OS | iOS 18+ |
 

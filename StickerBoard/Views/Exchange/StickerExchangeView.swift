@@ -1,5 +1,6 @@
 import MultipeerConnectivity
 import SwiftData
+import PostHog
 import SwiftUI
 
 /// 近距離デバイス間でシールを交換するβ版ビュー
@@ -39,6 +40,7 @@ struct StickerExchangeView: View {
             }
         }
         .navigationTitle("シール交換")
+        .postHogScreenView("StickerExchange")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             manager.startAdvertising()

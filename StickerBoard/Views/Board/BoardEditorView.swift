@@ -1,3 +1,4 @@
+import PostHog
 import SwiftUI
 import SwiftData
 import Photos
@@ -124,6 +125,7 @@ struct BoardEditorView: View {
             }
         }
         .navigationTitle(board.title)
+        .postHogScreenView("BoardEditor")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(AppTheme.editorBackground, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
@@ -392,6 +394,8 @@ struct BoardEditorView: View {
             // ボードカード（背景パターン付き）
             BoardBackgroundView(config: backgroundConfig, customImage: customBackgroundImage)
                 .clipShape(RoundedRectangle(cornerRadius: 16))
+                // 写真背景はユーザーの写真のためセッションリプレイでマスクする
+                .postHogMask(backgroundConfig.patternType == .custom)
                 .shadow(color: .black.opacity(0.08), radius: 20, y: 4)
                 .padding(24)
 
@@ -833,6 +837,10 @@ struct BoardEditorView: View {
         )
         placements.append(placement)
         selectedPlacementId = placement.id
+        AnalyticsService.capture(.stickerPlaced, properties: [
+            "board_type": board.boardType.rawValue,
+            "placement_count": placements.count
+        ])
         let placementId = placement.id
         let fileName = sticker.imageFileName
         Task {
@@ -1122,6 +1130,7 @@ struct BoardEditorView: View {
                 PHAssetChangeRequest.creationRequestForAsset(from: opaqueImage)
             }
             saveResultSuccess = true
+            AnalyticsService.capture(.boardSavedToPhotos, properties: ["sticker_count": placements.count])
         } catch {
             saveResultSuccess = false
         }
@@ -1304,7 +1313,7 @@ private struct PlacementBorderPickerSheet: View {
                 }
             }
             .sheet(isPresented: $showingPaywall) {
-                PaywallView()
+                PaywallView(source: .border)
             }
             .onAppear {
                 selectedWidth = placement.borderWidth

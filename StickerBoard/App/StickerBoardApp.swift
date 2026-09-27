@@ -46,6 +46,9 @@ struct StickerBoardApp: App {
             #endif
         }
 
+        // PostHog（プロダクト分析・セッションリプレイ）。匿名 ID のみのため ATT 許可は不要
+        AnalyticsService.setup()
+
         // Google Mobile Ads SDK 初期化は ATT 許可後に AdManager.preloadAll() から呼ぶ
 
         let container: ModelContainer
@@ -76,8 +79,8 @@ struct StickerBoardApp: App {
         UINavigationBar.appearance().compactAppearance = navBarAppearance
         UINavigationBar.appearance().tintColor = UIColor(AppTheme.accent)
 
-        // サブスクリプションマネージャーの早期初期化
-        _ = SubscriptionManager.shared
+        // サブスクリプションマネージャーの早期初期化（キャッシュ済みの Pro 状態を分析の共通プロパティに反映）
+        AnalyticsService.updateProStatus(SubscriptionManager.shared.isProUser)
 
         // アプリ起動回数カウント
         let launchCount = UserDefaults.standard.integer(forKey: "appLaunchCount") + 1
@@ -93,6 +96,7 @@ struct StickerBoardApp: App {
                 )) {
                     OnboardingView {
                         hasCompletedOnboarding = true
+                        AnalyticsService.capture(.onboardingCompleted)
                         Task {
                             await UnplacedStickerReminderService.shared.requestAuthorization()
                             // オンボーディング完了後に ATT 許可を要求

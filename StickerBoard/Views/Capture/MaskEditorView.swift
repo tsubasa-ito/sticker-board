@@ -1,3 +1,4 @@
+import PostHog
 import SwiftUI
 
 struct MaskEditorView: View {
@@ -29,6 +30,8 @@ struct MaskEditorView: View {
 
                 VStack(spacing: 0) {
                     canvas
+                        // 元写真をそのまま表示するためセッションリプレイでマスクする
+                        .postHogMask()
                         .padding(.vertical, 8)
                     bottomToolbar
                         .padding(.bottom, 8)

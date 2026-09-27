@@ -1,3 +1,4 @@
+import PostHog
 import SwiftUI
 import PhotosUI
 
@@ -50,7 +51,7 @@ struct BackgroundPatternPickerView: View {
                 }
             }
             .sheet(isPresented: $showingPaywall) {
-                PaywallView()
+                PaywallView(source: .background)
             }
             .onChange(of: selectedPhotoItem) { _, newItem in
                 guard let newItem else { return }
@@ -122,6 +123,8 @@ struct BackgroundPatternPickerView: View {
                 BoardBackgroundView(config: config, customImage: customImage)
                     .frame(width: previewWidth, height: previewHeight)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
+                    // 写真背景はユーザーの写真のためセッションリプレイでマスクする
+                    .postHogMask(config.patternType == .custom)
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(Color.black.opacity(0.06), lineWidth: 1)
