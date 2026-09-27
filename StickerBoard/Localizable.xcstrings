@@ -4305,6 +4305,36 @@
           }
         }
       }
+    },
+    "プライバシー" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy"
+          }
+        }
+      }
+    },
+    "利用状況データの送信" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share Usage Data"
+          }
+        }
+      }
+    },
+    "アプリ改善のため、匿名の操作履歴と画面の記録を送信します" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sends anonymous usage events and screen recordings to help improve the app"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

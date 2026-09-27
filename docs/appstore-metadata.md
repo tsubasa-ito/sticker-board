@@ -8,7 +8,7 @@
 - **SKU:** StickerBoard
 - **カテゴリ:** ライフスタイル
 - **年齢制限:** 4+
-- **プライバシーポリシーURL:** https://colorfree-map.com/sticker-board/privacy
+- **プライバシーポリシーURL:** https://sticker-board-app.pages.dev/privacy/
 - **サポートURL:** https://forms.gle/Ngx3Fq5XnZJKxAaD6
 
 ---
@@ -38,8 +38,8 @@
 ・カスタム写真背景
 ・ロゴなしの画像書き出し
 
-プライバシーポリシー：https://colorfree-map.com/sticker-board/privacy
-利用規約：https://colorfree-map.com/sticker-board/terms
+プライバシーポリシー：https://sticker-board-app.pages.dev/privacy/
+利用規約：https://sticker-board-app.pages.dev/terms/
 
 ---
 

@@ -51,7 +51,7 @@ struct BoardListView: View {
             }
         }
         .sheet(isPresented: $showingPaywall) {
-            PaywallView()
+            PaywallView(source: .boardLimit)
         }
         .alert("新しいボード", isPresented: $showingNewBoard) {
             TextField("ボード名", text: $newBoardTitle)
@@ -140,6 +140,10 @@ struct BoardListView: View {
         guard !title.isEmpty else { return }
         let board = Board(title: title)
         modelContext.insert(board)
+        AnalyticsService.capture(.boardCreated, properties: [
+            "board_type": board.boardType.rawValue,
+            "total_board_count": boards.count + 1
+        ])
         newBoardTitle = ""
     }
 

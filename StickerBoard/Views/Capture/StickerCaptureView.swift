@@ -1,5 +1,6 @@
-import SwiftUI
 import PhotosUI
+import PostHog
+import SwiftUI
 import SwiftData
 
 struct StickerCaptureView: View {
@@ -24,6 +25,8 @@ struct StickerCaptureView: View {
     @State private var processingTask: Task<Void, Never>?
     @State private var pressLocation: CGPoint = .zero
     @State private var longPressImageViewSize: CGSize = .zero
+    /// 分析用: 写真の取得元（"camera" / "library"）
+    @State private var photoSource: String?
     @Query private var allStickers: [Sticker]
     var onStickerSaved: () -> Void = {}
 
@@ -37,6 +40,7 @@ struct StickerCaptureView: View {
                     if let extractedStickers, extractedStickers.count > 1 {
                         // 複数シール選択
                         MultiStickerSelectionView(images: extractedStickers) { count in
+                            trackStickerSaved(count: count, isMultiple: true)
                             savedStickerCount = count
                             resetState()
                             showingSaveSuccess = true
@@ -61,6 +65,7 @@ struct StickerCaptureView: View {
             }
         }
         .navigationTitle("シール追加")
+        .postHogScreenView("StickerCapture")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
@@ -72,6 +77,7 @@ struct StickerCaptureView: View {
         }
         .onChange(of: cameraImage) { _, newImage in
             guard let newImage else { return }
+            photoSource = "camera"
             withAnimation(.spring(duration: 0.4)) {
                 originalImage = newImage
                 errorMessage = nil
@@ -95,7 +101,7 @@ struct StickerCaptureView: View {
             }
         }
         .sheet(isPresented: $showingPaywall) {
-            PaywallView()
+            PaywallView(source: .stickerLimit)
         }
         .alert("保存完了!", isPresented: $showingSaveSuccess) {
             Button("続けて追加") { resetState() }
@@ -223,6 +229,8 @@ struct StickerCaptureView: View {
                         .scaledToFit()
                         .frame(maxHeight: 280)
                         .clipShape(RoundedRectangle(cornerRadius: 16))
+                        // 切り抜き前の元写真は背景に個人情報が写り得るため、セッションリプレイでマスクする
+                        .postHogMask()
                         .shadow(color: .black.opacity(0.1), radius: 8, y: 4)
                         .overlay {
                             if isProcessing {
@@ -521,6 +529,7 @@ struct StickerCaptureView: View {
                 }
 
                 guard !Task.isCancelled else { return }
+                photoSource = "library"
                 withAnimation(.spring(duration: 0.4)) {
                     originalImage = image
                     errorMessage = nil
@@ -647,6 +656,7 @@ struct StickerCaptureView: View {
             let fileName = try ImageStorage.save(image)
             let sticker = Sticker(imageFileName: fileName)
             modelContext.insert(sticker)
+            trackStickerSaved(count: 1, isMultiple: false)
             savedStickerCount = 1
             showingSaveSuccess = true
             onStickerSaved()
@@ -655,7 +665,21 @@ struct StickerCaptureView: View {
         }
     }
 
+    private func trackStickerSaved(count: Int, isMultiple: Bool) {
+        var properties: [String: Any] = [
+            "count": count,
+            "is_multiple": isMultiple,
+            // @Query はまだ更新前のため、挿入済み（未保存含む）の件数をコンテキストから取得する
+            "total_sticker_count": (try? modelContext.fetchCount(FetchDescriptor<Sticker>())) ?? allStickers.count
+        ]
+        if let photoSource {
+            properties["photo_source"] = photoSource
+        }
+        AnalyticsService.capture(.stickerSaved, properties: properties)
+    }
+
     private func resetState() {
+        photoSource = nil
         selectedItem = nil
         originalImage = nil
         processedImage = nil

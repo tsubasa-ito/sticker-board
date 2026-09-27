@@ -31,8 +31,8 @@
 | バージョン 1.0.0 | ✅ | project.yml で設定済み |
 | ユニットテスト全パス | ✅ | 80テスト合格 |
 | Release ビルド成功 | ✅ | エラーなし |
-| プライバシーポリシー公開 | ✅ | https://colorfree-map.com/sticker-board/privacy |
-| 利用規約公開 | ✅ | https://colorfree-map.com/sticker-board/terms |
+| プライバシーポリシー公開 | ✅ | https://sticker-board-app.pages.dev/privacy/ |
+| 利用規約公開 | ✅ | https://sticker-board-app.pages.dev/terms/ |
 | アプリアイコン（1024x1024） | ✅ | Assets.xcassets に設定済み |
 | App Store メタデータ | ✅ | docs/appstore-metadata.md に準備済み |
 
@@ -155,7 +155,7 @@
 |------|--------|
 | サポートURL | https://forms.gle/Ngx3Fq5XnZJKxAaD6 |
 | マーケティングURL | （空欄でOK） |
-| プライバシーポリシーURL | https://colorfree-map.com/sticker-board/privacy |
+| プライバシーポリシーURL | https://sticker-board-app.pages.dev/privacy/ |
 | 著作権 | © 2026 solodev |
 | ライセンス契約 | 標準のApple EULA を使用（カスタム不要） |
 

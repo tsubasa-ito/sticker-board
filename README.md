@@ -65,6 +65,7 @@
 | ウィジェット | WidgetKit + AppIntentConfiguration |
 | 広告 | Google Mobile Ads SDK（AdMob） |
 | クラッシュ検知 | Firebase Crashlytics |
+| プロダクト分析・セッションリプレイ | PostHog |
 | プロジェクト管理 | XcodeGen |
 | 対応OS | iOS 18+ |
 
@@ -256,6 +257,21 @@ StickerBoardTests/                           # Swift Testing ユニットテス�
     ├── WidgetModelsTests.swift                      # SharedBoardMetadataのCodable・JSON往復
     └── WidgetDataSyncServiceTests.swift             # メタデータ生成・JSON読み書き・スナップショット・ディープリンク
 ```
+
+## 利用規約・プライバシーポリシー
+
+`web/` の静的サイトとして管理し、Cloudflare Pages（プロジェクト `sticker-board-app`）で配信しています。
+
+| ページ | URL | 原稿 |
+|---|---|---|
+| プライバシーポリシー | https://sticker-board-app.pages.dev/privacy/ | `web/content/ja/privacy.md` |
+| Privacy Policy | https://sticker-board-app.pages.dev/privacy/en/ | `web/content/en/privacy.md` |
+| 利用規約 | https://sticker-board-app.pages.dev/terms/ | `web/content/ja/terms.md` |
+| Terms of Service | https://sticker-board-app.pages.dev/terms/en/ | `web/content/en/terms.md` |
+
+- Markdown を編集して PR を出すと、Cloudflare Pages がブランチごとのプレビュー URL をビルドします
+- `main` にマージされると本番（`sticker-board-app.pages.dev`）に反映されます（アプリのリリースと同じタイミング）
+- ローカル確認: `cd web && npm install && npm run build`（`web/dist/` に出力）
 
 ## ブランチ戦略
 

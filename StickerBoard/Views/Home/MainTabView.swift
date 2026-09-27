@@ -107,6 +107,10 @@ struct MainTabView: View {
                 triggerReviewIfNeeded()
             }
         }
+        // タブはopacityで切り替えており onAppear が初回しか発火しないため、選択変更で画面表示を記録する
+        .onChange(of: selectedTab, initial: true) { _, tab in
+            AnalyticsService.screen(tab == .home ? "Home" : "Library")
+        }
         .onChange(of: deepLinkBoardId) {
             if deepLinkBoardId != nil {
                 selectedTab = .home
