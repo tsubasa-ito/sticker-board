@@ -1,0 +1,14 @@
+{
+  "name": "sticker-board-legal",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "devDependencies": {
+    "marked": "^18.0.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
