@@ -32,7 +32,7 @@ struct MultiStickerSelectionView: View {
         }
         .background(AppTheme.backgroundPrimary)
         .sheet(isPresented: $showingPaywall) {
-            PaywallView()
+            PaywallView(source: .stickerLimit)
         }
         .onAppear {
             withAnimation(.spring(duration: 0.5, bounce: 0.3)) {

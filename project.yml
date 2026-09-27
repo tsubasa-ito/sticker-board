@@ -18,6 +18,9 @@ packages:
   GoogleMobileAds:
     url: https://github.com/googleads/swift-package-manager-google-mobile-ads
     from: "11.0.0"
+  PostHog:
+    url: https://github.com/PostHog/posthog-ios
+    from: "3.85.0"
 
 settings:
   base:
@@ -80,6 +83,8 @@ targets:
         product: FirebaseCrashlytics
       - package: GoogleMobileAds
         product: GoogleMobileAds
+      - package: PostHog
+        product: PostHog
     postBuildScripts:
       - script: |
           if [ -f "${SRCROOT}/StickerBoard/GoogleService-Info.plist" ]; then

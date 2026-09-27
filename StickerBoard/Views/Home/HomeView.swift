@@ -1,3 +1,4 @@
+import PostHog
 import SwiftUI
 import SwiftData
 
@@ -86,7 +87,7 @@ struct HomeView: View {
             OnboardingView()
         }
         .sheet(isPresented: $showingPaywall) {
-            PaywallView()
+            PaywallView(source: .boardLimit)
         }
         .navigationDestination(item: $selectedBoard) { board in
             BoardEditorView(board: board)
@@ -447,6 +448,10 @@ struct HomeView: View {
     private func createBoard(title: String, boardType: BoardType) {
         let board = Board(title: title, boardType: boardType)
         modelContext.insert(board)
+        AnalyticsService.capture(.boardCreated, properties: [
+            "board_type": boardType.rawValue,
+            "total_board_count": boards.count + 1
+        ])
         onBoardCreated()
     }
 
@@ -578,6 +583,8 @@ private struct BoardCardBackground: View {
 
     var body: some View {
         BoardBackgroundView(config: config, customImage: customImage)
+            // 写真背景はユーザーの写真のためセッションリプレイでマスクする
+            .postHogMask(config.patternType == .custom)
             .task(id: config.customImageFileName) {
                 if config.patternType == .custom, let fileName = config.customImageFileName {
                     customImage = await Task.detached {

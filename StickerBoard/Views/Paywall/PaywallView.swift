@@ -3,6 +3,8 @@ import StoreKit
 
 /// Pro機能のペイウォールシート
 struct PaywallView: View {
+    /// 表示元（分析用）
+    let source: PaywallSource
     @ObservedObject private var subscriptionManager = SubscriptionManager.shared
     @Environment(\.dismiss) private var dismiss
     @State private var isPurchasing = false
@@ -40,6 +42,9 @@ struct PaywallView: View {
                     .scaleEffect(1.3)
                     .accessibilityLabel("購入処理中")
             }
+        }
+        .onAppear {
+            AnalyticsService.capture(.paywallViewed, properties: ["source": source.rawValue])
         }
         .task {
             if !productsLoaded {

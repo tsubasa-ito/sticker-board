@@ -83,8 +83,12 @@ enum BoardShareService {
         }
 
         // 共有完了後にインタースティシャル広告を表示（#260）
-        activityVC.completionWithItemsHandler = { _, completed, _, _ in
+        activityVC.completionWithItemsHandler = { activityType, completed, _, _ in
             guard completed else { return }
+            AnalyticsService.capture(.boardShared, properties: [
+                "activity_type": activityType?.rawValue ?? "unknown",
+                "sticker_count": placements.count
+            ])
             Task { @MainActor in AdManager.shared.recordExportAndShowIfNeeded() }
         }
         topVC.present(activityVC, animated: true)
